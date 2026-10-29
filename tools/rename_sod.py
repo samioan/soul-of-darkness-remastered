@@ -157,6 +157,7 @@ def main() -> None:
                  ROOT / "tools/reference_checks/BeamCheck.java",
                  ROOT / "tools/reference_checks/PromptCheck.java",
                  ROOT / "tools/reference_checks/IntroCheck.java",
+                 ROOT / "tools/reference_checks/ChandelierCheck.java",
                  ROOT / "tools/reference_checks/MenuCheck.java",
                  ROOT / "tools/reference_checks/ControllerCheck.java",
                  ROOT / "tools/reference_checks/image_adapter/javax/microedition/lcdui/Image.java",
@@ -166,6 +167,7 @@ def main() -> None:
             run([java, "-Djava.awt.headless=true", "-cp", f"{lifecycle}{sep}{harness}", "BeamCheck", EXTRACTED, build, STUBS])
             run([java, "-Djava.awt.headless=true", "-cp", f"{lifecycle}{sep}{harness}", "PromptCheck", EXTRACTED, build, STUBS])
             run([java, "-Djava.awt.headless=true", "-cp", f"{lifecycle}{sep}{harness}", "IntroCheck", EXTRACTED, build, STUBS])
+            run([java, "-Djava.awt.headless=true", "-cp", f"{lifecycle}{sep}{harness}", "ChandelierCheck", EXTRACTED, build, STUBS])
             run([java, "-Djava.awt.headless=true", "-cp", f"{lifecycle}{sep}{harness}", "MenuCheck", EXTRACTED, build, STUBS, MAP])
             run([java, "-Djava.awt.headless=true", "-cp", f"{lifecycle}{sep}{harness}", "ControllerCheck", EXTRACTED, build, STUBS, MAP])
             run([java, "-Djava.awt.headless=true", "-cp", harness, "LevelCheck", EXTRACTED, build, STUBS, MAP])

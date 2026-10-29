@@ -8,7 +8,9 @@ allowed. Ordinary player control, AI, pickups and world handlers stop during
 the scene; animation and presentation still advance on 83 ms ticks.
 
 This completes the first item in both current roadmap checklists. It does not
-implement every cutscene or the complete game. Script 160/trigger 161 is next.
+implement every cutscene or the complete game. Script 160/trigger 161 is now
+implemented separately in
+[NATIVE_CHANDELIER.md](NATIVE_CHANDELIER.md).
 
 ## Original branch and timing
 

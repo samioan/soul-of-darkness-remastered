@@ -92,6 +92,8 @@ shot passes through type-33 objects because its attack rectangle is a point.
 See [attachment behavior and limits](soul/docs/NATIVE_ICE_ATTACHMENTS.md).
 The original opening cutscene now plays in the first level, with four English
 dialogues, camera moves and Backspace to skip. See [native intro](soul/docs/NATIVE_INTRO.md).
+The first-level enemy/chandelier sequence (trigger 161/script 160) also runs
+during normal gameplay; see [native chandelier script](soul/docs/NATIVE_CHANDELIER.md).
 The first level now loads all nine placed keyboard tutorial hints; see
 [native prompts](soul/docs/NATIVE_PROMPTS.md).
 The first level now loads all six timed/sweeping beam hazards, with tile-clipped

@@ -959,6 +959,25 @@ int main() {
         rejects([]{soul::introView(0,0,0,240,320);},"invalid intro viewport rejected");
         require(soul::introSpeaker(0)==u"KALE" && soul::introSpeaker(3)==u"ZOMBIE" && soul::introText(0).find(u"castle")!=std::u16string_view::npos,"intro desktop dialogue and speakers are English");
         }
+        {
+        soul::ScriptData data;data.uid=160;
+        soul::ScriptTrack enemyTrack;enemyTrack.kind=2;enemyTrack.target=205;enemyTrack.initial=6;enemyTrack.raw.resize(11);enemyTrack.keys.push_back({0,9,{{107,{0,64,0,0}}}});
+        soul::ScriptTrack chandelier;chandelier.kind=2;chandelier.target=34;chandelier.initial=6;chandelier.raw.resize(11);chandelier.keys.push_back({0,9,{{106,{102}}}});data.tracks={enemyTrack,chandelier};
+        soul::ChandelierScript sequence(data);sequence.start();int flags=2056,action=101,x=0,y=0,bucket=0,resolved=0;
+        const auto missing=[&](int uid)->soul::ChandelierActor{++resolved;if(uid==34)return {};return {&x,&y,&flags,&action,&bucket,[](int){},[]{}};};
+        sequence.update(missing,0,0,true);require(resolved==0 && sequence.ticks==0,"paused selected script never resolves or advances targets");
+        rejects([&]{sequence.update(missing,0,0);},"missing script target is rejected");
+        require(sequence.ticks==0 && flags==2056 && sequence.offsets()==std::vector<int>({6,6}),"failed target resolution leaves script and enemy untouched");
+        sequence.update([&](int)->soul::ChandelierActor{return {&x,&y,&flags,&action,&bucket,[](int){},[]{}};},0,0);
+        require(sequence.ticks==-2 && sequence.finishes==1 && flags==(2056|16384) && action==102,"selected sequence executes raw flags and chandelier action before finishing");
+        soul::ActorRecord triggerRecord{};triggerRecord.count=19;triggerRecord.parameters={40,161,70,1060,0,8,0,0,80,120,1,1,0,186,-1,-1,160,-1,-1};soul::ChandelierTrigger trigger(triggerRecord);
+        trigger.latch=1;trigger.update(nullptr,sequence,true);require(trigger.alive && trigger.latch==1,"pause defers completed-trigger cleanup");
+        trigger.flags|=1024;trigger.update(nullptr,sequence);require(trigger.alive,"hidden trigger defers selected-slot release");trigger.flags&=~1024;
+        trigger.update(nullptr,sequence);require(!trigger.alive && trigger.latch==-1 && sequence.offsets()==std::vector<int>({6,6}),"completion releases and rewinds selected script even after source is gone");
+        trigger.update(nullptr,sequence);require(sequence.starts==1 && sequence.finishes==1,"removed trigger cannot restart the completed sequence");
+        data.tracks[1].kind=1;rejects([&]{soul::ChandelierScript invalid(data);},"chandelier executor rejects camera tracks");
+        }
+
         std::cout << "PASS: " << checks << " native player/input/pickup/container/reward assertions\n"; return 0;
     } catch(const std::exception& e) { std::cerr << e.what() << '\n'; return 1; }
 }

@@ -37,7 +37,7 @@ struct Settings {
 };
 Settings settings;
 std::unique_ptr<soul::GameFrontend> frontend;
-bool gameMode=false,calibrationRequested=false,gameScript=false,gamePassageScript=false,gameAbilityScript=false,gameActivationScript=false,gameSecondWaveScript=false,gameArenaScript=false,gameFireScript=false,gameFireAfterArena=false,gameIceScript=false,iceProjectileFixture=false,gameCheckpointScript=false,gameBeamScript=false,gamePromptScript=false,gameIntroScript=false,introSkipFixture=false;
+bool gameMode=false,calibrationRequested=false,gameScript=false,gamePassageScript=false,gameAbilityScript=false,gameActivationScript=false,gameSecondWaveScript=false,gameArenaScript=false,gameFireScript=false,gameFireAfterArena=false,gameIceScript=false,iceProjectileFixture=false,gameCheckpointScript=false,gameBeamScript=false,gamePromptScript=false,gameIntroScript=false,gameChandelierScript=false,introSkipFixture=false;
 std::optional<soul::CheckpointSnapshot> sessionCheckpoint;int checkpointActivations=0,checkpointRestarts=0,checkpointMenuRestarts=0,checkpointFixtureStage=0;bool restoringCheckpoint=false;
 std::filesystem::path gameSavePath;
 std::optional<soul::CheckpointSnapshot> diskCheckpoint;
@@ -55,7 +55,7 @@ soul::Canvas framebuffer(569,soul::kHeight);
 auto& pixels = framebuffer.pixels();
 struct PreviewOptions {
     bool requested = false, extra = false, font = false;
-    bool beamScript=false,promptScript=false,introScript=false;
+    bool beamScript=false,promptScript=false,introScript=false,chandelierScript=false;
     int pack = 0, resource = 0, frame = -1, animation = -1, palette = 0, flip = 0;
     int level=-1,cameraX=0,cameraY=0;
     bool cameraRequested=false;
@@ -141,6 +141,7 @@ struct MovementPreview {
         abilitySprite=soul::BSprite::parse(abilityPack.resource(27).value());
         const auto levelPack=soul::ResourcePack::numeric(soul::readAssetFile(previewOptions.data/"3"));
         combat->loadGateScripts(levelPack.resource(1).value());
+        combat->loadChandelierScript(levelPack.resource(1).value(),records);
         for(const auto& r:records) {
             if(r.parameters[0]==35) pickups.emplace_back(pickupSprite,r);
             if(r.parameters[0]==52) containers.emplace_back(containerSprite,promptSprite,scene.maps(),r);
@@ -211,7 +212,8 @@ struct MovementPreview {
             sessionCheckpoint=soul::CheckpointSnapshot::capture(checkpoint,player,meters,std::move(removed));++checkpointActivations;
             if(!gameSavePath.empty())try{soul::writeGameSave(gameSavePath,*sessionCheckpoint);diskCheckpoint=sessionCheckpoint;if(frontend){frontend->hasSave=true;frontend->saveStatus.clear();}}catch(const std::exception& e){saveFailure(e);}
         });
-        const bool controlled=previewOptions.movementScript || previewOptions.containerScript || previewOptions.meleeScript || previewOptions.combatScript || previewOptions.defeatScript || previewOptions.platformScript || previewOptions.swingScript || previewOptions.bridgeScript || previewOptions.regionScript || previewOptions.gateScript || previewOptions.gateTriggerScript || previewOptions.passageScript || previewOptions.abilityScript || previewOptions.activationScript || previewOptions.secondWaveScript || previewOptions.arenaScript || previewOptions.fireScript || previewOptions.iceScript || previewOptions.checkpointScript || previewOptions.beamScript || previewOptions.promptScript || gameCheckpointScript || gameBeamScript || gamePromptScript || gamePassageScript || gameAbilityScript || gameActivationScript || gameSecondWaveScript || gameArenaScript || gameFireScript || gameIceScript;
+        if(previewOptions.chandelierScript || gameChandelierScript){player.x=100;player.y=1100;player.fixedX=player.x*256;player.fixedY=player.y*256;player.refreshBounds();}
+        const bool controlled=previewOptions.chandelierScript || gameChandelierScript || previewOptions.movementScript || previewOptions.containerScript || previewOptions.meleeScript || previewOptions.combatScript || previewOptions.defeatScript || previewOptions.platformScript || previewOptions.swingScript || previewOptions.bridgeScript || previewOptions.regionScript || previewOptions.gateScript || previewOptions.gateTriggerScript || previewOptions.passageScript || previewOptions.abilityScript || previewOptions.activationScript || previewOptions.secondWaveScript || previewOptions.arenaScript || previewOptions.fireScript || previewOptions.iceScript || previewOptions.checkpointScript || previewOptions.beamScript || previewOptions.promptScript || gameCheckpointScript || gameBeamScript || gamePromptScript || gamePassageScript || gameAbilityScript || gameActivationScript || gameSecondWaveScript || gameArenaScript || gameFireScript || gameIceScript;
         if(previewOptions.introScript || gameIntroScript || (frontend && !controlled))combat->loadIntro(levelPack.resource(1).value(),records);
     }
     void restoreCheckpoint(const soul::CheckpointSnapshot& saved){
@@ -240,6 +242,7 @@ struct MovementPreview {
         if((previewOptions.introScript || gameIntroScript) && combat->intro && combat->intro->finishes && introControlTicks<20){
             if(introControlTicks<6){input.release(4096);input.press(8192);}else if(introControlTicks>=12 && introControlTicks<18){input.release(8192);input.press(4096);}else input.release(8192|4096);++introControlTicks;
         }
+        if(previewOptions.chandelierScript || gameChandelierScript){if(ticks>=3 && ticks<7)input.press(8192);else input.release(8192);}
         if(previewOptions.promptScript){if(ticks<35){input.release(4096);input.press(8192);}else if(ticks<70){input.release(8192);input.press(4096);}else input.release(4096|8192);}
         if(gamePromptScript){if(ticks==8)input.press(1);if(ticks==9)input.release(1);if(ticks>=30 && ticks<55)input.press(8192);else input.release(8192);}
         if(previewOptions.beamScript || gameBeamScript){if(ticks>=35 && ticks<100)input.press(8192);else input.release(8192);}
@@ -829,8 +832,9 @@ void restartGameplay(){
 }
 void loadPreview() {
     require(!previewOptions.containerScript || previewOptions.movement,"--container-script requires --movement-preview");
-    require(int(previewOptions.containerScript)+int(previewOptions.movementScript)+int(previewOptions.meleeScript)+int(previewOptions.combatScript)+int(previewOptions.defeatScript)+int(previewOptions.platformScript)+int(previewOptions.swingScript)+int(previewOptions.bridgeScript)+int(previewOptions.regionScript)+int(previewOptions.gateScript)+int(previewOptions.gateTriggerScript)+int(previewOptions.passageScript)+int(previewOptions.abilityScript)+int(previewOptions.activationScript)+int(previewOptions.secondWaveScript)+int(previewOptions.arenaScript)+int(previewOptions.fireScript)+int(previewOptions.iceScript)+int(previewOptions.checkpointScript)+int(previewOptions.beamScript)+int(previewOptions.promptScript)+int(previewOptions.introScript)<=1,"Choose one validation script");
+    require(int(previewOptions.containerScript)+int(previewOptions.movementScript)+int(previewOptions.meleeScript)+int(previewOptions.combatScript)+int(previewOptions.defeatScript)+int(previewOptions.platformScript)+int(previewOptions.swingScript)+int(previewOptions.bridgeScript)+int(previewOptions.regionScript)+int(previewOptions.gateScript)+int(previewOptions.gateTriggerScript)+int(previewOptions.passageScript)+int(previewOptions.abilityScript)+int(previewOptions.activationScript)+int(previewOptions.secondWaveScript)+int(previewOptions.arenaScript)+int(previewOptions.fireScript)+int(previewOptions.iceScript)+int(previewOptions.checkpointScript)+int(previewOptions.beamScript)+int(previewOptions.promptScript)+int(previewOptions.introScript)+int(previewOptions.chandelierScript)<=1,"Choose one validation script");
     require(!previewOptions.platformScript || previewOptions.movement,"--platform-script requires --movement-preview");
+    require(!previewOptions.chandelierScript || previewOptions.movement,"--chandelier-script requires --movement-preview");
     require(!previewOptions.introScript || previewOptions.movement,"--intro-script requires --movement-preview");
     require(!previewOptions.promptScript || previewOptions.movement,"--prompt-script requires --movement-preview");
     require(!previewOptions.beamScript || previewOptions.movement,"--beam-script requires --movement-preview");
@@ -970,6 +974,8 @@ int main(int argc, char** argv) {
             else if (arg == "--platform-script") previewOptions.platformScript=true;
             else if (arg == "--ice-projectile-script") {previewOptions.iceScript=true;iceProjectileFixture=true;}
             else if (arg == "--game-ice-projectile-script") {gameScript=true;gameIceScript=true;iceProjectileFixture=true;}
+            else if (arg == "--chandelier-script") previewOptions.chandelierScript=true;
+            else if (arg == "--game-chandelier-script") {gameScript=true;gameChandelierScript=true;}
             else if (arg == "--intro-script") previewOptions.introScript=true;
             else if (arg == "--intro-skip-script") {previewOptions.introScript=true;introSkipFixture=true;}
             else if (arg == "--game-intro-script") {gameScript=true;gameIntroScript=true;}
@@ -1049,7 +1055,7 @@ int main(int argc, char** argv) {
                              "  [--font-preview --data EXTRACTED_DIRECTORY] [--palette 0..2]\n"
                              "  [--level-preview 0..8 --data EXTRACTED_DIRECTORY] [--camera-x X --camera-y Y]\n"
                              "  Level preview: arrows pan, F8 changes width; tiles only, no gameplay.\n"
-                             "  [--movement-preview --data EXTRACTED_DIRECTORY] [--movement-script|--container-script|--melee-script|--combat-script|--defeat-script|--platform-script|--swing-script|--bridge-script|--region-script|--gate-script|--gate-trigger-script|--passage-script|--ability-script|--activation-script|--second-wave-script|--arena-script|--fire-script|--ice-script|--ice-projectile-script|--checkpoint-script|--beam-script|--prompt-script|--intro-script|--intro-skip-script]\n"
+                             "  [--movement-preview --data EXTRACTED_DIRECTORY] [--movement-script|--container-script|--melee-script|--combat-script|--defeat-script|--platform-script|--swing-script|--bridge-script|--region-script|--gate-script|--gate-trigger-script|--passage-script|--ability-script|--activation-script|--second-wave-script|--arena-script|--fire-script|--ice-script|--ice-projectile-script|--checkpoint-script|--beam-script|--prompt-script|--intro-script|--intro-skip-script|--chandelier-script]\n"
                              "  Player prototype: arrows/A/D, Space jump, Down crouch, E/J/Enter attacks/opens chests, K/0 casts equipped magic, Q/9 switches weapons, R restarts at the session checkpoint; ordinary enemies and combat.\n"
                              "  [--animation ID|--frame ID] [--palette ID] [--flip 0..3]\n"
                              "Interactive first-level combat preview is available; the complete game is not ported.\n";
@@ -1057,6 +1063,7 @@ int main(int argc, char** argv) {
             } else throw std::runtime_error("Unknown argument: " + arg);
         }
         require(!previewOptions.platformScript || headless,"--platform-script is a headless validation option");
+        require(!previewOptions.chandelierScript || headless,"--chandelier-script is a headless validation option");
         require(!previewOptions.introScript || headless,"--intro-script is a headless validation option");
         require(!previewOptions.promptScript || headless,"--prompt-script is a headless validation option");
         require(!previewOptions.beamScript || headless,"--beam-script is a headless validation option");
@@ -1093,7 +1100,7 @@ int main(int argc, char** argv) {
             gameMode=true;
         }
         require(!(gameMode && calibrationRequested),"Choose --game or --calibration");
-        require(int(gameAbilityScript)+int(gamePassageScript)+int(gameActivationScript)+int(gameSecondWaveScript)+int(gameArenaScript)+int(gameFireScript)+int(gameIceScript)+int(gameCheckpointScript)+int(gameBeamScript)+int(gamePromptScript)+int(gameIntroScript)<=1,"Choose one game validation fixture");
+        require(int(gameAbilityScript)+int(gamePassageScript)+int(gameActivationScript)+int(gameSecondWaveScript)+int(gameArenaScript)+int(gameFireScript)+int(gameIceScript)+int(gameCheckpointScript)+int(gameBeamScript)+int(gamePromptScript)+int(gameIntroScript)+int(gameChandelierScript)<=1,"Choose one game validation fixture");
         require(!gameScript || (gameMode && headless),"--game-script requires --game --headless");
         require(!continueOnLaunch || (gameMode && !gameScript),"--continue requires --game without validation scripts");
         if(gameMode) {
@@ -1104,7 +1111,7 @@ int main(int argc, char** argv) {
             }
             require(!previewOptions.data.empty(),"--game requires --data EXTRACTED_DIRECTORY");
             require(!previewOptions.movement && !previewOptions.font && !previewOptions.requested && previewOptions.level<0,"--game cannot be combined with preview modes");
-            require(!(previewOptions.movementScript || previewOptions.containerScript || previewOptions.meleeScript || previewOptions.combatScript || previewOptions.defeatScript || previewOptions.platformScript || previewOptions.regionScript || previewOptions.gateScript || previewOptions.gateTriggerScript || previewOptions.passageScript || previewOptions.abilityScript || previewOptions.activationScript || previewOptions.secondWaveScript || previewOptions.arenaScript || previewOptions.fireScript || previewOptions.iceScript || previewOptions.checkpointScript || previewOptions.beamScript || previewOptions.promptScript || previewOptions.introScript || previewOptions.bridgeScript || previewOptions.swingScript),"--game cannot use movement validation scripts");
+            require(!(previewOptions.movementScript || previewOptions.containerScript || previewOptions.meleeScript || previewOptions.combatScript || previewOptions.defeatScript || previewOptions.platformScript || previewOptions.regionScript || previewOptions.gateScript || previewOptions.gateTriggerScript || previewOptions.passageScript || previewOptions.abilityScript || previewOptions.activationScript || previewOptions.secondWaveScript || previewOptions.arenaScript || previewOptions.fireScript || previewOptions.iceScript || previewOptions.checkpointScript || previewOptions.beamScript || previewOptions.promptScript || previewOptions.introScript || previewOptions.chandelierScript || previewOptions.bridgeScript || previewOptions.swingScript),"--game cannot use movement validation scripts");
             frontend=std::make_unique<soul::GameFrontend>(previewOptions.data);
             if(!gameSavePath.empty())try{diskCheckpoint=soul::loadGameSave(gameSavePath);frontend->hasSave=diskCheckpoint.has_value();}catch(const std::exception& e){saveFailure(e);}
             if(continueOnLaunch){require(bool(diskCheckpoint),"No valid checkpoint to continue");frontend->enter(2);frontend->selection=1;frontend->press(13);}
@@ -1134,6 +1141,10 @@ int main(int argc, char** argv) {
                 std::cout << " player_x=" << p.x << " player_y=" << p.y << " player_vx=" << p.vx << " player_vy=" << p.vy
                     << " player_animation=" << p.animation << " player_step=" << p.step << " player_tick=" << p.animationTick
                     << " intro_trigger_alive=" << std::count_if(movementPreview->combat->introTriggers.begin(),movementPreview->combat->introTriggers.end(),[](const auto& t){return t.alive;}) << " intro_bird83_alive=" << std::any_of(movementPreview->combat->flyingEnemies.begin(),movementPreview->combat->flyingEnemies.end(),[](const auto& e){return e.uid==83 && e.alive;}) << " intro_prompt_hidden=" << std::any_of(movementPreview->combat->prompts.begin(),movementPreview->combat->prompts.end(),[](const auto& p){return p.uid==267 && (p.flags&128);})
+                    << " chandelier_tick=" << movementPreview->combat->chandelierScript->ticks << " chandelier_starts=" << movementPreview->combat->chandelierScript->starts << " chandelier_finishes=" << movementPreview->combat->chandelierScript->finishes
+                    << " chandelier_trigger_alive=" << std::any_of(movementPreview->combat->chandelierTriggers.begin(),movementPreview->combat->chandelierTriggers.end(),[](const auto& t){return t.alive;})
+                    << " chandelier34_y=" << [&]{for(const auto& p:movementPreview->combat->platforms)if(p.uid==34)return p.y;return -1;}() << " chandelier34_action=" << [&]{for(const auto& p:movementPreview->combat->platforms)if(p.uid==34)return p.action;return -1;}()
+                    << " chandelier205_alive=" << [&]{for(const auto& e:movementPreview->combat->enemies)if(e.uid==205)return e.alive;return false;}() << " chandelier205_flags=" << [&]{for(const auto& e:movementPreview->combat->enemies)if(e.uid==205)return e.flags;return -1;}()
                     << " intro_control_ticks=" << movementPreview->introControlTicks
                     << " intro_active=" << (movementPreview->combat->intro && movementPreview->combat->intro->active()) << " intro_tick=" << (movementPreview->combat->intro?movementPreview->combat->intro->ticks:-1) << " intro_dialogue=" << (movementPreview->combat->intro?movementPreview->combat->intro->dialogue:-1) << " intro_page=" << (movementPreview->combat->intro?movementPreview->combat->intro->page:0) << " intro_starts=" << (movementPreview->combat->intro?movementPreview->combat->intro->starts:0) << " intro_finishes=" << (movementPreview->combat->intro?movementPreview->combat->intro->finishes:0) << " intro_skips=" << (movementPreview->combat->intro?movementPreview->combat->intro->skips:0) << " intro_dialogues_opened=" << (movementPreview->combat->intro?movementPreview->combat->intro->dialoguesOpened:0)
                     << " fire_prompt_alive=" << std::any_of(movementPreview->combat->prompts.begin(),movementPreview->combat->prompts.end(),[](const auto& p){return p.uid==8 && p.alive;}) << " fire_prompt_status=" << ([&]{for(const auto& p:movementPreview->combat->prompts)if(p.uid==8)return p.status;return -1;}())

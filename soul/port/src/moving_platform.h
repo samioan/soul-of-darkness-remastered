@@ -29,6 +29,7 @@ public:
     int type=33,ropeLength=0,pivotX=0,pivotY=0,angle=0,angularSpeed=0,angularDirection=0,angularSign=1,mode=0,contactDamage=0,enemyKills=0;
     std::array<int,12> swing{};
     void update(Player&,bool paused=false,CombatExchange* combat=nullptr,const std::vector<FallingTarget>& targets={});
+    void scriptAnimation(int);
     void refreshBounds(); void advanceAnimation(); void draw(Canvas&,int,int,int stateFrame=0);
     void write(std::ostream&) const;
     void writeSwing(std::ostream&) const;

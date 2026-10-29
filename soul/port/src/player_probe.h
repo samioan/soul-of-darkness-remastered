@@ -64,3 +64,5 @@ void emitBeamManifest(const std::filesystem::path&);
 void emitPromptManifest(const std::filesystem::path&);
 
 void emitIntroManifest(const std::filesystem::path&);
+
+void emitChandelierManifest(const std::filesystem::path&);

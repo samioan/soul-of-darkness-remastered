@@ -1,6 +1,6 @@
 # Windows port implementation roadmap
 
-Updated 2026-10-29 after the native opening-cutscene pass. This file lists the
+Updated 2026-10-29 after the native chandelier-script pass. This file lists the
 remaining native work and acceptance conditions. [ROADMAP.md](ROADMAP.md) is
 the overall project checklist. [PORT_ROADMAP_HISTORY.md](PORT_ROADMAP_HISTORY.md)
 preserves the old notes; their claims that gameplay, platforms or Continue are
@@ -25,7 +25,10 @@ Level indices are zero-based; level 0 is the first level and uses pack 3.
   the corresponding NATIVE_*.md docs.
 - Opening trigger 82/script 76, with four English dialogues, camera focus,
   actor/prompt ownership, skip and input handoff. See NATIVE_INTRO.md.
-- Latest data-free suite: 89 CTests and 466 player assertions. Intro fixtures
+- Trigger 161/script 160 controls enemy 205 and chandelier 34 during normal play,
+  with flag release and completed-trigger cleanup. See NATIVE_CHANDELIER.md.
+- Latest data-free suite: 92 CTests and 475 player assertions. Chandelier fixtures
+  compare 3000 bytecode rows and 24 host runs; intro fixtures
   compare 5460 original-bytecode rows and 48 playback/skip host runs.
 
 The full game is not yet ported. Asset decoding, Java comparisons and controlled
@@ -39,10 +42,11 @@ native fixtures do not establish a complete native play-through.
    command 113. Accept when the original intro can play, be skipped where allowed,
    and hand control to Kale without stuck flags or orphaned actors. Implemented
    and verified; see [NATIVE_INTRO.md](NATIVE_INTRO.md).
-2. [ ] **Script 160 and trigger 161.** Implement the player-overlap script-start
+2. [x] **Script 160 and trigger 161.** Implement the player-overlap script-start
    condition, enemy-205 flag commands 107/108 and chandelier-34 position,
    animation/action tracks. Accept when actual overlap starts the sequence once
-   and its finished actors return to normal world ownership.
+   and its finished actors return to normal world ownership. Implemented and
+   verified; see [NATIVE_CHANDELIER.md](NATIVE_CHANDELIER.md).
 3. [ ] **Linked prompt-removal triggers 43/61.** Resolve chandelier UIDs 3/34,
    evaluate their original trigger conditions and remove prompt UIDs 187/59.
    Compare source lookup, trigger removal and update-queue timing to bytecode.
@@ -98,8 +102,8 @@ native fixtures do not establish a complete native play-through.
 
 - [ ] Run all 17 scripts / 47 decoded tracks: camera and global tracks, cinematic
   actor creation, UID-targeted properties, flags, commands and completion modes.
-  The selected script-76 intro and script-165 gate branches now run natively;
-  script 160 and the other scripts remain unimplemented.
+  Selected scripts 76 (intro), 160 (enemy/chandelier) and 165 (gate) now run
+  natively; the other scripts and general command ownership remain unfinished.
 - [ ] Dialogue layout/English text, interaction locks, QTE success/failure, allowed
   skip, audio/shake/fade commands and cutscene bars. Complete the original
   Game.paint mutations on simulation ticks before adding faster presentation.

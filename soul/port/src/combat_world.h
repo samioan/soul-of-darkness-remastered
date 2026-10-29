@@ -18,6 +18,7 @@
 #include "beam_emitter.h"
 #include "placed_prompt.h"
 #include "intro_cutscene.h"
+#include "chandelier_script.h"
 #include <memory>
 #include <list>
 namespace soul {
@@ -32,6 +33,9 @@ public:
     CombatWorld(const BSprite&,const BSprite&&,const LevelMaps&,Player&,PlayerMeters&,const std::vector<ActorRecord>&,const std::vector<int>&)=delete;
     CombatWorld(const BSprite&,const BSprite&,const LevelMaps&&,Player&,PlayerMeters&,const std::vector<ActorRecord>&,const std::vector<int>&)=delete;
     CombatWorld(const CombatWorld&)=delete; CombatWorld& operator=(const CombatWorld&)=delete;
+    std::unique_ptr<ChandelierScript> chandelierScript;
+    std::vector<ChandelierTrigger> chandelierTriggers;
+    void loadChandelierScript(ByteView,const std::vector<ActorRecord>&);
     std::unique_ptr<IntroCutscene> intro;
     std::vector<IntroTrigger> introTriggers;
     bool introInputReset=false;
@@ -132,7 +136,7 @@ private:
     std::array<int,4> regionCameraBounds_{};
     bool regionChanged_=false;
     std::vector<int> queue_,buckets_;
-    enum class ActorKind { Enemy,Platform,Bridge,Region,LinkedAreaTrigger,Gate,RemovedScriptTrigger,Passage,PlayerEnableTrigger,FlyingEnemy,RemovedEnemyTrigger,Checkpoint,BeamEmitter,Prompt,IntroTrigger };
+    enum class ActorKind { Enemy,Platform,Bridge,Region,LinkedAreaTrigger,Gate,RemovedScriptTrigger,Passage,PlayerEnableTrigger,FlyingEnemy,RemovedEnemyTrigger,Checkpoint,BeamEmitter,Prompt,IntroTrigger,ChandelierTrigger };
     struct ActorSlot { ActorKind kind;std::size_t index; };
     std::vector<ActorSlot> order_,updateQueue_,contactQueue_;
     std::vector<MovingPlatform*> platformIndex_;

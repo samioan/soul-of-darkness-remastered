@@ -101,6 +101,7 @@ MovingPlatform::MovingPlatform(const BSprite& sprite,const LevelMaps& maps,const
     if(type==50)limits={collision[0]-120,pivotY,collision[2]+120,collision[3]};
 }
 MovingPlatform::~MovingPlatform(){while(!iceBacklinks.empty())iceBacklinks.back()->detach();}
+void MovingPlatform::scriptAnimation(int id){if(id<0 || std::size_t(id)>=sprite_.animations().size())throw FormatError("Missing scripted platform pose");if(animation!=id){animation=id;pending=-1;step=tick=0;flags&=~64;}}
 void MovingPlatform::request(int id) { if(animation!=id){pending=id;flags&=~64;} }
 void MovingPlatform::contact(Player& p) {
     refreshBounds();surface.x=x;surface.y=y;surface.vx=vx;surface.vy=vy;surface.flags=flags;

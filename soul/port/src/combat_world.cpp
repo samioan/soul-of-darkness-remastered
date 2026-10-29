@@ -52,13 +52,13 @@ void CombatWorld::loadCheckpoints(const std::vector<ActorRecord>& records,std::f
 std::vector<RemovedCheckpointActor> CombatWorld::removedCheckpointActors()const{
     std::vector<RemovedCheckpointActor> result;
     const auto add=[&](const auto& rows){for(const auto& a:rows)if(!a.alive)result.push_back({a.uid,a.flags});};
-    add(introTriggers);add(prompts);add(enemies);add(flyingEnemies);add(checkpoints);add(bridges);add(removedEnemyTriggers);add(removedScriptTriggers);add(playerEnableTriggers);return result;
+    add(chandelierTriggers);add(introTriggers);add(prompts);add(enemies);add(flyingEnemies);add(checkpoints);add(bridges);add(removedEnemyTriggers);add(removedScriptTriggers);add(playerEnableTriggers);return result;
 }
 void CombatWorld::restoreCheckpointActors(const CheckpointSnapshot& saved,const std::vector<ActorRecord>& records){
     if(worldFrame_!=0 || !updateQueue_.empty())throw FormatError("Checkpoint restore requires a reconstructed world");
     const auto skip=[&](int uid){const auto r=std::find_if(records.begin(),records.end(),[&](const auto& a){return a.parameters[1]==uid;});return r!=records.end() && saved.skips(*r);};
     const auto remove=[&](auto& rows){for(auto& a:rows)if(skip(a.uid))a.alive=false;};
-    remove(introTriggers);remove(prompts);remove(enemies);remove(flyingEnemies);remove(checkpoints);remove(bridges);remove(removedEnemyTriggers);remove(removedScriptTriggers);remove(playerEnableTriggers);
+    remove(chandelierTriggers);remove(introTriggers);remove(prompts);remove(enemies);remove(flyingEnemies);remove(checkpoints);remove(bridges);remove(removedEnemyTriggers);remove(removedScriptTriggers);remove(playerEnableTriggers);
     for(std::size_t i=0;i<placedUids_.size();++i)placedRemoved_[i]=skip(placedUids_[i]);
     region_=-1;previousRegion_=-1;regionChanged_=false;refreshRegionSelection();cacheBuckets();
 }
@@ -97,6 +97,14 @@ IntroActor CombatWorld::introActor(int uid){
     for(auto& e:flyingEnemies)if(e.uid==uid && e.alive)return enemy(e);
     for(auto& p:prompts)if(p.uid==uid && p.alive)return {&p.x,&p.y,&p.flags,&p.facingLeft,[&p](int n){if(n!=p.animation){p.animation=n;p.step=p.tick=0;p.flags&=~64;}},[&p]{return p.collision[1];},[]{},[this,&p]{p.alive=false;for(std::size_t i=0;i<placedUids_.size();++i)if(placedUids_[i]==p.uid)placedRemoved_[i]=true;}};
     return {};
+}
+void CombatWorld::loadChandelierScript(ByteView bytes,const std::vector<ActorRecord>& records){
+    if(chandelierScript)throw FormatError("Chandelier script already loaded");
+    for(auto& s:decodeScripts(bytes))if(s.uid==160)chandelierScript=std::make_unique<ChandelierScript>(std::move(s));
+    if(!chandelierScript)throw FormatError("Missing chandelier script 160");
+    for(const auto& r:records)if(ChandelierTrigger::supported(r)){if(r.parameters[13]!=player_.uid)throw FormatError("Chandelier script trigger needs the owned player");chandelierTriggers.emplace_back(r);}
+    if(chandelierTriggers.size()!=1)throw FormatError("Expected one chandelier script trigger");
+    rebuildOrder(records);cacheBuckets();
 }
 void CombatWorld::loadIntro(ByteView scripts,const std::vector<ActorRecord>& records){
     if(intro)throw FormatError("Intro already loaded");
@@ -176,6 +184,7 @@ void CombatWorld::rebuildOrder(const std::vector<ActorRecord>& records) {
     order_.clear();
     for(const auto& r:records){
         const auto& p=r.parameters;
+        if(p[0]==40)for(std::size_t i=0;i<chandelierTriggers.size();++i)if(chandelierTriggers[i].uid==p[1])order_.push_back({ActorKind::ChandelierTrigger,i});
         if(p[0]==20)for(std::size_t i=0;i<introTriggers.size();++i)if(introTriggers[i].uid==p[1])order_.push_back({ActorKind::IntroTrigger,i});
         if(p[0]==21)for(std::size_t i=0;i<prompts.size();++i)if(prompts[i].uid==p[1])order_.push_back({ActorKind::Prompt,i});
         if(p[0]==10)for(std::size_t i=0;i<beamEmitters.size();++i)if(beamEmitters[i].uid==p[1])order_.push_back({ActorKind::BeamEmitter,i});
@@ -209,6 +218,7 @@ void CombatWorld::cacheBuckets() {
     for(auto& g:gates)g.bucket=std::abs(g.x-(cx+120))/120+std::abs(g.y-(cy+160))/160;
     for(auto& t:passages)t.bucket=std::abs(t.x-(cx+120))/120+std::abs(t.y-(cy+160))/160;
     for(auto& t:playerEnableTriggers)t.bucket=std::abs(t.x-(cx+120))/120+std::abs(t.y-(cy+160))/160;
+    for(auto& t:chandelierTriggers)t.bucket=std::abs(t.x-(cx+120))/120+std::abs(t.y-(cy+160))/160;
     for(auto& t:introTriggers)t.bucket=std::abs(t.x-(cx+120))/120+std::abs(t.y-(cy+160))/160;
     for(auto& p:prompts)p.bucket=std::abs(p.x-(cx+120))/120+std::abs(p.y-(cy+160))/160;
     for(auto& e:beamEmitters)e.bucket=std::abs(e.x-(cx+120))/120+std::abs(e.y-(cy+160))/160;
@@ -231,6 +241,11 @@ const std::vector<ContactBody*>& CombatWorld::prepare(bool playerPaused) {
 void CombatWorld::updatePlayer(unsigned pressed,unsigned held,int frame,bool paused) {
     if(!paused){if(promptMagicTicks>0)--promptMagicTicks;else recentPromptMagic=-1;}
     if(gateScript_){const auto [cx,cy]=referenceCamera();gateScript_->update([&](int uid)->LinkedGate*{for(auto& g:gates)if(g.uid==uid)return &g;return nullptr;},cx,cy,paused);}
+    if(chandelierScript){const auto [cx,cy]=referenceCamera();chandelierScript->update([&](int uid)->ChandelierActor{
+        for(std::size_t i=0;i<enemies.size();++i){auto& e=enemies[i];if(e.uid==uid && e.alive)return {&e.x,&e.y,&e.flags,&e.action,&buckets_[i],[&e](int n){e.scriptAnimation(n);},[&e]{e.refreshBounds();}};}
+        for(auto& p:platforms)if(p.uid==uid)return {&p.x,&p.y,&p.flags,&p.action,&p.bucket,[&p](int n){p.scriptAnimation(n);},[&p]{p.refreshBounds();}};
+        return {};
+    },cx,cy,paused);}
     const auto& bodies=prepare(paused);
     if(fireMagic && !paused && !(player_.flags&(1024|16384)) && !player_.stoppedByHazard()){
         fireMagic->regenerate(meters_,player_.action);player_.availableMagic=meters_.magic;player_.fireOccupied=fireMagic->occupied();
@@ -264,6 +279,7 @@ bool CombatWorld::eligible(const ActorSlot& slot) const {
     case ActorKind::RemovedEnemyTrigger:{const auto& t=removedEnemyTriggers[slot.index];if(!t.alive)return false;flags=t.flags;bucket=t.bucket;radius=7;break;}
     case ActorKind::Platform: {const auto& p=*platformIndex_[slot.index];flags=p.flags;bucket=p.bucket;break;}
     case ActorKind::Bridge: {const auto& b=*bridgeIndex_[slot.index];if(!b.alive)return false;flags=b.flags;bucket=b.bucket;radius=4;break;}
+    case ActorKind::ChandelierTrigger:{const auto& t=chandelierTriggers[slot.index];if(!t.alive)return false;flags=t.flags;bucket=t.bucket;radius=7;break;}
     case ActorKind::IntroTrigger:{const auto& t=introTriggers[slot.index];if(!t.alive)return false;flags=t.flags;bucket=t.bucket;break;}
     case ActorKind::Prompt:{const auto& p=prompts[slot.index];if(!p.alive)return false;flags=p.flags;bucket=p.bucket;break;}
     case ActorKind::BeamEmitter:{const auto& e=beamEmitters[slot.index];flags=e.flags;bucket=e.bucket;break;}
@@ -287,6 +303,7 @@ std::vector<int> CombatWorld::updateQueueUids() const {
     case ActorKind::Enemy:result.push_back(enemies[slot.index].uid);break;
     case ActorKind::Platform:result.push_back(platformIndex_[slot.index]->uid);break;
     case ActorKind::Bridge:result.push_back(bridgeIndex_[slot.index]->uid);break;
+    case ActorKind::ChandelierTrigger:result.push_back(chandelierTriggers[slot.index].uid);break;
     case ActorKind::IntroTrigger:result.push_back(introTriggers[slot.index].uid);break;
     case ActorKind::Prompt:result.push_back(prompts[slot.index].uid);break;
     case ActorKind::BeamEmitter:result.push_back(beamEmitters[slot.index].uid);break;
@@ -351,6 +368,7 @@ bool CombatWorld::finishPlayer(bool paused) {
     }
     for(auto& p:platforms)if(p.type==33 && player_.platform==&p.surface && player_.ceiling)p.vy=0;
     for(const auto& slot:updateQueue_) {
+        if(slot.kind==ActorKind::ChandelierTrigger){auto& t=chandelierTriggers[slot.index];t.update(&player_,*chandelierScript,paused);if(!t.alive)for(std::size_t i=0;i<placedUids_.size();++i)if(placedUids_[i]==t.uid)placedRemoved_[i]=true;continue;}
         if(slot.kind==ActorKind::IntroTrigger){auto& t=introTriggers[slot.index];if(t.update(player_,paused)){
             const auto [cx,cy]=referenceCamera();intro->start(cx,cy,t.skipAllowed);introInputReset=true;player_.facingLeft=(t.flags&1)!=0;player_.flags=(player_.flags&~1)|int(player_.facingLeft);player_.vx=player_.vy=0;player_.weaponSwitchCooldown=0;
             if(fireMagic)fireMagic->clear();if(iceMagic)iceMagic->clear();effects.clear();

@@ -1,6 +1,6 @@
 # Soul of Darkness roadmap
 
-Updated 2026-10-29 after the native opening-cutscene pass. This is the current
+Updated 2026-10-29 after the native chandelier-script pass. This is the current
 remaining-work list. Historical implementation notes are in
 [ROADMAP_HISTORY.md](ROADMAP_HISTORY.md); their old pending/next descriptions
 are superseded. Update the lists below when work lands instead of appending
@@ -19,7 +19,8 @@ another conflicting progress narrative.
   fire/ice magic, pickups/chests/rewards, platforms/chandeliers/bridges, regions,
   all 16 passages, the arena/reward/gate chain, six beam hazards and nine placed
   tutorial prompts. Intro trigger 82/script 76 now plays with English dialogue,
-  camera control, skip and verified return to gameplay. See the NATIVE_*.md docs.
+  camera control, skip and verified return to gameplay. Trigger 161/script 160
+  now runs the enemy/chandelier sequence during ordinary play. See the NATIVE_*.md docs.
 - Six first-level checkpoints support R/menu Restart and desktop autosave/Continue.
   The desktop format covers the supported native subset; it is not original RMS.
 - All nine gameplay maps decode/render, but normal gameplay constructs **level 0
@@ -37,9 +38,10 @@ gameplay pack = level index + 3.
   the camera; implement flags, positions, actor removal, anchored dialogue,
   input lock/skip and return to ordinary play. Completed and verified in
   [NATIVE_INTRO.md](NATIVE_INTRO.md).
-- [ ] Implement type-40 **UID 161 -> script 160**: the player-overlap trigger
+- [x] Implement type-40 **UID 161 -> script 160**: the player-overlap trigger
   starts the track for enemy **205** and chandelier **34**. Add its flag/action/
-  animation/position commands and completion cleanup; script 165 already runs.
+  animation/position commands and completion cleanup. Completed and verified in
+  [NATIVE_CHANDELIER.md](NATIVE_CHANDELIER.md); script 165 already runs.
 - [ ] Implement type-40 **UIDs 43 and 61**, which link chandeliers **3/34** to
   removal of prompts **187/59**. Placed prompt self-removal alone does not
   implement these linked conditions.
@@ -88,7 +90,7 @@ gameplay pack = level index + 3.
 ## Scripts, rendering and ownership still to finish
 
 - [ ] Execute camera tracks, global tracks and cinematic actor tracks, and extend
-  existing-actor tracks beyond the selected script-165 gate commands. Decoding
+  existing-actor tracks beyond the selected scripts 76/160/165. Decoding
   all 17 scripts is already done; executing them all is not.
 - [ ] Implement dialogue, cutscene input locks/skip, QTEs and the remaining
   script global/property commands, fades, shakes and letterbox transitions.
@@ -130,8 +132,9 @@ gameplay pack = level index + 3.
 - Run default `python tools/rename_sod.py` after Java naming/patch/check changes.
 - Run Debug/Release builds, checks appropriate to each native change and
   `soul/port/build_dist.bat`; retain all data and screenshots outside git.
-- The intro pass adds 5460 native-comparable rows, brings player assertions to
-  466 and CTest to 89 tests, and verifies 48 playback/skip host runs at both
-  widths. Detailed evidence and limits are in [NATIVE_INTRO.md](NATIVE_INTRO.md).
+- Current baseline: 475 player assertions and 92 CTests. Script 160 adds 3000
+  original-bytecode rows and 24 host runs at both widths; see
+  [NATIVE_CHANDELIER.md](NATIVE_CHANDELIER.md). The intro retains its 5460 rows
+  and 48 playback/skip host runs; see [NATIVE_INTRO.md](NATIVE_INTRO.md).
 - [PORT_ROADMAP.md](PORT_ROADMAP.md) gives the native implementation order and
   concrete acceptance conditions; feature docs retain detailed evidence/limits.

@@ -35,6 +35,7 @@ def main():
                         if not interpolation:cmd+=['--no-interpolation']
                         v=dict(x.split('=') for x in subprocess.check_output(cmd,text=True).split())
                         require((v['chandelier_tick'],v['chandelier_starts'],v['chandelier_finishes'],v['chandelier_trigger_alive'])==('-2','1','1','0'),'Host did not release completed script 160/trigger 161')
+                        require((v['prompt_removal_triggers'],v['prompt59_alive'],v['prompt187_alive'])==('1','0','1'),'Linked chandelier trigger did not remove only prompt 59')
                         require((v['chandelier34_action'],v['chandelier34_y'])==('104','901'),'Chandelier did not fall, land and finish its break animation')
                         require(int(v['chandelier205_flags'])&16384==0,'Enemy remained frozen after script completion')
                         require(v['defeated']=='0' and v['intro_active']=='0' and v['melee_attacks']=='0' and v['fire_casts']=='0','Unexpected modal, attack or death in chandelier fixture')

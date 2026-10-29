@@ -94,5 +94,7 @@ also passed. The data-free distribution build passed; its executable matches
 Release, and its asset tool passes the chandelier oracle. Portrait and widescreen
 gameplay captures were inspected. Oracles, captures and binaries remain ignored.
 
-This completes script 160/trigger 161 only. Linked prompt removals 43/61, camera
-controllers 63/167, exit 173 and later-level scripts remain on the roadmaps.
+This pass completes script 160/trigger 161. The subsequent
+[linked prompt-removal pass](NATIVE_PROMPT_REMOVAL.md) completes triggers 43/61.
+[Camera controllers 63/167](NATIVE_CAMERA_CONTROLLERS.md) are also implemented.
+Exit 173 and later-level scripts remain on the roadmaps.

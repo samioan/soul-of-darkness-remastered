@@ -1,6 +1,6 @@
 # Windows port implementation roadmap
 
-Updated 2026-10-29 after the native chandelier-script pass. This file lists the
+Updated 2026-10-29 after the first-level camera-controller pass. This file lists the
 remaining native work and acceptance conditions. [ROADMAP.md](ROADMAP.md) is
 the overall project checklist. [PORT_ROADMAP_HISTORY.md](PORT_ROADMAP_HISTORY.md)
 preserves the old notes; their claims that gameplay, platforms or Continue are
@@ -27,9 +27,15 @@ Level indices are zero-based; level 0 is the first level and uses pack 3.
   actor/prompt ownership, skip and input handoff. See NATIVE_INTRO.md.
 - Trigger 161/script 160 controls enemy 205 and chandelier 34 during normal play,
   with flag release and completed-trigger cleanup. See NATIVE_CHANDELIER.md.
-- Latest data-free suite: 92 CTests and 475 player assertions. Chandelier fixtures
+- Linked triggers 43/61 remove prompts 187/59 on chandelier overlap, with lazy
+  source/target lookup and ordered removal. See NATIVE_PROMPT_REMOVAL.md.
+- Camera controllers 63/167 now own linked-enemy framing, removal/release and
+  falling-camera tracking; 1360 original-bytecode/native rows and 58 host checks
+  verify the supported modes. See NATIVE_CAMERA_CONTROLLERS.md.
+- Latest data-free suite: 95 CTests and 495 player assertions. Chandelier fixtures
   compare 3000 bytecode rows and 24 host runs; intro fixtures
-  compare 5460 original-bytecode rows and 48 playback/skip host runs.
+  compare 5460 original-bytecode rows and 48 playback/skip host runs. Linked
+  prompt removal adds 352 handler/world rows against original bytecode.
 
 The full game is not yet ported. Asset decoding, Java comparisons and controlled
 native fixtures do not establish a complete native play-through.
@@ -47,13 +53,15 @@ native fixtures do not establish a complete native play-through.
    animation/action tracks. Accept when actual overlap starts the sequence once
    and its finished actors return to normal world ownership. Implemented and
    verified; see [NATIVE_CHANDELIER.md](NATIVE_CHANDELIER.md).
-3. [ ] **Linked prompt-removal triggers 43/61.** Resolve chandelier UIDs 3/34,
+3. [x] **Linked prompt-removal triggers 43/61.** Resolve chandelier UIDs 3/34,
    evaluate their original trigger conditions and remove prompt UIDs 187/59.
-   Compare source lookup, trigger removal and update-queue timing to bytecode.
-4. [ ] **Camera controllers 63/167.** Implement the link from 63 to enemy 202,
+   Source lookup, trigger removal and update-queue timing now match bytecode;
+   see [NATIVE_PROMPT_REMOVAL.md](NATIVE_PROMPT_REMOVAL.md).
+4. [x] **Camera controllers 63/167.** Implement the link from 63 to enemy 202,
    missing/removed-link release, strict overlap, active-controller selection and
    controller 167's falling-camera branch. Adapt targets/clamps to 240/569
-   explicitly; never replace every 240/120 constant globally.
+   explicitly; never replace every 240/120 constant globally. Implemented and
+   verified; see [NATIVE_CAMERA_CONTROLLERS.md](NATIVE_CAMERA_CONTROLLERS.md).
 5. [ ] **Exit trigger 173 and completion state 15.** Compare inclusive contact,
    defeated-player rejection, one-time entry, closing bars, completion message
    and acknowledge input against the original flow.

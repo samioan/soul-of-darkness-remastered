@@ -31,6 +31,11 @@ CombatWorld::CombatWorld(const BSprite& enemySprite,const BSprite& effectSprite,
             }
             playerEnableTriggers.emplace_back(r);
         }
+        if(PromptRemovalTrigger::supported(r)){
+            const auto has=[&](int uid,int type){return std::any_of(records.begin(),records.end(),[&](const auto& a){return a.parameters[1]==uid && a.parameters[0]==type;});};
+            if(has(p[13],50) && has(p[16],21))promptRemovalTriggers.emplace_back(r);
+        }
+        if(CameraController::supported(r))cameraControllers.emplace_back(r);
         if(LinkedAreaTrigger::supported(r))linkedAreaTriggers.emplace_back(r);
         if(p[0]==22) {
             if(r.count<12 || (p[5]&~(8|32|256|1024|16384)) || !(p[5]&8) || p[8]<=0 || p[9]<=0)throw FormatError("Unsupported camera-region record");
@@ -52,13 +57,13 @@ void CombatWorld::loadCheckpoints(const std::vector<ActorRecord>& records,std::f
 std::vector<RemovedCheckpointActor> CombatWorld::removedCheckpointActors()const{
     std::vector<RemovedCheckpointActor> result;
     const auto add=[&](const auto& rows){for(const auto& a:rows)if(!a.alive)result.push_back({a.uid,a.flags});};
-    add(chandelierTriggers);add(introTriggers);add(prompts);add(enemies);add(flyingEnemies);add(checkpoints);add(bridges);add(removedEnemyTriggers);add(removedScriptTriggers);add(playerEnableTriggers);return result;
+    add(cameraControllers);add(promptRemovalTriggers);add(chandelierTriggers);add(introTriggers);add(prompts);add(enemies);add(flyingEnemies);add(checkpoints);add(bridges);add(removedEnemyTriggers);add(removedScriptTriggers);add(playerEnableTriggers);return result;
 }
 void CombatWorld::restoreCheckpointActors(const CheckpointSnapshot& saved,const std::vector<ActorRecord>& records){
     if(worldFrame_!=0 || !updateQueue_.empty())throw FormatError("Checkpoint restore requires a reconstructed world");
     const auto skip=[&](int uid){const auto r=std::find_if(records.begin(),records.end(),[&](const auto& a){return a.parameters[1]==uid;});return r!=records.end() && saved.skips(*r);};
     const auto remove=[&](auto& rows){for(auto& a:rows)if(skip(a.uid))a.alive=false;};
-    remove(chandelierTriggers);remove(introTriggers);remove(prompts);remove(enemies);remove(flyingEnemies);remove(checkpoints);remove(bridges);remove(removedEnemyTriggers);remove(removedScriptTriggers);remove(playerEnableTriggers);
+    remove(cameraControllers);remove(promptRemovalTriggers);remove(chandelierTriggers);remove(introTriggers);remove(prompts);remove(enemies);remove(flyingEnemies);remove(checkpoints);remove(bridges);remove(removedEnemyTriggers);remove(removedScriptTriggers);remove(playerEnableTriggers);
     for(std::size_t i=0;i<placedUids_.size();++i)placedRemoved_[i]=skip(placedUids_[i]);
     region_=-1;previousRegion_=-1;regionChanged_=false;refreshRegionSelection();cacheBuckets();
 }
@@ -184,6 +189,8 @@ void CombatWorld::rebuildOrder(const std::vector<ActorRecord>& records) {
     order_.clear();
     for(const auto& r:records){
         const auto& p=r.parameters;
+        if(p[0]==49)for(std::size_t i=0;i<cameraControllers.size();++i)if(cameraControllers[i].uid==p[1])order_.push_back({ActorKind::CameraController,i});
+        if(p[0]==40)for(std::size_t i=0;i<promptRemovalTriggers.size();++i)if(promptRemovalTriggers[i].uid==p[1])order_.push_back({ActorKind::PromptRemovalTrigger,i});
         if(p[0]==40)for(std::size_t i=0;i<chandelierTriggers.size();++i)if(chandelierTriggers[i].uid==p[1])order_.push_back({ActorKind::ChandelierTrigger,i});
         if(p[0]==20)for(std::size_t i=0;i<introTriggers.size();++i)if(introTriggers[i].uid==p[1])order_.push_back({ActorKind::IntroTrigger,i});
         if(p[0]==21)for(std::size_t i=0;i<prompts.size();++i)if(prompts[i].uid==p[1])order_.push_back({ActorKind::Prompt,i});
@@ -204,6 +211,7 @@ void CombatWorld::rebuildOrder(const std::vector<ActorRecord>& records) {
 }
 std::pair<int,int> CombatWorld::referenceCamera() const {
     if(intro && intro->active())return {intro->cameraX,intro->cameraY};
+    if(camera.uid!=-1)return {camera.x,camera.y};
     return {std::clamp(player_.x-120,0,std::max(0,maps_.layers[1].width*20-240)),
         std::clamp(player_.y-220,0,std::max(0,maps_.layers[1].height*20-320))};
 }
@@ -218,6 +226,8 @@ void CombatWorld::cacheBuckets() {
     for(auto& g:gates)g.bucket=std::abs(g.x-(cx+120))/120+std::abs(g.y-(cy+160))/160;
     for(auto& t:passages)t.bucket=std::abs(t.x-(cx+120))/120+std::abs(t.y-(cy+160))/160;
     for(auto& t:playerEnableTriggers)t.bucket=std::abs(t.x-(cx+120))/120+std::abs(t.y-(cy+160))/160;
+    for(auto& t:cameraControllers)t.bucket=std::abs(t.x-(cx+120))/120+std::abs(t.y-(cy+160))/160;
+    for(auto& t:promptRemovalTriggers)t.bucket=std::abs(t.x-(cx+120))/120+std::abs(t.y-(cy+160))/160;
     for(auto& t:chandelierTriggers)t.bucket=std::abs(t.x-(cx+120))/120+std::abs(t.y-(cy+160))/160;
     for(auto& t:introTriggers)t.bucket=std::abs(t.x-(cx+120))/120+std::abs(t.y-(cy+160))/160;
     for(auto& p:prompts)p.bucket=std::abs(p.x-(cx+120))/120+std::abs(p.y-(cy+160))/160;
@@ -262,7 +272,7 @@ void CombatWorld::updateRegion(std::size_t i) {
     if(player_.x>r[0] && player_.x<=r[2] && player_.y>r[1] && player_.y<=r[3]) {
         regionChanged_=false;
         if(static_cast<int>(i)!=region_) {previousRegion_=region_;region_=static_cast<int>(i);regionChanged_=true;}
-        regionCameraBounds_=r;
+        regionCameraBounds_=r;if(!camera.active)camera.bounds=r;
     }
 }
 void CombatWorld::refreshRegionSelection() {
@@ -279,6 +289,8 @@ bool CombatWorld::eligible(const ActorSlot& slot) const {
     case ActorKind::RemovedEnemyTrigger:{const auto& t=removedEnemyTriggers[slot.index];if(!t.alive)return false;flags=t.flags;bucket=t.bucket;radius=7;break;}
     case ActorKind::Platform: {const auto& p=*platformIndex_[slot.index];flags=p.flags;bucket=p.bucket;break;}
     case ActorKind::Bridge: {const auto& b=*bridgeIndex_[slot.index];if(!b.alive)return false;flags=b.flags;bucket=b.bucket;radius=4;break;}
+    case ActorKind::CameraController:{const auto& c=cameraControllers[slot.index];if(!c.alive)return false;flags=c.flags;bucket=c.bucket;break;}
+    case ActorKind::PromptRemovalTrigger:{const auto& t=promptRemovalTriggers[slot.index];if(!t.alive)return false;flags=t.flags;bucket=t.bucket;radius=7;break;}
     case ActorKind::ChandelierTrigger:{const auto& t=chandelierTriggers[slot.index];if(!t.alive)return false;flags=t.flags;bucket=t.bucket;radius=7;break;}
     case ActorKind::IntroTrigger:{const auto& t=introTriggers[slot.index];if(!t.alive)return false;flags=t.flags;bucket=t.bucket;break;}
     case ActorKind::Prompt:{const auto& p=prompts[slot.index];if(!p.alive)return false;flags=p.flags;bucket=p.bucket;break;}
@@ -303,9 +315,11 @@ std::vector<int> CombatWorld::updateQueueUids() const {
     case ActorKind::Enemy:result.push_back(enemies[slot.index].uid);break;
     case ActorKind::Platform:result.push_back(platformIndex_[slot.index]->uid);break;
     case ActorKind::Bridge:result.push_back(bridgeIndex_[slot.index]->uid);break;
+    case ActorKind::CameraController:result.push_back(cameraControllers[slot.index].alive?cameraControllers[slot.index].uid:-999);break;
+    case ActorKind::PromptRemovalTrigger:result.push_back(promptRemovalTriggers[slot.index].alive?promptRemovalTriggers[slot.index].uid:-999);break;
     case ActorKind::ChandelierTrigger:result.push_back(chandelierTriggers[slot.index].uid);break;
     case ActorKind::IntroTrigger:result.push_back(introTriggers[slot.index].uid);break;
-    case ActorKind::Prompt:result.push_back(prompts[slot.index].uid);break;
+    case ActorKind::Prompt:result.push_back(prompts[slot.index].alive?prompts[slot.index].uid:-999);break;
     case ActorKind::BeamEmitter:result.push_back(beamEmitters[slot.index].uid);break;
     case ActorKind::Checkpoint:result.push_back(checkpoints[slot.index].uid);break;
     case ActorKind::Region:result.push_back(regions_[slot.index].uid);break;
@@ -347,6 +361,7 @@ bool CombatWorld::finishPlayer(bool paused) {
     // so its first handler runs this tick. Enemy-spawned effects join later.
     for(const auto& spawn:playerEffects_) { effects.emplace_back(effectSprite_,spawn); ++effectsSpawned; }
     playerEffects_.clear();
+    if(camera.uid==-1){const auto [cx,cy]=referenceCamera();camera.x=camera.targetX=cx;camera.y=camera.targetY=cy;camera.vx=camera.vy=0;}
     const bool regionCleanup=regionChanged_;
     applyRegionTransition();
     for(auto& effect:effects) effect.update(paused);
@@ -368,6 +383,20 @@ bool CombatWorld::finishPlayer(bool paused) {
     }
     for(auto& p:platforms)if(p.type==33 && player_.platform==&p.surface && player_.ceiling)p.vy=0;
     for(const auto& slot:updateQueue_) {
+        if(slot.kind==ActorKind::CameraController){auto& c=cameraControllers[slot.index];
+            c.update(player_,camera,[&](int uid)->CameraSource{for(auto& e:enemies)if(e.uid==uid && e.alive)return {&e.x,&e.y,&e.alive,[&e]{e.refreshBounds();}};return {};},regionChanged_,paused);
+            if(!c.alive)for(std::size_t i=0;i<placedUids_.size();++i)if(placedUids_[i]==c.uid)placedRemoved_[i]=true;
+            continue;
+        }
+        if(slot.kind==ActorKind::PromptRemovalTrigger){auto& t=promptRemovalTriggers[slot.index];
+            t.update([&](int uid)->MovingPlatform*{for(auto& p:platforms)if(p.uid==uid)return &p;return nullptr;},
+                [&](int uid)->PlacedPrompt*{for(auto& p:prompts)if(p.uid==uid && p.alive)return &p;return nullptr;},paused);
+            if(!t.alive)for(std::size_t i=0;i<placedUids_.size();++i)if(placedUids_[i]==t.uid || placedUids_[i]==t.targetUid){
+                // A missing target is not marked removed merely because the trigger fired.
+                if(placedUids_[i]==t.uid || std::any_of(prompts.begin(),prompts.end(),[&](const auto& p){return p.uid==t.targetUid && !p.alive;}))placedRemoved_[i]=true;
+            }
+            continue;
+        }
         if(slot.kind==ActorKind::ChandelierTrigger){auto& t=chandelierTriggers[slot.index];t.update(&player_,*chandelierScript,paused);if(!t.alive)for(std::size_t i=0;i<placedUids_.size();++i)if(placedUids_[i]==t.uid)placedRemoved_[i]=true;continue;}
         if(slot.kind==ActorKind::IntroTrigger){auto& t=introTriggers[slot.index];if(t.update(player_,paused)){
             const auto [cx,cy]=referenceCamera();intro->start(cx,cy,t.skipAllowed);introInputReset=true;player_.facingLeft=(t.flags&1)!=0;player_.flags=(player_.flags&~1)|int(player_.facingLeft);player_.vx=player_.vy=0;player_.weaponSwitchCooldown=0;
@@ -378,7 +407,7 @@ bool CombatWorld::finishPlayer(bool paused) {
         if(slot.kind==ActorKind::Passage){
             auto& passage=passages[slot.index];
             if(passage.update(player_,[&](int uid)->const LinkedPassage*{for(const auto& t:passages)if(t.uid==uid)return &t;return nullptr;},paused)){
-                ++passageTransfers;lastPassageUid=passage.uid;
+                ++passageTransfers;lastPassageUid=passage.uid;camera.active=false;camera.uid=-1;camera.vx=camera.vy=0;
                 if(!regionChanged_)refreshRegionSelection();
                 target={player_.x,player_.fixedX,player_.collision,player_.attack,player_.fixedY};
             }
@@ -475,7 +504,9 @@ void CombatWorld::advance() {
     for(auto& g:gates)if(!(g.flags&1024) && ((g.flags&16) || (!(g.flags&(256|32)) && g.bucket<2) || (g.bucket<=1 && overlap(g.visual,view))))g.advanceAnimation();
     for(auto& b:bridges)if(b.alive && !(b.flags&1024) && (b.bucket<4 || (b.bucket<=4 && overlap(b.collision,view))))b.advanceAnimation();
     for(auto& p:platforms)if(!(p.flags&1024) && ((p.flags&16) || (!(p.flags&(256|32)) && p.bucket<2) || ((p.type!=50 || p.bucket<=4) && overlap(p.type==50?p.limits:p.visual,view)))){p.refreshBounds();p.advanceAnimation();}
-    effects.remove_if([](const auto& effect){return !effect.alive;}); cacheBuckets();++worldFrame_;
+    effects.remove_if([](const auto& effect){return !effect.alive;});
+    if(!intro || !intro->active())camera.advance(player_,maps_.width(),maps_.height());
+    cacheBuckets();++worldFrame_;
 }
 void CombatWorld::drawEnemies(Canvas& c,int cx,int cy) { for(auto& e:beamEmitters)e.draw(c,cx,cy); for(auto& e:enemies) e.draw(c,cx,cy);for(auto& e:flyingEnemies)e.draw(c,cx,cy); }
 void CombatWorld::drawPlatforms(Canvas& c,int cx,int cy) {

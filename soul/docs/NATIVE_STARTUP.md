@@ -126,4 +126,5 @@ see NATIVE_PASSAGES.md. Full original camera control remains pending.
 NATIVE_INTRO.md completes opening trigger 82/script 76 after normal first-level
 entry. Four English dialogue panels use Enter/E/J to advance; Backspace skips.
 The scene releases control to ordinary gameplay. Script 160, linked prompt
-removals, type-49 cameras and level completion remain in the current checklists.
+removals and first-level [type-49 cameras](NATIVE_CAMERA_CONTROLLERS.md) are also
+implemented. Level completion remains in the current checklists.

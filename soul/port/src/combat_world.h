@@ -19,6 +19,8 @@
 #include "placed_prompt.h"
 #include "intro_cutscene.h"
 #include "chandelier_script.h"
+#include "prompt_removal_trigger.h"
+#include "camera_controller.h"
 #include <memory>
 #include <list>
 namespace soul {
@@ -42,6 +44,9 @@ public:
     void loadIntro(ByteView,const std::vector<ActorRecord>&);
     void updateIntro(unsigned pressed,int dialoguePages);
     void animateIntro();
+    ControlledCamera camera;
+    std::vector<CameraController> cameraControllers;
+    std::vector<PromptRemovalTrigger> promptRemovalTriggers;
     std::vector<PlacedPrompt> prompts;
     int promptsRemoved=0,recentPromptMagic=-1,promptMagicTicks=0,promptSwitchEvent=0;
     void loadPrompts(const BSprite&,const std::vector<ActorRecord>&);
@@ -136,7 +141,7 @@ private:
     std::array<int,4> regionCameraBounds_{};
     bool regionChanged_=false;
     std::vector<int> queue_,buckets_;
-    enum class ActorKind { Enemy,Platform,Bridge,Region,LinkedAreaTrigger,Gate,RemovedScriptTrigger,Passage,PlayerEnableTrigger,FlyingEnemy,RemovedEnemyTrigger,Checkpoint,BeamEmitter,Prompt,IntroTrigger,ChandelierTrigger };
+    enum class ActorKind { CameraController, PromptRemovalTrigger, Enemy,Platform,Bridge,Region,LinkedAreaTrigger,Gate,RemovedScriptTrigger,Passage,PlayerEnableTrigger,FlyingEnemy,RemovedEnemyTrigger,Checkpoint,BeamEmitter,Prompt,IntroTrigger,ChandelierTrigger };
     struct ActorSlot { ActorKind kind;std::size_t index; };
     std::vector<ActorSlot> order_,updateQueue_,contactQueue_;
     std::vector<MovingPlatform*> platformIndex_;

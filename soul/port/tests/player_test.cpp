@@ -1,3 +1,4 @@
+#include "prompt_removal_trigger.h"
 #include "player.h"
 #include "pickup.h"
 #include "container.h"
@@ -978,6 +979,38 @@ int main() {
         data.tracks[1].kind=1;rejects([&]{soul::ChandelierScript invalid(data);},"chandelier executor rejects camera tracks");
         }
 
+        {
+        soul::ActorRecord r{};r.count=19;r.parameters={40,61,128,1148,0,8,0,0,30,30,1,0,5,34,-1,-1,59,-1,-1};
+        require(soul::PromptRemovalTrigger::supported(r),"single overlap/prompt removal branch accepted");
+        soul::PromptRemovalTrigger t(r);int calls=0;
+        const auto source=[&](int)->soul::MovingPlatform*{++calls;return nullptr;};
+        const auto target=[&](int)->soul::PlacedPrompt*{++calls;return nullptr;};
+        require(!t.update(source,target,true) && calls==0,"pause defers prompt link resolution");
+        t.flags|=1024;require(!t.update(source,target) && calls==0,"hidden removal trigger defers links");t.flags&=~1024;
+        t.flags|=16384;require(!t.update(source,target) && calls==0,"frozen removal trigger defers links");t.flags&=~16384;
+        require(!t.update(source,target) && calls==2 && t.alive,"missing prompt links keep trigger alive");
+        require(!t.update(source,target) && calls==4,"missing prompt links retry on next handler");
+        r.parameters[11]=1;require(!soul::PromptRemovalTrigger::supported(r),"prompt removal rejects script target branch");
+        r.parameters[11]=0;r.parameters[14]=35;rejects([&]{soul::PromptRemovalTrigger invalid(r);},"prompt removal rejects unsupported multi-source branch");
+        }
+        {
+        soul::ActorRecord cr{};cr.count=14;cr.parameters={49,63,90,190,0,8,0,0,80,120,0,202,0,0};
+        soul::CameraController controller(cr);soul::ControlledCamera camera;camera.bounds={0,0,800,400};
+        soul::Player player(sprite,world,record());int sx=150,sy=199,resolutions=0;bool live=true;
+        const auto resolve=[&](int)->soul::CameraSource{++resolutions;return {&sx,&sy,&live,[]{}};};
+        controller.update(player,camera,resolve,false,true);require(resolutions==0,"paused camera handler does not resolve links");
+        controller.update(player,camera,resolve,true);require(resolutions==0,"region change defers camera handler");
+        player.collision={80,190,90,200};controller.update(player,camera,resolve);require(!camera.active && camera.uid==-1,"camera overlap excludes touching edges");
+        player.collision={100,200,100,200};controller.update(player,camera,resolve);require(camera.uid==-1,"camera overlap excludes points");
+        player.refreshBounds();player.vx=256;controller.update(player,camera,resolve);require(camera.uid==63 && camera.active && (controller.flags&16),"linked camera overlap forces controller updates");
+        require(resolutions==1,"camera caches successful source lookup");
+        live=false;controller.update(player,camera,resolve);require(!controller.alive && !camera.active && camera.uid==-1 && controller.sourceUid==-1,"removed source releases cached camera and controller");
+        cr.parameters[10]=1;cr.parameters[11]=-1;soul::CameraController falling(cr);player.vy=-512;falling.update(player,camera,resolve);require(camera.uid==-1,"falling camera releases while ascending");
+        player.vy=512;falling.update(player,camera,resolve);require(camera.uid==63 && camera.targetY==39,"falling camera follows positive vertical speed");
+        camera.x=camera.y=camera.vx=camera.vy=0;camera.advance(player,800,400);require(camera.x==2 && camera.y==17,"falling camera uses the original two-stage vertical acceleration");
+        cr.parameters[10]=4;rejects([&]{soul::CameraController unsupported(cr);},"camera rejects unported forced-scroll modes");
+        cr.parameters[10]=1;cr.parameters[12]=8;require(!soul::CameraController::supported(cr),"camera rejects unsupported constraint masks");
+        }
         std::cout << "PASS: " << checks << " native player/input/pickup/container/reward assertions\n"; return 0;
     } catch(const std::exception& e) { std::cerr << e.what() << '\n'; return 1; }
 }

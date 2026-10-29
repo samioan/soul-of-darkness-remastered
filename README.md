@@ -95,7 +95,11 @@ dialogues, camera moves and Backspace to skip. See [native intro](soul/docs/NATI
 The first-level enemy/chandelier sequence (trigger 161/script 160) also runs
 during normal gameplay; see [native chandelier script](soul/docs/NATIVE_CHANDELIER.md).
 The first level now loads all nine placed keyboard tutorial hints; see
-[native prompts](soul/docs/NATIVE_PROMPTS.md).
+[native prompts](soul/docs/NATIVE_PROMPTS.md). Linked chandelier triggers now
+remove their two tutorials through the original overlap conditions; see
+[prompt-removal links](soul/docs/NATIVE_PROMPT_REMOVAL.md). The two first-level
+camera controllers now frame Kale with their linked enemy or track his fall;
+see [camera controllers](soul/docs/NATIVE_CAMERA_CONTROLLERS.md).
 The first level now loads all six timed/sweeping beam hazards, with tile-clipped
 endpoints, damage and knockback. See [native beams](soul/docs/NATIVE_BEAMS.md).
 All six first-level checkpoints now work and autosave to the desktop user slot. R or

@@ -88,4 +88,7 @@ their separate owner; next are linked object/trigger integration and the remaini
 The normal game presentation now consumes the published region bounds for camera
 clamping and world clipping (see NATIVE_PASSAGES.md). Type-59 room transfers can
 request immediate destination selection; cleanup still occurs at the next world
-boundary. This does not implement the original scripted camera controller.
+boundary. The subsequent [camera-controller pass](NATIVE_CAMERA_CONTROLLERS.md)
+adds the first-level type-49 modes, retaining separate camera constraints and
+current-region presentation clipping. Other controller modes and full ordinary
+camera-follow behavior remain pending.

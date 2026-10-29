@@ -37,7 +37,7 @@ struct Settings {
 };
 Settings settings;
 std::unique_ptr<soul::GameFrontend> frontend;
-bool gameMode=false,calibrationRequested=false,gameScript=false,gamePassageScript=false,gameAbilityScript=false,gameActivationScript=false,gameSecondWaveScript=false,gameArenaScript=false,gameFireScript=false,gameFireAfterArena=false,gameIceScript=false,iceProjectileFixture=false,gameCheckpointScript=false,gameBeamScript=false,gamePromptScript=false,gameIntroScript=false,gameChandelierScript=false,introSkipFixture=false;
+bool gameMode=false,calibrationRequested=false,gameScript=false,gamePassageScript=false,gameAbilityScript=false,gameActivationScript=false,gameSecondWaveScript=false,gameArenaScript=false,gameFireScript=false,gameFireAfterArena=false,gameIceScript=false,iceProjectileFixture=false,gameCheckpointScript=false,gameBeamScript=false,gamePromptScript=false,gameIntroScript=false,gameCameraScript=false,gameChandelierScript=false,introSkipFixture=false;
 std::optional<soul::CheckpointSnapshot> sessionCheckpoint;int checkpointActivations=0,checkpointRestarts=0,checkpointMenuRestarts=0,checkpointFixtureStage=0;bool restoringCheckpoint=false;
 std::filesystem::path gameSavePath;
 std::optional<soul::CheckpointSnapshot> diskCheckpoint;
@@ -55,7 +55,7 @@ soul::Canvas framebuffer(569,soul::kHeight);
 auto& pixels = framebuffer.pixels();
 struct PreviewOptions {
     bool requested = false, extra = false, font = false;
-    bool beamScript=false,promptScript=false,introScript=false,chandelierScript=false;
+    bool beamScript=false,promptScript=false,introScript=false,chandelierScript=false,cameraScript=false;
     int pack = 0, resource = 0, frame = -1, animation = -1, palette = 0, flip = 0;
     int level=-1,cameraX=0,cameraY=0;
     bool cameraRequested=false;
@@ -121,7 +121,7 @@ struct MovementPreview {
     soul::BSprite fontSprite; soul::BitmapFont font; soul::SpriteRenderer crystalRenderer;
     soul::CrystalReward reward; int beamTicks=0,rewardsCompleted=0,resumeTicks=0; std::size_t crystalIndex=0;
     bool restartRequested=false;int introControlTicks=0;
-    soul::MovementInput input; int ticks=0,cameraX=0,cameraY=0;
+    soul::MovementInput input; int ticks=0,cameraX=0,cameraY=0,camera63Ticks=0,camera167Ticks=0,cameraFixtureStage=0;
     MovementPreview(soul::TileScene world,soul::BSprite image,std::vector<soul::ActorRecord> rows,soul::BSprite items,soul::BSprite chests,soul::BSprite prompts,soul::BSprite text,soul::BSprite effectImage,soul::BSprite sword,soul::BSprite enemies,soul::BSprite platformImage,soul::BSprite bridgeImage,const std::vector<int>& stats,const std::vector<int>& flyingStats,const std::vector<int>& beamStats)
         : scene(std::move(world)),sprite(std::move(image)),records(std::move(rows)),player(sprite,scene.maps(),soul::playerRecord(records)),pickupSprite(std::move(items)),containerSprite(std::move(chests)),promptSprite(std::move(prompts)),fontSprite(std::move(text)),font(fontSprite),crystalRenderer(pickupSprite) {
         effectSprite=std::move(effectImage);
@@ -213,7 +213,12 @@ struct MovementPreview {
             if(!gameSavePath.empty())try{soul::writeGameSave(gameSavePath,*sessionCheckpoint);diskCheckpoint=sessionCheckpoint;if(frontend){frontend->hasSave=true;frontend->saveStatus.clear();}}catch(const std::exception& e){saveFailure(e);}
         });
         if(previewOptions.chandelierScript || gameChandelierScript){player.x=100;player.y=1100;player.fixedX=player.x*256;player.fixedY=player.y*256;player.refreshBounds();}
-        const bool controlled=previewOptions.chandelierScript || gameChandelierScript || previewOptions.movementScript || previewOptions.containerScript || previewOptions.meleeScript || previewOptions.combatScript || previewOptions.defeatScript || previewOptions.platformScript || previewOptions.swingScript || previewOptions.bridgeScript || previewOptions.regionScript || previewOptions.gateScript || previewOptions.gateTriggerScript || previewOptions.passageScript || previewOptions.abilityScript || previewOptions.activationScript || previewOptions.secondWaveScript || previewOptions.arenaScript || previewOptions.fireScript || previewOptions.iceScript || previewOptions.checkpointScript || previewOptions.beamScript || previewOptions.promptScript || gameCheckpointScript || gameBeamScript || gamePromptScript || gamePassageScript || gameAbilityScript || gameActivationScript || gameSecondWaveScript || gameArenaScript || gameFireScript || gameIceScript;
+        if(previewOptions.cameraScript || gameCameraScript){
+            player.flags=16384;combat->damage.invulnerability=60000;
+            for(auto& e:combat->enemies)e.flags|=16384;for(auto& e:combat->flyingEnemies)e.flags|=16384;
+            for(auto& p:combat->platforms)p.flags|=16384;for(auto& e:combat->beamEmitters)e.flags|=16384;
+        }
+        const bool controlled=previewOptions.cameraScript || gameCameraScript || previewOptions.chandelierScript || gameChandelierScript || previewOptions.movementScript || previewOptions.containerScript || previewOptions.meleeScript || previewOptions.combatScript || previewOptions.defeatScript || previewOptions.platformScript || previewOptions.swingScript || previewOptions.bridgeScript || previewOptions.regionScript || previewOptions.gateScript || previewOptions.gateTriggerScript || previewOptions.passageScript || previewOptions.abilityScript || previewOptions.activationScript || previewOptions.secondWaveScript || previewOptions.arenaScript || previewOptions.fireScript || previewOptions.iceScript || previewOptions.checkpointScript || previewOptions.beamScript || previewOptions.promptScript || gameCheckpointScript || gameBeamScript || gamePromptScript || gamePassageScript || gameAbilityScript || gameActivationScript || gameSecondWaveScript || gameArenaScript || gameFireScript || gameIceScript;
         if(previewOptions.introScript || gameIntroScript || (frontend && !controlled))combat->loadIntro(levelPack.resource(1).value(),records);
     }
     void restoreCheckpoint(const soul::CheckpointSnapshot& saved){
@@ -241,6 +246,14 @@ struct MovementPreview {
         }
         if((previewOptions.introScript || gameIntroScript) && combat->intro && combat->intro->finishes && introControlTicks<20){
             if(introControlTicks<6){input.release(4096);input.press(8192);}else if(introControlTicks>=12 && introControlTicks<18){input.release(8192);input.press(4096);}else input.release(8192|4096);++introControlTicks;
+        }
+        if(previewOptions.cameraScript || gameCameraScript){
+            cameraFixtureStage=ticks<10?0:ticks<20?1:ticks<40?2:ticks<50?3:4;
+            player.x=ticks<20?1650:ticks<50?1300:1100;
+            player.y=ticks<20?335:ticks<40?700+(ticks-20)*12:ticks<50?940-(ticks-40)*12:1100;
+            player.vx=256;player.vy=ticks>=40 && ticks<50?-512:512;
+            player.fixedX=player.x*256;player.fixedY=player.y*256;player.refreshBounds();
+            if(ticks==10)for(auto& e:combat->enemies)if(e.uid==202)e.alive=false;
         }
         if(previewOptions.chandelierScript || gameChandelierScript){if(ticks>=3 && ticks<7)input.press(8192);else input.release(8192);}
         if(previewOptions.promptScript){if(ticks<35){input.release(4096);input.press(8192);}else if(ticks<70){input.release(8192);input.press(4096);}else input.release(4096|8192);}
@@ -449,6 +462,7 @@ struct MovementPreview {
             if(player.animation>=19 && player.animation<=21){iceMeleePoses|=1<<(player.animation-19);if(player.step==0 && player.animationTick==0)++iceMeleeAttacks;}
             weapon->advanceAnimation();
             combat->advance();
+            if(combat->camera.uid==63)++camera63Ticks;if(combat->camera.uid==167)++camera167Ticks;
             for(auto& effect:effects) effect.advanceAnimation();
             effects.remove_if([](const auto& e){return !e.alive;});
         }
@@ -494,6 +508,11 @@ struct MovementPreview {
         target.clear(0xff102030);
         if(frontend){
             const auto view=soul::gameplayView(player.x,player.y,target.width(),target.height(),scene.maps().width(),scene.maps().height(),combat->currentRegion()<0?nullptr:&combat->regionCameraBounds());
+            camera={view.x,view.y};target.setClip(view.left,view.top,view.right-view.left,view.bottom-view.top);
+        }
+        if(combat->camera.uid!=-1){
+            const auto& controlled=combat->camera;
+            const auto view=soul::gameplayView(controlled.x+120,controlled.y+220,target.width(),target.height(),scene.maps().width(),scene.maps().height(),combat->currentRegion()<0?nullptr:&combat->regionCameraBounds());
             camera={view.x,view.y};target.setClip(view.left,view.top,view.right-view.left,view.bottom-view.top);
         }
         if(combat->intro && combat->intro->active()){
@@ -832,8 +851,9 @@ void restartGameplay(){
 }
 void loadPreview() {
     require(!previewOptions.containerScript || previewOptions.movement,"--container-script requires --movement-preview");
-    require(int(previewOptions.containerScript)+int(previewOptions.movementScript)+int(previewOptions.meleeScript)+int(previewOptions.combatScript)+int(previewOptions.defeatScript)+int(previewOptions.platformScript)+int(previewOptions.swingScript)+int(previewOptions.bridgeScript)+int(previewOptions.regionScript)+int(previewOptions.gateScript)+int(previewOptions.gateTriggerScript)+int(previewOptions.passageScript)+int(previewOptions.abilityScript)+int(previewOptions.activationScript)+int(previewOptions.secondWaveScript)+int(previewOptions.arenaScript)+int(previewOptions.fireScript)+int(previewOptions.iceScript)+int(previewOptions.checkpointScript)+int(previewOptions.beamScript)+int(previewOptions.promptScript)+int(previewOptions.introScript)+int(previewOptions.chandelierScript)<=1,"Choose one validation script");
+    require(int(previewOptions.containerScript)+int(previewOptions.movementScript)+int(previewOptions.meleeScript)+int(previewOptions.combatScript)+int(previewOptions.defeatScript)+int(previewOptions.platformScript)+int(previewOptions.swingScript)+int(previewOptions.bridgeScript)+int(previewOptions.regionScript)+int(previewOptions.gateScript)+int(previewOptions.gateTriggerScript)+int(previewOptions.passageScript)+int(previewOptions.abilityScript)+int(previewOptions.activationScript)+int(previewOptions.secondWaveScript)+int(previewOptions.arenaScript)+int(previewOptions.fireScript)+int(previewOptions.iceScript)+int(previewOptions.checkpointScript)+int(previewOptions.beamScript)+int(previewOptions.promptScript)+int(previewOptions.introScript)+int(previewOptions.chandelierScript)+int(previewOptions.cameraScript)<=1,"Choose one validation script");
     require(!previewOptions.platformScript || previewOptions.movement,"--platform-script requires --movement-preview");
+    require(!previewOptions.cameraScript || previewOptions.movement,"--camera-script requires --movement-preview");
     require(!previewOptions.chandelierScript || previewOptions.movement,"--chandelier-script requires --movement-preview");
     require(!previewOptions.introScript || previewOptions.movement,"--intro-script requires --movement-preview");
     require(!previewOptions.promptScript || previewOptions.movement,"--prompt-script requires --movement-preview");
@@ -974,6 +994,8 @@ int main(int argc, char** argv) {
             else if (arg == "--platform-script") previewOptions.platformScript=true;
             else if (arg == "--ice-projectile-script") {previewOptions.iceScript=true;iceProjectileFixture=true;}
             else if (arg == "--game-ice-projectile-script") {gameScript=true;gameIceScript=true;iceProjectileFixture=true;}
+            else if (arg == "--camera-script") previewOptions.cameraScript=true;
+            else if (arg == "--game-camera-script") {gameScript=true;gameCameraScript=true;}
             else if (arg == "--chandelier-script") previewOptions.chandelierScript=true;
             else if (arg == "--game-chandelier-script") {gameScript=true;gameChandelierScript=true;}
             else if (arg == "--intro-script") previewOptions.introScript=true;
@@ -1055,7 +1077,7 @@ int main(int argc, char** argv) {
                              "  [--font-preview --data EXTRACTED_DIRECTORY] [--palette 0..2]\n"
                              "  [--level-preview 0..8 --data EXTRACTED_DIRECTORY] [--camera-x X --camera-y Y]\n"
                              "  Level preview: arrows pan, F8 changes width; tiles only, no gameplay.\n"
-                             "  [--movement-preview --data EXTRACTED_DIRECTORY] [--movement-script|--container-script|--melee-script|--combat-script|--defeat-script|--platform-script|--swing-script|--bridge-script|--region-script|--gate-script|--gate-trigger-script|--passage-script|--ability-script|--activation-script|--second-wave-script|--arena-script|--fire-script|--ice-script|--ice-projectile-script|--checkpoint-script|--beam-script|--prompt-script|--intro-script|--intro-skip-script|--chandelier-script]\n"
+                             "  [--movement-preview --data EXTRACTED_DIRECTORY] [--movement-script|--container-script|--melee-script|--combat-script|--defeat-script|--platform-script|--swing-script|--bridge-script|--region-script|--gate-script|--gate-trigger-script|--passage-script|--ability-script|--activation-script|--second-wave-script|--arena-script|--fire-script|--ice-script|--ice-projectile-script|--checkpoint-script|--beam-script|--prompt-script|--intro-script|--intro-skip-script|--chandelier-script|--camera-script]\n"
                              "  Player prototype: arrows/A/D, Space jump, Down crouch, E/J/Enter attacks/opens chests, K/0 casts equipped magic, Q/9 switches weapons, R restarts at the session checkpoint; ordinary enemies and combat.\n"
                              "  [--animation ID|--frame ID] [--palette ID] [--flip 0..3]\n"
                              "Interactive first-level combat preview is available; the complete game is not ported.\n";
@@ -1063,6 +1085,7 @@ int main(int argc, char** argv) {
             } else throw std::runtime_error("Unknown argument: " + arg);
         }
         require(!previewOptions.platformScript || headless,"--platform-script is a headless validation option");
+        require(!previewOptions.cameraScript || headless,"--camera-script is a headless validation option");
         require(!previewOptions.chandelierScript || headless,"--chandelier-script is a headless validation option");
         require(!previewOptions.introScript || headless,"--intro-script is a headless validation option");
         require(!previewOptions.promptScript || headless,"--prompt-script is a headless validation option");
@@ -1100,7 +1123,7 @@ int main(int argc, char** argv) {
             gameMode=true;
         }
         require(!(gameMode && calibrationRequested),"Choose --game or --calibration");
-        require(int(gameAbilityScript)+int(gamePassageScript)+int(gameActivationScript)+int(gameSecondWaveScript)+int(gameArenaScript)+int(gameFireScript)+int(gameIceScript)+int(gameCheckpointScript)+int(gameBeamScript)+int(gamePromptScript)+int(gameIntroScript)+int(gameChandelierScript)<=1,"Choose one game validation fixture");
+        require(int(gameAbilityScript)+int(gamePassageScript)+int(gameActivationScript)+int(gameSecondWaveScript)+int(gameArenaScript)+int(gameFireScript)+int(gameIceScript)+int(gameCheckpointScript)+int(gameBeamScript)+int(gamePromptScript)+int(gameIntroScript)+int(gameChandelierScript)+int(gameCameraScript)<=1,"Choose one game validation fixture");
         require(!gameScript || (gameMode && headless),"--game-script requires --game --headless");
         require(!continueOnLaunch || (gameMode && !gameScript),"--continue requires --game without validation scripts");
         if(gameMode) {
@@ -1111,7 +1134,7 @@ int main(int argc, char** argv) {
             }
             require(!previewOptions.data.empty(),"--game requires --data EXTRACTED_DIRECTORY");
             require(!previewOptions.movement && !previewOptions.font && !previewOptions.requested && previewOptions.level<0,"--game cannot be combined with preview modes");
-            require(!(previewOptions.movementScript || previewOptions.containerScript || previewOptions.meleeScript || previewOptions.combatScript || previewOptions.defeatScript || previewOptions.platformScript || previewOptions.regionScript || previewOptions.gateScript || previewOptions.gateTriggerScript || previewOptions.passageScript || previewOptions.abilityScript || previewOptions.activationScript || previewOptions.secondWaveScript || previewOptions.arenaScript || previewOptions.fireScript || previewOptions.iceScript || previewOptions.checkpointScript || previewOptions.beamScript || previewOptions.promptScript || previewOptions.introScript || previewOptions.chandelierScript || previewOptions.bridgeScript || previewOptions.swingScript),"--game cannot use movement validation scripts");
+            require(!(previewOptions.movementScript || previewOptions.containerScript || previewOptions.meleeScript || previewOptions.combatScript || previewOptions.defeatScript || previewOptions.platformScript || previewOptions.regionScript || previewOptions.gateScript || previewOptions.gateTriggerScript || previewOptions.passageScript || previewOptions.abilityScript || previewOptions.activationScript || previewOptions.secondWaveScript || previewOptions.arenaScript || previewOptions.fireScript || previewOptions.iceScript || previewOptions.checkpointScript || previewOptions.beamScript || previewOptions.promptScript || previewOptions.introScript || previewOptions.chandelierScript || previewOptions.cameraScript || previewOptions.bridgeScript || previewOptions.swingScript),"--game cannot use movement validation scripts");
             frontend=std::make_unique<soul::GameFrontend>(previewOptions.data);
             if(!gameSavePath.empty())try{diskCheckpoint=soul::loadGameSave(gameSavePath);frontend->hasSave=diskCheckpoint.has_value();}catch(const std::exception& e){saveFailure(e);}
             if(continueOnLaunch){require(bool(diskCheckpoint),"No valid checkpoint to continue");frontend->enter(2);frontend->selection=1;frontend->press(13);}
@@ -1141,6 +1164,14 @@ int main(int argc, char** argv) {
                 std::cout << " player_x=" << p.x << " player_y=" << p.y << " player_vx=" << p.vx << " player_vy=" << p.vy
                     << " player_animation=" << p.animation << " player_step=" << p.step << " player_tick=" << p.animationTick
                     << " intro_trigger_alive=" << std::count_if(movementPreview->combat->introTriggers.begin(),movementPreview->combat->introTriggers.end(),[](const auto& t){return t.alive;}) << " intro_bird83_alive=" << std::any_of(movementPreview->combat->flyingEnemies.begin(),movementPreview->combat->flyingEnemies.end(),[](const auto& e){return e.uid==83 && e.alive;}) << " intro_prompt_hidden=" << std::any_of(movementPreview->combat->prompts.begin(),movementPreview->combat->prompts.end(),[](const auto& p){return p.uid==267 && (p.flags&128);})
+                    << " camera_uid=" << movementPreview->combat->camera.uid << " camera_mode=" << movementPreview->combat->camera.mode << " camera_active=" << movementPreview->combat->camera.active
+                    << " camera_x=" << movementPreview->combat->camera.x << " camera_y=" << movementPreview->combat->camera.y << " camera_target_x=" << movementPreview->combat->camera.targetX << " camera_target_y=" << movementPreview->combat->camera.targetY
+                    << " camera63_ticks=" << movementPreview->camera63Ticks << " camera167_ticks=" << movementPreview->camera167Ticks << " camera_fixture_stage=" << movementPreview->cameraFixtureStage
+                    << " camera63_alive=" << [&]{for(const auto& c:movementPreview->combat->cameraControllers)if(c.uid==63)return c.alive;return false;}()
+                    << " camera_controllers=" << movementPreview->combat->cameraControllers.size()
+                    << " prompt_removal_triggers=" << std::count_if(movementPreview->combat->promptRemovalTriggers.begin(),movementPreview->combat->promptRemovalTriggers.end(),[](const auto& t){return t.alive;})
+                    << " prompt59_alive=" << [&]{for(const auto& p:movementPreview->combat->prompts)if(p.uid==59)return p.alive;return false;}()
+                    << " prompt187_alive=" << [&]{for(const auto& p:movementPreview->combat->prompts)if(p.uid==187)return p.alive;return false;}()
                     << " chandelier_tick=" << movementPreview->combat->chandelierScript->ticks << " chandelier_starts=" << movementPreview->combat->chandelierScript->starts << " chandelier_finishes=" << movementPreview->combat->chandelierScript->finishes
                     << " chandelier_trigger_alive=" << std::any_of(movementPreview->combat->chandelierTriggers.begin(),movementPreview->combat->chandelierTriggers.end(),[](const auto& t){return t.alive;})
                     << " chandelier34_y=" << [&]{for(const auto& p:movementPreview->combat->platforms)if(p.uid==34)return p.y;return -1;}() << " chandelier34_action=" << [&]{for(const auto& p:movementPreview->combat->platforms)if(p.uid==34)return p.action;return -1;}()

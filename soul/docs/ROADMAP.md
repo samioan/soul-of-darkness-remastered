@@ -1,6 +1,6 @@
 # Soul of Darkness roadmap
 
-Updated 2026-10-29 after the native chandelier-script pass. This is the current
+Updated 2026-10-29 after the first-level camera-controller pass. This is the current
 remaining-work list. Historical implementation notes are in
 [ROADMAP_HISTORY.md](ROADMAP_HISTORY.md); their old pending/next descriptions
 are superseded. Update the lists below when work lands instead of appending
@@ -20,7 +20,9 @@ another conflicting progress narrative.
   all 16 passages, the arena/reward/gate chain, six beam hazards and nine placed
   tutorial prompts. Intro trigger 82/script 76 now plays with English dialogue,
   camera control, skip and verified return to gameplay. Trigger 161/script 160
-  now runs the enemy/chandelier sequence during ordinary play. See the NATIVE_*.md docs.
+  now runs the enemy/chandelier sequence during ordinary play. Linked triggers
+  43/61 remove their chandelier tutorial prompts. Camera controllers 63/167 now
+  provide linked-enemy framing and falling-camera tracking. See the NATIVE_*.md docs.
 - Six first-level checkpoints support R/menu Restart and desktop autosave/Continue.
   The desktop format covers the supported native subset; it is not original RMS.
 - All nine gameplay maps decode/render, but normal gameplay constructs **level 0
@@ -42,12 +44,14 @@ gameplay pack = level index + 3.
   starts the track for enemy **205** and chandelier **34**. Add its flag/action/
   animation/position commands and completion cleanup. Completed and verified in
   [NATIVE_CHANDELIER.md](NATIVE_CHANDELIER.md); script 165 already runs.
-- [ ] Implement type-40 **UIDs 43 and 61**, which link chandeliers **3/34** to
-  removal of prompts **187/59**. Placed prompt self-removal alone does not
-  implement these linked conditions.
-- [ ] Implement type-49 camera controller **UID 63**, including its link to
+- [x] Implement type-40 **UIDs 43 and 61**, which link chandeliers **3/34** to
+  removal of prompts **187/59**. Completed with original-bytecode handler and
+  ordered-world comparisons; see [NATIVE_PROMPT_REMOVAL.md](NATIVE_PROMPT_REMOVAL.md).
+- [x] Implement type-49 camera controller **UID 63**, including its link to
   **UID 202**, and controller **UID 167**. Check activation/release, linked-source
-  removal and falling-camera behavior at widths 240/569.
+  removal and falling-camera behavior at widths 240/569. Completed with
+  handler, active-camera and ordered-world comparisons; see
+  [NATIVE_CAMERA_CONTROLLERS.md](NATIVE_CAMERA_CONTROLLERS.md).
 - [ ] Implement type-20 exit **UID 173**: normal overlap enters completion state
   15, a defeated player cannot trigger it, and the closing-bars/acknowledge flow
   runs once rather than letting Kale walk into an inert exit.
@@ -132,7 +136,11 @@ gameplay pack = level index + 3.
 - Run default `python tools/rename_sod.py` after Java naming/patch/check changes.
 - Run Debug/Release builds, checks appropriate to each native change and
   `soul/port/build_dist.bat`; retain all data and screenshots outside git.
-- Current baseline: 475 player assertions and 92 CTests. Script 160 adds 3000
+- Linked prompt removal adds 352 original-bytecode/native rows and verified
+  removal in the chandelier host fixtures; see [NATIVE_PROMPT_REMOVAL.md](NATIVE_PROMPT_REMOVAL.md).
+- Camera controllers add 1360 handler/camera/world rows and 58 controlled host
+  checks at 240/569; see [NATIVE_CAMERA_CONTROLLERS.md](NATIVE_CAMERA_CONTROLLERS.md).
+- Current baseline: 495 player assertions and 95 CTests. Script 160 adds 3000
   original-bytecode rows and 24 host runs at both widths; see
   [NATIVE_CHANDELIER.md](NATIVE_CHANDELIER.md). The intro retains its 5460 rows
   and 48 playback/skip host runs; see [NATIVE_INTRO.md](NATIVE_INTRO.md).

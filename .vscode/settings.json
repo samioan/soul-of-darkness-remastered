@@ -1,0 +1,6 @@
+{
+  "cmake.sourceDirectory": "${workspaceFolder}/soul/port",
+  "cmake.configureOnOpen": false,
+  "files.exclude": {"**/__pycache__": true},
+  "search.exclude": {"soul/extracted": true, "soul/port/build": true}
+}

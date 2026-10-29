@@ -1,0 +1,27 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "Setup and verify",
+      "type": "process",
+      "command": "powershell.exe",
+      "args": ["-NoProfile", "-ExecutionPolicy", "Bypass", "-File", "${workspaceFolder}/setup.ps1"],
+      "problemMatcher": []
+    },
+    {
+      "label": "Build Debug port",
+      "type": "shell",
+      "command": ".\\soul\\port\\build.bat",
+      "options": {"cwd": "${workspaceFolder}"},
+      "group": {"kind": "build", "isDefault": true},
+      "problemMatcher": ["$msCompile"]
+    },
+    {
+      "label": "Regenerate reference Java",
+      "type": "process",
+      "command": "python",
+      "args": ["${workspaceFolder}/tools/rename_sod.py"],
+      "problemMatcher": []
+    }
+  ]
+}

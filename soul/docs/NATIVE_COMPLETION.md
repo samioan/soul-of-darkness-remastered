@@ -3,14 +3,13 @@
 The first-level type-20 exit, UID 173, now starts state 15 on inclusive player
 contact. Gameplay stops after the entry tick, the bars close on simulation ticks,
 and LEVEL COMPLETE appears with Enter/E/J confirmation. One fresh confirmation
-returns to the current level-0 selection card.
+hands off once to finishLevel and the next chapter selection.
 
-This pass implements exit/state-15 ownership only. It does not call a native
-finishLevel, mark progress completed, unlock/select level 1, change desktop saves
-or unload the world on acknowledgement. The selection card still offers level 0;
-starting it reconstructs the world through the existing frontend. The next
-roadmap task owns completion/progression/save/unload/next-level behavior. The
-full game remains unfinished.
+The subsequent [finishLevel pass](NATIVE_FINISH.md) now saves completion/unlocks,
+unloads the old world and selects chapter 2. Its entry is disabled until that
+level is playable; Left selects chapter 1 for replay. The full game remains
+unfinished. This document's original-code UI fixtures still stop at a counted
+finishLevel boundary; the new progression fixtures execute the real routine.
 
 ## Original behavior and evidence
 
@@ -90,13 +89,13 @@ flags and input clearing.
 Thirteen data-free assertions verify death/point/pause rejection, inclusive edge,
 one-time entry, entry delay, closing timing, wrong/early/repeated input and
 unsupported variants. Three CLI guards cover invalid exit fixtures. The current
-baseline is 508 player assertions and 98 CTests.
+baseline is 508 player assertions and 101 CTests.
 
 The host checker runs ten milestones and 48 raw/game wait/ack runs at 240/569,
 30/60/144 FPS and interpolation on/off. The fixture starts at (1740,799), freezes
 unrelated enemies, beams and checkpoints, and uses actual rightward movement to
 reach the shipped exit at (1777,799). It verifies entry, closing/message timing,
-one-time acknowledgement, frozen player state, frontend ownership and equal
+one-time acknowledgement, frozen player state, frontend ownership/world unload and equal
 simulation/per-width pixels across presentation settings. It is not a route test
 from the original spawn.
 

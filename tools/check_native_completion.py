@@ -42,9 +42,10 @@ def main():
                 for fps in (30,60,144):
                     for interpolation in (True,False):
                         v=run(width,fps,fps*(18 if game else 8),game,wait,interpolation)
-                        require((v['completion_state'],v['completion_starts'],v['completion_acks'],v['exit_triggers'])==('15' if wait else '19','1','0' if wait else '1','1'),'Exit flow did not reach its one-time endpoint')
-                        require(v['completion_bars']==('160' if wait else '0') and v['defeated']=='0','Completion bars/death state differs')
-                        require(v['player_x']=='1777' and v['player_y']=='799','Exit failed to freeze Kale after contact')
+                        require((v['completion_state'],v['completion_starts'],v['completion_acks'],v['exit_triggers'])==('15' if wait else '19','1','0' if wait else '1','0' if game and not wait else '1'),'Exit flow did not reach its one-time endpoint')
+                        require(v['completion_bars']==('160' if wait else '0') and ((game and not wait) or v['defeated']=='0'),'Completion bars/death state differs')
+                        if game and not wait:require(v['world_loaded']=='0' and v['finish_count']=='1' and v['selected_level']=='1','Finish failed to unload and select next chapter')
+                        else:require(v['player_x']=='1777' and v['player_y']=='799','Exit failed to freeze Kale after contact')
                         if game:require(v['frontend_state']==('15' if wait else '19'),'Frontend did not own the completion/selection state')
                         state={k:val for k,val in v.items() if k not in ('frames','width','movement_crc','frontend_crc')}
                         if baseline is None:baseline=state

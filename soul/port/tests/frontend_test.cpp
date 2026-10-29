@@ -39,5 +39,9 @@ int main(){try{
     check(text[40].find(u"Kale")!=std::u16string::npos,"English prologue");
     check(text[28].find(u"{Executive producers}^CREDITED NAME^")!=std::u16string::npos && text[28].find(u"{Special thanks}^CREDITED NAME^")!=std::u16string::npos,"Credit roles translate while names stay in order");
     ui.press(38);ui.press(13);check(ui.exitRequested,"Menu wraps to exit");
+    soul::FrontendState chapters;chapters.maxUnlockedLevel=1;chapters.selectedLevel=1;chapters.enter(19);chapters.press(13);chapters.update(100);
+    check(chapters.state==19 && !chapters.startRequested,"Unlocked unported chapter cannot start a world");
+    chapters.press(37);check(chapters.selectedLevel==0,"Completed selection can return to first chapter");chapters.press(39);check(chapters.selectedLevel==1,"Selection can revisit unlocked next chapter");
+    chapters.press(37);chapters.press(13);check(chapters.state==9,"First chapter remains replayable after completion");
     std::cout<<"PASS: frontend logo/title/menu/credits/prologue/selection/loading/back/exit transitions\n";return 0;
 }catch(const std::exception& e){std::cerr<<e.what()<<'\n';return 1;}}

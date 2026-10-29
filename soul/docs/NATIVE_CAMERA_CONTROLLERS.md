@@ -129,5 +129,6 @@ python tools/check_native_camera_controllers.py --exe soul/port/build/Debug/soul
 ```
 
 The subsequent [exit/completion pass](NATIVE_COMPLETION.md) implements exit 173
-and state 15. The next ordered task is finishLevel progression/save/advance. Full progression, later
-levels and the complete game remain unfinished.
+and state 15. The [finishLevel pass](NATIVE_FINISH.md) now implements native first-level
+completion saves and unload. Selected-level construction and later levels
+remain unfinished.

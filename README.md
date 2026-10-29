@@ -100,15 +100,19 @@ remove their two tutorials through the original overlap conditions; see
 [prompt-removal links](soul/docs/NATIVE_PROMPT_REMOVAL.md). The two first-level
 camera controllers now frame Kale with their linked enemy or track his fall;
 see [camera controllers](soul/docs/NATIVE_CAMERA_CONTROLLERS.md). The first-level
-exit now closes the bars and shows LEVEL COMPLETE; Enter/E/J returns to the
-current selection card. Completion saves/unlocks and next-level advancement
-remain pending; see [exit/completion](soul/docs/NATIVE_COMPLETION.md).
+exit now closes the bars and shows LEVEL COMPLETE. Enter/E/J saves completion,
+unlocks/selects chapter 2 and unloads the old world. Chapter 2 is not yet playable;
+Left selects chapter 1 for replay. Continue follows completed progress to the
+next selection instead of restoring the old checkpoint. Version-1 saves remain
+readable; see [exit/completion](soul/docs/NATIVE_COMPLETION.md) and
+[progression saves](soul/docs/NATIVE_FINISH.md).
 The first level now loads all six timed/sweeping beam hazards, with tile-clipped
 endpoints, damage and knockback. See [native beams](soul/docs/NATIVE_BEAMS.md).
 All six first-level checkpoints now work and autosave to the desktop user slot. R or
 pause Restart Level restores the latest checkpoint, saved weapon/abilities and
 MP, and refills health. See [native checkpoints](soul/docs/NATIVE_CHECKPOINTS.md).
-Continue resumes the latest first-level checkpoint after closing the executable. See [desktop saves](soul/docs/NATIVE_SAVES.md) for the format and remaining boundaries.
+Continue resumes an incomplete first-level checkpoint after closing the executable;
+completed progress selects the next chapter. See [desktop saves](soul/docs/NATIVE_SAVES.md) for the format and remaining boundaries.
 
 ## Setup
 

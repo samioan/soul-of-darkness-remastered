@@ -1,6 +1,6 @@
 # Windows port implementation roadmap
 
-Updated 2026-10-29 after the first-level exit/completion UI pass. This file lists the
+Updated 2026-10-29 after the completion/progression save pass. This file lists the
 remaining native work and acceptance conditions. [ROADMAP.md](ROADMAP.md) is
 the overall project checklist. [PORT_ROADMAP_HISTORY.md](PORT_ROADMAP_HISTORY.md)
 preserves the old notes; their claims that gameplay, platforms or Continue are
@@ -33,9 +33,11 @@ Level indices are zero-based; level 0 is the first level and uses pack 3.
   falling-camera tracking; 1368 original-bytecode/native rows and 58 host checks
   verify the supported modes. See NATIVE_CAMERA_CONTROLLERS.md.
 - Exit 173/state 15 now runs inclusive contact, death-pose rejection, closing
-  bars, English completion text and a one-time selection handoff. Progression
-  persistence and advancement remain pending. See NATIVE_COMPLETION.md.
-- Latest data-free suite: 98 CTests and 508 player assertions. Chandelier fixtures
+  bars, English completion text and a one-time selection handoff. Completion
+  now persists, unloads the world and selects the next (currently unavailable)
+  chapter. Version-1 checkpoint saves migrate to version 2; Continue and replay
+  keep distinct position/stat rules. See NATIVE_COMPLETION.md and NATIVE_FINISH.md.
+- Latest data-free suite: 101 CTests and 508 player assertions. Chandelier fixtures
   compare 3000 bytecode rows and 24 host runs; intro fixtures
   compare 5460 original-bytecode rows and 48 playback/skip host runs. Linked
   prompt removal adds 352 handler/world rows against original bytecode.
@@ -68,12 +70,15 @@ native fixtures do not establish a complete native play-through.
 5. [x] **Exit trigger 173 and completion state 15.** Compare inclusive contact,
    defeated-player rejection, one-time entry, closing bars, completion message
    and acknowledge input against the original flow. Implemented and verified;
-   see [NATIVE_COMPLETION.md](NATIVE_COMPLETION.md). Acknowledgement currently
-   returns to the level-0 selection card; task 6 owns progression/save/advance.
-6. [ ] **Complete/unlock/save transition.** Port `finishLevel` effects, including
+   see [NATIVE_COMPLETION.md](NATIVE_COMPLETION.md). Task 6 now implements its
+   save/unload/next-selection handoff, with entry to unported levels disabled.
+6. [x] **Complete/unlock/save transition.** Port `finishLevel` effects, including
    the completion flag, maximum unlocked level, state unload/reset and next-level
    selection. Extend desktop saves with version migration and test restart vs
    Continue vs completed-level Continue after exiting/reopening the executable.
+   Implemented for level 0, including version-1 migration and a guarded chapter-2
+   selection; see [NATIVE_FINISH.md](NATIVE_FINISH.md). Level 1 remains unavailable
+   until tasks 7/8 supply its world and required handlers.
 7. [ ] **Selected-level construction.** Replace hardcoded level-0 scene/object/
    script loads with one level descriptor shared by player, sprites, records,
    scripts, regions and checkpoints. Rebuild all owners on load; release platform,
@@ -140,8 +145,9 @@ native fixtures do not establish a complete native play-through.
 
 ## Persistence, audio, controls and delivery
 
-- [ ] Save selected level, completion/unlocks, upgrade arrays and all progress flags;
-  preserve older desktop saves when extending the currently version-1 codec.
+- [ ] Extend version-2 level/completion/unlock saves beyond level 0, including
+  upgrade arrays and remaining flags; retain version-1 migration. The next
+  selected level is already derived from completion, with construction gated.
 - [ ] Native level-3 paired and level-5 controller snapshots through checkpoint,
   Restart, Continue and completed-level advancement.
 - [ ] Decide original RMS compatibility scope; before offering it, implement and

@@ -39,7 +39,9 @@ void FrontendState::press(unsigned key){
     }
     if(state==19){
         if(key==27)enter(2);
-        else if(key==13 || key==32 || key=='E')enter(9);
+        else if(key==37 || key=='A')selectedLevel=std::max(0,selectedLevel-1);
+        else if(key==39 || key=='D')selectedLevel=std::min(std::min(8,maxUnlockedLevel),selectedLevel+1);
+        else if((key==13 || key==32 || key=='E') && selectedLevel==0)enter(9);
         return;
     }
     if(state==8){if(key==27){selection=0;enter(21);}return;}
@@ -96,10 +98,17 @@ void GameFrontend::draw(Canvas& c){
     const auto& title=titleSprite_.images().at(0).at(0);c.blit(title.pixels,title.width,title.height,left,0);
     if(state==19){
         box(c,left+8,92,224,190,0xee000000);
-        font_.draw(c,strings_[41]+u" 1",cx,114,1);
+        font_.draw(c,strings_[41]+u" "+std::u16string(1,char16_t('1'+selectedLevel)),cx,114,1);
+        if(selectedLevel!=0){
+            font_.drawWrapped(c,u"THIS CHAPTER IS NOT AVAILABLE YET.",cx,152,210,1);
+            font_.draw(c,u"LEFT - PREVIOUS CHAPTER",cx,236,1);
+            if(!saveStatus.empty())font_.drawWrapped(c,saveStatus,cx,270,230,1);
+            font_.draw(c,u"ESC - BACK",cx,300,1);return;
+        }
         font_.drawWrapped(c,strings_[42],cx,144,210,1,1);
         font_.draw(c,u"ENTER THE TOWN OF OMINOS",cx,206,1);
         font_.draw(c,u"ENTER - START",cx,244,1);
+        if(maxUnlockedLevel>0)font_.draw(c,u"RIGHT - NEXT CHAPTER",cx,272,1);
         font_.draw(c,u"ESC - BACK",cx,300,1);return;
     }
     if(state==18){if(frame%10>5)font_.draw(c,strings_[10],cx,300,1);return;}

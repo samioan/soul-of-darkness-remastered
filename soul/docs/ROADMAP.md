@@ -1,6 +1,6 @@
 # Soul of Darkness roadmap
 
-Updated 2026-10-29 after the first-level exit/completion UI pass. This is the current
+Updated 2026-10-29 after the completion/progression save pass. This is the current
 remaining-work list. Historical implementation notes are in
 [ROADMAP_HISTORY.md](ROADMAP_HISTORY.md); their old pending/next descriptions
 are superseded. Update the lists below when work lands instead of appending
@@ -24,7 +24,9 @@ another conflicting progress narrative.
   43/61 remove their chandelier tutorial prompts. Camera controllers 63/167 now
   provide linked-enemy framing and falling-camera tracking. Exit 173 now enters
   closing bars/completion and acknowledges to the current selection card.
-  Completion progression is still pending; see the NATIVE_*.md docs.
+  Completion now saves progress, unloads the world and selects chapter 2 with
+  entry disabled until its native gameplay is ready; chapter 1 remains replayable.
+  See the NATIVE_*.md docs.
 - Six first-level checkpoints support R/menu Restart and desktop autosave/Continue.
   The desktop format covers the supported native subset; it is not original RMS.
 - All nine gameplay maps decode/render, but normal gameplay constructs **level 0
@@ -58,10 +60,12 @@ gameplay pack = level index + 3.
   15, a defeated player cannot trigger it, and the closing-bars/acknowledge flow
   runs once. Completed with original exit/bar/input checks and a native
   selection handoff; see [NATIVE_COMPLETION.md](NATIVE_COMPLETION.md).
-  `finishLevel` progression/save/next-level ownership remains the next task.
-- [ ] Implement `finishLevel`: update completion/max-unlock progression, persist
+  Its completion transition is implemented in [NATIVE_FINISH.md](NATIVE_FINISH.md).
+- [x] Implement `finishLevel`: update completion/max-unlock progression, persist
   it, unload the old world and select the next level. Add original-bytecode
-  checks for the completion/save/Continue branch.
+  checks for the completion/save/Continue branch. Completed for native level 0;
+  version-2 desktop saves retain version-1 migration. Next-level selection is
+  gated until its construction/handlers are playable; see [NATIVE_FINISH.md](NATIVE_FINISH.md).
 - [ ] Make native world construction accept a selected level instead of hardcoded
   pack 3/level 0. Keep player, assets, actor records, scripts and checkpoints on
   the same selected level; detach all borrowed actor/platform references on unload.
@@ -114,8 +118,9 @@ gameplay pack = level index + 3.
 
 ## Saves, interface, audio and distribution still to finish
 
-- [ ] Persist level index, completion/unlocks, upgrade arrays and all remaining
-  progress flags; support checkpoints/Continue across every playable level.
+- [ ] Extend the existing version-2 level-0 completion/unlock saves to later
+  levels, upgrade arrays and remaining flags; support checkpoints/Continue
+  across every playable level while retaining version-1 migration.
 - [ ] Port original level-3/5 special save snapshots and implement original
   1313-byte RMS import/compatibility if that compatibility is to be offered.
 - [ ] Implement the animated level-selection map, unlocked-level selection and
@@ -146,7 +151,10 @@ gameplay pack = level index + 3.
   checks at 240/569; see [NATIVE_CAMERA_CONTROLLERS.md](NATIVE_CAMERA_CONTROLLERS.md).
 - Exit/completion adds 1008 original-bytecode/native rows and 58 host checks;
   see [NATIVE_COMPLETION.md](NATIVE_COMPLETION.md).
-- Current baseline: 508 player assertions and 98 CTests. Script 160 adds 3000
+- Completion/progression adds 444 original/reference expectations, including
+  actual RMS writes and unload, plus 24 native decision rows and 36 cross-process
+  finish/Continue/replay checks; see [NATIVE_FINISH.md](NATIVE_FINISH.md).
+- Current baseline: 508 player assertions and 101 CTests. Script 160 adds 3000
   original-bytecode rows and 24 host runs at both widths; see
   [NATIVE_CHANDELIER.md](NATIVE_CHANDELIER.md). The intro retains its 5460 rows
   and 48 playback/skip host runs; see [NATIVE_INTRO.md](NATIVE_INTRO.md).

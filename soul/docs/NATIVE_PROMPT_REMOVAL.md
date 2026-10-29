@@ -94,5 +94,6 @@ python tools/check_native_chandelier.py --exe soul/port/build/Debug/soul_assets.
 Oracles/logs remain in ignored analysis/. Camera controllers
 63/167 are now implemented in [NATIVE_CAMERA_CONTROLLERS.md](NATIVE_CAMERA_CONTROLLERS.md).
 [Exit 173/completion UI](NATIVE_COMPLETION.md) is also implemented.
-Progression/save/advance is next. Full game completion and native gameplay beyond
+[First-level progression/save/unload](NATIVE_FINISH.md) is also implemented.
+Selected-level construction is next. Full game completion and native gameplay beyond
 level 0 remain pending.

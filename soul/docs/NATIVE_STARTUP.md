@@ -128,5 +128,6 @@ entry. Four English dialogue panels use Enter/E/J to advance; Backspace skips.
 The scene releases control to ordinary gameplay. Script 160, linked prompt
 removals and first-level [type-49 cameras](NATIVE_CAMERA_CONTROLLERS.md) are also
 implemented. [Exit 173/state-15 UI](NATIVE_COMPLETION.md) now acknowledges
-to the current selection card. Completion progression/save/next-level ownership
-remains in the current checklists.
+to [first-level progression](NATIVE_FINISH.md), saving completion/unlocks and
+unloading the world. The next chapter is selected with entry disabled; Left
+returns to chapter 1 for replay. Selected-level construction remains pending.

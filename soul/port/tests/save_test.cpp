@@ -5,6 +5,10 @@
 #include <stdexcept>
 #include <chrono>
 void check(bool b,const char* m){if(!b)throw std::runtime_error(m);}
+void payload(const std::filesystem::path& file,int version,const std::string& bytes){
+    std::uint32_t hash=2166136261u;for(unsigned char c:bytes){hash^=c;hash*=16777619u;}
+    std::ofstream out(file,std::ios::binary|std::ios::trunc);out<<"SODPC "<<version<<' '<<hash<<'\n'<<bytes;
+}
 int main(){const auto dir=std::filesystem::temp_directory_path()/("sod-save-test-"+std::to_string(std::chrono::steady_clock::now().time_since_epoch().count()));
 try{
     const auto file=dir/"checkpoint.sav";check(!soul::loadGameSave(file),"Missing save");
@@ -38,6 +42,24 @@ try{
     invalidPayload("0 11 148 259 1 1 23 80 17 90 12 2 1 1 1 251\n"); // excessive count
     invalidPayload("0 11 148 259 1 1 23 80 17 90 12 2 1 1 1 2\n11 9\n11 512\n"); // duplicate UID
     invalidPayload("0 11 148 259 1 1 23 80 17 90 12 2 1 1 1 0\nextra");
+    const std::string legacy="0 11 148 259 1 1 23 80 17 90 12 2 1 1 1 2\n11 9\n267 8\n";
+    payload(file,1,legacy);auto migrated=soul::loadGameSave(file).value();
+    check(migrated.uid==11 && migrated.meters.magic==17 && migrated.removed.back().uid==267 && migrated.maxUnlockedLevel==0 && !migrated.levelCompleted,"Version-1 snapshot migrates without inferred completion");
+    soul::writeGameSave(file,migrated);auto v2=soul::loadGameSave(file).value();
+    check(v2.uid==11 && v2.activeWeapon==1 && v2.meters.health==23 && v2.removed.size()==2,"Migrated version-2 snapshot retains legacy stats/removals");
+    soul::GameSave complete(s);complete.maxUnlockedLevel=3;
+    check(complete.finishLevel()==1 && complete.maxUnlockedLevel==3 && complete.levelCompleted,"Finish preserves higher unlocks and selects next level");
+    soul::writeGameSave(file,complete);auto finished=soul::loadGameSave(file).value();
+    check(finished.level==0 && finished.levelCompleted && finished.maxUnlockedLevel==3 && finished.continueLevel()==1 && !finished.continuesCheckpoint(),"Completed save advances Continue without restoring old checkpoint");
+    finished.prepareContinueStats();check(finished.meters.health==23 && finished.meters.magic==42 && finished.activeWeapon==1,"Completed save with checkpoint retains serialized progress stats");
+    complete.uid=-1;soul::writeGameSave(file,complete);auto noCheckpoint=soul::loadGameSave(file).value();noCheckpoint.prepareContinueStats();
+    check(noCheckpoint.meters.health==60 && noCheckpoint.meters.magic==60 && !noCheckpoint.meters.iceUnlocked && noCheckpoint.activeWeapon==0,"Cold Continue without checkpoint uses default stats");
+    noCheckpoint.prepareContinueStats(1,true,true);check(noCheckpoint.activeWeapon==1 && noCheckpoint.meters.iceUnlocked && noCheckpoint.meters.magicUnlocked && noCheckpoint.meters.health==60,"Warm Continue meter reset preserves runtime equipment/abilities");
+    complete.level=8;complete.maxUnlockedLevel=9;check(complete.finishLevel()==0 && complete.continueLevel()==8 && complete.continuesCheckpoint(),"Ending-level selection wrap differs from Continue decision");
+    rejected=false;try{soul::writeGameSave(file,complete);}catch(const std::exception&){rejected=true;}check(rejected && soul::loadGameSave(file)->level==0,"Unported level save rejected without replacing previous record");
+    for(const std::string invalid:{"0 0 1 -1 0 0 0 0 60 60 60 60 0 0 0 0 0 0\n","0 10 1 -1 0 0 0 0 60 60 60 60 0 0 0 0 0 0\n","0 1 2 -1 0 0 0 0 60 60 60 60 0 0 0 0 0 0\n","0 1 0 -1 0 0 0 0 60 60 60 60 0 0 0 0 0 0\n"}){
+        payload(file,2,invalid);rejected=false;try{soul::loadGameSave(file);}catch(const std::exception&){rejected=true;}check(rejected,"Invalid version-2 progress metadata accepted");
+    }
     // A parent that is a file cannot be used as a save directory.
     rejected=false;try{soul::writeGameSave(file/"child.sav",s);}catch(const std::exception&){rejected=true;}check(rejected,"Storage failure must propagate");
     soul::writeGameSave(file,s);soul::clearGameSave(file);check(!soul::loadGameSave(file),"New Game clears save");soul::clearGameSave(file);

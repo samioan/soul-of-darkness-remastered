@@ -40,7 +40,11 @@ std::unique_ptr<soul::GameFrontend> frontend;
 bool gameMode=false,calibrationRequested=false,gameScript=false,gamePassageScript=false,gameAbilityScript=false,gameActivationScript=false,gameSecondWaveScript=false,gameArenaScript=false,gameFireScript=false,gameFireAfterArena=false,gameIceScript=false,iceProjectileFixture=false,gameCheckpointScript=false,gameBeamScript=false,gamePromptScript=false,gameIntroScript=false,gameExitScript=false,exitWaitFixture=false,gameCameraScript=false,gameChandelierScript=false,introSkipFixture=false;
 std::optional<soul::CheckpointSnapshot> sessionCheckpoint;int checkpointActivations=0,checkpointRestarts=0,checkpointMenuRestarts=0,checkpointFixtureStage=0;bool restoringCheckpoint=false;
 std::filesystem::path gameSavePath;
-std::optional<soul::CheckpointSnapshot> diskCheckpoint;
+std::optional<soul::GameSave> diskCheckpoint;
+soul::GameSave progress;
+std::optional<soul::LevelCompletion> finishedCompletion;
+int finishCount=0,worldUnloads=0;
+bool replayCompletedFixture=false,finishFixture=false,failFinishSaveFixture=false;
 bool automatedRun=false,continueOnLaunch=false;
 void saveFailure(const std::exception& e){
     std::cerr<<"Save: "<<e.what()<<'\n';
@@ -50,6 +54,7 @@ void saveFailure(const std::exception& e){
 int frontendScriptStage=0;
 void loadPreview();
 void restartGameplay();
+void require(bool,const char*);
 soul::Clock clockState;
 soul::Canvas framebuffer(569,soul::kHeight);
 auto& pixels = framebuffer.pixels();
@@ -210,7 +215,8 @@ struct MovementPreview {
             for(const auto& p:pickups)if(!p.alive && p.uid>=0)removed.push_back({p.uid,p.flags});
             for(const auto& c:containers)if(!c.alive)removed.push_back({c.uid,c.flags});
             sessionCheckpoint=soul::CheckpointSnapshot::capture(checkpoint,player,meters,std::move(removed));++checkpointActivations;
-            if(!gameSavePath.empty())try{soul::writeGameSave(gameSavePath,*sessionCheckpoint);diskCheckpoint=sessionCheckpoint;if(frontend){frontend->hasSave=true;frontend->saveStatus.clear();}}catch(const std::exception& e){saveFailure(e);}
+            soul::GameSave saved(*sessionCheckpoint);saved.maxUnlockedLevel=progress.maxUnlockedLevel;progress=saved;
+            if(!gameSavePath.empty())try{soul::writeGameSave(gameSavePath,saved);diskCheckpoint=saved;if(frontend){frontend->hasSave=true;frontend->saveStatus.clear();}}catch(const std::exception& e){saveFailure(e);}
         });
         if(previewOptions.chandelierScript || gameChandelierScript){player.x=100;player.y=1100;player.fixedX=player.x*256;player.fixedY=player.y*256;player.refreshBounds();}
         if(previewOptions.exitScript || gameExitScript){
@@ -673,9 +679,10 @@ void update() {
         }
         if(frontend->newGameRequested){
             frontend->newGameRequested=false;
-            try{if(!gameSavePath.empty())soul::clearGameSave(gameSavePath);diskCheckpoint.reset();sessionCheckpoint.reset();frontend->hasSave=false;frontend->saveStatus.clear();}
+            try{if(!gameSavePath.empty())soul::clearGameSave(gameSavePath);diskCheckpoint.reset();sessionCheckpoint.reset();frontend->hasSave=false;frontend->saveStatus.clear();progress={};frontend->selectedLevel=frontend->maxUnlockedLevel=0;finishedCompletion.reset();finishCount=worldUnloads=0;}
             catch(const std::exception& e){frontend->enter(2);saveFailure(e);}
         }
+        if(replayCompletedFixture && frontend->state==19 && frontend->selectedLevel>0){frontend->press(37);frontend->press(13);replayCompletedFixture=false;}
         frontend->update();
         if(frontend->exitRequested){running=false;return;}
         if(frontend->startRequested){
@@ -684,13 +691,30 @@ void update() {
             else if(frontend->continueRequested){
                 frontend->continueRequested=false;
                 if(!diskCheckpoint){frontend->enter(2);return;}
-                sessionCheckpoint=diskCheckpoint;movementKeys.fill(false);movementPreview.reset();restoringCheckpoint=true;
+                const auto runtime=progress;progress=*diskCheckpoint;progress.prepareContinueStats(runtime.activeWeapon,runtime.meters.iceUnlocked,runtime.meters.magicUnlocked);frontend->maxUnlockedLevel=progress.maxUnlockedLevel;
+                if(!progress.continuesCheckpoint()){
+                    sessionCheckpoint.reset();movementKeys.fill(false);if(movementPreview)movementPreview->player.platform=nullptr;movementPreview.reset();frontend->selectedLevel=progress.continueLevel();frontend->enter(19);return;
+                }
+                frontend->selectedLevel=progress.level;
+                sessionCheckpoint=static_cast<const soul::CheckpointSnapshot&>(*diskCheckpoint);movementKeys.fill(false);movementPreview.reset();restoringCheckpoint=true;
                 try{loadPreview();restoringCheckpoint=false;}catch(...){restoringCheckpoint=false;throw;}
                 const auto continued=diskCheckpoint->forContinue();
-                movementPreview->restoreCheckpoint(continued);movementPreview->meters.health=continued.meters.health;frontend->enter(8);
+                movementPreview->restoreCheckpoint(continued);movementPreview->meters.health=continued.meters.health;
+                if(finishFixture){
+                    auto& p=movementPreview->player;p.x=1740;p.y=799;p.fixedX=p.x*256;p.fixedY=p.y*256;p.refreshBounds();
+                    auto& m=movementPreview->meters;m.health=31;m.magic=42;m.healthFragments=3;m.magicFragments=2;m.collected=19;
+                }
+                frontend->enter(8);
             }
             else{
-                sessionCheckpoint.reset();checkpointActivations=checkpointRestarts=checkpointMenuRestarts=checkpointFixtureStage=0;movementKeys.fill(false);movementPreview.reset();loadPreview();frontend->enter(8);
+                require(frontend->selectedLevel==0,"Selected chapter is not playable");
+                const auto retained=progress;
+                sessionCheckpoint.reset();checkpointActivations=checkpointRestarts=checkpointMenuRestarts=checkpointFixtureStage=0;movementKeys.fill(false);movementPreview.reset();loadPreview();
+                if(retained.maxUnlockedLevel>0){
+                    auto spawn=retained.forContinue();spawn.uid=-1;spawn.x=movementPreview->player.x;spawn.y=movementPreview->player.y;spawn.facingLeft=false;
+                    movementPreview->restoreCheckpoint(spawn);movementPreview->meters.magic=spawn.meters.maxMagic;
+                }
+                progress.level=0;progress.levelCompleted=false;frontend->enter(8);
             }
         }
         if(frontend->state!=8 && frontend->state!=15)return;
@@ -703,8 +727,17 @@ void update() {
         movementPreview->update();
         if(movementPreview->combat->completion.active() && frontend && frontend->state!=15)frontend->enter(15);
         if(movementPreview->combat->completion.state==19 && frontend && frontend->state==15){
-            // finishLevel progression/save/next-level ownership remains a separate pass.
-            frontend->enter(19);movementPreview->input.clear();movementKeys.fill(false);
+            soul::GameSave completed(sessionCheckpoint.value_or(soul::CheckpointSnapshot{}));
+            completed.level=0;completed.maxUnlockedLevel=progress.maxUnlockedLevel;completed.meters=movementPreview->meters;completed.activeWeapon=movementPreview->player.activeWeapon;
+            completed.removed=movementPreview->combat->removedCheckpointActors();
+            for(const auto& p:movementPreview->pickups)if(!p.alive && p.uid>=0)completed.removed.push_back({p.uid,p.flags});
+            for(const auto& c:movementPreview->containers)if(!c.alive)completed.removed.push_back({c.uid,c.flags});
+            const int selected=completed.finishLevel();progress=completed;++finishCount;
+            if(!gameSavePath.empty())try{soul::writeGameSave(failFinishSaveFixture?gameSavePath/L"blocked":gameSavePath,completed);diskCheckpoint=completed;frontend->hasSave=true;frontend->saveStatus.clear();}catch(const std::exception& e){saveFailure(e);}
+            finishedCompletion=movementPreview->combat->completion;
+            movementPreview->input.clear();movementPreview->player.platform=nullptr;movementKeys.fill(false);
+            movementPreview.reset();sessionCheckpoint.reset();++worldUnloads;
+            frontend->selectedLevel=selected;frontend->maxUnlockedLevel=progress.maxUnlockedLevel;frontend->enter(19);return;
         }
         if(movementPreview->restartRequested)restartGameplay();
     }
@@ -1036,6 +1069,9 @@ int main(int argc, char** argv) {
             else if (arg == "--ice-projectile-script") {previewOptions.iceScript=true;iceProjectileFixture=true;}
             else if (arg == "--game-ice-projectile-script") {gameScript=true;gameIceScript=true;iceProjectileFixture=true;}
             else if (arg == "--exit-script" || arg=="--exit-wait-script") {previewOptions.exitScript=true;exitWaitFixture=arg=="--exit-wait-script";}
+            else if (arg == "--finish-script") {finishFixture=true;gameExitScript=true;}
+            else if (arg == "--fail-finish-save") failFinishSaveFixture=true;
+            else if (arg == "--replay-completed") replayCompletedFixture=true;
             else if (arg == "--game-exit-script" || arg=="--game-exit-wait-script") {gameScript=true;gameExitScript=true;exitWaitFixture=arg=="--game-exit-wait-script";}
             else if (arg == "--camera-script") previewOptions.cameraScript=true;
             else if (arg == "--game-camera-script") {gameScript=true;gameCameraScript=true;}
@@ -1115,7 +1151,7 @@ int main(int argc, char** argv) {
                 std::cout << "soul_port [--width 240..2048] [--fps native|1..360] [--fullscreen|--windowed]\n"
                              "  [--config PATH] [--no-interpolation] [--headless --frames N --dump image.ppm]\n"
                              "  [--self-test]\nNative startup and first-level preview; full gameplay is not ported.\n";
-                std::cout << "  [--game --data EXTRACTED_DIRECTORY] [--save-file PATH] [--continue] [--calibration]\n"
+                std::cout << "  [--game --data EXTRACTED_DIRECTORY] [--save-file PATH] [--continue] [--finish-script|--replay-completed] [--calibration]\n"
                              "  [--sprite PACK:RESOURCE --data EXTRACTED_DIRECTORY]\n"
                              "  [--font-preview --data EXTRACTED_DIRECTORY] [--palette 0..2]\n"
                              "  [--level-preview 0..8 --data EXTRACTED_DIRECTORY] [--camera-x X --camera-y Y]\n"
@@ -1169,7 +1205,10 @@ int main(int argc, char** argv) {
         require(!(gameMode && calibrationRequested),"Choose --game or --calibration");
         require(int(gameAbilityScript)+int(gamePassageScript)+int(gameActivationScript)+int(gameSecondWaveScript)+int(gameArenaScript)+int(gameFireScript)+int(gameIceScript)+int(gameCheckpointScript)+int(gameBeamScript)+int(gamePromptScript)+int(gameIntroScript)+int(gameChandelierScript)+int(gameCameraScript)+int(gameExitScript)<=1,"Choose one game validation fixture");
         require(!gameScript || (gameMode && headless),"--game-script requires --game --headless");
-        require(!continueOnLaunch || (gameMode && !gameScript),"--continue requires --game without validation scripts");
+        require(!finishFixture || (gameMode && continueOnLaunch && headless),"--finish-script requires --game --continue --headless");
+        require(!failFinishSaveFixture || finishFixture,"--fail-finish-save requires --finish-script");
+        require(!replayCompletedFixture || (gameMode && continueOnLaunch && headless),"--replay-completed requires --game --continue --headless");
+        require(!continueOnLaunch || (gameMode && !gameScript),"--continue requires --game without startup validation scripts");
         if(gameMode) {
             if(gameSavePath.empty() && !automated){
                 PWSTR local=nullptr;
@@ -1180,7 +1219,7 @@ int main(int argc, char** argv) {
             require(!previewOptions.movement && !previewOptions.font && !previewOptions.requested && previewOptions.level<0,"--game cannot be combined with preview modes");
             require(!(previewOptions.movementScript || previewOptions.containerScript || previewOptions.meleeScript || previewOptions.combatScript || previewOptions.defeatScript || previewOptions.platformScript || previewOptions.regionScript || previewOptions.gateScript || previewOptions.gateTriggerScript || previewOptions.passageScript || previewOptions.abilityScript || previewOptions.activationScript || previewOptions.secondWaveScript || previewOptions.arenaScript || previewOptions.fireScript || previewOptions.iceScript || previewOptions.checkpointScript || previewOptions.beamScript || previewOptions.promptScript || previewOptions.introScript || previewOptions.chandelierScript || previewOptions.cameraScript || previewOptions.exitScript || previewOptions.bridgeScript || previewOptions.swingScript),"--game cannot use movement validation scripts");
             frontend=std::make_unique<soul::GameFrontend>(previewOptions.data);
-            if(!gameSavePath.empty())try{diskCheckpoint=soul::loadGameSave(gameSavePath);frontend->hasSave=diskCheckpoint.has_value();}catch(const std::exception& e){saveFailure(e);}
+            if(!gameSavePath.empty())try{diskCheckpoint=soul::loadGameSave(gameSavePath);frontend->hasSave=diskCheckpoint.has_value();if(diskCheckpoint)frontend->maxUnlockedLevel=diskCheckpoint->maxUnlockedLevel;}catch(const std::exception& e){saveFailure(e);}
             if(continueOnLaunch){require(bool(diskCheckpoint),"No valid checkpoint to continue");frontend->enter(2);frontend->selection=1;frontend->press(13);}
         } else loadPreview();
         if (headless) {
@@ -1196,7 +1235,11 @@ int main(int argc, char** argv) {
                 }
                 require(static_cast<bool>(out), "Cannot write dump");
             }
-            std::cout << "frames=" << frames << " ticks=" << clockState.ticks << " width=" << settings.width << " disk_checkpoint=" << (diskCheckpoint?diskCheckpoint->uid:-1) << " continue_available=" << (frontend && frontend->hasSave);
+            std::cout << "frames=" << frames << " ticks=" << clockState.ticks << " width=" << settings.width << " disk_checkpoint=" << (diskCheckpoint?diskCheckpoint->uid:-1) << " continue_available=" << (frontend && frontend->hasSave)
+                << " world_loaded=" << bool(movementPreview) << " finish_count=" << finishCount << " world_unloads=" << worldUnloads
+                << " progress_level=" << progress.level << " progress_completed=" << progress.levelCompleted << " max_unlocked=" << progress.maxUnlockedLevel << " selected_level=" << (frontend?frontend->selectedLevel:0)
+                << " progress_health=" << progress.meters.health << " progress_magic=" << progress.meters.magic;
+            if(!movementPreview && finishedCompletion)std::cout<<" completion_state="<<finishedCompletion->state<<" completion_bars="<<finishedCompletion->bars<<" completion_delay="<<finishedCompletion->delay<<" completion_starts="<<finishedCompletion->starts<<" completion_acks="<<finishedCompletion->acknowledgements<<" completion_ticks="<<finishedCompletion->ticks<<" exit_triggers=0";
             if (preview) std::cout << " preview_step=" << preview->step << " preview_tick=" << preview->tick << " preview_crc=" << framebuffer.checksum();
             if (fontPreview) std::cout << " font_tick=" << fontPreview->stateFrame << " font_crc=" << framebuffer.checksum();
             if (tilePreview) std::cout << " camera_x=" << tileCameraX << " camera_y=" << tileCameraY << " tile_crc=" << framebuffer.checksum();

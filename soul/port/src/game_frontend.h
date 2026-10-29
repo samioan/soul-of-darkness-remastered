@@ -4,7 +4,7 @@ namespace soul {
 // Native startup UI using original art/text. Start currently enters the gameplay slice.
 struct FrontendState {
 public:
-    int state=1,frame=0,selection=0,scrollY=266;
+    int state=1,frame=0,selection=0,scrollY=266,selectedLevel=0,maxUnlockedLevel=0;
     bool exitRequested=false,startRequested=false,restartRequested=false,continueRequested=false,newGameRequested=false,hasSave=false;
     std::u16string saveStatus;
     unsigned scrollKeys=0;

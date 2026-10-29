@@ -161,6 +161,7 @@ def main() -> None:
                  ROOT / "tools/reference_checks/PromptRemovalCheck.java",
                  ROOT / "tools/reference_checks/CameraControllerCheck.java",
                  ROOT / "tools/reference_checks/MenuCheck.java",
+                 ROOT / "tools/reference_checks/FinishCheck.java",
                  ROOT / "tools/reference_checks/ControllerCheck.java",
                  ROOT / "tools/reference_checks/image_adapter/javax/microedition/lcdui/Image.java",
                  ROOT / "tools/reference_checks/rms_adapter/javax/microedition/rms/RecordStore.java"])
@@ -173,6 +174,7 @@ def main() -> None:
             run([java, "-Djava.awt.headless=true", "-cp", f"{lifecycle}{sep}{harness}", "PromptRemovalCheck", EXTRACTED, build, STUBS])
             run([java, "-Djava.awt.headless=true", "-cp", f"{lifecycle}{sep}{harness}", "CameraControllerCheck", EXTRACTED, build, STUBS])
             run([java, "-Djava.awt.headless=true", "-cp", f"{lifecycle}{sep}{harness}", "MenuCheck", EXTRACTED, build, STUBS, MAP])
+            run([java, "-Djava.awt.headless=true", "-cp", f"{lifecycle}{sep}{harness}", "FinishCheck", EXTRACTED, build, STUBS])
             run([java, "-Djava.awt.headless=true", "-cp", f"{lifecycle}{sep}{harness}", "ControllerCheck", EXTRACTED, build, STUBS, MAP])
             run([java, "-Djava.awt.headless=true", "-cp", harness, "LevelCheck", EXTRACTED, build, STUBS, MAP])
             run([java, "-Djava.awt.headless=true", "-cp", harness, "SaveCheck", EXTRACTED, build, STUBS])

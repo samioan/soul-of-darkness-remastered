@@ -40,6 +40,7 @@ int EnemyType1::tile(int tx,int ty) const {
     if(index>=maps_.collision->cells.size()) throw FormatError("Enemy collision lookup exceeds stored grid");
     return static_cast<std::int8_t>(maps_.collision->cells[index]);
 }
+void EnemyType1::scriptAnimation(int id){if(id<0 || std::size_t(id)>=sprite_.animations().size())throw FormatError("Missing scripted enemy pose");if(id!=animation){animation=id;pending=-1;step=tick=0;flags&=~64;}refreshBounds();}
 void EnemyType1::refreshBounds() {
     dirty_=false;
     const auto& a=sprite_.animations().at(animation); const auto& af=sprite_.animationFrames().at(a.start+step);

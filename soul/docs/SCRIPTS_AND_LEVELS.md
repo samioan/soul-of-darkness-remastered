@@ -186,3 +186,8 @@ restoration paths. CHECKPOINT_LIFECYCLE.md adds controlled checkpoint/restart
 and repeated loads. Next: staged loading, new-game/continue integration,
 linked scripts/dialogue and remaining deep gameplay branches before
 translating the verified resource models and renderer into the native port.
+
+
+NATIVE_INTRO.md now implements the selected script-76 existing-actor/camera
+tracks and trigger 82 natively, with anchored dialogue, skip and completion.
+It supplements the script-165 gate runner; it is not a complete native interpreter.

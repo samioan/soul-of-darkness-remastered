@@ -40,6 +40,7 @@ public:
     void update(unsigned pressed,unsigned held,int stateFrame,bool paused=false,const std::vector<ContactBody*>& bodies={},PlayerCombatContext* combat=nullptr);
     void advanceAnimation();
     void refreshBounds() { bounds(); }
+    void scriptAnimation(int id);
     bool receiveBeamHit(int damage,int sourceX,bool forcePush,PlayerDamage&,int& health,int maximum,JavaRandom&,std::vector<CombatEffectSpawn>&);
     bool receiveHit(int damage,int sourceX,PlayerDamage&,int& health,int maximum,JavaRandom&,std::vector<CombatEffectSpawn>&);
     // Crystal contact enters pose 25; the host controls the following cinematic/reward ticks.

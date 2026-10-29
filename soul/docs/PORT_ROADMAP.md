@@ -1,6 +1,6 @@
 # Windows port implementation roadmap
 
-Updated 2026-10-29 after the native placed-prompt pass. This file lists the
+Updated 2026-10-29 after the native opening-cutscene pass. This file lists the
 remaining native work and acceptance conditions. [ROADMAP.md](ROADMAP.md) is
 the overall project checklist. [PORT_ROADMAP_HISTORY.md](PORT_ROADMAP_HISTORY.md)
 preserves the old notes; their claims that gameplay, platforms or Continue are
@@ -23,19 +23,22 @@ Level indices are zero-based; level 0 is the first level and uses pack 3.
 - Rider platform, six chandeliers, two bridges, six stationary/sweeping beam
   emitters and nine placed tutorial prompts. Original-handler limits remain in
   the corresponding NATIVE_*.md docs.
-- Latest data-free suite: 86 CTests and 451 player assertions. Prompt fixtures
-  compare 704 original-bytecode rows; see NATIVE_PROMPTS.md for validation.
+- Opening trigger 82/script 76, with four English dialogues, camera focus,
+  actor/prompt ownership, skip and input handoff. See NATIVE_INTRO.md.
+- Latest data-free suite: 89 CTests and 466 player assertions. Intro fixtures
+  compare 5460 original-bytecode rows and 48 playback/skip host runs.
 
 The full game is not yet ported. Asset decoding, Java comparisons and controlled
 native fixtures do not establish a complete native play-through.
 
 ## Ordered first-level work
 
-1. [ ] **Intro script 76 and trigger 82.** Add type-20 animation-8 activation,
+1. [x] **Intro script 76 and trigger 82.** Add type-20 animation-8 activation,
    cutscene enter/leave ownership, position/animation/flag commands for UIDs
    19/83/84/186/267, camera command 12, anchored dialogue command 116 and removal
    command 113. Accept when the original intro can play, be skipped where allowed,
-   and hand control to Kale without stuck flags or orphaned actors.
+   and hand control to Kale without stuck flags or orphaned actors. Implemented
+   and verified; see [NATIVE_INTRO.md](NATIVE_INTRO.md).
 2. [ ] **Script 160 and trigger 161.** Implement the player-overlap script-start
    condition, enemy-205 flag commands 107/108 and chandelier-34 position,
    animation/action tracks. Accept when actual overlap starts the sequence once
@@ -95,7 +98,8 @@ native fixtures do not establish a complete native play-through.
 
 - [ ] Run all 17 scripts / 47 decoded tracks: camera and global tracks, cinematic
   actor creation, UID-targeted properties, flags, commands and completion modes.
-  Only the selected script-165 gate track currently runs natively.
+  The selected script-76 intro and script-165 gate branches now run natively;
+  script 160 and the other scripts remain unimplemented.
 - [ ] Dialogue layout/English text, interaction locks, QTE success/failure, allowed
   skip, audio/shake/fade commands and cutscene bars. Complete the original
   Game.paint mutations on simulation ticks before adding faster presentation.

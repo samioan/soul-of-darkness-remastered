@@ -62,3 +62,5 @@ void emitCheckpointManifest(const std::filesystem::path&);
 void emitBeamManifest(const std::filesystem::path&);
 
 void emitPromptManifest(const std::filesystem::path&);
+
+void emitIntroManifest(const std::filesystem::path&);

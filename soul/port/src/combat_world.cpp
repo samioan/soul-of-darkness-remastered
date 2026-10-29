@@ -52,13 +52,13 @@ void CombatWorld::loadCheckpoints(const std::vector<ActorRecord>& records,std::f
 std::vector<RemovedCheckpointActor> CombatWorld::removedCheckpointActors()const{
     std::vector<RemovedCheckpointActor> result;
     const auto add=[&](const auto& rows){for(const auto& a:rows)if(!a.alive)result.push_back({a.uid,a.flags});};
-    add(prompts);add(enemies);add(flyingEnemies);add(checkpoints);add(bridges);add(removedEnemyTriggers);add(removedScriptTriggers);add(playerEnableTriggers);return result;
+    add(introTriggers);add(prompts);add(enemies);add(flyingEnemies);add(checkpoints);add(bridges);add(removedEnemyTriggers);add(removedScriptTriggers);add(playerEnableTriggers);return result;
 }
 void CombatWorld::restoreCheckpointActors(const CheckpointSnapshot& saved,const std::vector<ActorRecord>& records){
     if(worldFrame_!=0 || !updateQueue_.empty())throw FormatError("Checkpoint restore requires a reconstructed world");
     const auto skip=[&](int uid){const auto r=std::find_if(records.begin(),records.end(),[&](const auto& a){return a.parameters[1]==uid;});return r!=records.end() && saved.skips(*r);};
     const auto remove=[&](auto& rows){for(auto& a:rows)if(skip(a.uid))a.alive=false;};
-    remove(prompts);remove(enemies);remove(flyingEnemies);remove(checkpoints);remove(bridges);remove(removedEnemyTriggers);remove(removedScriptTriggers);remove(playerEnableTriggers);
+    remove(introTriggers);remove(prompts);remove(enemies);remove(flyingEnemies);remove(checkpoints);remove(bridges);remove(removedEnemyTriggers);remove(removedScriptTriggers);remove(playerEnableTriggers);
     for(std::size_t i=0;i<placedUids_.size();++i)placedRemoved_[i]=skip(placedUids_[i]);
     region_=-1;previousRegion_=-1;regionChanged_=false;refreshRegionSelection();cacheBuckets();
 }
@@ -90,6 +90,31 @@ void CombatWorld::loadBridges(const BSprite& sprite,LevelMaps& maps,const std::v
     for(const auto& r:records)if(r.parameters[0]==45){bridges.emplace_back(sprite,maps,r);bridgeIndex_.push_back(&bridges.back());}
     rebuildOrder(records);cacheBuckets();
 }
+IntroActor CombatWorld::introActor(int uid){
+    if(player_.uid==uid)return {&player_.x,&player_.y,&player_.flags,&player_.facingLeft,[this](int n){player_.scriptAnimation(n);},[this]{player_.refreshBounds();return player_.collision[1];},[this]{player_.refreshBounds();},[]{throw FormatError("Intro cannot remove player");}};
+    const auto enemy=[this](EnemyType1& e)->IntroActor{return {&e.x,&e.y,&e.flags,&e.facingLeft,[&e](int n){e.scriptAnimation(n);},[&e]{e.refreshBounds();return e.collision[1];},[&e]{e.refreshBounds();},[this,&e]{e.alive=false;e.collision=e.attack=e.visual={};for(std::size_t i=0;i<placedUids_.size();++i)if(placedUids_[i]==e.uid)placedRemoved_[i]=true;}};};
+    for(auto& e:enemies)if(e.uid==uid && e.alive)return enemy(e);
+    for(auto& e:flyingEnemies)if(e.uid==uid && e.alive)return enemy(e);
+    for(auto& p:prompts)if(p.uid==uid && p.alive)return {&p.x,&p.y,&p.flags,&p.facingLeft,[&p](int n){if(n!=p.animation){p.animation=n;p.step=p.tick=0;p.flags&=~64;}},[&p]{return p.collision[1];},[]{},[this,&p]{p.alive=false;for(std::size_t i=0;i<placedUids_.size();++i)if(placedUids_[i]==p.uid)placedRemoved_[i]=true;}};
+    return {};
+}
+void CombatWorld::loadIntro(ByteView scripts,const std::vector<ActorRecord>& records){
+    if(intro)throw FormatError("Intro already loaded");
+    for(auto& s:decodeScripts(scripts))if(s.uid==76)intro=std::make_unique<IntroCutscene>(std::move(s),maps_.width(),maps_.height());
+    if(!intro)throw FormatError("Missing intro script 76");
+    for(const auto& r:records)if(r.parameters[0]==20 && r.parameters[4]==8 && r.parameters[10]==76)introTriggers.emplace_back(r);
+    if(introTriggers.size()!=1)throw FormatError("Expected one intro trigger");
+    rebuildOrder(records);cacheBuckets();
+}
+void CombatWorld::updateIntro(unsigned pressed,int pages){
+    if(!intro || !intro->active())return;
+    if((pressed&131072) && intro->skipAllowed){intro->skip([this](int uid){return introActor(uid);});introInputReset=true;}
+    else if(intro->dialogue>=0){if(pressed&(65536|32768)){if(intro->page+1<pages)++intro->page;else intro->dismissDialogue();introInputReset=true;}}
+    else intro->step([this](int uid){return introActor(uid);});
+    if(!intro->active()){introInputReset=true;refreshRegionSelection();}
+    intro->presentationTick();
+}
+void CombatWorld::animateIntro(){player_.refreshBounds();player_.advanceAnimation();advance();}
 void CombatWorld::loadPrompts(const BSprite& sprite,const std::vector<ActorRecord>& records){
     if(promptSprite_)throw FormatError("Prompts already loaded");
     for(const auto& r:records)if(r.parameters[0]==21){if(r.parameters[4]<0 || std::size_t(r.parameters[4])>=sprite.animations().size())throw FormatError("Missing prompt animation");prompts.emplace_back(r);}
@@ -151,6 +176,7 @@ void CombatWorld::rebuildOrder(const std::vector<ActorRecord>& records) {
     order_.clear();
     for(const auto& r:records){
         const auto& p=r.parameters;
+        if(p[0]==20)for(std::size_t i=0;i<introTriggers.size();++i)if(introTriggers[i].uid==p[1])order_.push_back({ActorKind::IntroTrigger,i});
         if(p[0]==21)for(std::size_t i=0;i<prompts.size();++i)if(prompts[i].uid==p[1])order_.push_back({ActorKind::Prompt,i});
         if(p[0]==10)for(std::size_t i=0;i<beamEmitters.size();++i)if(beamEmitters[i].uid==p[1])order_.push_back({ActorKind::BeamEmitter,i});
         if(p[0]==23)for(std::size_t i=0;i<checkpoints.size();++i)if(checkpoints[i].uid==p[1])order_.push_back({ActorKind::Checkpoint,i});
@@ -168,6 +194,7 @@ void CombatWorld::rebuildOrder(const std::vector<ActorRecord>& records) {
     }
 }
 std::pair<int,int> CombatWorld::referenceCamera() const {
+    if(intro && intro->active())return {intro->cameraX,intro->cameraY};
     return {std::clamp(player_.x-120,0,std::max(0,maps_.layers[1].width*20-240)),
         std::clamp(player_.y-220,0,std::max(0,maps_.layers[1].height*20-320))};
 }
@@ -182,6 +209,7 @@ void CombatWorld::cacheBuckets() {
     for(auto& g:gates)g.bucket=std::abs(g.x-(cx+120))/120+std::abs(g.y-(cy+160))/160;
     for(auto& t:passages)t.bucket=std::abs(t.x-(cx+120))/120+std::abs(t.y-(cy+160))/160;
     for(auto& t:playerEnableTriggers)t.bucket=std::abs(t.x-(cx+120))/120+std::abs(t.y-(cy+160))/160;
+    for(auto& t:introTriggers)t.bucket=std::abs(t.x-(cx+120))/120+std::abs(t.y-(cy+160))/160;
     for(auto& p:prompts)p.bucket=std::abs(p.x-(cx+120))/120+std::abs(p.y-(cy+160))/160;
     for(auto& e:beamEmitters)e.bucket=std::abs(e.x-(cx+120))/120+std::abs(e.y-(cy+160))/160;
     for(auto& t:checkpoints)t.bucket=std::abs(t.x-(cx+120))/120+std::abs(t.y-(cy+160))/160;
@@ -236,6 +264,7 @@ bool CombatWorld::eligible(const ActorSlot& slot) const {
     case ActorKind::RemovedEnemyTrigger:{const auto& t=removedEnemyTriggers[slot.index];if(!t.alive)return false;flags=t.flags;bucket=t.bucket;radius=7;break;}
     case ActorKind::Platform: {const auto& p=*platformIndex_[slot.index];flags=p.flags;bucket=p.bucket;break;}
     case ActorKind::Bridge: {const auto& b=*bridgeIndex_[slot.index];if(!b.alive)return false;flags=b.flags;bucket=b.bucket;radius=4;break;}
+    case ActorKind::IntroTrigger:{const auto& t=introTriggers[slot.index];if(!t.alive)return false;flags=t.flags;bucket=t.bucket;break;}
     case ActorKind::Prompt:{const auto& p=prompts[slot.index];if(!p.alive)return false;flags=p.flags;bucket=p.bucket;break;}
     case ActorKind::BeamEmitter:{const auto& e=beamEmitters[slot.index];flags=e.flags;bucket=e.bucket;break;}
     case ActorKind::Checkpoint:{const auto& c=checkpoints[slot.index];if(!c.alive)return false;flags=c.flags;bucket=c.bucket;break;}
@@ -258,6 +287,7 @@ std::vector<int> CombatWorld::updateQueueUids() const {
     case ActorKind::Enemy:result.push_back(enemies[slot.index].uid);break;
     case ActorKind::Platform:result.push_back(platformIndex_[slot.index]->uid);break;
     case ActorKind::Bridge:result.push_back(bridgeIndex_[slot.index]->uid);break;
+    case ActorKind::IntroTrigger:result.push_back(introTriggers[slot.index].uid);break;
     case ActorKind::Prompt:result.push_back(prompts[slot.index].uid);break;
     case ActorKind::BeamEmitter:result.push_back(beamEmitters[slot.index].uid);break;
     case ActorKind::Checkpoint:result.push_back(checkpoints[slot.index].uid);break;
@@ -321,6 +351,11 @@ bool CombatWorld::finishPlayer(bool paused) {
     }
     for(auto& p:platforms)if(p.type==33 && player_.platform==&p.surface && player_.ceiling)p.vy=0;
     for(const auto& slot:updateQueue_) {
+        if(slot.kind==ActorKind::IntroTrigger){auto& t=introTriggers[slot.index];if(t.update(player_,paused)){
+            const auto [cx,cy]=referenceCamera();intro->start(cx,cy,t.skipAllowed);introInputReset=true;player_.facingLeft=(t.flags&1)!=0;player_.flags=(player_.flags&~1)|int(player_.facingLeft);player_.vx=player_.vy=0;player_.weaponSwitchCooldown=0;
+            if(fireMagic)fireMagic->clear();if(iceMagic)iceMagic->clear();effects.clear();
+            for(std::size_t i=0;i<placedUids_.size();++i)if(placedUids_[i]==t.uid)placedRemoved_[i]=true;
+        }continue;}
         if(slot.kind==ActorKind::Checkpoint){auto& c=checkpoints[slot.index];if(c.update(player_,paused)){for(std::size_t i=0;i<placedUids_.size();++i)if(placedUids_[i]==c.uid)placedRemoved_[i]=true;if(checkpointActivated_)checkpointActivated_(c);}continue;}
         if(slot.kind==ActorKind::Passage){
             auto& passage=passages[slot.index];

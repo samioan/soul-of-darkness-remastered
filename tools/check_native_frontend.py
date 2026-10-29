@@ -116,7 +116,20 @@ def main():
                 state={k:val for k,val in v.items() if k!='frames'}
                 if expected is None:expected=state
                 require(state==expected,'FPS/interpolation changed paused state or HUD pixels')
-    print('PASS: original logo/title and English story pixels at 240/569, menu/credits/prologue/selection transitions, 12 timed prologue and 12 startup-to-game runs, pause freeze/resume and 12 timed HUD/pause runs')
+    # The ordinary startup fixture pauses during the intro now. Verify HUD output
+    # separately after the complete intro fixture has returned control.
+    for width in (240,569):
+        expected=None
+        for fps in (30,60,144):
+            for interpolate in (True,False):
+                cmd=[str(a.exe),'--game','--game-intro-script','--headless','--data',str(a.data),'--width',str(width),'--fps',str(fps),'--frames',str(fps*30)]
+                if not interpolate:cmd+=['--no-interpolation']
+                v=dict(x.split('=') for x in subprocess.check_output(cmd,text=True).split())
+                require(v['intro_active']=='0' and v['intro_finishes']=='1' and v['frontend_state']=='8' and v['player_health']=='60','HUD fixture did not complete intro')
+                state={k:val for k,val in v.items() if k!='frames'}
+                if expected is None:expected=state
+                require(state==expected,'FPS/interpolation changed post-intro HUD or simulation')
+    print('PASS: original logo/title and English story pixels at 240/569, menu/credits/prologue/selection transitions, 12 timed prologue and 12 startup-to-game runs, pause/intro freeze/resume, 12 timed pause runs and 12 post-intro HUD runs')
 
 
 if __name__ == '__main__': main()

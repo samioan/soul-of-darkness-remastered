@@ -443,3 +443,14 @@ and thirteen controlled cases. `python tools/check_native_prompts.py --exe soul/
 compares those rows and checks seven milestones / 24 host runs across widths/FPS/
 interpolation. See NATIVE_PROMPTS.md for the controlled magic-prompt relocation,
 keyboard adaptation, high-UID save fix and remaining linked/script dependencies.
+
+
+`IntroCheck.java` runs shipped trigger 82/script 76 in original/reference
+lifecycle loaders and writes ignored `analysis/intro-oracle.tsv`: 5460 timeline,
+camera, dialogue-anchor, flag/pose and actor-presence rows (969 expectations).
+`python tools/check_native_intro.py --exe soul/port/build/Debug/soul_assets.exe --port-exe soul/port/build/Debug/soul_port.exe`
+checks those rows, seven milestones and 48 playback/skip host runs at 240/569
+across FPS/interpolation. --intro-script / --game-intro-script use the ordinary
+spawn and real input; their skip variants fast-forward via Backspace's mask.
+Normal New Game enables the intro automatically. NATIVE_INTRO.md records the
+remaining interpreter, original-renderer and owner limits.

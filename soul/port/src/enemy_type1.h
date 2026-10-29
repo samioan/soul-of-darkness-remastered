@@ -35,6 +35,7 @@ public:
     int contactDamage=0;
     void advanceAnimation();
     void refreshBounds();
+    void scriptAnimation(int id);
     void draw(Canvas&,int cameraX,int cameraY);
     ContactBody body() const;
     void applyContact(const ContactBody&);

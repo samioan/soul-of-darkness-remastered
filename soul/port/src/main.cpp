@@ -37,7 +37,7 @@ struct Settings {
 };
 Settings settings;
 std::unique_ptr<soul::GameFrontend> frontend;
-bool gameMode=false,calibrationRequested=false,gameScript=false,gamePassageScript=false,gameAbilityScript=false,gameActivationScript=false,gameSecondWaveScript=false,gameArenaScript=false,gameFireScript=false,gameFireAfterArena=false,gameIceScript=false,iceProjectileFixture=false,gameCheckpointScript=false,gameBeamScript=false,gamePromptScript=false;
+bool gameMode=false,calibrationRequested=false,gameScript=false,gamePassageScript=false,gameAbilityScript=false,gameActivationScript=false,gameSecondWaveScript=false,gameArenaScript=false,gameFireScript=false,gameFireAfterArena=false,gameIceScript=false,iceProjectileFixture=false,gameCheckpointScript=false,gameBeamScript=false,gamePromptScript=false,gameIntroScript=false,introSkipFixture=false;
 std::optional<soul::CheckpointSnapshot> sessionCheckpoint;int checkpointActivations=0,checkpointRestarts=0,checkpointMenuRestarts=0,checkpointFixtureStage=0;bool restoringCheckpoint=false;
 std::filesystem::path gameSavePath;
 std::optional<soul::CheckpointSnapshot> diskCheckpoint;
@@ -55,7 +55,7 @@ soul::Canvas framebuffer(569,soul::kHeight);
 auto& pixels = framebuffer.pixels();
 struct PreviewOptions {
     bool requested = false, extra = false, font = false;
-    bool beamScript=false,promptScript=false;
+    bool beamScript=false,promptScript=false,introScript=false;
     int pack = 0, resource = 0, frame = -1, animation = -1, palette = 0, flip = 0;
     int level=-1,cameraX=0,cameraY=0;
     bool cameraRequested=false;
@@ -106,6 +106,7 @@ void fill(soul::Canvas& canvas,int x,int y,int width,int height,std::uint32_t co
     const int right=std::min(x+width,clip.right),bottom=std::min(y+height,clip.bottom);
     if(right>left && bottom>top) canvas.blit(soul::Pixels(static_cast<std::size_t>(right-left)*(bottom-top),color),right-left,bottom-top,left,top);
 }
+extern std::array<bool,256> movementKeys;
 struct MovementPreview {
     soul::TileScene scene; soul::BSprite sprite; std::vector<soul::ActorRecord> records; soul::Player player;
     soul::BSprite pickupSprite,containerSprite,promptSprite; std::vector<soul::Pickup> pickups;
@@ -119,7 +120,7 @@ struct MovementPreview {
     soul::BSprite abilitySprite; std::vector<soul::AbilityPickup> abilities; soul::AbilityInteraction abilityUi; int abilityUnlocks=0,abilityCompleted=0,regionAbilitiesRemoved=0;
     soul::BSprite fontSprite; soul::BitmapFont font; soul::SpriteRenderer crystalRenderer;
     soul::CrystalReward reward; int beamTicks=0,rewardsCompleted=0,resumeTicks=0; std::size_t crystalIndex=0;
-    bool restartRequested=false;
+    bool restartRequested=false;int introControlTicks=0;
     soul::MovementInput input; int ticks=0,cameraX=0,cameraY=0;
     MovementPreview(soul::TileScene world,soul::BSprite image,std::vector<soul::ActorRecord> rows,soul::BSprite items,soul::BSprite chests,soul::BSprite prompts,soul::BSprite text,soul::BSprite effectImage,soul::BSprite sword,soul::BSprite enemies,soul::BSprite platformImage,soul::BSprite bridgeImage,const std::vector<int>& stats,const std::vector<int>& flyingStats,const std::vector<int>& beamStats)
         : scene(std::move(world)),sprite(std::move(image)),records(std::move(rows)),player(sprite,scene.maps(),soul::playerRecord(records)),pickupSprite(std::move(items)),containerSprite(std::move(chests)),promptSprite(std::move(prompts)),fontSprite(std::move(text)),font(fontSprite),crystalRenderer(pickupSprite) {
@@ -210,6 +211,8 @@ struct MovementPreview {
             sessionCheckpoint=soul::CheckpointSnapshot::capture(checkpoint,player,meters,std::move(removed));++checkpointActivations;
             if(!gameSavePath.empty())try{soul::writeGameSave(gameSavePath,*sessionCheckpoint);diskCheckpoint=sessionCheckpoint;if(frontend){frontend->hasSave=true;frontend->saveStatus.clear();}}catch(const std::exception& e){saveFailure(e);}
         });
+        const bool controlled=previewOptions.movementScript || previewOptions.containerScript || previewOptions.meleeScript || previewOptions.combatScript || previewOptions.defeatScript || previewOptions.platformScript || previewOptions.swingScript || previewOptions.bridgeScript || previewOptions.regionScript || previewOptions.gateScript || previewOptions.gateTriggerScript || previewOptions.passageScript || previewOptions.abilityScript || previewOptions.activationScript || previewOptions.secondWaveScript || previewOptions.arenaScript || previewOptions.fireScript || previewOptions.iceScript || previewOptions.checkpointScript || previewOptions.beamScript || previewOptions.promptScript || gameCheckpointScript || gameBeamScript || gamePromptScript || gamePassageScript || gameAbilityScript || gameActivationScript || gameSecondWaveScript || gameArenaScript || gameFireScript || gameIceScript;
+        if(previewOptions.introScript || gameIntroScript || (frontend && !controlled))combat->loadIntro(levelPack.resource(1).value(),records);
     }
     void restoreCheckpoint(const soul::CheckpointSnapshot& saved){
         saved.restore(player,meters);
@@ -221,6 +224,22 @@ struct MovementPreview {
     }
     bool crystalBoundary() const { return std::any_of(pickups.begin(),pickups.end(),[](const auto& p){return p.alive && p.upgradeBoundary;}); }
     void update() {
+        if(combat->intro && combat->intro->active()){
+            auto& sceneIntro=*combat->intro;
+            if(previewOptions.introScript || gameIntroScript){if(sceneIntro.ticks>=10 && sceneIntro.ticks<15)input.press(8192);else input.release(8192);}
+            if(previewOptions.introScript || gameIntroScript){
+                if(introSkipFixture && sceneIntro.ticks>=20)input.press(131072);
+                else if(sceneIntro.dialogue>=0 && sceneIntro.dialogueFrames>=8 && !input.held)input.press(65536);
+                else input.release(65536|131072);
+            }
+            const int pages=sceneIntro.dialogue<0?1:std::max(1,(static_cast<int>(font.wrap(soul::introText(sceneIntro.dialogue),210).size())+2)/3);
+            combat->updateIntro(input.pressed,pages);combat->animateIntro();weapon->hide();
+            if(combat->introInputReset){input.clear();movementKeys.fill(false);combat->introInputReset=false;}
+            input.latch(player);++ticks;return;
+        }
+        if((previewOptions.introScript || gameIntroScript) && combat->intro && combat->intro->finishes && introControlTicks<20){
+            if(introControlTicks<6){input.release(4096);input.press(8192);}else if(introControlTicks>=12 && introControlTicks<18){input.release(8192);input.press(4096);}else input.release(8192|4096);++introControlTicks;
+        }
         if(previewOptions.promptScript){if(ticks<35){input.release(4096);input.press(8192);}else if(ticks<70){input.release(8192);input.press(4096);}else input.release(4096|8192);}
         if(gamePromptScript){if(ticks==8)input.press(1);if(ticks==9)input.release(1);if(ticks>=30 && ticks<55)input.press(8192);else input.release(8192);}
         if(previewOptions.beamScript || gameBeamScript){if(ticks>=35 && ticks<100)input.press(8192);else input.release(8192);}
@@ -263,7 +282,9 @@ struct MovementPreview {
                 }
             }
             if(previewOptions.containerScript && input.held && !reward.active) input.release(65536);
-            input.latch(player); ++ticks; return;
+            if(combat->introInputReset){input.clear();movementKeys.fill(false);combat->introInputReset=false;}
+        if(combat->intro)combat->intro->presentationTick();
+        input.latch(player); ++ticks; return;
         }
         if (previewOptions.movementScript) {
             if (ticks==0) input.press(8192);
@@ -383,7 +404,7 @@ struct MovementPreview {
         if(combat->playerHits!=previousHits) weapon->hide();
         if (player.clearInputRequested) input.clear();
         if (!player.stoppedByHazard()) {
-            if(player.animation!=8 && player.animation!=9) { weapon->update(player); }
+            if(player.animation!=8 && player.animation!=9 && (!combat->intro || !combat->intro->active())) { weapon->update(player); }
             else weapon->hide();
             const auto previousItems=pickups.size(),previousAbilities=abilities.size();
             for(const auto& drop:combat->loot) pickups.push_back(soul::Pickup::enemyDrop(pickupSprite,drop.animation,drop.x,drop.y,drop.flags));
@@ -431,9 +452,25 @@ struct MovementPreview {
         const bool riding=player.platform && player.platform->type==39;
         if(riding){++iceRidingTicks;if(!wasIceRiding){++iceLandings;iceRideY=player.y;}}else if(wasIceRiding)++iceDetachments;
         wasIceRiding=riding;
+        if(combat->introInputReset){input.clear();movementKeys.fill(false);combat->introInputReset=false;}
+        if(combat->intro)combat->intro->presentationTick();
         input.latch(player); ++ticks;
         const auto camera=scene.clampCamera(player.x-settings.width/2,player.y-220,settings.width,soul::kHeight);
         cameraX=camera.first; cameraY=camera.second;
+    }
+    void drawIntro(soul::Canvas& c){
+        if(!combat->intro)return;const auto& intro=*combat->intro;const int cx=c.width()/2,left=cx-120;
+        if(intro.bars>0){fill(c,0,0,c.width(),intro.bars,0xdd000000);fill(c,0,320-intro.bars,c.width(),intro.bars,0xdd000000);}
+        if(intro.dialogue>=0){
+            const int age=std::min(5,intro.dialogueFrames);const auto camera=soul::introView(intro.cameraX,intro.cameraY,c.width(),scene.maps().width(),scene.maps().height());
+            if(age<5){const int ax=intro.anchorX+intro.cameraX-camera.first,ay=intro.anchorY;const int x=ax+(cx-ax)*age/5,y=ay+(37-ay)*age/5;fill(c,x-24*age,y-7*age,48*age,14*age,0xee101018);}
+            else{fill(c,left,0,240,75,0xff101018);fill(c,left,74,240,1,0xffe8a81b);font.draw(c,soul::introSpeaker(intro.speaker),left+5,7);
+                const auto old=c.clip();c.setClip(left+5,23,230,44);font.drawWrapped(c,soul::introText(intro.dialogue),left+5,23-intro.page*3*font.lineHeight(),210);c.setClip(old.left,old.top,old.right-old.left,old.bottom-old.top);
+
+            }
+        }
+        if(intro.dialogue>=0)font.draw(c,u"ENTER - NEXT",cx,286,1);
+        if(intro.active() && intro.skipAllowed)font.draw(c,u"BACKSPACE - SKIP",cx,305,1);
     }
     void drawHud(soul::Canvas& target) {
         const auto number=[](int n){const auto v=std::to_string(n);return std::u16string(v.begin(),v.end());};
@@ -455,6 +492,10 @@ struct MovementPreview {
         if(frontend){
             const auto view=soul::gameplayView(player.x,player.y,target.width(),target.height(),scene.maps().width(),scene.maps().height(),combat->currentRegion()<0?nullptr:&combat->regionCameraBounds());
             camera={view.x,view.y};target.setClip(view.left,view.top,view.right-view.left,view.bottom-view.top);
+        }
+        if(combat->intro && combat->intro->active()){
+            target.resetClip();camera=soul::introView(combat->intro->cameraX,combat->intro->cameraY,target.width(),scene.maps().width(),scene.maps().height());
+            if(combat->currentRegion()>=0){const auto& r=combat->regionCameraBounds();const int l=std::max(0,r[0]-camera.first),t=std::max(0,r[1]-camera.second);target.setClip(l,t,std::max(0,std::min(target.width(),r[2]-camera.first)-l),std::max(0,std::min(target.height(),r[3]-camera.second)-t));}
         }
         scene.draw(target,camera.first,camera.second);
         const int beam=abilityUi.active && abilityUi.mode==3?abilityUi.beamTicks:beamTicks;
@@ -517,6 +558,7 @@ struct MovementPreview {
 std::unique_ptr<MovementPreview> movementPreview;
 std::array<bool,256> movementKeys{};
 unsigned movementKey(WPARAM key) {
+    if (key==VK_BACK) return 131072;
     if (key==VK_LEFT || key=='A') return 4096;
     if (key==VK_RIGHT || key=='D') return 8192;
     if (key==VK_UP || key=='W' || key==VK_SPACE) return 16384;
@@ -624,7 +666,8 @@ void render() {
     if (movementPreview) {
         movementPreview->draw(framebuffer);
         if(frontend){
-            movementPreview->drawHud(framebuffer);
+            if(!movementPreview->combat->intro || !movementPreview->combat->intro->active())movementPreview->drawHud(framebuffer);
+            movementPreview->drawIntro(framebuffer);
             if(frontend->state==21)frontend->drawPause(framebuffer);
         }
         return;
@@ -786,8 +829,9 @@ void restartGameplay(){
 }
 void loadPreview() {
     require(!previewOptions.containerScript || previewOptions.movement,"--container-script requires --movement-preview");
-    require(int(previewOptions.containerScript)+int(previewOptions.movementScript)+int(previewOptions.meleeScript)+int(previewOptions.combatScript)+int(previewOptions.defeatScript)+int(previewOptions.platformScript)+int(previewOptions.swingScript)+int(previewOptions.bridgeScript)+int(previewOptions.regionScript)+int(previewOptions.gateScript)+int(previewOptions.gateTriggerScript)+int(previewOptions.passageScript)+int(previewOptions.abilityScript)+int(previewOptions.activationScript)+int(previewOptions.secondWaveScript)+int(previewOptions.arenaScript)+int(previewOptions.fireScript)+int(previewOptions.iceScript)+int(previewOptions.checkpointScript)+int(previewOptions.beamScript)+int(previewOptions.promptScript)<=1,"Choose one validation script");
+    require(int(previewOptions.containerScript)+int(previewOptions.movementScript)+int(previewOptions.meleeScript)+int(previewOptions.combatScript)+int(previewOptions.defeatScript)+int(previewOptions.platformScript)+int(previewOptions.swingScript)+int(previewOptions.bridgeScript)+int(previewOptions.regionScript)+int(previewOptions.gateScript)+int(previewOptions.gateTriggerScript)+int(previewOptions.passageScript)+int(previewOptions.abilityScript)+int(previewOptions.activationScript)+int(previewOptions.secondWaveScript)+int(previewOptions.arenaScript)+int(previewOptions.fireScript)+int(previewOptions.iceScript)+int(previewOptions.checkpointScript)+int(previewOptions.beamScript)+int(previewOptions.promptScript)+int(previewOptions.introScript)<=1,"Choose one validation script");
     require(!previewOptions.platformScript || previewOptions.movement,"--platform-script requires --movement-preview");
+    require(!previewOptions.introScript || previewOptions.movement,"--intro-script requires --movement-preview");
     require(!previewOptions.promptScript || previewOptions.movement,"--prompt-script requires --movement-preview");
     require(!previewOptions.beamScript || previewOptions.movement,"--beam-script requires --movement-preview");
     require(!previewOptions.checkpointScript || previewOptions.movement,"--checkpoint-script requires --movement-preview");
@@ -926,6 +970,10 @@ int main(int argc, char** argv) {
             else if (arg == "--platform-script") previewOptions.platformScript=true;
             else if (arg == "--ice-projectile-script") {previewOptions.iceScript=true;iceProjectileFixture=true;}
             else if (arg == "--game-ice-projectile-script") {gameScript=true;gameIceScript=true;iceProjectileFixture=true;}
+            else if (arg == "--intro-script") previewOptions.introScript=true;
+            else if (arg == "--intro-skip-script") {previewOptions.introScript=true;introSkipFixture=true;}
+            else if (arg == "--game-intro-script") {gameScript=true;gameIntroScript=true;}
+            else if (arg == "--game-intro-skip-script") {gameScript=true;gameIntroScript=true;introSkipFixture=true;}
             else if (arg == "--prompt-script") previewOptions.promptScript=true;
             else if (arg == "--game-prompt-script") {gameScript=true;gamePromptScript=true;}
             else if (arg == "--beam-script") previewOptions.beamScript=true;
@@ -1001,7 +1049,7 @@ int main(int argc, char** argv) {
                              "  [--font-preview --data EXTRACTED_DIRECTORY] [--palette 0..2]\n"
                              "  [--level-preview 0..8 --data EXTRACTED_DIRECTORY] [--camera-x X --camera-y Y]\n"
                              "  Level preview: arrows pan, F8 changes width; tiles only, no gameplay.\n"
-                             "  [--movement-preview --data EXTRACTED_DIRECTORY] [--movement-script|--container-script|--melee-script|--combat-script|--defeat-script|--platform-script|--swing-script|--bridge-script|--region-script|--gate-script|--gate-trigger-script|--passage-script|--ability-script|--activation-script|--second-wave-script|--arena-script|--fire-script|--ice-script|--ice-projectile-script|--checkpoint-script|--beam-script|--prompt-script]\n"
+                             "  [--movement-preview --data EXTRACTED_DIRECTORY] [--movement-script|--container-script|--melee-script|--combat-script|--defeat-script|--platform-script|--swing-script|--bridge-script|--region-script|--gate-script|--gate-trigger-script|--passage-script|--ability-script|--activation-script|--second-wave-script|--arena-script|--fire-script|--ice-script|--ice-projectile-script|--checkpoint-script|--beam-script|--prompt-script|--intro-script|--intro-skip-script]\n"
                              "  Player prototype: arrows/A/D, Space jump, Down crouch, E/J/Enter attacks/opens chests, K/0 casts equipped magic, Q/9 switches weapons, R restarts at the session checkpoint; ordinary enemies and combat.\n"
                              "  [--animation ID|--frame ID] [--palette ID] [--flip 0..3]\n"
                              "Interactive first-level combat preview is available; the complete game is not ported.\n";
@@ -1009,6 +1057,7 @@ int main(int argc, char** argv) {
             } else throw std::runtime_error("Unknown argument: " + arg);
         }
         require(!previewOptions.platformScript || headless,"--platform-script is a headless validation option");
+        require(!previewOptions.introScript || headless,"--intro-script is a headless validation option");
         require(!previewOptions.promptScript || headless,"--prompt-script is a headless validation option");
         require(!previewOptions.beamScript || headless,"--beam-script is a headless validation option");
         require(!previewOptions.checkpointScript || headless,"--checkpoint-script is a headless validation option");
@@ -1044,7 +1093,7 @@ int main(int argc, char** argv) {
             gameMode=true;
         }
         require(!(gameMode && calibrationRequested),"Choose --game or --calibration");
-        require(int(gameAbilityScript)+int(gamePassageScript)+int(gameActivationScript)+int(gameSecondWaveScript)+int(gameArenaScript)+int(gameFireScript)+int(gameIceScript)+int(gameCheckpointScript)+int(gameBeamScript)+int(gamePromptScript)<=1,"Choose one game validation fixture");
+        require(int(gameAbilityScript)+int(gamePassageScript)+int(gameActivationScript)+int(gameSecondWaveScript)+int(gameArenaScript)+int(gameFireScript)+int(gameIceScript)+int(gameCheckpointScript)+int(gameBeamScript)+int(gamePromptScript)+int(gameIntroScript)<=1,"Choose one game validation fixture");
         require(!gameScript || (gameMode && headless),"--game-script requires --game --headless");
         require(!continueOnLaunch || (gameMode && !gameScript),"--continue requires --game without validation scripts");
         if(gameMode) {
@@ -1055,7 +1104,7 @@ int main(int argc, char** argv) {
             }
             require(!previewOptions.data.empty(),"--game requires --data EXTRACTED_DIRECTORY");
             require(!previewOptions.movement && !previewOptions.font && !previewOptions.requested && previewOptions.level<0,"--game cannot be combined with preview modes");
-            require(!(previewOptions.movementScript || previewOptions.containerScript || previewOptions.meleeScript || previewOptions.combatScript || previewOptions.defeatScript || previewOptions.platformScript || previewOptions.regionScript || previewOptions.gateScript || previewOptions.gateTriggerScript || previewOptions.passageScript || previewOptions.abilityScript || previewOptions.activationScript || previewOptions.secondWaveScript || previewOptions.arenaScript || previewOptions.fireScript || previewOptions.iceScript || previewOptions.checkpointScript || previewOptions.beamScript || previewOptions.promptScript || previewOptions.bridgeScript || previewOptions.swingScript),"--game cannot use movement validation scripts");
+            require(!(previewOptions.movementScript || previewOptions.containerScript || previewOptions.meleeScript || previewOptions.combatScript || previewOptions.defeatScript || previewOptions.platformScript || previewOptions.regionScript || previewOptions.gateScript || previewOptions.gateTriggerScript || previewOptions.passageScript || previewOptions.abilityScript || previewOptions.activationScript || previewOptions.secondWaveScript || previewOptions.arenaScript || previewOptions.fireScript || previewOptions.iceScript || previewOptions.checkpointScript || previewOptions.beamScript || previewOptions.promptScript || previewOptions.introScript || previewOptions.bridgeScript || previewOptions.swingScript),"--game cannot use movement validation scripts");
             frontend=std::make_unique<soul::GameFrontend>(previewOptions.data);
             if(!gameSavePath.empty())try{diskCheckpoint=soul::loadGameSave(gameSavePath);frontend->hasSave=diskCheckpoint.has_value();}catch(const std::exception& e){saveFailure(e);}
             if(continueOnLaunch){require(bool(diskCheckpoint),"No valid checkpoint to continue");frontend->enter(2);frontend->selection=1;frontend->press(13);}
@@ -1084,6 +1133,9 @@ int main(int argc, char** argv) {
                 if(swing!=movementPreview->combat->platforms.end())std::cout<<" swing_x="<<swing->x<<" swing_y="<<swing->y<<" swing_angle="<<swing->angle<<" swing_state="<<swing->action<<" support_uid="<<(support==movementPreview->combat->platforms.end()?-1:support->uid);
                 std::cout << " player_x=" << p.x << " player_y=" << p.y << " player_vx=" << p.vx << " player_vy=" << p.vy
                     << " player_animation=" << p.animation << " player_step=" << p.step << " player_tick=" << p.animationTick
+                    << " intro_trigger_alive=" << std::count_if(movementPreview->combat->introTriggers.begin(),movementPreview->combat->introTriggers.end(),[](const auto& t){return t.alive;}) << " intro_bird83_alive=" << std::any_of(movementPreview->combat->flyingEnemies.begin(),movementPreview->combat->flyingEnemies.end(),[](const auto& e){return e.uid==83 && e.alive;}) << " intro_prompt_hidden=" << std::any_of(movementPreview->combat->prompts.begin(),movementPreview->combat->prompts.end(),[](const auto& p){return p.uid==267 && (p.flags&128);})
+                    << " intro_control_ticks=" << movementPreview->introControlTicks
+                    << " intro_active=" << (movementPreview->combat->intro && movementPreview->combat->intro->active()) << " intro_tick=" << (movementPreview->combat->intro?movementPreview->combat->intro->ticks:-1) << " intro_dialogue=" << (movementPreview->combat->intro?movementPreview->combat->intro->dialogue:-1) << " intro_page=" << (movementPreview->combat->intro?movementPreview->combat->intro->page:0) << " intro_starts=" << (movementPreview->combat->intro?movementPreview->combat->intro->starts:0) << " intro_finishes=" << (movementPreview->combat->intro?movementPreview->combat->intro->finishes:0) << " intro_skips=" << (movementPreview->combat->intro?movementPreview->combat->intro->skips:0) << " intro_dialogues_opened=" << (movementPreview->combat->intro?movementPreview->combat->intro->dialoguesOpened:0)
                     << " fire_prompt_alive=" << std::any_of(movementPreview->combat->prompts.begin(),movementPreview->combat->prompts.end(),[](const auto& p){return p.uid==8 && p.alive;}) << " fire_prompt_status=" << ([&]{for(const auto& p:movementPreview->combat->prompts)if(p.uid==8)return p.status;return -1;}())
                     << " placed_prompts=" << movementPreview->combat->prompts.size() << " prompts_active=" << std::count_if(movementPreview->combat->prompts.begin(),movementPreview->combat->prompts.end(),[](const auto& p){return p.alive;}) << " prompts_visible=" << movementPreview->combat->visiblePrompts() << " prompts_removed=" << movementPreview->combat->promptsRemoved << " prompt_magic=" << movementPreview->combat->recentPromptMagic
                     << " beam_emitters=" << movementPreview->combat->beamEmitters.size() << " beams_active=" << std::count_if(movementPreview->combat->beamEmitters.begin(),movementPreview->combat->beamEmitters.end(),[](const auto& e){return e.active;}) << " beam_hits=" << movementPreview->combat->beamHits

@@ -72,6 +72,7 @@ void Player::bounds() {
 void Player::immediate(int id) {
     if (id!=animation) { previousAnimation_=animation; animation=id; step=animationTick=0; pending=-1; flags&=~64; }
 }
+void Player::scriptAnimation(int id){if(id<0 || std::size_t(id)>=sprite_.animations().size())throw FormatError("Missing scripted player pose");immediate(id);bounds();}
 void Player::request(int id) {
     if (id==4) fallStart_=y;
     if (id!=animation) { previousAnimation_=animation; pending=id; flags&=~64; dirty_=true; }

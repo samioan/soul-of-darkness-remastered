@@ -11,6 +11,9 @@ post-increment correction and pack 9 collision/visual dimension mismatch.
 Reference approaches:
 ../tes-travels-decomp, ../gow-betrayal-decomp, ../rac-j2me-decomp.
 
+- After completing and verifying a roadmap task, check it off in both
+  soul/docs/ROADMAP.md and soul/docs/PORT_ROADMAP.md and keep their current
+  status/remaining lists accurate. Do not append contradictory pending summaries.
 - Keep JARs, extracted/decoded assets, screenshots and tool binaries out of git.
 - soul/decompiled is raw Vineflower output. soul/src is generated reference Java.
   Change soul/docs/names.map or asserting PATCHES in tools/rename_sod.py, then

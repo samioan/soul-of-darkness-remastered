@@ -490,3 +490,10 @@ Placed-prompt pass: existing Actor.bN/updatePrompt, its constructor/visibility
 and Game.removeActor paths were checked against original b bytecode. Placed
 UIDs, custom rectangles, magic/switch acknowledgement and registry-slot removal
 supply NATIVE_PROMPTS.md's evidence. No names or generated Java patches changed.
+
+
+Opening cutscene pass: existing Actor.updateTrigger/Actor.o and Game.startCutscene,
+updateBackgroundScripts/updateScript, executeScriptOpcode 116/113 and
+finishCutscene were checked against original b/e bytecode. IntroCheck compares
+the shipped trigger 82/script 76, including high-word flags and skip cleanup.
+No semantic names or generated Java patches changed; see NATIVE_INTRO.md.

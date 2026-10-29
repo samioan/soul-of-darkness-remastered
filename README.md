@@ -90,6 +90,8 @@ and its remaining handler boundaries.
 Moving-object ice links now have separate original-bytecode checks; the shipped
 shot passes through type-33 objects because its attack rectangle is a point.
 See [attachment behavior and limits](soul/docs/NATIVE_ICE_ATTACHMENTS.md).
+The original opening cutscene now plays in the first level, with four English
+dialogues, camera moves and Backspace to skip. See [native intro](soul/docs/NATIVE_INTRO.md).
 The first level now loads all nine placed keyboard tutorial hints; see
 [native prompts](soul/docs/NATIVE_PROMPTS.md).
 The first level now loads all six timed/sweeping beam hazards, with tile-clipped
@@ -140,7 +142,8 @@ python tools/check_native_sprites.py --exe soul/port/build/Debug/soul_assets.exe
 With the local extracted data present, double-clicking the Debug, Release or dist
 executable now opens the Gameloft logo, original title art and a native menu.
 Choose **Continue** when a saved checkpoint exists, or **New Game** to read the English prologue, then press Enter for the
-first-level selection and Enter again to start playing. Checkpoints autosave to `%LOCALAPPDATA%/SoulOfDarkness/checkpoint.sav`; New Game confirms before replacing that progress. Up/Down or
+first-level selection and Enter again to enter the first level. The opening
+cutscene plays automatically: Enter/E/J advances dialogue and Backspace skips. Checkpoints autosave to `%LOCALAPPDATA%/SoulOfDarkness/checkpoint.sav`; New Game confirms before replacing that progress. Up/Down or
 W/S accelerate the story scroll while held. **Original credits** opens the
 credits. Arrows/W/S navigate and Enter selects. Escape pauses gameplay; Resume
 continues the same session, Restart Level restores its latest checkpoint, and Main Menu leaves play.

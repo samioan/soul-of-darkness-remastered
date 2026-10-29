@@ -59,6 +59,8 @@ try {
         if ($LASTEXITCODE -ne 0) { throw "Native ice attachment checks failed" }
         & python tools/check_native_checkpoints.py --exe soul/port/build/Debug/soul_assets.exe --port-exe soul/port/build/Debug/soul_port.exe
         if ($LASTEXITCODE -ne 0) { throw "Native checkpoint check failed" }
+        & python tools/check_native_intro.py --exe soul/port/build/Debug/soul_assets.exe --port-exe soul/port/build/Debug/soul_port.exe
+        if ($LASTEXITCODE -ne 0) { throw "Native intro cutscene checks failed" }
         & python tools/check_native_prompts.py --exe soul/port/build/Debug/soul_assets.exe --port-exe soul/port/build/Debug/soul_port.exe
         if ($LASTEXITCODE -ne 0) { throw "Native placed tutorial prompt checks failed" }
         & python tools/check_native_beams.py --exe soul/port/build/Debug/soul_assets.exe --port-exe soul/port/build/Debug/soul_port.exe

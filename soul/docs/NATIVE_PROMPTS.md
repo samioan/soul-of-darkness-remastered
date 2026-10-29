@@ -58,9 +58,8 @@ accepts removed UIDs through 32767 and tests UID 267 round trips. Existing versi
 saves remain readable; no original RMS compatibility is implied.
 
 Linked type-40 removals are a separate dependency: UIDs 43/61 link chandeliers
-3/34 to prompts 187/59 and are not implemented by this handler pass. Script 76's
-movement/flag/animation ownership of prompt 267 is also still unported. Those
-exact tasks are now listed in both current roadmaps.
+3/34 to prompts 187/59 and are not implemented by this handler pass. NATIVE_INTRO.md now implements script 76's movement/flag/animation ownership
+of prompt 267. The linked-trigger tasks remain listed in both current roadmaps.
 
 ## Verification
 
@@ -90,7 +89,7 @@ agree across display settings.
 
 Twelve data-free assertions bring player checks to 451; three CLI guards bring
 CTest to 86 tests. Save codec tests additionally round-trip high prompt UIDs.
-The full game remains unfinished. Next: intro script 76/trigger 82, script 160/
+The full game remains unfinished. Intro script 76/trigger 82 is now complete in NATIVE_INTRO.md. Next: script 160/
 trigger 161, linked prompt-removal triggers 43/61, cameras 63/167 and exit 173;
 see the current ROADMAP.md and PORT_ROADMAP.md checklists.
 

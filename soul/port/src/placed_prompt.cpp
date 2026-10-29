@@ -7,7 +7,7 @@ std::u16string_view desktopPromptText(int n){switch(n){case 0:case 12:return u"S
 PlacedPrompt::PlacedPrompt(const ActorRecord& r){
     const auto& p=r.parameters;
     if(r.count!=10 || p[0]!=21 || !(p[5]&8) || (p[5]&~(1|2|4|8|16|32|64|128|256|512|1024|16384)) || p[8]<=0 || p[9]<=0 || (p[4]!=14 && desktopPromptText(p[4]).empty()) || p[4]==25)throw FormatError("Unsupported placed prompt record");
-    uid=p[1];x=static_cast<std::uint16_t>(p[2]);y=static_cast<std::uint16_t>(p[3]);animation=p[4];flags=animation?p[5]&~64:p[5];collision={x+p[6],y+p[7],x+p[6]+p[8],y+p[7]+p[9]};
+    uid=p[1];x=static_cast<std::uint16_t>(p[2]);y=static_cast<std::uint16_t>(p[3]);animation=p[4];flags=animation?p[5]&~64:p[5];facingLeft=(flags&1)!=0;collision={x+p[6],y+p[7],x+p[6]+p[8],y+p[7]+p[9]};
 }
 bool PlacedPrompt::update(const Player& p,int magic,int& switched,bool paused){
     if(!alive || paused || (flags&(1024|16384)))return false;

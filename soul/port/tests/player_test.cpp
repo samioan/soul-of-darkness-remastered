@@ -939,6 +939,26 @@ int main() {
         tutorialPlayer.collision={150,200,160,210};require(!tutorial.update(tutorialPlayer,0,tutorialSwitch,true) && tutorial.status==0,"pause freezes prompt acknowledgement");
         require(soul::desktopPromptText(8)==u"A / D - MOVE" && soul::desktopPromptText(17)==u"K / 0 - FIRE","desktop hints use actual keyboard bindings");
         }
+
+        {
+        soul::ActorRecord introRecord{};introRecord.count=12;introRecord.parameters={20,82,89,182,8,8,0,0,60,80,76,0};soul::IntroTrigger introTrigger(introRecord);
+        soul::Player introPlayer(hitSprite,world,r);introPlayer.collision={200,200,210,210};
+        require(introTrigger.uid==82 && introTrigger.flags==136 && introTrigger.skipAllowed,"intro trigger uses shipped ID, invisible flag and skip policy");
+        require(!introTrigger.update(introPlayer),"intro does not start outside the custom volume");
+        introPlayer.collision={100,200,100,200};require(!introTrigger.update(introPlayer),"point body cannot start intro");
+        introPlayer.collision={100,200,110,210};require(!introTrigger.update(introPlayer,true),"pause cannot consume intro trigger");
+        introTrigger.flags|=1024;require(!introTrigger.update(introPlayer),"hidden intro trigger does not start");introTrigger.flags&=~1024;
+        introTrigger.flags|=16384;require(!introTrigger.update(introPlayer),"frozen intro trigger does not start");introTrigger.flags&=~16384;
+        introPlayer.collision={87,200,89,201};require(introTrigger.update(introPlayer) && !introTrigger.alive,"inclusive intro edge activates once");
+        require(!introTrigger.update(introPlayer),"consumed intro trigger cannot reactivate");
+        introRecord.parameters[11]=1;require(!soul::IntroTrigger(introRecord).skipAllowed,"trigger can disable skip");
+        require(soul::introView(300,16,240,1820,1680)==std::pair<int,int>{300,16},"portrait script camera retains canonical position");
+        require(soul::introView(300,16,569,1820,1680)==std::pair<int,int>{136,16},"wide camera expands around the same scripted focus");
+        require(soul::introView(10,0,569,1820,1680)==std::pair<int,int>{0,0},"wide intro camera clamps map edge");
+        require(soul::introView(0,0,569,240,320)==std::pair<int,int>{0,0},"intro viewport handles map narrower than screen");
+        rejects([]{soul::introView(0,0,0,240,320);},"invalid intro viewport rejected");
+        require(soul::introSpeaker(0)==u"KALE" && soul::introSpeaker(3)==u"ZOMBIE" && soul::introText(0).find(u"castle")!=std::u16string_view::npos,"intro desktop dialogue and speakers are English");
+        }
         std::cout << "PASS: " << checks << " native player/input/pickup/container/reward assertions\n"; return 0;
     } catch(const std::exception& e) { std::cerr << e.what() << '\n'; return 1; }
 }

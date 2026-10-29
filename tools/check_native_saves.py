@@ -36,7 +36,7 @@ def main():
                     if not interpolation:
                         args.append("--no-interpolation")
                     state = run(opt.exe, opt.data, *args)
-                    for key, value in {"frontend_state": 8, "player_x": 148, "player_y": 259, "player_health": 23, "player_magic": 17, "active_weapon": 1, "ice_unlocked": 1, "magic_unlocked": 1, "health_fragments": 2, "magic_fragments": 1, "checkpoint_uid": 11, "checkpoint_restarts": 0, "checkpoint_activations": 1, "checkpoints_active": 5, "continue_available": 1}.items():
+                    for key, value in {"frontend_state": 8, "player_x": -50, "player_y": 120, "player_health": 23, "player_magic": 17, "active_weapon": 1, "ice_unlocked": 1, "magic_unlocked": 1, "health_fragments": 2, "magic_fragments": 1, "checkpoint_uid": 11, "checkpoint_restarts": 0, "checkpoint_activations": 1, "checkpoints_active": 5, "continue_available": 1, "intro_active": 1, "intro_starts": 1}.items():
                         assert int(state[key]) == value, (key, state[key], value)
                     if expected is None:
                         expected = state["frontend_crc"]

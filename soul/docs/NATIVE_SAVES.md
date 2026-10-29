@@ -80,3 +80,10 @@ seven milestones and 24 restart host chains. Debug and the rebuilt package passe
 the desktop-save checker; the package matches Release. The existing Release
 startup/English story/HUD/pause checker also passed. No game data or saves are
 included in the package.
+
+
+NATIVE_INTRO.md now executes reconstructed type-20 trigger 82. Resuming a
+checkpoint inside its volume can replay the intro while retaining the saved
+meters/equipment; this follows the existing nonpersistent-trigger reconstruction
+policy. The save checker accounts for that active scene instead of assuming
+that the restored trigger does nothing.

@@ -1,6 +1,6 @@
 # Soul of Darkness roadmap
 
-Updated 2026-10-29 after the native placed-prompt pass. This is the current
+Updated 2026-10-29 after the native opening-cutscene pass. This is the current
 remaining-work list. Historical implementation notes are in
 [ROADMAP_HISTORY.md](ROADMAP_HISTORY.md); their old pending/next descriptions
 are superseded. Update the lists below when work lands instead of appending
@@ -18,7 +18,8 @@ another conflicting progress narrative.
 - Native level 0 supports movement/collision, ground/flying enemies, melee,
   fire/ice magic, pickups/chests/rewards, platforms/chandeliers/bridges, regions,
   all 16 passages, the arena/reward/gate chain, six beam hazards and nine placed
-  tutorial prompts. See the NATIVE_*.md feature docs for tested boundaries.
+  tutorial prompts. Intro trigger 82/script 76 now plays with English dialogue,
+  camera control, skip and verified return to gameplay. See the NATIVE_*.md docs.
 - Six first-level checkpoints support R/menu Restart and desktop autosave/Continue.
   The desktop format covers the supported native subset; it is not original RMS.
 - All nine gameplay maps decode/render, but normal gameplay constructs **level 0
@@ -31,19 +32,20 @@ gameplay pack = level index + 3.
 
 ## Next: finish the first-level flow
 
-- [ ] Implement type-20 intro trigger **UID 82** and cutscene **script 76**.
+- [x] Implement type-20 intro trigger **UID 82** and cutscene **script 76**.
   Its tracks control enemy 19, flying actors 83/84, player 186, prompt 267 and
   the camera; implement flags, positions, actor removal, anchored dialogue,
-  input lock/skip and return to ordinary play.
-- [ ] Implement type-49 camera controller **UID 63**, including its link to
-  **UID 202**, and controller **UID 167**. Check activation/release, linked-source
-  removal and falling-camera behavior at widths 240/569.
+  input lock/skip and return to ordinary play. Completed and verified in
+  [NATIVE_INTRO.md](NATIVE_INTRO.md).
 - [ ] Implement type-40 **UID 161 -> script 160**: the player-overlap trigger
   starts the track for enemy **205** and chandelier **34**. Add its flag/action/
   animation/position commands and completion cleanup; script 165 already runs.
 - [ ] Implement type-40 **UIDs 43 and 61**, which link chandeliers **3/34** to
   removal of prompts **187/59**. Placed prompt self-removal alone does not
   implement these linked conditions.
+- [ ] Implement type-49 camera controller **UID 63**, including its link to
+  **UID 202**, and controller **UID 167**. Check activation/release, linked-source
+  removal and falling-camera behavior at widths 240/569.
 - [ ] Implement type-20 exit **UID 173**: normal overlap enters completion state
   15, a defeated player cannot trigger it, and the closing-bars/acknowledge flow
   runs once rather than letting Kale walk into an inert exit.
@@ -128,8 +130,8 @@ gameplay pack = level index + 3.
 - Run default `python tools/rename_sod.py` after Java naming/patch/check changes.
 - Run Debug/Release builds, checks appropriate to each native change and
   `soul/port/build_dist.bat`; retain all data and screenshots outside git.
-- The prompt pass adds 704 original/reference/native rows, 451 data-free player
-  assertions and brings CTest to 86 tests. Full validation is recorded in
-  [NATIVE_PROMPTS.md](NATIVE_PROMPTS.md).
+- The intro pass adds 5460 native-comparable rows, brings player assertions to
+  466 and CTest to 89 tests, and verifies 48 playback/skip host runs at both
+  widths. Detailed evidence and limits are in [NATIVE_INTRO.md](NATIVE_INTRO.md).
 - [PORT_ROADMAP.md](PORT_ROADMAP.md) gives the native implementation order and
   concrete acceptance conditions; feature docs retain detailed evidence/limits.

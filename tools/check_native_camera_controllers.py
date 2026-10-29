@@ -12,9 +12,9 @@ def main():
     a=p.parse_args()
     expected=(ROOT/'soul/analysis/camera-controller-oracle.tsv').read_text().splitlines()
     actual=subprocess.check_output([str(a.exe),'--data',str(a.data),'--camera-controller-manifest'],text=True).splitlines()
-    require(len(expected)==1360 and len(actual)==len(expected),'Camera-controller oracle row count differs')
+    require(len(expected)==1368 and len(actual)==len(expected),'Camera-controller oracle row count differs')
     for i,(j,n) in enumerate(zip(expected,actual),1):require(j==n,f'Camera-controller row {i}:\nJava: {j}\nC++: {n}')
-    print('PASS: 1280 handler/camera rows plus 80 original world/order rows')
+    print('PASS: 1280 handler/camera rows plus 80 original world/order rows and eight eligibility rows')
     if not a.port_exe:return
     def run(width,fps,frames,game=False,interpolation=True):
         cmd=[str(a.port_exe),'--data',str(a.data),'--headless','--width',str(width),'--fps',str(fps),'--frames',str(frames)]

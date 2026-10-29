@@ -52,8 +52,9 @@ checkpoint or camera state advances from drawing.
 
 ## World and widescreen integration
 
-CombatWorld constructs controllers in placed-record order, uses ordinary strict
-radius-two eligibility with flag-16 precedence, and resolves source 202 from
+CombatWorld constructs controllers in placed-record order, uses strict
+radius-seven eligibility plus inclusive player-volume overlap, with flag-16
+precedence over flags 32/256, and resolves source 202 from
 stable enemy storage. The selected source remains available through hurt/death
 poses and respawn states; final native removal releases the controller on its
 next eligible handler. Native source liveness stands in for the tested original
@@ -85,7 +86,7 @@ complete first-level route or full runtime-equivalence claim.
 
 CameraControllerCheck runs original and generated classes in isolated loaders
 with the existing test ImageIO/RMS adapters, not a MIDP runtime. It produces
-1365 original/reference expectations and 1360 native rows:
+1373 original/reference expectations and 1368 native rows:
 
 - 1280 handler/active-camera rows cover both shipped records across sixteen
   scenarios, before and after selected camera advancement. Cases include
@@ -95,10 +96,14 @@ with the existing test ImageIO/RMS adapters, not a MIDP runtime. It produces
 - 80 original Game.W rows cover linked-first and falling-first record order,
   pause and actual source removal. They compare controller liveness/flags,
   global mode/target/current camera/easing/bounds and the full update UID queue.
+- Eight additional bytecode/native rows call actual Game.shouldUpdateActor,
+  covering the radius-six/seven boundary, distant overlap, forced-update
+  precedence, disabled/unspawned flags and points. These corrected the earlier
+  native radius-two queue assumption; strict handler activation is unchanged.
 - Twelve data-free assertions cover strict contact, cached-source lifecycle,
   pause/region gating, fall/release/easing and unsupported branches. Three CLI
-  guards reject invalid fixture combinations. The current baseline is 495
-  player assertions and 95 CTests.
+  guards reject invalid fixture combinations. The current baseline is 508
+  player assertions and 98 CTests.
 
 The host checker adds ten activation/release milestones at widths 240/569,
 24 active-controller render runs across 30/60/144 FPS and interpolation on/off,
@@ -109,8 +114,8 @@ state and per-width pixels agree across presentation settings.
 
 Validation on 2026-10-29: default regeneration exited 0 after compilation,
 ReferenceCheck's 4218 comparisons and all registered original/reference checks.
-Debug and Release passed all 95 CTests and 495 player assertions, plus the
-1360-row oracle and 58 camera host checks. Chandelier/prompt removal, passages,
+Debug and Release passed all 98 CTests and 508 player assertions, plus the
+1368-row oracle and 58 camera host checks. Chandelier/prompt removal, passages,
 ordered world dispatch, checkpoint/restart, cross-process Continue and intro
 playback/skip regressions passed. The rebuilt data-free distribution passed
 package validation; its asset tool matched the new camera oracle.
@@ -123,5 +128,6 @@ python tools/check_native_camera_controllers.py --exe soul/port/build/Debug/soul
 .\soul\port\build_dist.bat
 ```
 
-The next ordered task is exit 173/completion state 15. Full progression, later
+The subsequent [exit/completion pass](NATIVE_COMPLETION.md) implements exit 173
+and state 15. The next ordered task is finishLevel progression/save/advance. Full progression, later
 levels and the complete game remain unfinished.

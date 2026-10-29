@@ -26,6 +26,7 @@ public:
     bool alive=true;
     std::array<int,4> collision{};
     void write(std::ostream&)const;
+    bool eligible(const Player&)const;
 private:
     CameraSource source_;
     void remove(ControlledCamera&);

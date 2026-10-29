@@ -35,6 +35,7 @@ CombatWorld::CombatWorld(const BSprite& enemySprite,const BSprite& effectSprite,
             const auto has=[&](int uid,int type){return std::any_of(records.begin(),records.end(),[&](const auto& a){return a.parameters[1]==uid && a.parameters[0]==type;});};
             if(has(p[13],50) && has(p[16],21))promptRemovalTriggers.emplace_back(r);
         }
+        if(ExitTrigger::supported(r))exits.emplace_back(r);
         if(CameraController::supported(r))cameraControllers.emplace_back(r);
         if(LinkedAreaTrigger::supported(r))linkedAreaTriggers.emplace_back(r);
         if(p[0]==22) {
@@ -189,6 +190,7 @@ void CombatWorld::rebuildOrder(const std::vector<ActorRecord>& records) {
     order_.clear();
     for(const auto& r:records){
         const auto& p=r.parameters;
+        if(p[0]==20)for(std::size_t i=0;i<exits.size();++i)if(exits[i].uid==p[1])order_.push_back({ActorKind::ExitTrigger,i});
         if(p[0]==49)for(std::size_t i=0;i<cameraControllers.size();++i)if(cameraControllers[i].uid==p[1])order_.push_back({ActorKind::CameraController,i});
         if(p[0]==40)for(std::size_t i=0;i<promptRemovalTriggers.size();++i)if(promptRemovalTriggers[i].uid==p[1])order_.push_back({ActorKind::PromptRemovalTrigger,i});
         if(p[0]==40)for(std::size_t i=0;i<chandelierTriggers.size();++i)if(chandelierTriggers[i].uid==p[1])order_.push_back({ActorKind::ChandelierTrigger,i});
@@ -226,6 +228,7 @@ void CombatWorld::cacheBuckets() {
     for(auto& g:gates)g.bucket=std::abs(g.x-(cx+120))/120+std::abs(g.y-(cy+160))/160;
     for(auto& t:passages)t.bucket=std::abs(t.x-(cx+120))/120+std::abs(t.y-(cy+160))/160;
     for(auto& t:playerEnableTriggers)t.bucket=std::abs(t.x-(cx+120))/120+std::abs(t.y-(cy+160))/160;
+    for(auto& t:exits)t.bucket=std::abs(t.x-(cx+120))/120+std::abs(t.y-(cy+160))/160;
     for(auto& t:cameraControllers)t.bucket=std::abs(t.x-(cx+120))/120+std::abs(t.y-(cy+160))/160;
     for(auto& t:promptRemovalTriggers)t.bucket=std::abs(t.x-(cx+120))/120+std::abs(t.y-(cy+160))/160;
     for(auto& t:chandelierTriggers)t.bucket=std::abs(t.x-(cx+120))/120+std::abs(t.y-(cy+160))/160;
@@ -289,7 +292,8 @@ bool CombatWorld::eligible(const ActorSlot& slot) const {
     case ActorKind::RemovedEnemyTrigger:{const auto& t=removedEnemyTriggers[slot.index];if(!t.alive)return false;flags=t.flags;bucket=t.bucket;radius=7;break;}
     case ActorKind::Platform: {const auto& p=*platformIndex_[slot.index];flags=p.flags;bucket=p.bucket;break;}
     case ActorKind::Bridge: {const auto& b=*bridgeIndex_[slot.index];if(!b.alive)return false;flags=b.flags;bucket=b.bucket;radius=4;break;}
-    case ActorKind::CameraController:{const auto& c=cameraControllers[slot.index];if(!c.alive)return false;flags=c.flags;bucket=c.bucket;break;}
+    case ActorKind::ExitTrigger:{const auto& t=exits[slot.index];flags=t.flags;bucket=t.bucket;break;}
+    case ActorKind::CameraController:return cameraControllers[slot.index].eligible(player_);
     case ActorKind::PromptRemovalTrigger:{const auto& t=promptRemovalTriggers[slot.index];if(!t.alive)return false;flags=t.flags;bucket=t.bucket;radius=7;break;}
     case ActorKind::ChandelierTrigger:{const auto& t=chandelierTriggers[slot.index];if(!t.alive)return false;flags=t.flags;bucket=t.bucket;radius=7;break;}
     case ActorKind::IntroTrigger:{const auto& t=introTriggers[slot.index];if(!t.alive)return false;flags=t.flags;bucket=t.bucket;break;}
@@ -315,6 +319,7 @@ std::vector<int> CombatWorld::updateQueueUids() const {
     case ActorKind::Enemy:result.push_back(enemies[slot.index].uid);break;
     case ActorKind::Platform:result.push_back(platformIndex_[slot.index]->uid);break;
     case ActorKind::Bridge:result.push_back(bridgeIndex_[slot.index]->uid);break;
+    case ActorKind::ExitTrigger:result.push_back(exits[slot.index].uid);break;
     case ActorKind::CameraController:result.push_back(cameraControllers[slot.index].alive?cameraControllers[slot.index].uid:-999);break;
     case ActorKind::PromptRemovalTrigger:result.push_back(promptRemovalTriggers[slot.index].alive?promptRemovalTriggers[slot.index].uid:-999);break;
     case ActorKind::ChandelierTrigger:result.push_back(chandelierTriggers[slot.index].uid);break;
@@ -383,6 +388,7 @@ bool CombatWorld::finishPlayer(bool paused) {
     }
     for(auto& p:platforms)if(p.type==33 && player_.platform==&p.surface && player_.ceiling)p.vy=0;
     for(const auto& slot:updateQueue_) {
+        if(slot.kind==ActorKind::ExitTrigger){exits[slot.index].update(player_,completion,paused);continue;}
         if(slot.kind==ActorKind::CameraController){auto& c=cameraControllers[slot.index];
             c.update(player_,camera,[&](int uid)->CameraSource{for(auto& e:enemies)if(e.uid==uid && e.alive)return {&e.x,&e.y,&e.alive,[&e]{e.refreshBounds();}};return {};},regionChanged_,paused);
             if(!c.alive)for(std::size_t i=0;i<placedUids_.size();++i)if(placedUids_[i]==c.uid)placedRemoved_[i]=true;
@@ -506,7 +512,7 @@ void CombatWorld::advance() {
     for(auto& p:platforms)if(!(p.flags&1024) && ((p.flags&16) || (!(p.flags&(256|32)) && p.bucket<2) || ((p.type!=50 || p.bucket<=4) && overlap(p.type==50?p.limits:p.visual,view)))){p.refreshBounds();p.advanceAnimation();}
     effects.remove_if([](const auto& effect){return !effect.alive;});
     if(!intro || !intro->active())camera.advance(player_,maps_.width(),maps_.height());
-    cacheBuckets();++worldFrame_;
+    completion.entryFrame();cacheBuckets();++worldFrame_;
 }
 void CombatWorld::drawEnemies(Canvas& c,int cx,int cy) { for(auto& e:beamEmitters)e.draw(c,cx,cy); for(auto& e:enemies) e.draw(c,cx,cy);for(auto& e:flyingEnemies)e.draw(c,cx,cy); }
 void CombatWorld::drawPlatforms(Canvas& c,int cx,int cy) {

@@ -212,11 +212,14 @@ def main() -> None:
             run([javac, "--add-exports", "java.base/jdk.internal.org.objectweb.asm=ALL-UNNAMED",
                  "-cp", f"{harness}{sep}{classpath}", "-d", harness,
                  ROOT / "tools/reference_checks/CrystalCheck.java",
+                 ROOT / "tools/reference_checks/CompletionCheck.java",
                  ROOT / "tools/reference_checks/AbilityModalCheck.java",
                  ROOT / "tools/reference_checks/FireMagicCheck.java",
                  ROOT / "tools/reference_checks/IceMagicCheck.java"])
             run([java, "--add-exports", "java.base/jdk.internal.org.objectweb.asm=ALL-UNNAMED",
                  "-Djava.awt.headless=true", "-cp", harness, "CrystalCheck", EXTRACTED, build, STUBS, tmp / "crystal"])
+            run([java, "--add-exports", "java.base/jdk.internal.org.objectweb.asm=ALL-UNNAMED",
+                 "-Djava.awt.headless=true", "-cp", harness, "CompletionCheck", EXTRACTED, build, STUBS, tmp / "completion"])
             run([java, "--add-exports", "java.base/jdk.internal.org.objectweb.asm=ALL-UNNAMED",
                  "-Djava.awt.headless=true", "-cp", harness, "AbilityModalCheck", EXTRACTED, build, STUBS, tmp / "ability-modal"])
             run([java, "--add-exports", "java.base/jdk.internal.org.objectweb.asm=ALL-UNNAMED",

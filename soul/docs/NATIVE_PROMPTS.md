@@ -92,7 +92,8 @@ This pass added twelve data-free assertions and three CLI guards (451 player
 assertions and 86 CTests at that point). Save codec tests additionally round-trip high prompt UIDs.
 The full game remains unfinished. Intro script 76/trigger 82, script 160/trigger
 161, linked prompt-removal triggers 43/61 and [cameras 63/167](NATIVE_CAMERA_CONTROLLERS.md)
-are now complete. Exit 173 remains; see ROADMAP.md and PORT_ROADMAP.md for current checklists.
+are now complete. [Exit 173/completion UI](NATIVE_COMPLETION.md) is also implemented;
+progression remains. See ROADMAP.md and PORT_ROADMAP.md for current checklists.
 
 
 Validation on 2026-10-29: default Java regeneration passed compilation with zero

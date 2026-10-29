@@ -1011,6 +1011,22 @@ int main() {
         cr.parameters[10]=4;rejects([&]{soul::CameraController unsupported(cr);},"camera rejects unported forced-scroll modes");
         cr.parameters[10]=1;cr.parameters[12]=8;require(!soul::CameraController::supported(cr),"camera rejects unsupported constraint masks");
         }
+        {
+        soul::ActorRecord er{};er.count=15;er.parameters={20,173,90,190,4,8,0,0,23,23,0,1,-1,0,0};soul::ExitTrigger exit(er);soul::LevelCompletion complete;soul::Player player(sprite,world,record());
+        player.animation=9;require(!exit.update(player,complete),"death pose cannot activate exit");player.animation=0;
+        player.collision={91,191,91,191};require(!exit.update(player,complete),"point rectangle cannot activate exit");
+        player.collision={80,190,90,200};require(!exit.update(player,complete,true),"pause defers inclusive exit contact");
+        require(exit.update(player,complete) && complete.state==15 && complete.bars==1 && complete.target==160,"inclusive exit edge starts closing bars");
+        require(!exit.update(player,complete) && complete.starts==1,"active completion cannot reenter through the same exit");
+        complete.entryFrame();require(complete.delay==1 && complete.bars==1,"entry gameplay frame consumes the original bar delay");complete.entryFrame();require(complete.delay==1,"entry frame cannot consume delay twice");
+        require(!complete.update(65536) && complete.state==15,"early confirmation does not skip closing bars");
+        while(!complete.ready() && complete.ticks<20)complete.update(0);
+        require(complete.ready() && complete.ticks==10 && complete.bars==160,"bars meet on the original simulation tick");
+        require(!complete.update(32768) && !complete.update(131072),"down/cancel are not completion acknowledgements");
+        require(complete.update(65536) && complete.state==19 && complete.bars==0 && complete.target==0 && complete.acknowledgements==1,"confirmation releases bars and emits one selection handoff");
+        require(!complete.update(65536) && !exit.update(player,complete) && complete.acknowledgements==1,"acknowledged completion cannot repeat or reenter");
+        er.parameters[4]=8;rejects([&]{soul::ExitTrigger unsupported(er);},"exit loader rejects cutscene trigger variants");
+        }
         std::cout << "PASS: " << checks << " native player/input/pickup/container/reward assertions\n"; return 0;
     } catch(const std::exception& e) { std::cerr << e.what() << '\n'; return 1; }
 }

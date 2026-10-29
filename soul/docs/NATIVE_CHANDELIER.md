@@ -97,4 +97,5 @@ gameplay captures were inspected. Oracles, captures and binaries remain ignored.
 This pass completes script 160/trigger 161. The subsequent
 [linked prompt-removal pass](NATIVE_PROMPT_REMOVAL.md) completes triggers 43/61.
 [Camera controllers 63/167](NATIVE_CAMERA_CONTROLLERS.md) are also implemented.
-Exit 173 and later-level scripts remain on the roadmaps.
+[Exit 173/completion UI](NATIVE_COMPLETION.md) is implemented. Progression and
+later-level scripts remain on the roadmaps.

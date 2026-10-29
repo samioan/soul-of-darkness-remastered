@@ -1,6 +1,6 @@
 # Windows port implementation roadmap
 
-Updated 2026-10-29 after the first-level camera-controller pass. This file lists the
+Updated 2026-10-29 after the first-level exit/completion UI pass. This file lists the
 remaining native work and acceptance conditions. [ROADMAP.md](ROADMAP.md) is
 the overall project checklist. [PORT_ROADMAP_HISTORY.md](PORT_ROADMAP_HISTORY.md)
 preserves the old notes; their claims that gameplay, platforms or Continue are
@@ -30,9 +30,12 @@ Level indices are zero-based; level 0 is the first level and uses pack 3.
 - Linked triggers 43/61 remove prompts 187/59 on chandelier overlap, with lazy
   source/target lookup and ordered removal. See NATIVE_PROMPT_REMOVAL.md.
 - Camera controllers 63/167 now own linked-enemy framing, removal/release and
-  falling-camera tracking; 1360 original-bytecode/native rows and 58 host checks
+  falling-camera tracking; 1368 original-bytecode/native rows and 58 host checks
   verify the supported modes. See NATIVE_CAMERA_CONTROLLERS.md.
-- Latest data-free suite: 95 CTests and 495 player assertions. Chandelier fixtures
+- Exit 173/state 15 now runs inclusive contact, death-pose rejection, closing
+  bars, English completion text and a one-time selection handoff. Progression
+  persistence and advancement remain pending. See NATIVE_COMPLETION.md.
+- Latest data-free suite: 98 CTests and 508 player assertions. Chandelier fixtures
   compare 3000 bytecode rows and 24 host runs; intro fixtures
   compare 5460 original-bytecode rows and 48 playback/skip host runs. Linked
   prompt removal adds 352 handler/world rows against original bytecode.
@@ -62,9 +65,11 @@ native fixtures do not establish a complete native play-through.
    controller 167's falling-camera branch. Adapt targets/clamps to 240/569
    explicitly; never replace every 240/120 constant globally. Implemented and
    verified; see [NATIVE_CAMERA_CONTROLLERS.md](NATIVE_CAMERA_CONTROLLERS.md).
-5. [ ] **Exit trigger 173 and completion state 15.** Compare inclusive contact,
+5. [x] **Exit trigger 173 and completion state 15.** Compare inclusive contact,
    defeated-player rejection, one-time entry, closing bars, completion message
-   and acknowledge input against the original flow.
+   and acknowledge input against the original flow. Implemented and verified;
+   see [NATIVE_COMPLETION.md](NATIVE_COMPLETION.md). Acknowledgement currently
+   returns to the level-0 selection card; task 6 owns progression/save/advance.
 6. [ ] **Complete/unlock/save transition.** Port `finishLevel` effects, including
    the completion flag, maximum unlocked level, state unload/reset and next-level
    selection. Extend desktop saves with version migration and test restart vs

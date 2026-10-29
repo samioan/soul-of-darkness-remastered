@@ -32,6 +32,11 @@ CameraController::CameraController(const ActorRecord& r){
     uid=p[1];x=static_cast<std::uint16_t>(p[2]);y=static_cast<std::uint16_t>(p[3]);flags=p[5];mode=p[10];sourceUid=p[11];mask=p[12];
     collision={x+p[6],y+p[7],x+p[6]+p[8],y+p[7]+p[9]};
 }
+bool CameraController::eligible(const Player& p)const{
+    if(!alive)return false;if(flags&16)return true;if(flags&(256|32))return false;
+    const auto& a=p.collision;const auto& b=collision;
+    return bucket<7 || ((a[0]!=a[2] || a[1]!=a[3]) && a[0]<=b[2] && a[2]>=b[0] && a[1]<=b[3] && a[3]>=b[1]);
+}
 void CameraController::remove(ControlledCamera& c){source_={};sourceUid=-1;alive=false;collision={};c.active=false;c.uid=-1;}
 void CameraController::update(Player& p,ControlledCamera& c,const std::function<CameraSource(int)>& resolve,bool changed,bool paused){
     if(!alive || paused || (flags&(1024|16384)) || changed)return;

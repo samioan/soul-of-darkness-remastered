@@ -44,4 +44,9 @@ void emitCameraControllerManifest(const std::filesystem::path& root){
         }
     }
 
+    for(int i=0;i<8;++i){const int flags[]{8,8,8,40,56,264,280,8},bucket[]{6,7,30,0,30,0,30,30};soul::CameraController c(record(63));c.flags=flags[i];c.bucket=bucket[i];soul::Player p(ps,scene.maps(),record(186));
+        p.collision=i<2?std::array<int,4>{0,0,5,5}:i==7?std::array<int,4>{1591,322,1591,322}:std::array<int,4>{1590,321,1595,325};
+        std::cout<<"E\t"<<i<<'\t'<<std::boolalpha<<c.eligible(p)<<'\n';
+    }
+
 }

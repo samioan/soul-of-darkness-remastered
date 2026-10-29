@@ -99,7 +99,10 @@ The first level now loads all nine placed keyboard tutorial hints; see
 remove their two tutorials through the original overlap conditions; see
 [prompt-removal links](soul/docs/NATIVE_PROMPT_REMOVAL.md). The two first-level
 camera controllers now frame Kale with their linked enemy or track his fall;
-see [camera controllers](soul/docs/NATIVE_CAMERA_CONTROLLERS.md).
+see [camera controllers](soul/docs/NATIVE_CAMERA_CONTROLLERS.md). The first-level
+exit now closes the bars and shows LEVEL COMPLETE; Enter/E/J returns to the
+current selection card. Completion saves/unlocks and next-level advancement
+remain pending; see [exit/completion](soul/docs/NATIVE_COMPLETION.md).
 The first level now loads all six timed/sweeping beam hazards, with tile-clipped
 endpoints, damage and knockback. See [native beams](soul/docs/NATIVE_BEAMS.md).
 All six first-level checkpoints now work and autosave to the desktop user slot. R or

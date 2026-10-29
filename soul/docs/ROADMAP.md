@@ -1,6 +1,6 @@
 # Soul of Darkness roadmap
 
-Updated 2026-10-29 after the first-level camera-controller pass. This is the current
+Updated 2026-10-29 after the first-level exit/completion UI pass. This is the current
 remaining-work list. Historical implementation notes are in
 [ROADMAP_HISTORY.md](ROADMAP_HISTORY.md); their old pending/next descriptions
 are superseded. Update the lists below when work lands instead of appending
@@ -22,7 +22,9 @@ another conflicting progress narrative.
   camera control, skip and verified return to gameplay. Trigger 161/script 160
   now runs the enemy/chandelier sequence during ordinary play. Linked triggers
   43/61 remove their chandelier tutorial prompts. Camera controllers 63/167 now
-  provide linked-enemy framing and falling-camera tracking. See the NATIVE_*.md docs.
+  provide linked-enemy framing and falling-camera tracking. Exit 173 now enters
+  closing bars/completion and acknowledges to the current selection card.
+  Completion progression is still pending; see the NATIVE_*.md docs.
 - Six first-level checkpoints support R/menu Restart and desktop autosave/Continue.
   The desktop format covers the supported native subset; it is not original RMS.
 - All nine gameplay maps decode/render, but normal gameplay constructs **level 0
@@ -52,9 +54,11 @@ gameplay pack = level index + 3.
   removal and falling-camera behavior at widths 240/569. Completed with
   handler, active-camera and ordered-world comparisons; see
   [NATIVE_CAMERA_CONTROLLERS.md](NATIVE_CAMERA_CONTROLLERS.md).
-- [ ] Implement type-20 exit **UID 173**: normal overlap enters completion state
+- [x] Implement type-20 exit **UID 173**: normal overlap enters completion state
   15, a defeated player cannot trigger it, and the closing-bars/acknowledge flow
-  runs once rather than letting Kale walk into an inert exit.
+  runs once. Completed with original exit/bar/input checks and a native
+  selection handoff; see [NATIVE_COMPLETION.md](NATIVE_COMPLETION.md).
+  `finishLevel` progression/save/next-level ownership remains the next task.
 - [ ] Implement `finishLevel`: update completion/max-unlock progression, persist
   it, unload the old world and select the next level. Add original-bytecode
   checks for the completion/save/Continue branch.
@@ -117,7 +121,7 @@ gameplay pack = level index + 3.
 - [ ] Implement the animated level-selection map, unlocked-level selection and
   the selected-level stats/checkpoint-position decision.
 - [ ] Add weapon/magic upgrade screens and their native rank/progression ownership.
-- [ ] Finish Help/settings/pause/game-over/completion/ending menu flows and expose
+- [ ] Finish Help/settings/pause/game-over and remaining completion/ending menu flows and expose
   supported display/input options through the interface.
 - [ ] Translate remaining dialogue/tutorial/menu resources that become visible;
   preserve credited names. The supplied resource set contains Czech text.
@@ -138,9 +142,11 @@ gameplay pack = level index + 3.
   `soul/port/build_dist.bat`; retain all data and screenshots outside git.
 - Linked prompt removal adds 352 original-bytecode/native rows and verified
   removal in the chandelier host fixtures; see [NATIVE_PROMPT_REMOVAL.md](NATIVE_PROMPT_REMOVAL.md).
-- Camera controllers add 1360 handler/camera/world rows and 58 controlled host
+- Camera controllers add 1368 handler/camera/world rows and 58 controlled host
   checks at 240/569; see [NATIVE_CAMERA_CONTROLLERS.md](NATIVE_CAMERA_CONTROLLERS.md).
-- Current baseline: 495 player assertions and 95 CTests. Script 160 adds 3000
+- Exit/completion adds 1008 original-bytecode/native rows and 58 host checks;
+  see [NATIVE_COMPLETION.md](NATIVE_COMPLETION.md).
+- Current baseline: 508 player assertions and 98 CTests. Script 160 adds 3000
   original-bytecode rows and 24 host runs at both widths; see
   [NATIVE_CHANDELIER.md](NATIVE_CHANDELIER.md). The intro retains its 5460 rows
   and 48 playback/skip host runs; see [NATIVE_INTRO.md](NATIVE_INTRO.md).

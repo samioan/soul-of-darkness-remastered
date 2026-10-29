@@ -81,6 +81,12 @@ public final class CameraControllerCheck {
                 }
             }
             worlds(a,b,out);
+            for(int i=0;i<8;++i){int flags=new int[]{8,8,8,40,56,264,280,8}[i],bucket=new int[]{6,7,30,0,30,0,30,30}[i];boolean inside=i>=2,point=i==7;
+                String expected=null;
+                for(var c:List.of(a,b)){c.clearWorld();Object p=c.player(10,10);Object t=c.create();short[] r=record(assets,63);c.call(t,"a","initializeFromRecord",new Class<?>[]{short[].class,boolean.class,int.class,int.class},Arrays.copyOf(r,20),true,0,r.length);c.set(t,"c","flags",flags);c.set(t,"ai","cameraDistanceBucket",bucket);c.set(p,"j","collisionBounds",inside?(point?new int[]{1591,322,1591,322}:new int[]{1590,321,1595,325}):new int[]{0,0,5,5});
+                    var method=c.game.getDeclaredMethod(c.renamed?"shouldUpdateActor":"h",c.actor);method.setAccessible(true);String value="E\t"+i+"\t"+method.invoke(null,t)+"\n";if(c==a)expected=value;else ActorCheck.equal(expected,value,"camera queue eligibility");
+                }out.print(expected);
+            }
         }
         System.out.println("camera controllers: "+ActorCheck.comparisons+" original/reference expectations; "+file);
     }

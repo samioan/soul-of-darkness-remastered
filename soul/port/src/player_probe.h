@@ -70,3 +70,5 @@ void emitChandelierManifest(const std::filesystem::path&);
 void emitPromptRemovalManifest(const std::filesystem::path&);
 
 void emitCameraControllerManifest(const std::filesystem::path&);
+
+void emitCompletionManifest(const std::filesystem::path&);

@@ -74,3 +74,5 @@ void emitCameraControllerManifest(const std::filesystem::path&);
 void emitCompletionManifest(const std::filesystem::path&);
 
 void emitFinishManifest(const std::filesystem::path&);
+
+void emitSelectedLevelManifest(const std::filesystem::path&);

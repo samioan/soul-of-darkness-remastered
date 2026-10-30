@@ -13,7 +13,7 @@ public:
 struct RemovedCheckpointActor {int uid,flags;};
 // First-level, in-session semantic snapshot. This is not the original RMS record.
 struct CheckpointSnapshot {
-    int uid=-1,x=0,y=0,activeWeapon=0;
+    int uid=-1,x=0,y=0,activeWeapon=0,level=0;
     bool facingLeft=false;
     PlayerMeters meters;
     std::vector<RemovedCheckpointActor> removed;

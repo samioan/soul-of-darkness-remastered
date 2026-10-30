@@ -27,6 +27,7 @@
 #include "gameplay_view.h"
 #include "ability_pickup.h"
 #include "save_game.h"
+#include "level_data.h"
 #include <shlobj.h>
 
 namespace {
@@ -62,7 +63,8 @@ struct PreviewOptions {
     bool requested = false, extra = false, font = false;
     bool beamScript=false,promptScript=false,introScript=false,chandelierScript=false,cameraScript=false,exitScript=false;
     int pack = 0, resource = 0, frame = -1, animation = -1, palette = 0, flip = 0;
-    int level=-1,cameraX=0,cameraY=0;
+    bool selectedLevelExplicit=false;
+    int level=-1,gameplayLevel=0,cameraX=0,cameraY=0;
     bool cameraRequested=false;
     bool movement=false,movementScript=false,containerScript=false,meleeScript=false,combatScript=false,defeatScript=false,platformScript=false,swingScript=false,bridgeScript=false,regionScript=false,gateScript=false,gateTriggerScript=false,passageScript=false,abilityScript=false,activationScript=false,secondWaveScript=false,arenaScript=false,fireScript=false,iceScript=false,checkpointScript=false;
     std::filesystem::path data;
@@ -113,40 +115,39 @@ void fill(soul::Canvas& canvas,int x,int y,int width,int height,std::uint32_t co
 }
 extern std::array<bool,256> movementKeys;
 struct MovementPreview {
-    soul::TileScene scene; soul::BSprite sprite; std::vector<soul::ActorRecord> records; soul::Player player;
-    soul::BSprite pickupSprite,containerSprite,promptSprite; std::vector<soul::Pickup> pickups;
-    soul::BSprite effectSprite,weaponSprite; std::list<soul::CollectionEffect> effects; int effectsSpawned=0;
+    soul::LevelData data;
+    soul::TileScene& scene; const soul::BSprite& sprite; std::vector<soul::ActorRecord>& records; soul::Player player;
+    const soul::BSprite &pickupSprite,&containerSprite,&promptSprite; std::vector<soul::Pickup> pickups;
+    const soul::BSprite &effectSprite,&weaponSprite; std::list<soul::CollectionEffect> effects; int effectsSpawned=0;
     std::unique_ptr<soul::MeleeWeapon> weapon;
     int meleeAttacks=0,meleePoses=0,iceMeleeAttacks=0,iceMeleePoses=0,iceFixtureStage=0,iceFixtureTicks=0;
     int iceShotStage=0,iceShotTicks=0,iceLandings=0,iceDetachments=0,iceRidingTicks=0,iceRideY=-1;bool wasIceRiding=false;
     int regionPickupsRemoved=0,regionEffectsRemoved=0;
-    soul::BSprite enemySprite,flyingSprite,platformSprite,bridgeSprite,beamSprite; std::unique_ptr<soul::CombatWorld> combat;
+    const soul::BSprite &enemySprite,&flyingSprite,&platformSprite,&bridgeSprite,&beamSprite; std::unique_ptr<soul::CombatWorld> combat;
     std::vector<soul::Container> containers; soul::PlayerMeters meters; int placedPickups=0,openedContainers=0;
-    soul::BSprite abilitySprite; std::vector<soul::AbilityPickup> abilities; soul::AbilityInteraction abilityUi; int abilityUnlocks=0,abilityCompleted=0,regionAbilitiesRemoved=0;
-    soul::BSprite fontSprite; soul::BitmapFont font; soul::SpriteRenderer crystalRenderer;
+    const soul::BSprite& abilitySprite; std::vector<soul::AbilityPickup> abilities; soul::AbilityInteraction abilityUi; int abilityUnlocks=0,abilityCompleted=0,regionAbilitiesRemoved=0;
+    const soul::BSprite& fontSprite; soul::BitmapFont font; soul::SpriteRenderer crystalRenderer;
     soul::CrystalReward reward; int beamTicks=0,rewardsCompleted=0,resumeTicks=0; std::size_t crystalIndex=0;
     bool restartRequested=false;int introControlTicks=0;
     soul::MovementInput input; int ticks=0,cameraX=0,cameraY=0,camera63Ticks=0,camera167Ticks=0,cameraFixtureStage=0;
-    MovementPreview(soul::TileScene world,soul::BSprite image,std::vector<soul::ActorRecord> rows,soul::BSprite items,soul::BSprite chests,soul::BSprite prompts,soul::BSprite text,soul::BSprite effectImage,soul::BSprite sword,soul::BSprite enemies,soul::BSprite platformImage,soul::BSprite bridgeImage,const std::vector<int>& stats,const std::vector<int>& flyingStats,const std::vector<int>& beamStats)
-        : scene(std::move(world)),sprite(std::move(image)),records(std::move(rows)),player(sprite,scene.maps(),soul::playerRecord(records)),pickupSprite(std::move(items)),containerSprite(std::move(chests)),promptSprite(std::move(prompts)),fontSprite(std::move(text)),font(fontSprite),crystalRenderer(pickupSprite) {
-        effectSprite=std::move(effectImage);
-        weaponSprite=std::move(sword); enemySprite=std::move(enemies); platformSprite=std::move(platformImage); bridgeSprite=std::move(bridgeImage);
+    MovementPreview(const MovementPreview&)=delete;MovementPreview& operator=(const MovementPreview&)=delete;
+    MovementPreview(MovementPreview&&)=delete;MovementPreview& operator=(MovementPreview&&)=delete;
+    explicit MovementPreview(soul::LevelData loaded)
+        :data(std::move(loaded)),scene(data.scene),sprite(data.sprite(data.level.playerSprite)),records(data.records),player(sprite,scene.maps(),soul::playerRecord(records),data.level.index),
+        pickupSprite(data.sprite(data.level.pickupSprite)),containerSprite(data.sprite(data.level.containerSprite)),promptSprite(data.sprite(data.level.promptSprite)),effectSprite(data.sprite(data.level.effectSprite)),weaponSprite(data.sprite(data.level.weaponSprite)),
+        enemySprite(data.sprite(data.level.enemySprite)),flyingSprite(data.sprite(data.level.flyingSprite)),platformSprite(data.sprite(data.level.platformSprite)),bridgeSprite(data.sprite(data.level.bridgeSprite)),beamSprite(data.sprite(data.level.beamSprite)),abilitySprite(data.sprite(data.level.abilitySprite)),fontSprite(data.font),font(fontSprite),crystalRenderer(pickupSprite){
+        const auto& stats=data.stats(0);const auto& flyingStats=data.stats(2);const auto& beamStats=data.stats(9);
         combat=std::make_unique<soul::CombatWorld>(enemySprite,effectSprite,scene.maps(),player,meters,records,stats);
-        const auto flyingPack=soul::ResourcePack::numeric(soul::readAssetFile(previewOptions.data/"2"));flyingSprite=soul::BSprite::parse(flyingPack.resource(3).value());combat->loadFlyingEnemies(flyingSprite,records,flyingStats);
-        const auto trig=soul::loadPlatformTrig(previewOptions.data);
+        combat->loadFlyingEnemies(flyingSprite,records,flyingStats);
+        const auto& trig=data.trig;
         combat->loadFireMagic(trig);
         if(gamePromptScript)for(auto& r:records)if(r.parameters[0]==21 && r.parameters[1]==8){r.parameters[2]=440;r.parameters[3]=200;}
         combat->loadPrompts(promptSprite,records);
-        beamSprite=soul::BSprite::parse(flyingPack.resource(10).value());
         combat->loadBeamEmitters(beamSprite,records,beamStats,trig);
         combat->loadPlatforms(platformSprite,records,&trig,stats.at(1));
         combat->loadBridges(bridgeSprite,scene.mutableMaps(),records);
         combat->loadGates(platformSprite,scene.mutableMaps(),records);
-        const auto abilityPack=soul::ResourcePack::numeric(soul::readAssetFile(previewOptions.data/"2"));
-        abilitySprite=soul::BSprite::parse(abilityPack.resource(27).value());
-        const auto levelPack=soul::ResourcePack::numeric(soul::readAssetFile(previewOptions.data/"3"));
-        combat->loadGateScripts(levelPack.resource(1).value());
-        combat->loadChandelierScript(levelPack.resource(1).value(),records);
+        if(data.level.openingScripts()){combat->loadGateScripts(soul::ByteView(data.scriptBytes));combat->loadChandelierScript(soul::ByteView(data.scriptBytes),records);}
         for(const auto& r:records) {
             if(r.parameters[0]==35) pickups.emplace_back(pickupSprite,r);
             if(r.parameters[0]==52) containers.emplace_back(containerSprite,promptSprite,scene.maps(),r);
@@ -156,7 +157,7 @@ struct MovementPreview {
             }
         }
         if(previewOptions.iceScript || gameIceScript){
-            const auto pack=soul::ResourcePack::numeric(soul::readAssetFile(previewOptions.data/"4"));const auto placements=soul::actorRecords(pack.resource(0).value());
+            const auto placements=soul::loadLevelRecords(previewOptions.data,soul::LevelDescriptor::get(1)); // Explicit cross-level ice analysis fixture.
             const auto chest=std::find_if(placements.begin(),placements.end(),[](const auto& r){return r.parameters[0]==52 && r.parameters[1]==59 && r.parameters[6]==-5;});
             if(chest==placements.end())throw soul::FormatError("Missing original second-level ice chest");if(std::any_of(records.begin(),records.end(),[](const auto& r){return r.parameters[1]==1000;}))throw soul::FormatError("Ice fixture UID collides with a placed actor");auto fixture=*chest;fixture.parameters[1]=1000;fixture.parameters[2]=340;fixture.parameters[3]=262;fixture.parameters[5]&=~(32|128);containers.emplace_back(containerSprite,promptSprite,scene.maps(),fixture);
             player.x=340;player.y=259;player.fixedX=player.x*256;player.fixedY=player.y*256;player.refreshBounds();meters.magicUnlocked=true;meters.magic=iceProjectileFixture?60:30;combat->damage.invulnerability=60000;
@@ -229,9 +230,12 @@ struct MovementPreview {
             for(auto& p:combat->platforms)p.flags|=16384;for(auto& e:combat->beamEmitters)e.flags|=16384;
         }
         const bool controlled=previewOptions.exitScript || gameExitScript || previewOptions.cameraScript || gameCameraScript || previewOptions.chandelierScript || gameChandelierScript || previewOptions.movementScript || previewOptions.containerScript || previewOptions.meleeScript || previewOptions.combatScript || previewOptions.defeatScript || previewOptions.platformScript || previewOptions.swingScript || previewOptions.bridgeScript || previewOptions.regionScript || previewOptions.gateScript || previewOptions.gateTriggerScript || previewOptions.passageScript || previewOptions.abilityScript || previewOptions.activationScript || previewOptions.secondWaveScript || previewOptions.arenaScript || previewOptions.fireScript || previewOptions.iceScript || previewOptions.checkpointScript || previewOptions.beamScript || previewOptions.promptScript || gameCheckpointScript || gameBeamScript || gamePromptScript || gamePassageScript || gameAbilityScript || gameActivationScript || gameSecondWaveScript || gameArenaScript || gameFireScript || gameIceScript;
-        if(previewOptions.introScript || gameIntroScript || (frontend && !controlled))combat->loadIntro(levelPack.resource(1).value(),records);
+        if(data.level.openingScripts() && (previewOptions.introScript || gameIntroScript || (frontend && !controlled)))combat->loadIntro(soul::ByteView(data.scriptBytes),records);
     }
+    ~MovementPreview(){if(combat)combat->detach();}
     void restoreCheckpoint(const soul::CheckpointSnapshot& saved){
+        require(saved.level==data.level.index,"Checkpoint selected level differs from world");
+        if(saved.uid>=0)require(std::find(data.checkpointUids.begin(),data.checkpointUids.end(),saved.uid)!=data.checkpointUids.end(),"Checkpoint UID is not in the selected level");
         saved.restore(player,meters);
         const auto skips=[&](int uid){const auto r=std::find_if(records.begin(),records.end(),[&](const auto& row){return row.parameters[1]==uid;});return r!=records.end() && saved.skips(*r);};
         for(auto& p:pickups)if(skips(p.uid))p.alive=false;
@@ -707,14 +711,14 @@ void update() {
                 frontend->enter(8);
             }
             else{
-                require(frontend->selectedLevel==0,"Selected chapter is not playable");
+                require(soul::nativeLevelPlayable(frontend->selectedLevel),"Selected chapter is not playable");
                 const auto retained=progress;
                 sessionCheckpoint.reset();checkpointActivations=checkpointRestarts=checkpointMenuRestarts=checkpointFixtureStage=0;movementKeys.fill(false);movementPreview.reset();loadPreview();
                 if(retained.maxUnlockedLevel>0){
-                    auto spawn=retained.forContinue();spawn.uid=-1;spawn.x=movementPreview->player.x;spawn.y=movementPreview->player.y;spawn.facingLeft=false;
+                    auto spawn=retained.forContinue();spawn.level=movementPreview->data.level.index;spawn.uid=-1;spawn.x=movementPreview->player.x;spawn.y=movementPreview->player.y;spawn.facingLeft=false;
                     movementPreview->restoreCheckpoint(spawn);movementPreview->meters.magic=spawn.meters.maxMagic;
                 }
-                progress.level=0;progress.levelCompleted=false;frontend->enter(8);
+                progress.level=movementPreview->data.level.index;progress.levelCompleted=false;frontend->enter(8);
             }
         }
         if(frontend->state!=8 && frontend->state!=15)return;
@@ -728,7 +732,7 @@ void update() {
         if(movementPreview->combat->completion.active() && frontend && frontend->state!=15)frontend->enter(15);
         if(movementPreview->combat->completion.state==19 && frontend && frontend->state==15){
             soul::GameSave completed(sessionCheckpoint.value_or(soul::CheckpointSnapshot{}));
-            completed.level=0;completed.maxUnlockedLevel=progress.maxUnlockedLevel;completed.meters=movementPreview->meters;completed.activeWeapon=movementPreview->player.activeWeapon;
+            completed.level=movementPreview->data.level.index;completed.maxUnlockedLevel=progress.maxUnlockedLevel;completed.meters=movementPreview->meters;completed.activeWeapon=movementPreview->player.activeWeapon;
             completed.removed=movementPreview->combat->removedCheckpointActors();
             for(const auto& p:movementPreview->pickups)if(!p.alive && p.uid>=0)completed.removed.push_back({p.uid,p.flags});
             for(const auto& c:movementPreview->containers)if(!c.alive)completed.removed.push_back({c.uid,c.flags});
@@ -917,7 +921,10 @@ void require(bool result, const char* message) {
     if (!result) throw std::runtime_error(message);
 }
 void restartGameplay(){
-    const auto saved=sessionCheckpoint;movementKeys.fill(false);movementPreview.reset();restoringCheckpoint=bool(saved);
+    const auto saved=sessionCheckpoint;
+    const int selected=saved?saved->level:(movementPreview?movementPreview->data.level.index:previewOptions.gameplayLevel);
+    if(frontend)frontend->selectedLevel=selected;else previewOptions.gameplayLevel=selected;
+    movementKeys.fill(false);movementPreview.reset();restoringCheckpoint=bool(saved);
     try{loadPreview();restoringCheckpoint=false;}catch(...){restoringCheckpoint=false;throw;}
     if(saved && movementPreview){movementPreview->restoreCheckpoint(*saved);++checkpointRestarts;}
     if(frontend)frontend->enter(8);
@@ -953,16 +960,9 @@ void loadPreview() {
         require(!previewOptions.cameraRequested,"Movement prototype uses its own following camera");
         require(!previewOptions.data.empty(),"--movement-preview requires --data EXTRACTED_DIRECTORY");
         require(previewOptions.frame<0 && previewOptions.animation<0 && previewOptions.palette==0 && previewOptions.flip==0,"Movement prototype does not use sprite selectors");
-        auto world=soul::TileScene::load(previewOptions.data,0);
-        const auto pack=soul::ResourcePack::numeric(soul::readAssetFile(previewOptions.data/"3"));
-        auto records=soul::actorRecords(pack.resource(0).value());
-        const auto sprites=soul::ResourcePack::numeric(soul::readAssetFile(previewOptions.data/"2"));
-        const auto textPack=soul::ResourcePack::numeric(soul::readAssetFile(previewOptions.data/"1"));
-        const auto statsPack=soul::ResourcePack::numeric(soul::readAssetFile(previewOptions.data/"18"));
-        soul::BinaryReader statsReader(statsPack.resource(0).value());
-        const int tableCount=statsReader.i32be(); require(tableCount==20,"Invalid stat table count"); std::vector<int> enemyStats,flyingStats,beamStats;
-        for(int table=0;table<tableCount;++table) { const int count=statsReader.i32be(); require(count>=0 && count<10000,"Invalid stat row"); for(int i=0;i<count;++i) { const int value=statsReader.i32be(); if(table==0) enemyStats.push_back(value);if(table==2)flyingStats.push_back(value);if(table==9)beamStats.push_back(value); } } statsReader.done();
-        movementPreview=std::make_unique<MovementPreview>(std::move(world),soul::BSprite::parse(sprites.resource(0).value()),std::move(records),soul::BSprite::parse(sprites.resource(33).value()),soul::BSprite::parse(sprites.resource(34).value()),soul::BSprite::parse(sprites.resource(18).value()),soul::BSprite::parse(textPack.resource(0).value()),soul::BSprite::parse(sprites.resource(1).value()),soul::BSprite::parse(sprites.resource(25).value()),soul::BSprite::parse(sprites.resource(2).value()),soul::BSprite::parse(sprites.resource(28).value()),soul::BSprite::parse(sprites.resource(36).value()),enemyStats,flyingStats,beamStats);
+        const int selected=frontend?frontend->selectedLevel:previewOptions.gameplayLevel;
+        require(soul::nativeLevelPlayable(selected),"Selected chapter is not playable");
+        movementPreview=std::make_unique<MovementPreview>(soul::LevelData::load(previewOptions.data,selected));
         return;
     }
     if (previewOptions.level>=0) {
@@ -1063,6 +1063,7 @@ int main(int argc, char** argv) {
             if (arg == "--self-test") { selfTest(); return 0; }
             else if (arg == "--headless") headless = true;
             else if (arg == "--game") gameMode=true;
+            else if (arg == "--movement-level") {previewOptions.gameplayLevel=std::stoi(next());previewOptions.selectedLevelExplicit=true;}
             else if (arg == "--save-file") gameSavePath=next();
             else if (arg == "--continue") continueOnLaunch=true;
             else if (arg == "--platform-script") previewOptions.platformScript=true;
@@ -1156,7 +1157,7 @@ int main(int argc, char** argv) {
                              "  [--font-preview --data EXTRACTED_DIRECTORY] [--palette 0..2]\n"
                              "  [--level-preview 0..8 --data EXTRACTED_DIRECTORY] [--camera-x X --camera-y Y]\n"
                              "  Level preview: arrows pan, F8 changes width; tiles only, no gameplay.\n"
-                             "  [--movement-preview --data EXTRACTED_DIRECTORY] [--movement-script|--container-script|--melee-script|--combat-script|--defeat-script|--platform-script|--swing-script|--bridge-script|--region-script|--gate-script|--gate-trigger-script|--passage-script|--ability-script|--activation-script|--second-wave-script|--arena-script|--fire-script|--ice-script|--ice-projectile-script|--checkpoint-script|--beam-script|--prompt-script|--intro-script|--intro-skip-script|--chandelier-script|--camera-script|--exit-script|--exit-wait-script]\n"
+                             "  [--movement-preview --movement-level 0 --data EXTRACTED_DIRECTORY] [--movement-script|--container-script|--melee-script|--combat-script|--defeat-script|--platform-script|--swing-script|--bridge-script|--region-script|--gate-script|--gate-trigger-script|--passage-script|--ability-script|--activation-script|--second-wave-script|--arena-script|--fire-script|--ice-script|--ice-projectile-script|--checkpoint-script|--beam-script|--prompt-script|--intro-script|--intro-skip-script|--chandelier-script|--camera-script|--exit-script|--exit-wait-script]\n"
                              "  Player prototype: arrows/A/D, Space jump, Down crouch, E/J/Enter attacks/opens chests, K/0 casts equipped magic, Q/9 switches weapons, R restarts at the session checkpoint; ordinary enemies and combat.\n"
                              "  [--animation ID|--frame ID] [--palette ID] [--flip 0..3]\n"
                              "Interactive first-level combat preview is available; the complete game is not ported.\n";
@@ -1168,6 +1169,8 @@ int main(int argc, char** argv) {
         require(!previewOptions.cameraScript || headless,"--camera-script is a headless validation option");
         require(!previewOptions.chandelierScript || headless,"--chandelier-script is a headless validation option");
         require(!previewOptions.introScript || headless,"--intro-script is a headless validation option");
+        require(!previewOptions.selectedLevelExplicit || (previewOptions.movement && !gameMode),"--movement-level requires the explicit movement preview");
+        require(soul::nativeLevelPlayable(previewOptions.gameplayLevel),"Selected gameplay level is not playable");
         require(!previewOptions.promptScript || headless,"--prompt-script is a headless validation option");
         require(!previewOptions.beamScript || headless,"--beam-script is a headless validation option");
         require(!previewOptions.checkpointScript || headless,"--checkpoint-script is a headless validation option");
@@ -1236,7 +1239,7 @@ int main(int argc, char** argv) {
                 require(static_cast<bool>(out), "Cannot write dump");
             }
             std::cout << "frames=" << frames << " ticks=" << clockState.ticks << " width=" << settings.width << " disk_checkpoint=" << (diskCheckpoint?diskCheckpoint->uid:-1) << " continue_available=" << (frontend && frontend->hasSave)
-                << " world_loaded=" << bool(movementPreview) << " finish_count=" << finishCount << " world_unloads=" << worldUnloads
+                << " world_loaded=" << bool(movementPreview) << " world_level=" << (movementPreview?movementPreview->data.level.index:-1) << " world_pack=" << (movementPreview?movementPreview->data.level.pack:-1) << " finish_count=" << finishCount << " world_unloads=" << worldUnloads
                 << " progress_level=" << progress.level << " progress_completed=" << progress.levelCompleted << " max_unlocked=" << progress.maxUnlockedLevel << " selected_level=" << (frontend?frontend->selectedLevel:0)
                 << " progress_health=" << progress.meters.health << " progress_magic=" << progress.meters.magic;
             if(!movementPreview && finishedCompletion)std::cout<<" completion_state="<<finishedCompletion->state<<" completion_bars="<<finishedCompletion->bars<<" completion_delay="<<finishedCompletion->delay<<" completion_starts="<<finishedCompletion->starts<<" completion_acks="<<finishedCompletion->acknowledgements<<" completion_ticks="<<finishedCompletion->ticks<<" exit_triggers=0";

@@ -12,7 +12,7 @@ bool Checkpoint::update(const Player& p,bool paused){
     alive=false;return true;
 }
 CheckpointSnapshot CheckpointSnapshot::capture(const Checkpoint& c,const Player& p,const PlayerMeters& m,std::vector<RemovedCheckpointActor> removedActors){
-    CheckpointSnapshot saved;saved.uid=c.uid;saved.x=static_cast<std::int16_t>(p.x);saved.y=static_cast<std::int16_t>(p.y);saved.facingLeft=p.facingLeft;saved.activeWeapon=p.activeWeapon;saved.meters=m;
+    CheckpointSnapshot saved;saved.level=p.level();saved.uid=c.uid;saved.x=static_cast<std::int16_t>(p.x);saved.y=static_cast<std::int16_t>(p.y);saved.facingLeft=p.facingLeft;saved.activeWeapon=p.activeWeapon;saved.meters=m;
     for(const auto& a:removedActors)if(!(a.flags&8192) && std::none_of(saved.removed.begin(),saved.removed.end(),[&](const auto& old){return old.uid==a.uid;}))saved.removed.push_back(a);
     if(std::none_of(saved.removed.begin(),saved.removed.end(),[&](const auto& a){return a.uid==c.uid;}))saved.removed.push_back({c.uid,c.flags});return saved;
 }
@@ -26,6 +26,7 @@ CheckpointSnapshot CheckpointSnapshot::forContinue()const{
     saved.removed.erase(std::remove_if(saved.removed.begin(),saved.removed.end(),[](const auto& r){return !(r.flags&512);}),saved.removed.end());return saved;
 }
 void CheckpointSnapshot::restore(Player& p,PlayerMeters& m)const{
+    if(level!=p.level())throw FormatError("Checkpoint belongs to another selected level");
     m=meters;m.health=m.maxHealth;p.x=x;p.y=y;p.fixedX=x*256;p.fixedY=y*256;p.facingLeft=facingLeft;p.flags=int(facingLeft);
     p.vx=p.vy=p.ax=p.ay=0;p.animation=0;p.pending=-1;p.step=p.animationTick=0;p.platform=nullptr;p.activeWeapon=activeWeapon;p.iceOwned=m.iceUnlocked;p.refreshBounds();
 }

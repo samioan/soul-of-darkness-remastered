@@ -7,7 +7,7 @@ namespace soul {
 struct GameSave : CheckpointSnapshot {
     GameSave()=default;
     GameSave(const CheckpointSnapshot& snapshot):CheckpointSnapshot(snapshot){}
-    int level=0,maxUnlockedLevel=0;
+    int maxUnlockedLevel=0;
     bool levelCompleted=false;
     int finishLevel();
     int continueLevel()const;

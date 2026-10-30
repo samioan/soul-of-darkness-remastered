@@ -49,7 +49,23 @@ CombatWorld::CombatWorld(const BSprite& enemySprite,const BSprite& effectSprite,
     }
     placedRemoved_.resize(placedUids_.size());rebuildOrder(records);buckets_.resize(enemies.size()); cacheBuckets();
 }
-CombatWorld::~CombatWorld() { if(iceMagic)iceMagic->clear(); for(auto& p:platforms)if(player_.platform==&p.surface)player_.platform=nullptr; }
+CombatWorld::~CombatWorld(){detach();}
+void CombatWorld::detach(){
+    if(detached_)return;detached_=true;
+    // Remove borrowers and reciprocal projectile links while every target is alive.
+    player_.platform=nullptr;checkpointActivated_={};containers_=nullptr;containerSourcesPending_=false;
+    if(iceMagic)iceMagic->clear();if(fireMagic)fireMagic->clear();
+    intro.reset();chandelierScript.reset();gateScript_.reset();
+    linkedAreaTriggers.clear();playerEnableTriggers.clear();removedEnemyTriggers.clear();removedScriptTriggers.clear();
+    promptRemovalTriggers.clear();cameraControllers.clear();introTriggers.clear();chandelierTriggers.clear();
+    bodyPointers_.clear();bodies_.clear();playerEffects_.clear();order_.clear();updateQueue_.clear();contactQueue_.clear();queue_.clear();containerQueue_.clear();
+    platformIndex_.clear();bridgeIndex_.clear();gateIndex_.clear();
+    iceMagic.reset();fireMagic.reset();gates.clear();platforms.clear();bridges.clear();
+    enemies.clear();flyingEnemies.clear();prompts.clear();beamEmitters.clear();checkpoints.clear();exits.clear();passages.clear();effects.clear();loot.clear();
+    promptRenderer_.reset();promptSprite_=nullptr;placedUids_.clear();placedRemoved_.clear();buckets_.clear();regions_.clear();
+    region_=previousRegion_=-1;regionChanged_=false;regionCameraBounds_={};camera={};completion={};
+}
+
 void CombatWorld::loadCheckpoints(const std::vector<ActorRecord>& records,std::function<void(const Checkpoint&)> activated){
     if(!checkpoints.empty() || checkpointActivated_)throw FormatError("Checkpoints already loaded");
     for(const auto& r:records)if(r.parameters[0]==23)checkpoints.emplace_back(r);
@@ -61,6 +77,7 @@ std::vector<RemovedCheckpointActor> CombatWorld::removedCheckpointActors()const{
     add(cameraControllers);add(promptRemovalTriggers);add(chandelierTriggers);add(introTriggers);add(prompts);add(enemies);add(flyingEnemies);add(checkpoints);add(bridges);add(removedEnemyTriggers);add(removedScriptTriggers);add(playerEnableTriggers);return result;
 }
 void CombatWorld::restoreCheckpointActors(const CheckpointSnapshot& saved,const std::vector<ActorRecord>& records){
+    if(saved.level!=player_.level())throw FormatError("Checkpoint actor state belongs to another level");
     if(worldFrame_!=0 || !updateQueue_.empty())throw FormatError("Checkpoint restore requires a reconstructed world");
     const auto skip=[&](int uid){const auto r=std::find_if(records.begin(),records.end(),[&](const auto& a){return a.parameters[1]==uid;});return r!=records.end() && saved.skips(*r);};
     const auto remove=[&](auto& rows){for(auto& a:rows)if(skip(a.uid))a.alive=false;};
@@ -239,6 +256,7 @@ void CombatWorld::cacheBuckets() {
     for(auto& t:removedScriptTriggers)t.bucket=std::abs(t.x-(cx+120))/120+std::abs(t.y-(cy+160))/160;
 }
 const std::vector<ContactBody*>& CombatWorld::prepare(bool playerPaused) {
+    if(detached_)throw FormatError("Detached world cannot prepare actors");
     loot.clear(); playerEffects_.clear(); bodies_.clear(); bodyPointers_.clear();
     for(auto& e:enemies) { e.effects.clear(); e.loot.clear(); }
     for(auto& e:flyingEnemies){e.effects.clear();e.loot.clear();}
@@ -252,6 +270,7 @@ const std::vector<ContactBody*>& CombatWorld::prepare(bool playerPaused) {
     return bodyPointers_;
 }
 void CombatWorld::updatePlayer(unsigned pressed,unsigned held,int frame,bool paused) {
+    if(detached_)throw FormatError("Detached world cannot update player");
     if(!paused){if(promptMagicTicks>0)--promptMagicTicks;else recentPromptMagic=-1;}
     if(gateScript_){const auto [cx,cy]=referenceCamera();gateScript_->update([&](int uid)->LinkedGate*{for(auto& g:gates)if(g.uid==uid)return &g;return nullptr;},cx,cy,paused);}
     if(chandelierScript){const auto [cx,cy]=referenceCamera();chandelierScript->update([&](int uid)->ChandelierActor{
@@ -358,6 +377,7 @@ void CombatWorld::applyRegionTransition() {
     regionChanged_=false;
 }
 bool CombatWorld::finishPlayer(bool paused) {
+    if(detached_)throw FormatError("Detached world cannot dispatch actors");
     containerSourcesPending_=false;
     if(iceMagic)for(auto& e:iceMagic->projectiles)e.updatedThisTick=false;
     for(std::size_t i=0;i<contactQueue_.size();++i){const auto& slot=contactQueue_[i];auto& e=slot.kind==ActorKind::Enemy?enemies[slot.index]:static_cast<EnemyType1&>(flyingEnemies[slot.index]);e.applyContact(bodies_[i]);}
@@ -483,6 +503,7 @@ bool CombatWorld::finishPlayer(bool paused) {
     containerSourcesPending_=true;return regionCleanup;
 }
 void CombatWorld::advance() {
+    if(detached_)throw FormatError("Detached world cannot advance animations");
     if(fireMagic)fireMagic->advance();
     if(iceMagic)iceMagic->advance();
     damage.tick();

@@ -1,4 +1,5 @@
 #include "prompt_removal_trigger.h"
+#include "level_data.h"
 #include "player.h"
 #include "pickup.h"
 #include "container.h"
@@ -78,7 +79,7 @@ int main() {
         input.heldFrames=4; input.latch(p); require(!p.shortJump,"long hold keeps full jump");
         auto hazard=world; hazard.collision->cells[10*40+5]=2; soul::Player h(sprite,hazard,r); h.update(0,0,0);
         require(h.stoppedByHazard(),"unported hazard boundary freezes prototype");
-        auto bad=r; bad.parameters[5]=8; rejects([&]{soul::Player invalid(sprite,world,bad);},"custom player bounds unsupported");
+        auto bad=r; bad.parameters[5]=8; soul::Player flagged(sprite,world,bad);require(flagged.flags==8 && flagged.collision==std::array<int,4>{91,140,109,199},"player flag eight preserves sprite collision bounds");
         auto unsignedRecord=r; unsignedRecord.parameters[2]=-1; soul::Player high(sprite,world,unsignedRecord);
         require(high.x==65535,"unsigned spawn coordinate");
         soul::Canvas canvas(240,320); const auto before=p.fixedX; p.draw(canvas,0,0); p.draw(canvas,0,0);
@@ -540,6 +541,13 @@ int main() {
         require(areaWorld.updateQueueUids()==std::vector<int>{210,211,182} && areaWorld.platforms.front().x==605,"disabled platform drops out of the next snapshot");
         areaWorld.linkedAreaTriggers[0].flags=136;areaWorld.linkedAreaTriggers[0].bucket=7;areaWorld.updatePlayer(0,0,4);areaWorld.finishPlayer();
         require(areaWorld.updateQueueUids()==std::vector<int>{210,211},"type-40 distance eligibility uses strict radius seven");
+        areaWorld.detach();
+        require(areaWorld.detached() && areaWorld.linkedAreaTriggers.empty() && areaWorld.platforms.empty() && areaWorld.updateQueueUids().empty(),"unload clears cached flag links before their platform targets");
+        areaWorld.detach();
+        rejects([&]{areaWorld.prepare();},"detached world cannot prepare borrowed bodies");
+        rejects([&]{areaWorld.updatePlayer(0,0,5);},"detached world cannot update player");
+        rejects([&]{areaWorld.finishPlayer();},"detached world cannot dispatch actors");
+        rejects([&]{areaWorld.advance();},"detached world cannot advance animations");
         auto gateMap=maps();soul::ActorRecord gateRecord{};gateRecord.count=9;gateRecord.parameters={31,154,208,120,4,0,4,64,-1};
         soul::LinkedGate gate(hitSprite,gateMap,gateRecord);int gateLinkState=101,gateResolutions=0;
         auto gateResolve=[&](int uid)->const int*{++gateResolutions;return uid==64?&gateLinkState:nullptr;};
@@ -885,6 +893,15 @@ int main() {
         newLink.collision=newLink.attack=temporaryParent->collision;newLink.tryAttach(*temporaryParent);
         require(oldLink.attachedTo==temporaryParent.get() && !(oldLink.flags&256) && temporaryParent->attachedIce==&newLink,"overwriting the parent's active link retains the original old reverse link");
         temporaryParent.reset();require(!oldLink.attachedTo && !newLink.attachedTo && !(newLink.flags&256),"parent teardown also clears overwritten reverse links safely");
+        linkedWorld.iceMagic->projectiles.emplace_back(hitSprite,world,linkedPlayer);auto& ownedIce=linkedWorld.iceMagic->projectiles.back();linkedWorld.iceMagic->slots[0]=&ownedIce;
+        oldLink.collision=oldLink.attack=parent.collision;oldLink.tryAttach(parent);
+        ownedIce.collision=ownedIce.attack=parent.collision;ownedIce.tryAttach(parent);
+        newLink.collision=newLink.attack=parent.collision;newLink.tryAttach(parent);linkedPlayer.platform=&ownedIce.surface;
+        require(parent.iceBacklinks.size()==3,"unload fixture has active, overwritten and owned projectile links");
+        linkedWorld.detach();
+        require(!oldLink.attachedTo && !newLink.attachedTo && !linkedPlayer.platform && !linkedWorld.iceMagic && !linkedWorld.fireMagic && linkedWorld.platforms.empty(),"world unload clears active and overwritten ice backlinks and rider before targets die");
+        linkedWorld.detach();
+
         }
         {soul::ActorRecord checkpointRecord{};checkpointRecord.count=10;checkpointRecord.parameters={23,11,100,181,0,8,0,0,40,80};soul::Checkpoint checkpoint(checkpointRecord);
         soul::Player checkpointPlayer(hitSprite,world,r);checkpointPlayer.collision={90,200,99,201};
@@ -1027,6 +1044,13 @@ int main() {
         require(!complete.update(65536) && !exit.update(player,complete) && complete.acknowledgements==1,"acknowledged completion cannot repeat or reenter");
         er.parameters[4]=8;rejects([&]{soul::ExitTrigger unsupported(er);},"exit loader rejects cutscene trigger variants");
         }
+        for(int level=0;level<9;++level){const auto d=soul::LevelDescriptor::get(level);require(d.index==level && d.pack==level+3 && d.stringTable==level+2 && soul::nativeLevelPlayable(level)==(level==0),"selected descriptor and availability");}
+        rejects([]{soul::LevelDescriptor::get(-1);},"negative selected level rejected");rejects([]{soul::LevelDescriptor::get(9);},"selected level above eight rejected");
+        auto laterRecord=r;laterRecord.parameters[5]=8;soul::Player laterPlayer(sprite,world,laterRecord,1);require(laterPlayer.flags==8,"later-level player construction preserves shipped flag eight");soul::CheckpointSnapshot wrongLevel;wrongLevel.level=0;
+        const int originalX=laterPlayer.x;soul::PlayerMeters laterMeters;
+        rejects([&]{wrongLevel.restore(laterPlayer,laterMeters);},"checkpoint cannot restore another selected player");require(laterPlayer.x==originalX,"wrong-level rejection leaves player unchanged");
+        soul::CombatWorld laterWorld(sprite,sprite,world,laterPlayer,laterMeters,{},stats);
+        rejects([&]{laterWorld.restoreCheckpointActors(wrongLevel,{});},"checkpoint actor state cannot cross levels");
         std::cout << "PASS: " << checks << " native player/input/pickup/container/reward assertions\n"; return 0;
     } catch(const std::exception& e) { std::cerr << e.what() << '\n'; return 1; }
 }

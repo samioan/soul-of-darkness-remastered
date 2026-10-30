@@ -125,6 +125,7 @@ python tools/check_native_saves.py --exe soul/port/build/Debug/soul_port.exe
 .\soul\port\build_dist.bat
 ```
 
-The next task is selected-level construction; entry to level 1 stays disabled
-until its required handlers are implemented. Logs, captures, oracles and binaries
+Selected-level data ownership and teardown are now implemented in
+[NATIVE_SELECTED_LEVELS.md](NATIVE_SELECTED_LEVELS.md). The next task is second-level
+actor construction/handlers; entry to level 1 stays disabled until they are verified. Logs, captures, oracles and binaries
 remain ignored and no game data is committed or packaged.

@@ -1,5 +1,6 @@
 #include "game_frontend.h"
 #include "english_text.h"
+#include "level_descriptor.h"
 #include <algorithm>
 namespace soul {
 namespace {
@@ -41,7 +42,7 @@ void FrontendState::press(unsigned key){
         if(key==27)enter(2);
         else if(key==37 || key=='A')selectedLevel=std::max(0,selectedLevel-1);
         else if(key==39 || key=='D')selectedLevel=std::min(std::min(8,maxUnlockedLevel),selectedLevel+1);
-        else if((key==13 || key==32 || key=='E') && selectedLevel==0)enter(9);
+        else if((key==13 || key==32 || key=='E') && nativeLevelPlayable(selectedLevel))enter(9);
         return;
     }
     if(state==8){if(key==27){selection=0;enter(21);}return;}
@@ -99,7 +100,7 @@ void GameFrontend::draw(Canvas& c){
     if(state==19){
         box(c,left+8,92,224,190,0xee000000);
         font_.draw(c,strings_[41]+u" "+std::u16string(1,char16_t('1'+selectedLevel)),cx,114,1);
-        if(selectedLevel!=0){
+        if(!nativeLevelPlayable(selectedLevel)){
             font_.drawWrapped(c,u"THIS CHAPTER IS NOT AVAILABLE YET.",cx,152,210,1);
             font_.draw(c,u"LEFT - PREVIOUS CHAPTER",cx,236,1);
             if(!saveStatus.empty())font_.drawWrapped(c,saveStatus,cx,270,230,1);

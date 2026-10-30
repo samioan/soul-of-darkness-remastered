@@ -1,6 +1,6 @@
 # Soul of Darkness roadmap
 
-Updated 2026-10-29 after the completion/progression save pass. This is the current
+Updated 2026-10-29 after the selected-level ownership pass. This is the current
 remaining-work list. Historical implementation notes are in
 [ROADMAP_HISTORY.md](ROADMAP_HISTORY.md); their old pending/next descriptions
 are superseded. Update the lists below when work lands instead of appending
@@ -29,6 +29,10 @@ another conflicting progress narrative.
   See the NATIVE_*.md docs.
 - Six first-level checkpoints support R/menu Restart and desktop autosave/Continue.
   The desktop format covers the supported native subset; it is not original RMS.
+- All nine selected data bundles and players load against 983 bytecode rows;
+  the shared owner keeps maps, records, scripts, assets and checkpoints aligned.
+  Cached links and projectile/rider references detach before targets unload.
+  See [NATIVE_SELECTED_LEVELS.md](NATIVE_SELECTED_LEVELS.md).
 - All nine gameplay maps decode/render, but normal gameplay constructs **level 0
   only**. The other eight levels are not yet playable through the frontend.
 - Rendering supports portrait/widescreen widths; simulation runs at 83 ms.
@@ -66,9 +70,11 @@ gameplay pack = level index + 3.
   checks for the completion/save/Continue branch. Completed for native level 0;
   version-2 desktop saves retain version-1 migration. Next-level selection is
   gated until its construction/handlers are playable; see [NATIVE_FINISH.md](NATIVE_FINISH.md).
-- [ ] Make native world construction accept a selected level instead of hardcoded
+- [x] Make native world construction accept a selected level instead of hardcoded
   pack 3/level 0. Keep player, assets, actor records, scripts and checkpoints on
   the same selected level; detach all borrowed actor/platform references on unload.
+  Implemented with a shared data owner, 983 original-bytecode input rows and
+  explicit teardown. Gameplay beyond level 0 stays gated; see [NATIVE_SELECTED_LEVELS.md](NATIVE_SELECTED_LEVELS.md).
 - [ ] Construct the second-level actors and resolve their unsupported handlers
   before enabling entry to that level. Its newly required placed types include
   **3, 80 and 89**; existing types also need their level-1 variants checked.
@@ -154,7 +160,7 @@ gameplay pack = level index + 3.
 - Completion/progression adds 444 original/reference expectations, including
   actual RMS writes and unload, plus 24 native decision rows and 36 cross-process
   finish/Continue/replay checks; see [NATIVE_FINISH.md](NATIVE_FINISH.md).
-- Current baseline: 508 player assertions and 101 CTests. Script 160 adds 3000
+- Current baseline: 530 player assertions and 104 CTests. Script 160 adds 3000
   original-bytecode rows and 24 host runs at both widths; see
   [NATIVE_CHANDELIER.md](NATIVE_CHANDELIER.md). The intro retains its 5460 rows
   and 48 playback/skip host runs; see [NATIVE_INTRO.md](NATIVE_INTRO.md).

@@ -1,4 +1,5 @@
 #include "save_game.h"
+#include "level_descriptor.h"
 #define NOMINMAX
 #define WIN32_LEAN_AND_MEAN
 #include <windows.h>
@@ -9,9 +10,9 @@
 namespace soul {
 namespace {
 void validate(const GameSave& s){
-    if(s.level!=0 || s.maxUnlockedLevel<0 || s.maxUnlockedLevel>9 || (s.levelCompleted && s.maxUnlockedLevel<s.level+1))throw FormatError("Unsupported desktop save progression");
+    if(!nativeLevelPlayable(s.level) || s.maxUnlockedLevel<0 || s.maxUnlockedLevel>9 || (s.levelCompleted && s.maxUnlockedLevel<s.level+1))throw FormatError("Unsupported desktop save progression");
     const auto& m=s.meters;
-    if(s.uid<(s.levelCompleted?-1:0) || s.uid>249 || s.x<0 || s.x>2048 || s.y<0 || s.y>2048 || s.activeWeapon<0 || s.activeWeapon>1 || (s.activeWeapon && !m.iceUnlocked) || m.maxHealth<1 || m.maxHealth>32767 || m.health<0 || m.health>m.maxHealth || m.maxMagic<1 || m.maxMagic>32767 || m.magic<0 || m.magic>m.maxMagic || m.collected<0 || m.healthFragments<0 || m.healthFragments>32767 || m.magicFragments<0 || m.magicFragments>32767 || s.removed.size()>250)throw FormatError("Invalid desktop save values");
+    if(s.uid<(s.levelCompleted?-1:0) || s.uid>32767 || s.x<0 || s.x>2048 || s.y<0 || s.y>2048 || s.activeWeapon<0 || s.activeWeapon>1 || (s.activeWeapon && !m.iceUnlocked) || m.maxHealth<1 || m.maxHealth>32767 || m.health<0 || m.health>m.maxHealth || m.maxMagic<1 || m.maxMagic>32767 || m.magic<0 || m.magic>m.maxMagic || m.collected<0 || m.healthFragments<0 || m.healthFragments>32767 || m.magicFragments<0 || m.magicFragments>32767 || s.removed.size()>250)throw FormatError("Invalid desktop save values");
     std::set<int> seen;
     for(const auto& r:s.removed)if(r.uid<0 || r.uid>32767 || r.flags<0 || r.flags>65535 || !seen.insert(r.uid).second)throw FormatError("Invalid desktop save removals");
 }

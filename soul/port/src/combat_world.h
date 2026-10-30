@@ -106,6 +106,9 @@ public:
     void loadPlatforms(BSprite&&,const std::vector<ActorRecord>&,const std::array<int,256>* =nullptr,int=0)=delete;
     void loadPlatforms(const BSprite&&,const std::vector<ActorRecord>&,const std::array<int,256>* =nullptr,int=0)=delete;
     ~CombatWorld();
+    void detach();
+    bool detached()const{return detached_;}
+    int levelIndex()const{return player_.level();}
     std::list<CombatEffect> effects;
     std::vector<EnemyLootSpawn> loot;
     PlayerDamage damage; JavaRandom random;
@@ -130,6 +133,7 @@ public:
     const std::array<int,4>& regionCameraBounds() const { return regionCameraBounds_; }
     std::vector<int> updateQueueUids() const;
 private:
+    bool detached_=false;
     const BSprite* promptSprite_=nullptr;
     std::unique_ptr<SpriteRenderer> promptRenderer_;
     const BSprite& effectSprite_; const LevelMaps& maps_; Player& player_; PlayerMeters& meters_;

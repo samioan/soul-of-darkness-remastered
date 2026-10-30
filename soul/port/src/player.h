@@ -24,6 +24,7 @@ public:
     Player(const BSprite&&,const LevelMaps&,const ActorRecord&,int=0)=delete;
     Player(const BSprite&,LevelMaps&&,const ActorRecord&,int=0)=delete;
     Player(const BSprite&,const LevelMaps&&,const ActorRecord&,int=0)=delete;
+    int level()const{return level_;}
     int x=0,y=0,fixedX=0,fixedY=0,vx=0,vy=0,ax=0,ay=0,flags=0;
     int animation=0,pending=-1,step=0,animationTick=0,action=0,uid=0;
     int queuedCombo=-1,meleeRecovery=0,meleeTimer=0;

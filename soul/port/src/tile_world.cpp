@@ -1,4 +1,5 @@
 #include "tile_world.h"
+#include "level_descriptor.h"
 #include <algorithm>
 
 namespace soul {
@@ -43,9 +44,10 @@ LevelMaps LevelMaps::load(const ResourcePack& pack,bool gameplay) {
 }
 TileBinding tileBinding(int level) {
     // Original Game.bi/bj, consumed by Game.j(stage,level) from pack 16.
-    constexpr int ids[]{3,3,7,7,7,3,11,11,3,3,7,11};
+    constexpr int previewIds[]{3,7,11};
     if (level<0 || level>=12) throw std::out_of_range("Tile binding level");
-    return {ids[level],0,ids[level]+1,0};
+    if(level<9){const auto d=LevelDescriptor::get(level);return {d.background0,0,d.background1,0};}
+    return {previewIds[level-9],0,previewIds[level-9]+1,0};
 }
 TileScene::TileScene(LevelMaps maps,SpriteImage first,SpriteImage second) : maps_(std::move(maps)) {
     // Also validate callers constructing grids directly, before any indexing.
@@ -75,7 +77,8 @@ TileScene::TileScene(LevelMaps maps,SpriteImage first,SpriteImage second) : maps
 }
 TileScene TileScene::load(const std::filesystem::path& root,int level) {
     if (level<0 || level>8) throw std::out_of_range("Tile preview level must be 0..8");
-    const auto pack=ResourcePack::numeric(readAssetFile(root/std::to_string(level+3)));
+    const auto descriptor=LevelDescriptor::get(level);
+    const auto pack=ResourcePack::numeric(readAssetFile(root/std::to_string(descriptor.pack)));
     auto maps=LevelMaps::load(pack,true); const auto binding=tileBinding(level);
     const auto backgrounds=ResourcePack::numeric(readAssetFile(root/"16"));
     const auto first=BSprite::parse(resource(backgrounds,binding.resource0));

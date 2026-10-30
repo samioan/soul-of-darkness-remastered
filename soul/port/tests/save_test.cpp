@@ -17,6 +17,7 @@ try{
     check(r.uid==11 && r.x==148 && r.y==259 && r.facingLeft && r.activeWeapon==1,"Position/equipment roundtrip");
     check(r.meters.health==23 && r.meters.maxHealth==80 && r.meters.magic==17 && r.meters.maxMagic==90 && r.meters.collected==12 && r.meters.healthFragments==2 && r.meters.magicFragments==1 && r.meters.magicUnlocked && r.meters.iceUnlocked,"Progress roundtrip");
     check(r.removed.size()==4 && r.removed[1].uid==47 && r.removed[1].flags==512,"Removal roundtrip");
+    auto largeUid=r;largeUid.uid=376;soul::writeGameSave(file,largeUid);check(soul::loadGameSave(file)->uid==376,"Checkpoint UID is independent of persistence slot count");soul::writeGameSave(file,r);
     const auto continued=r.forContinue();soul::ActorRecord cp{},chest{},enemy{};cp.parameters[0]=23;cp.parameters[1]=11;chest.parameters[0]=52;chest.parameters[1]=47;enemy.parameters[0]=1;enemy.parameters[1]=19;
     check(r.skips(cp) && !continued.skips(cp) && continued.skips(chest) && !continued.skips(enemy) && continued.meters.health==23,"Continue recreates persistence-only removals and retains saved HP");
     s.uid=128;s.meters.magic=42;soul::writeGameSave(file,s);check(soul::loadGameSave(file)->uid==128 && soul::loadGameSave(file)->meters.magic==42,"Atomic replacement");

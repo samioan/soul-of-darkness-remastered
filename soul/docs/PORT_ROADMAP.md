@@ -1,6 +1,6 @@
 # Windows port implementation roadmap
 
-Updated 2026-10-29 after the completion/progression save pass. This file lists the
+Updated 2026-10-29 after the selected-level ownership pass. This file lists the
 remaining native work and acceptance conditions. [ROADMAP.md](ROADMAP.md) is
 the overall project checklist. [PORT_ROADMAP_HISTORY.md](PORT_ROADMAP_HISTORY.md)
 preserves the old notes; their claims that gameplay, platforms or Continue are
@@ -37,7 +37,11 @@ Level indices are zero-based; level 0 is the first level and uses pack 3.
   now persists, unloads the world and selects the next (currently unavailable)
   chapter. Version-1 checkpoint saves migrate to version 2; Continue and replay
   keep distinct position/stat rules. See NATIVE_COMPLETION.md and NATIVE_FINISH.md.
-- Latest data-free suite: 101 CTests and 508 player assertions. Chandelier fixtures
+- Shared selected-level data owner, player initialization and required assets
+  compare across all nine levels in 983 bytecode rows. Explicit teardown clears
+  cached links and projectile/rider support before targets unload. Normal
+  gameplay remains gated to level 0; see NATIVE_SELECTED_LEVELS.md.
+- Latest data-free suite: 104 CTests and 530 player assertions. Chandelier fixtures
   compare 3000 bytecode rows and 24 host runs; intro fixtures
   compare 5460 original-bytecode rows and 48 playback/skip host runs. Linked
   prompt removal adds 352 handler/world rows against original bytecode.
@@ -78,11 +82,14 @@ native fixtures do not establish a complete native play-through.
    Continue vs completed-level Continue after exiting/reopening the executable.
    Implemented for level 0, including version-1 migration and a guarded chapter-2
    selection; see [NATIVE_FINISH.md](NATIVE_FINISH.md). Level 1 remains unavailable
-   until tasks 7/8 supply its world and required handlers.
-7. [ ] **Selected-level construction.** Replace hardcoded level-0 scene/object/
+   until task 8 supplies its world handlers and verifies its variants.
+7. [x] **Selected-level construction.** Replace hardcoded level-0 scene/object/
    script loads with one level descriptor shared by player, sprites, records,
    scripts, regions and checkpoints. Rebuild all owners on load; release platform,
    projectile, script and cached UID links before destroying their targets.
+   Implemented and verified for shared inputs across all nine selections and
+   controlled unload/restart fixtures; see [NATIVE_SELECTED_LEVELS.md](NATIVE_SELECTED_LEVELS.md).
+   Later native actor construction and gameplay remain task 8.
 8. [ ] **Second-level gameplay.** Add its new type-3 enemies, type-80 collapsing
    platform and type-89 switches, then verify its existing-type variants and all
    twenty passages. Enable New Game/Continue progression into level 1 only after
@@ -129,7 +136,7 @@ native fixtures do not establish a complete native play-through.
   The nine placed type-21 handlers and desktop key captions are implemented;
   other owners must not be silently routed through that placed-only loader.
 - [ ] Original animated selection map, unlock-dependent navigation and the
-  selected-level stat/checkpoint-position decision. The existing card selects level 0 only.
+  selected-level stat/checkpoint-position decision. Only level 0 is playable from the current card.
 - [ ] Weapon/magic upgrade menus, all upgrade arrays/ranks and their save ownership.
 - [ ] Help/options, remaining pause/game-over actions, completion and ending screens;
   retain the working keyboard display controls until equivalent menu options exist.

@@ -1,4 +1,5 @@
 #include "player.h"
+#include "level_descriptor.h"
 #include "combat.h"
 #include <algorithm>
 #include <cstring>
@@ -39,13 +40,14 @@ Player::Player(const BSprite& sprite,const LevelMaps& maps,const ActorRecord& re
         maps.collision->cells.size()!=static_cast<std::size_t>(maps.collision->width)*maps.collision->height)
         throw FormatError("Invalid movement collision map");
     const auto& p=record.parameters;
-    if (record.count<6 || record.count>20 || p[0]!=0 || (p[5]&8) || p[4]<0 || p[4]>12 ||
+    // Original type 0 retains flag 8 but refreshBounds still uses sprite rectangles.
+    if (record.count<6 || record.count>20 || p[0]!=0 || p[4]<0 || p[4]>12 ||
         sprite.animations().size()<13) throw FormatError("Unsupported player record/sprite for movement subset");
     uid=p[1]; x=static_cast<std::uint16_t>(p[2]); y=static_cast<std::uint16_t>(p[3]); fixedX=shift(x); fixedY=shift(y);
     flags=p[5]; facingLeft=(flags&1)!=0; animation=-1; immediate(p[4]); bounds();
 }
 int Player::tile(int tx,int ty) const {
-    constexpr int modes[]{0,0,0,3,0,2,0,0,0}; const int mode=modes[level_];
+    const int mode=LevelDescriptor::get(level_).mode;
     const auto& grid=*maps_.collision;
     if (tx>=0 && tx<maps_.layers[1].width && ty<maps_.layers[1].height) {
         if (ty<0) return mode==3 ? 0 : 24;

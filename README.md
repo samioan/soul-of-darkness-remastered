@@ -49,6 +49,10 @@ comparisons at widths 240/569. See [rendering and preview](soul/docs/NATIVE_REND
 Native bitmap text adds wrapping, palette controls, anchors and inline icons;
 334 original-Java layout rows and 240 text surfaces pass. See
 [native fonts](soul/docs/NATIVE_FONTS.md).
+A shared native data owner now loads selected maps, records, scripts, required
+sprites and checkpoints; 983 original-bytecode rows cover all nine level bundles
+and player initialization. Unload clears cached actor/platform/projectile links.
+Normal gameplay remains level 0 only; see [selected-level ownership](soul/docs/NATIVE_SELECTED_LEVELS.md).
 Native tile drawing now displays all nine gameplay maps at widths 240/569,
 with 45 original-Java map rows and 324 pixel comparisons. See
 [native tiles](soul/docs/NATIVE_TILES.md). A first-level native player prototype

@@ -1,6 +1,6 @@
 # Soul of Darkness roadmap
 
-Updated 2026-10-30 after the energy-barrier pass. This is the current
+Updated 2026-10-30 after the thrown-object foundation pass. This is the current
 remaining-work list. Historical implementation notes are in
 [ROADMAP_HISTORY.md](ROADMAP_HISTORY.md); their old pending/next descriptions
 are superseded. Update the lists below when work lands instead of appending
@@ -87,8 +87,12 @@ gameplay pack = level index + 3.
 
 ## Remaining gameplay across levels 1-8
 
-- [ ] Port enemy **type 3** and its thrown-object/projectile owners; it appears
-  in levels 1-3. Verify attacks, death/loot, respawn and region reconstruction.
+- [x] Port the **type-16 thrown-object foundation**: held ownership, flight,
+  reflection, explosion, target contacts and cleanup. Verified in 6507 bytecode
+  rows and twelve controlled world fixtures; see [NATIVE_THROWN_OBJECTS.md](NATIVE_THROWN_OBJECTS.md).
+- [ ] Port enemy **type 3** in levels 1-3, including AI variants, linked chests
+  and projectile birth/update order. Verify attacks, death/loot, respawn and
+  region reconstruction; the type-16 foundation is ready.
 - [ ] Port enemy **types 13/14/70** and their damage/projectile variants; complete
   later-level variants of the already ported type-1/type-2 enemies.
 - [x] Port **type 89** timed-switch handlers: fire activation, timers, linked-gate
@@ -167,7 +171,7 @@ gameplay pack = level index + 3.
 - Completion/progression adds 444 original/reference expectations, including
   actual RMS writes and unload, plus 24 native decision rows and 36 cross-process
   finish/Continue/replay checks; see [NATIVE_FINISH.md](NATIVE_FINISH.md).
-- Current baseline: 530 player assertions, 25 timed-switch assertions, 17 barrier assertions and 106 CTests. Script 160 adds 3000
+- Current baseline: 530 player assertions, 25 timed-switch assertions, 17 barrier assertions, 15 thrown-object assertions and 107 CTests. Script 160 adds 3000
   original-bytecode rows and 24 host runs at both widths; see
   [NATIVE_CHANDELIER.md](NATIVE_CHANDELIER.md). The intro retains its 5460 rows
   and 48 playback/skip host runs; see [NATIVE_INTRO.md](NATIVE_INTRO.md).

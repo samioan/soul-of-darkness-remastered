@@ -508,3 +508,12 @@ which draws three random red/white lightning strands, and draws the sprite at
 both vertical endpoints. Level-1 enemy 352 and triggers 354/124/356 enable, clear
 the respawn flag and release barrier UID 32. Original b/e bytecode confirms these
 call sites; this is an energy barrier rather than a collapsing rider platform.
+
+
+Type-16 foundation: existing Actor.bH/updateThrownObject, bJ bounce physics, bK
+reflected/exploding target contacts, action entries 101-105, m(II)/n(II) held
+birth/release and B(I)/Game.d(Actor) holder notification were inspected against
+original b/e bytecode. Flag 256 is removed by release/replacement, while B(I)
+clears the holder directly and preserves the removed object's flag until it is
+discarded. ThrownObjectCheck verifies these paths without executing type-3 AI.
+No names or generated-Java patches changed; see NATIVE_THROWN_OBJECTS.md.

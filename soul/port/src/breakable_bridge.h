@@ -16,6 +16,7 @@ public:
     void advanceAnimation();
     bool hitByChandelier(const std::array<int,4>&,int sourceX);
     void activate(int sourceX);
+    bool hitByThrown(const std::array<int,4>&);
     void draw(Canvas&,int cameraX,int cameraY);
     void write(std::ostream&) const;
 private:

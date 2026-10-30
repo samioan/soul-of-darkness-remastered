@@ -24,6 +24,7 @@
 #include "level_completion.h"
 #include "timed_switch.h"
 #include "barrier_trigger.h"
+#include "thrown_object.h"
 #include <memory>
 #include <list>
 namespace soul {
@@ -79,6 +80,10 @@ public:
     std::vector<RemovedEnemyTrigger> removedEnemyTriggers;
     int removedEnemyActivations=0;
     int containerEnables=0;
+    std::unique_ptr<ThrownObjects> thrownObjects;
+    void loadThrownObjects(const BSprite&);
+    void loadThrownObjects(BSprite&&)=delete;
+    void loadThrownObjects(const BSprite&&)=delete;
     std::unique_ptr<FireMagic> fireMagic;
     std::unique_ptr<IceMagic> iceMagic;
     int weaponSwitches=0;
@@ -175,6 +180,7 @@ private:
     int worldFrame_=0;
     std::pair<int,int> referenceCamera() const;
     void cacheBuckets();
+    void updateThrownObjects(bool paused);
     void hitIceTargets(IceProjectile&);
     void updateAttachedIce(MovingPlatform&,bool paused);
     std::function<void(const Checkpoint&)> checkpointActivated_;

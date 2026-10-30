@@ -26,6 +26,10 @@ bool BreakableBridge::hitByChandelier(const std::array<int,4>& r,int sourceX) {
     if(!alive || (flags&1024) || action!=0 || r[0]>collision[2] || r[2]<collision[0] || r[1]>collision[3] || r[3]<collision[1]-17)return false;
     activate(sourceX);return true;
 }
+bool BreakableBridge::hitByThrown(const std::array<int,4>& r){
+    if(!alive || (flags&1024) || animation!=0 || (r[0]==r[2] && r[1]==r[3]) || r[0]>collision[2] || r[2]<collision[0] || r[1]>collision[3] || r[3]<collision[1])return false;
+    maps_.fillCollisionRect(collision,0);action=100;return true;
+}
 void BreakableBridge::advanceAnimation() {
     if(!alive || (flags&1024))return;
     if(pending!=-1){animation=pending;pending=-1;step=tick=0;}

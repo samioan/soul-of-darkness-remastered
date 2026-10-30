@@ -60,6 +60,7 @@ void CombatWorld::detach(){
     if(detached_)return;detached_=true;
     // Remove borrowers and reciprocal projectile links while every target is alive.
     player_.platform=nullptr;checkpointActivated_={};containers_=nullptr;containerSourcesPending_=false;
+    if(thrownObjects)thrownObjects->clear();
     if(iceMagic)iceMagic->clear();if(fireMagic)fireMagic->clear();
     intro.reset();chandelierScript.reset();gateScript_.reset();
     barrierTriggers.clear();
@@ -67,7 +68,7 @@ void CombatWorld::detach(){
     promptRemovalTriggers.clear();cameraControllers.clear();introTriggers.clear();chandelierTriggers.clear();
     bodyPointers_.clear();bodies_.clear();playerEffects_.clear();order_.clear();updateQueue_.clear();contactQueue_.clear();queue_.clear();containerQueue_.clear();
     platformIndex_.clear();bridgeIndex_.clear();gateIndex_.clear();
-    iceMagic.reset();fireMagic.reset();gates.clear();timedSwitches.clear();energyBarriers.clear();platforms.clear();bridges.clear();
+    thrownObjects.reset();iceMagic.reset();fireMagic.reset();gates.clear();timedSwitches.clear();energyBarriers.clear();platforms.clear();bridges.clear();
     enemies.clear();flyingEnemies.clear();prompts.clear();beamEmitters.clear();checkpoints.clear();exits.clear();passages.clear();effects.clear();loot.clear();
     promptRenderer_.reset();promptSprite_=nullptr;placedUids_.clear();placedRemoved_.clear();buckets_.clear();regions_.clear();
     region_=previousRegion_=-1;regionChanged_=false;regionCameraBounds_={};camera={};completion={};
@@ -92,6 +93,7 @@ void CombatWorld::restoreCheckpointActors(const CheckpointSnapshot& saved,const 
     for(std::size_t i=0;i<placedUids_.size();++i)placedRemoved_[i]=skip(placedUids_[i]);
     region_=-1;previousRegion_=-1;regionChanged_=false;refreshRegionSelection();cacheBuckets();
 }
+void CombatWorld::loadThrownObjects(const BSprite& sprite){if(detached_ || thrownObjects)throw FormatError("Thrown objects need one live world owner");thrownObjects=std::make_unique<ThrownObjects>(sprite,maps_,player_.level());}
 void CombatWorld::loadFireMagic(const std::array<int,256>& trig){if(fireMagic)throw FormatError("Fire magic already loaded");fireMagic=std::make_unique<FireMagic>(effectSprite_,trig);iceMagic=std::make_unique<IceMagic>(effectSprite_,maps_,player_);}
 void CombatWorld::chargeFireMagic(){
     const int fire=fireMagic?fireMagic->casts:0,ice=iceMagic?iceMagic->casts:0;
@@ -412,6 +414,7 @@ void CombatWorld::applyRegionTransition() {
         if(overlap(t.collision,regions_[region_].bounds))t.flags&=~1024;
         else if(previousRegion_>=0 && overlap(t.collision,regions_[previousRegion_].bounds))t.resetForRegionExit();
     }
+    if(thrownObjects)thrownObjects->clear();
     // Ordinary transient effects are discarded by Game.W on a region change.
     effects.remove_if([](const auto& e){return removeTransientOnRegionChange(39,-1,e.animation);});
     if(fireMagic)fireMagic->clear();
@@ -535,7 +538,11 @@ bool CombatWorld::finishPlayer(bool paused) {
         for(const auto& spawn:e.effects) { effects.emplace_back(effectSprite_,spawn); ++effectsSpawned; }
         for(const auto& spawn:e.loot) { loot.push_back(spawn); ++lootSpawned; }
     }
+    updateThrownObjects(paused);
     if(fireMagic)fireMagic->update(player_,[&](const FirePulse& pulse){
+        if(thrownObjects){const EnemyTarget playerTarget{player_.x,player_.fixedX,player_.collision,player_.attack,player_.fixedY};const auto touches=[](const auto& a,const auto& b){return (a[0]!=a[2] || a[1]!=a[3]) && (b[0]!=b[2] || b[1]!=b[3]) && overlap(a,b);};
+            for(auto& shot:thrownObjects->objects)if(shot.alive && !(shot.flags&1024) && (shot.action==103 || (shot.action==102 && shot.timer<=0)) && (touches(shot.collision,pulse.collision) || touches(shot.collision,pulse.attack)))shot.reflect(playerTarget);
+        }
         if(pulse.flags&128)return;
         const auto touches=[](const std::array<int,4>& a,const std::array<int,4>& b){return (a[0]!=a[2] || a[1]!=a[3]) && (b[0]!=b[2] || b[1]!=b[3]) && overlap(a,b);};
         for(const auto& targetSlot:updateQueue_){
@@ -557,6 +564,7 @@ bool CombatWorld::finishPlayer(bool paused) {
 }
 void CombatWorld::advance() {
     if(detached_)throw FormatError("Detached world cannot advance animations");
+    if(thrownObjects)thrownObjects->advanceAnimation();
     if(fireMagic)fireMagic->advance();
     if(iceMagic)iceMagic->advance();
     damage.tick();
@@ -600,8 +608,21 @@ void CombatWorld::drawPlatforms(Canvas& c,int cx,int cy) {
     for(auto& p:platforms)if(p.type==33)p.draw(c,cx,cy,std::max(0,worldFrame_-1));
 }
 void CombatWorld::drawEffects(Canvas& c,int cx,int cy,BitmapFont& font) {
-    for(auto& e:beamEmitters)e.drawTip(c,cx,cy); if(fireMagic)fireMagic->draw(c,cx,cy);if(iceMagic)iceMagic->draw(c,cx,cy);for(auto& effect:effects) effect.draw(c,cx,cy,&font); }
+    for(auto& e:beamEmitters)e.drawTip(c,cx,cy); if(fireMagic)fireMagic->draw(c,cx,cy);if(iceMagic)iceMagic->draw(c,cx,cy);for(auto& effect:effects) effect.draw(c,cx,cy,&font);if(thrownObjects)thrownObjects->draw(c,cx,cy); }
 int CombatWorld::active() const { return static_cast<int>(std::count_if(enemies.begin(),enemies.end(),[](const auto& e){return e.alive && !(e.flags&1024);})); }
+void CombatWorld::updateThrownObjects(bool paused){
+    if(!thrownObjects)return;
+    for(auto& object:thrownObjects->objects){const EnemyTarget target{player_.x,player_.fixedX,player_.collision,player_.attack,player_.fixedY};object.update(target,[&](ThrownObject& shot){
+        for(const auto& slot:updateQueue_){
+            if(slot.kind==ActorKind::Bridge){bridgeIndex_[slot.index]->hitByThrown(shot.collision);continue;}
+            if(slot.kind!=ActorKind::Enemy && slot.kind!=ActorKind::FlyingEnemy)continue;
+            auto& enemy=slot.kind==ActorKind::Enemy?enemies[slot.index]:static_cast<EnemyType1&>(flyingEnemies[slot.index]);
+            if(!enemy.alive || (enemy.flags&(1024|16384)) || enemy.action==3 || enemy.action==5 || enemy.action==6 || enemy.action==7 || (enemy.collision[0]==enemy.collision[2] && enemy.collision[1]==enemy.collision[3]) || (shot.collision[0]==shot.collision[2] && shot.collision[1]==shot.collision[3]) || !overlap(enemy.collision,shot.collision))continue;
+            const auto oldEffects=enemy.effects.size();const int oldHealth=enemy.health;enemy.applyDamage(500,true,target,{},random);++enemyHits;if(oldHealth>0 && enemy.health<=0)++kills;shot.explode();
+            for(std::size_t n=oldEffects;n<enemy.effects.size();++n){effects.emplace_back(effectSprite_,enemy.effects[n]);++effectsSpawned;}
+        }
+    },[&](ThrownObject& shot){if(player_.receiveBeamHit(15,shot.x,false,damage,meters_.health,meters_.maxHealth,random,playerEffects_))++playerHits;},paused);}
+}
 void CombatWorld::hitIceTargets(IceProjectile& shot){
             for(const auto& slot:updateQueue_){
                 if(slot.kind==ActorKind::Platform){shot.tryAttach(*platformIndex_[slot.index]);continue;}

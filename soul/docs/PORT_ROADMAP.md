@@ -1,6 +1,6 @@
 # Windows port implementation roadmap
 
-Updated 2026-10-30 after the energy-barrier pass. This file lists the
+Updated 2026-10-30 after the thrown-object foundation pass. This file lists the
 remaining native work and acceptance conditions. [ROADMAP.md](ROADMAP.md) is
 the overall project checklist. [PORT_ROADMAP_HISTORY.md](PORT_ROADMAP_HISTORY.md)
 preserves the old notes; their claims that gameplay, platforms or Continue are
@@ -49,7 +49,12 @@ Level indices are zero-based; level 0 is the first level and uses pack 3.
   priority bodies, release/reset, the selected three-trigger chain and cached
   lightning. 3776 bytecode rows and twelve controlled world runs verify these
   boundaries; see NATIVE_ENERGY_BARRIERS.md. Type-3 AI remains unported.
-- Latest data-free suite: 106 CTests, 530 player, 25 timed-switch and 17 barrier assertions. Chandelier fixtures
+- Type-16 projectile owners now implement held/released state, tile bouncing,
+  reflection, explosion and target/holder cleanup. 6507 bytecode rows and twelve
+  selected-level world fixtures verify the foundation; type-3 AI and its exact
+  birth/update sequence remain pending. See NATIVE_THROWN_OBJECTS.md.
+- Latest data-free suite: 107 CTests, 530 player, 25 timed-switch, 17 barrier
+  and 15 thrown-object assertions. Chandelier fixtures
   compare 3000 bytecode rows and 24 host runs; intro fixtures
   compare 5460 original-bytecode rows and 48 playback/skip host runs. Linked
   prompt removal adds 352 handler/world rows against original bytecode.
@@ -103,7 +108,8 @@ native fixtures do not establish a complete native play-through.
    twenty passages. Enable New Game/Continue progression into level 1 only after
    its construction and required controllers work. Type-89 handler/gate and
    type-80 barrier/trigger fixtures are implemented; type 3, existing-type
-   variants and the second-level route remain pending.
+   variants and the second-level route remain pending. The type-16 projectile
+   foundation is ready; its type-3 AI owner is not yet ported.
 9. [ ] **Full first-level route test.** Start at the ordinary spawn, run the intro,
    traverse rooms/platforms, complete the arena/reward/gate, pass the beams and
    final room, then complete/unload. Exercise checkpoint death/restart/Continue
@@ -112,7 +118,8 @@ native fixtures do not establish a complete native play-through.
 
 ## Remaining owners and handlers for levels 1-8
 
-- [ ] Type-3 AI plus type-16 thrown objects and its projectile/effect births.
+- [x] Type-16 thrown-object state, tile physics, target contacts and holder/world cleanup; see NATIVE_THROWN_OBJECTS.md.
+- [ ] Type-3 AI, linked chest ownership and exact projectile/effect birth/update order.
 - [ ] Type-13/type-14/type-70 AI, projectile targeting, damage and respawn variants.
 - [ ] Type-37 gate controller, type-64 springs and type-72 linked platforms.
 - [ ] Type-61/type-79 destructibles and their mutable collision/render state.

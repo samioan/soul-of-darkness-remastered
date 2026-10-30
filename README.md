@@ -56,6 +56,9 @@ Normal gameplay remains level 0 only; see [selected-level ownership](soul/docs/N
 Native timed-switch handlers now match 4153 original-bytecode rows and drive
 linked gates in controlled worlds. Second-level gameplay remains unfinished;
 see [timed-switch coverage](soul/docs/NATIVE_TIMED_SWITCHES.md).
+Type-80 energy barriers now support priority collision, linked release and cached
+lightning, verified with 3776 bytecode rows and twelve controlled world runs.
+They were previously mislabelled collapsing platforms; see [barrier coverage](soul/docs/NATIVE_ENERGY_BARRIERS.md).
 Native tile drawing now displays all nine gameplay maps at widths 240/569,
 with 45 original-Java map rows and 324 pixel comparisons. See
 [native tiles](soul/docs/NATIVE_TILES.md). A first-level native player prototype

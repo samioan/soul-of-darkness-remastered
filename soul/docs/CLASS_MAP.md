@@ -497,3 +497,14 @@ updateBackgroundScripts/updateScript, executeScriptOpcode 116/113 and
 finishCutscene were checked against original b/e bytecode. IntroCheck compares
 the shipped trigger 82/script 76, including high-word flags and skip cleanup.
 No semantic names or generated Java patches changed; see NATIVE_INTRO.md.
+
+
+Type-80 correction: Actor.bd is now updateEnergyBarrier (previously labelled
+updateCollapsingPlatform). Actor.initializeFromRecord extends its sprite bounds
+vertically by record[6], marks it hidden and maps it to effect sprite 1. Actor.bd
+enables its priority solid body and waits for animation endings; linked-trigger
+operation 7 requests animation 31 and removal. Actor.paint calls Game.b(III),
+which draws three random red/white lightning strands, and draws the sprite at
+both vertical endpoints. Level-1 enemy 352 and triggers 354/124/356 enable, clear
+the respawn flag and release barrier UID 32. Original b/e bytecode confirms these
+call sites; this is an energy barrier rather than a collapsing rider platform.

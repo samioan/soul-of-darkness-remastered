@@ -2682,7 +2682,7 @@ public final class Actor {
                   this.updateDestructible79();
                   break;
                case 80:
-                  this.updateCollapsingPlatform();
+                  this.updateEnergyBarrier();
                   break;
                case 82:
                   this.updatePlatformGroup();
@@ -7439,7 +7439,7 @@ public final class Actor {
    }
 
    // $VF: renamed from: bd () void
-   private void updateCollapsingPlatform() {
+   private void updateEnergyBarrier() {
       switch (this.actionState) {
          case 0:
             this.N = true;

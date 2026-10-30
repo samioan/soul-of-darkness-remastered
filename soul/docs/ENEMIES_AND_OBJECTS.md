@@ -54,7 +54,8 @@ appearance alone. Numbered enemy names deliberately avoid guessing identities.
 | 20, 21, 40, 49 | `updateTrigger`, `updatePrompt`, `updateLinkedTrigger`, `updateCameraController` |
 | 35, 48, 52 | `updatePickup`, `updateAbilityPickup`, `updateContainer` |
 | 31, 37, 45 | `updateLinkedGate`, `updateGate37`, `updateBreakableBridge` |
-| 33, 50, 64, 72, 80, 82 | Moving, swinging, spring, linked, collapsing and grouped platform handlers |
+| 33, 50, 64, 72, 82 | Moving, swinging, spring, linked and grouped platform handlers |
+| 80 | `updateEnergyBarrier`: extended solid body, lightning endpoints and linked release |
 | 73, 74, 75, 78, 89, 95 | Hazard, spawner, trap, area, timed switch and crushing hazard handlers |
 | 18, 19, -37, -40, -100, -102 | Homing/straight/hit/explosion/decelerating/boss-orbit projectiles |
 | 16, 39, 98 | Thrown objects, effects and one-shot effects |

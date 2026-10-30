@@ -33,8 +33,10 @@ The surface owner must keep its `ContactBody` at a stable address and clear
 `Player.platform` before removing it. A per-tick copied enemy body is unsuitable
 for this ownership. Horizontal carrying is not inferred from a moving rectangle:
 it belongs to the original handler/integration order and remains pending.
-Spring launches (64), collapsing/grouped platforms (80/82), type-14 pushing,
+Spring launches (64), grouped platforms (82), type-14 pushing,
 nonplayer support/attachment chains and full world ownership are outside this pass.
+Type 80 was mislabelled a collapsing platform; it is now implemented as an
+energy barrier in [NATIVE_ENERGY_BARRIERS.md](NATIVE_ENERGY_BARRIERS.md).
 
 ## Validation
 

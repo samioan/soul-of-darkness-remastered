@@ -513,7 +513,7 @@ method b.bm() updateHazardType73
 method b.bp() updateHazardSpawner
 method b.bx() updateTrap75
 method b.bc() updateHazardArea78
-method b.bd() updateCollapsingPlatform
+method b.bd() updateEnergyBarrier
 method b.R() updatePlatformGroup
 method b.S() updateMovingPlatform
 method b.I() updateTimedSwitch

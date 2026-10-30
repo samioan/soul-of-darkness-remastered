@@ -78,3 +78,5 @@ void emitFinishManifest(const std::filesystem::path&);
 void emitSelectedLevelManifest(const std::filesystem::path&);
 
 void emitTimedSwitchManifest(const std::filesystem::path&);
+
+void emitEnergyBarrierManifest(const std::filesystem::path&);

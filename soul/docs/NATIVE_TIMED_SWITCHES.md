@@ -3,8 +3,8 @@
 The native world now owns type-89 timed switches, resolves their action state
 for linked gates, dispatches them in placed-record order, advances their
 animations and draws them using sprite 28. The second level remains disabled:
-its type-3 enemies, type-80 collapsing platform, existing-type variants and
-full route are still unfinished. This is one completed handler in that task.
+its type-3 enemies, existing-type variants and full route are still unfinished.
+The type-80 energy barrier is now covered in NATIVE_ENERGY_BARRIERS.md. This is one completed handler in that task.
 
 ## Original behavior
 

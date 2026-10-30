@@ -9,8 +9,9 @@ No resource-pack views survive the load. `MovementPreview` owns that bundle
 before its borrowers and cannot be copied or moved once constructed.
 
 The data loader accepts all nine selections. Normal gameplay and desktop save
-acceptance remain gated to level 0: the second-level type-3/type-80/type-89
-handlers and existing-type variants are the next task. Loading later data and
+acceptance remain gated to level 0: the second-level type-3 AI, existing-type
+variants and route checks are still pending. Type-80/type-89 handler foundations are now implemented; see
+NATIVE_ENERGY_BARRIERS.md and NATIVE_TIMED_SWITCHES.md. Loading later data and
 initializing its player do not construct or verify all of its native actors.
 The opening-script runners are explicitly level-0 implementations; decoding
 the other tracks does not execute them.

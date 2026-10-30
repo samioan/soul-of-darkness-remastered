@@ -23,6 +23,7 @@
 #include "camera_controller.h"
 #include "level_completion.h"
 #include "timed_switch.h"
+#include "barrier_trigger.h"
 #include <memory>
 #include <list>
 namespace soul {
@@ -62,6 +63,11 @@ public:
     void loadBeamEmitters(const BSprite&,const std::vector<ActorRecord>&,const std::vector<int>&,const std::array<int,256>&);
     void loadBeamEmitters(BSprite&&,const std::vector<ActorRecord>&,const std::vector<int>&,const std::array<int,256>&)=delete;
     int beamHits=0;
+    std::vector<EnergyBarrier> energyBarriers;
+    std::vector<BarrierTrigger> barrierTriggers;
+    void loadEnergyBarriers(const BSprite&,const std::vector<ActorRecord>&);
+    void loadEnergyBarriers(BSprite&&,const std::vector<ActorRecord>&)=delete;
+    void loadEnergyBarriers(const BSprite&&,const std::vector<ActorRecord>&)=delete;
     std::vector<TimedSwitch> timedSwitches;
     void loadTimedSwitches(const BSprite&,const std::vector<ActorRecord>&);
     void loadTimedSwitches(BSprite&&,const std::vector<ActorRecord>&)=delete;
@@ -153,7 +159,7 @@ private:
     std::array<int,4> regionCameraBounds_{};
     bool regionChanged_=false;
     std::vector<int> queue_,buckets_;
-    enum class ActorKind { TimedSwitch, ExitTrigger, CameraController, PromptRemovalTrigger, Enemy,Platform,Bridge,Region,LinkedAreaTrigger,Gate,RemovedScriptTrigger,Passage,PlayerEnableTrigger,FlyingEnemy,RemovedEnemyTrigger,Checkpoint,BeamEmitter,Prompt,IntroTrigger,ChandelierTrigger };
+    enum class ActorKind { EnergyBarrier, BarrierTrigger, TimedSwitch, ExitTrigger, CameraController, PromptRemovalTrigger, Enemy,Platform,Bridge,Region,LinkedAreaTrigger,Gate,RemovedScriptTrigger,Passage,PlayerEnableTrigger,FlyingEnemy,RemovedEnemyTrigger,Checkpoint,BeamEmitter,Prompt,IntroTrigger,ChandelierTrigger };
     struct ActorSlot { ActorKind kind;std::size_t index; };
     std::vector<ActorSlot> order_,updateQueue_,contactQueue_;
     std::vector<MovingPlatform*> platformIndex_;

@@ -164,6 +164,8 @@ def main() -> None:
                  ROOT / "tools/reference_checks/FinishCheck.java",
                  ROOT / "tools/reference_checks/LevelSelectionCheck.java",
                  ROOT / "tools/reference_checks/TimedSwitchCheck.java",
+                 ROOT / "tools/reference_checks/EnergyBarrierCheck.java",
+                 ROOT / "tools/reference_checks/BarrierChainCheck.java",
                  ROOT / "tools/reference_checks/ControllerCheck.java",
                  ROOT / "tools/reference_checks/image_adapter/javax/microedition/lcdui/Image.java",
                  ROOT / "tools/reference_checks/rms_adapter/javax/microedition/rms/RecordStore.java"])
@@ -179,6 +181,8 @@ def main() -> None:
             run([java, "-Djava.awt.headless=true", "-cp", f"{lifecycle}{sep}{harness}", "FinishCheck", EXTRACTED, build, STUBS])
             run([java, "-Djava.awt.headless=true", "-cp", f"{lifecycle}{sep}{harness}", "LevelSelectionCheck", EXTRACTED, build, STUBS])
             run([java, "-Djava.awt.headless=true", "-cp", f"{lifecycle}{sep}{harness}", "TimedSwitchCheck", EXTRACTED, build, STUBS])
+            run([java, "-Djava.awt.headless=true", "-cp", f"{lifecycle}{sep}{harness}", "EnergyBarrierCheck", EXTRACTED, build, STUBS])
+            run([java, "-Djava.awt.headless=true", "-cp", f"{lifecycle}{sep}{harness}", "BarrierChainCheck", EXTRACTED, build, STUBS])
             run([java, "-Djava.awt.headless=true", "-cp", f"{lifecycle}{sep}{harness}", "ControllerCheck", EXTRACTED, build, STUBS, MAP])
             run([java, "-Djava.awt.headless=true", "-cp", harness, "LevelCheck", EXTRACTED, build, STUBS, MAP])
             run([java, "-Djava.awt.headless=true", "-cp", harness, "SaveCheck", EXTRACTED, build, STUBS])
@@ -221,7 +225,9 @@ def main() -> None:
                  ROOT / "tools/reference_checks/CompletionCheck.java",
                  ROOT / "tools/reference_checks/AbilityModalCheck.java",
                  ROOT / "tools/reference_checks/FireMagicCheck.java",
-                 ROOT / "tools/reference_checks/IceMagicCheck.java"])
+                 ROOT / "tools/reference_checks/IceMagicCheck.java",
+                 ROOT / "tools/reference_checks/BarrierInk.java",
+                 ROOT / "tools/reference_checks/LightningCheck.java"])
             run([java, "--add-exports", "java.base/jdk.internal.org.objectweb.asm=ALL-UNNAMED",
                  "-Djava.awt.headless=true", "-cp", harness, "CrystalCheck", EXTRACTED, build, STUBS, tmp / "crystal"])
             run([java, "--add-exports", "java.base/jdk.internal.org.objectweb.asm=ALL-UNNAMED",
@@ -232,6 +238,8 @@ def main() -> None:
                  "-Djava.awt.headless=true", "-cp", harness, "FireMagicCheck", EXTRACTED, build, STUBS, tmp / "fire-magic"])
             run([java, "--add-exports", "java.base/jdk.internal.org.objectweb.asm=ALL-UNNAMED",
                  "-Djava.awt.headless=true", "-cp", harness, "IceMagicCheck", EXTRACTED, build, STUBS, tmp / "ice-magic"])
+            run([java, "--add-exports", "java.base/jdk.internal.org.objectweb.asm=ALL-UNNAMED",
+                 "-Djava.awt.headless=true", "-cp", harness, "LightningCheck", EXTRACTED, build, STUBS, tmp / "lightning"])
 
 
 

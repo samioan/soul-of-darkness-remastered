@@ -167,6 +167,7 @@ def main() -> None:
                  ROOT / "tools/reference_checks/EnergyBarrierCheck.java",
                  ROOT / "tools/reference_checks/BarrierChainCheck.java",
                  ROOT / "tools/reference_checks/ThrownObjectCheck.java",
+                 ROOT / "tools/reference_checks/Type3DecisionCheck.java",
                  ROOT / "tools/reference_checks/ControllerCheck.java",
                  ROOT / "tools/reference_checks/image_adapter/javax/microedition/lcdui/Image.java",
                  ROOT / "tools/reference_checks/rms_adapter/javax/microedition/rms/RecordStore.java"])
@@ -185,6 +186,7 @@ def main() -> None:
             run([java, "-Djava.awt.headless=true", "-cp", f"{lifecycle}{sep}{harness}", "EnergyBarrierCheck", EXTRACTED, build, STUBS])
             run([java, "-Djava.awt.headless=true", "-cp", f"{lifecycle}{sep}{harness}", "BarrierChainCheck", EXTRACTED, build, STUBS])
             run([java, "-Djava.awt.headless=true", "-cp", f"{lifecycle}{sep}{harness}", "ThrownObjectCheck", EXTRACTED, build, STUBS])
+            run([java, "-Djava.awt.headless=true", "-cp", f"{lifecycle}{sep}{harness}", "Type3DecisionCheck", EXTRACTED, build, STUBS])
             run([java, "-Djava.awt.headless=true", "-cp", f"{lifecycle}{sep}{harness}", "ControllerCheck", EXTRACTED, build, STUBS, MAP])
             run([java, "-Djava.awt.headless=true", "-cp", harness, "LevelCheck", EXTRACTED, build, STUBS, MAP])
             run([java, "-Djava.awt.headless=true", "-cp", harness, "SaveCheck", EXTRACTED, build, STUBS])

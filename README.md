@@ -60,8 +60,10 @@ Type-80 energy barriers now support priority collision, linked release and cache
 lightning, verified with 3776 bytecode rows and twelve controlled world runs.
 They were previously mislabelled collapsing platforms; see [barrier coverage](soul/docs/NATIVE_ENERGY_BARRIERS.md).
 The type-16 projectile foundation now supports held ownership, bouncing,
-reflection, explosion and cleanup, matching 6507 bytecode rows. Type-3 enemy AI
-remains pending; see [thrown-object coverage](soul/docs/NATIVE_THROWN_OBJECTS.md).
+reflection, explosion and cleanup, matching 6507 bytecode rows; see
+[thrown-object coverage](soul/docs/NATIVE_THROWN_OBJECTS.md). Type-3 action entries,
+aiming and isolated decisions now match 10922 bytecode rows. Their full native
+actor/world integration remains pending; see [type-3 decision coverage](soul/docs/NATIVE_TYPE3_DECISIONS.md).
 Native tile drawing now displays all nine gameplay maps at widths 240/569,
 with 45 original-Java map rows and 324 pixel comparisons. See
 [native tiles](soul/docs/NATIVE_TILES.md). A first-level native player prototype

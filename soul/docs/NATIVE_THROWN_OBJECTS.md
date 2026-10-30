@@ -2,8 +2,9 @@
 
 The native world now owns the type-16 objects required by type-3 throwing
 enemies. Held creation, release, bouncing, resting, reflection, explosion and
-cleanup run on simulation ticks. This is the projectile foundation: type-3 AI,
-its linked chests and its exact birth/update ownership are still pending.
+cleanup run on simulation ticks. This is the projectile foundation: type-3 actor
+integration, linked chests and exact birth/update ownership are still pending.
+The isolated [type-3 decisions](NATIVE_TYPE3_DECISIONS.md) are now verified separately.
 Level 1 remains unavailable through the frontend.
 
 ## Original evidence
@@ -85,7 +86,7 @@ maps, world damage dispatch, external fire reflection and region ownership.
 Twelve controlled selected-level world fixtures compare widths 240/569 and
 30/60/144 FPS with frequent versus sparse rendering. Each completes a held birth,
 release and removal in 100 ticks; simulation, rendering and RNG remain stable.
-The current suite contains 107 CTests, alongside 530 player, 25 timed-switch,
+At the thrown-object milestone the suite contained 107 CTests, alongside 530 player, 25 timed-switch,
 17 barrier and 15 thrown-object assertions.
 
 ```powershell

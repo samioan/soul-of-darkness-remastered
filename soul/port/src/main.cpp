@@ -147,6 +147,7 @@ struct MovementPreview {
         combat->loadPlatforms(platformSprite,records,&trig,stats.at(1));
         combat->loadBridges(bridgeSprite,scene.mutableMaps(),records);
         combat->loadGates(platformSprite,scene.mutableMaps(),records);
+        combat->loadTimedSwitches(platformSprite,records);
         if(data.level.openingScripts()){combat->loadGateScripts(soul::ByteView(data.scriptBytes));combat->loadChandelierScript(soul::ByteView(data.scriptBytes),records);}
         for(const auto& r:records) {
             if(r.parameters[0]==35) pickups.emplace_back(pickupSprite,r);

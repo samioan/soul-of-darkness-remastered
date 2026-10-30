@@ -60,7 +60,7 @@ void CombatWorld::detach(){
     promptRemovalTriggers.clear();cameraControllers.clear();introTriggers.clear();chandelierTriggers.clear();
     bodyPointers_.clear();bodies_.clear();playerEffects_.clear();order_.clear();updateQueue_.clear();contactQueue_.clear();queue_.clear();containerQueue_.clear();
     platformIndex_.clear();bridgeIndex_.clear();gateIndex_.clear();
-    iceMagic.reset();fireMagic.reset();gates.clear();platforms.clear();bridges.clear();
+    iceMagic.reset();fireMagic.reset();gates.clear();timedSwitches.clear();platforms.clear();bridges.clear();
     enemies.clear();flyingEnemies.clear();prompts.clear();beamEmitters.clear();checkpoints.clear();exits.clear();passages.clear();effects.clear();loot.clear();
     promptRenderer_.reset();promptSprite_=nullptr;placedUids_.clear();placedRemoved_.clear();buckets_.clear();regions_.clear();
     region_=previousRegion_=-1;regionChanged_=false;regionCameraBounds_={};camera={};completion={};
@@ -167,6 +167,11 @@ void CombatWorld::loadBeamEmitters(const BSprite& sprite,const std::vector<Actor
     for(const auto& r:records)if(r.parameters[0]==10)beamEmitters.emplace_back(sprite,effectSprite_,maps_,r,stats,trig);
     rebuildOrder(records);cacheBuckets();
 }
+void CombatWorld::loadTimedSwitches(const BSprite& sprite,const std::vector<ActorRecord>& records){
+    if(detached_ || !timedSwitches.empty())throw FormatError("Timed switches require a live world and a single load");
+    timedSwitches.reserve(records.size());for(const auto& r:records)if(r.parameters[0]==89)timedSwitches.emplace_back(sprite,r);
+    rebuildOrder(records);cacheBuckets();
+}
 void CombatWorld::loadGates(const BSprite& sprite,LevelMaps& maps,const std::vector<ActorRecord>& records) {
     if(&maps!=&maps_ || !gates.empty())throw FormatError("Gate owner needs the shared collision map and a single load");
     for(const auto& r:records)if(r.parameters[0]==31){gates.emplace_back(sprite,maps,r);gateIndex_.push_back(&gates.back());}
@@ -175,6 +180,7 @@ void CombatWorld::loadGates(const BSprite& sprite,LevelMaps& maps,const std::vec
 const int* CombatWorld::resolveAction(int uid) const {
     if(player_.uid==uid)return &player_.action;
     for(const auto& slot:order_)switch(slot.kind) {
+    case ActorKind::TimedSwitch:if(timedSwitches[slot.index].uid==uid)return &timedSwitches[slot.index].action;break;
     case ActorKind::FlyingEnemy:if(flyingEnemies[slot.index].uid==uid && flyingEnemies[slot.index].alive)return &flyingEnemies[slot.index].action;break;
     case ActorKind::Enemy:if(enemies[slot.index].uid==uid && enemies[slot.index].alive)return &enemies[slot.index].action;break;
     case ActorKind::Platform:if(platformIndex_[slot.index]->uid==uid)return &platformIndex_[slot.index]->action;break;
@@ -207,6 +213,7 @@ void CombatWorld::rebuildOrder(const std::vector<ActorRecord>& records) {
     order_.clear();
     for(const auto& r:records){
         const auto& p=r.parameters;
+        if(p[0]==89)for(std::size_t i=0;i<timedSwitches.size();++i)if(timedSwitches[i].uid==p[1])order_.push_back({ActorKind::TimedSwitch,i});
         if(p[0]==20)for(std::size_t i=0;i<exits.size();++i)if(exits[i].uid==p[1])order_.push_back({ActorKind::ExitTrigger,i});
         if(p[0]==49)for(std::size_t i=0;i<cameraControllers.size();++i)if(cameraControllers[i].uid==p[1])order_.push_back({ActorKind::CameraController,i});
         if(p[0]==40)for(std::size_t i=0;i<promptRemovalTriggers.size();++i)if(promptRemovalTriggers[i].uid==p[1])order_.push_back({ActorKind::PromptRemovalTrigger,i});
@@ -237,6 +244,7 @@ std::pair<int,int> CombatWorld::referenceCamera() const {
 void CombatWorld::cacheBuckets() {
     const auto [cx,cy]=referenceCamera();
     for(std::size_t i=0;i<enemies.size();++i) buckets_[i]=std::abs(enemies[i].x-(cx+120))/120+std::abs(enemies[i].y-(cy+160))/160;
+    for(auto& t:timedSwitches)t.bucket=std::abs(t.x-(cx+120))/120+std::abs(t.y-(cy+160))/160;
     for(auto& e:flyingEnemies)e.bucket=std::abs(e.x-(cx+120))/120+std::abs(e.y-(cy+160))/160;
     for(auto& t:removedEnemyTriggers)t.bucket=std::abs(t.x-(cx+120))/120+std::abs(t.y-(cy+160))/160;
     for(auto& p:platforms)p.bucket=std::abs(p.x-(cx+120))/120+std::abs(p.y-(cy+160))/160;
@@ -306,6 +314,7 @@ void CombatWorld::refreshRegionSelection() {
 bool CombatWorld::eligible(const ActorSlot& slot) const {
     int flags=0,bucket=0,radius=2;
     switch(slot.kind) {
+    case ActorKind::TimedSwitch:{const auto& t=timedSwitches[slot.index];flags=t.flags;bucket=t.bucket;break;}
     case ActorKind::Enemy: {const auto& e=enemies[slot.index];if(!e.alive)return false;flags=e.flags;bucket=buckets_[slot.index];break;}
     case ActorKind::FlyingEnemy:{const auto& e=flyingEnemies[slot.index];if(!e.alive)return false;flags=e.flags;bucket=e.bucket;break;}
     case ActorKind::RemovedEnemyTrigger:{const auto& t=removedEnemyTriggers[slot.index];if(!t.alive)return false;flags=t.flags;bucket=t.bucket;radius=7;break;}
@@ -333,6 +342,7 @@ bool CombatWorld::eligible(const ActorSlot& slot) const {
 std::vector<int> CombatWorld::updateQueueUids() const {
     std::vector<int> result;
     for(const auto& slot:updateQueue_)switch(slot.kind) {
+    case ActorKind::TimedSwitch:result.push_back(timedSwitches[slot.index].uid);break;
     case ActorKind::FlyingEnemy:result.push_back(flyingEnemies[slot.index].uid);break;
     case ActorKind::RemovedEnemyTrigger:result.push_back(removedEnemyTriggers[slot.index].alive?removedEnemyTriggers[slot.index].uid:-999);break;
     case ActorKind::Enemy:result.push_back(enemies[slot.index].uid);break;
@@ -408,6 +418,7 @@ bool CombatWorld::finishPlayer(bool paused) {
     }
     for(auto& p:platforms)if(p.type==33 && player_.platform==&p.surface && player_.ceiling)p.vy=0;
     for(const auto& slot:updateQueue_) {
+        if(slot.kind==ActorKind::TimedSwitch){auto& t=timedSwitches[slot.index];t.update(t.struckBy(player_,fireMagic.get()),[&](int uid){return resolveAction(uid);},paused);continue;}
         if(slot.kind==ActorKind::ExitTrigger){exits[slot.index].update(player_,completion,paused);continue;}
         if(slot.kind==ActorKind::CameraController){auto& c=cameraControllers[slot.index];
             c.update(player_,camera,[&](int uid)->CameraSource{for(auto& e:enemies)if(e.uid==uid && e.alive)return {&e.x,&e.y,&e.alive,[&e]{e.refreshBounds();}};return {};},regionChanged_,paused);
@@ -528,6 +539,7 @@ void CombatWorld::advance() {
     for(std::size_t i=0;i<beamEmitters.size();++i){auto& e=beamEmitters[i];const bool queued=std::any_of(updateQueue_.begin(),updateQueue_.end(),[&](const auto& s){return s.kind==ActorKind::BeamEmitter && s.index==i;});if(!(e.flags&1024) && (queued || (e.bucket<=1 && overlap(e.visual,view))))e.advanceAnimation();}
     if(promptSprite_)for(auto& p:prompts)if(p.alive && !(p.flags&1024) && ((p.flags&16) || (!(p.flags&(256|32)) && p.bucket<2) || (p.bucket<=1 && p.visible(player_,view))))p.advanceAnimation(*promptSprite_);
     for(auto& effect:effects) effect.advanceAnimation();
+    for(auto& t:timedSwitches)if(!(t.flags&1024) && ((t.flags&16) || (!(t.flags&(256|32)) && t.bucket<2) || (t.bucket<=1 && overlap(t.visual,view))))t.advanceAnimation();
     for(auto& g:gates)if(!(g.flags&1024) && ((g.flags&16) || (!(g.flags&(256|32)) && g.bucket<2) || (g.bucket<=1 && overlap(g.visual,view))))g.advanceAnimation();
     for(auto& b:bridges)if(b.alive && !(b.flags&1024) && (b.bucket<4 || (b.bucket<=4 && overlap(b.collision,view))))b.advanceAnimation();
     for(auto& p:platforms)if(!(p.flags&1024) && ((p.flags&16) || (!(p.flags&(256|32)) && p.bucket<2) || ((p.type!=50 || p.bucket<=4) && overlap(p.type==50?p.limits:p.visual,view)))){p.refreshBounds();p.advanceAnimation();}
@@ -537,7 +549,7 @@ void CombatWorld::advance() {
 }
 void CombatWorld::drawEnemies(Canvas& c,int cx,int cy) { for(auto& e:beamEmitters)e.draw(c,cx,cy); for(auto& e:enemies) e.draw(c,cx,cy);for(auto& e:flyingEnemies)e.draw(c,cx,cy); }
 void CombatWorld::drawPlatforms(Canvas& c,int cx,int cy) {
-    for(auto& g:gates)g.draw(c,cx,cy);
+    for(auto& g:gates)g.draw(c,cx,cy);for(auto& t:timedSwitches)t.draw(c,cx,cy);
     for(const auto& slot:order_) {
         if(slot.kind==ActorKind::Bridge)bridgeIndex_[slot.index]->draw(c,cx,cy);
         else if(slot.kind==ActorKind::Platform && platformIndex_[slot.index]->type==50)platformIndex_[slot.index]->draw(c,cx,cy,std::max(0,worldFrame_-1));

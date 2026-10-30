@@ -1,6 +1,6 @@
 # Windows port implementation roadmap
 
-Updated 2026-10-29 after the selected-level ownership pass. This file lists the
+Updated 2026-10-30 after the selected-level ownership and timed-switch passes. This file lists the
 remaining native work and acceptance conditions. [ROADMAP.md](ROADMAP.md) is
 the overall project checklist. [PORT_ROADMAP_HISTORY.md](PORT_ROADMAP_HISTORY.md)
 preserves the old notes; their claims that gameplay, platforms or Continue are
@@ -41,7 +41,11 @@ Level indices are zero-based; level 0 is the first level and uses pack 3.
   compare across all nine levels in 983 bytecode rows. Explicit teardown clears
   cached links and projectile/rider support before targets unload. Normal
   gameplay remains gated to level 0; see NATIVE_SELECTED_LEVELS.md.
-- Latest data-free suite: 104 CTests and 530 player assertions. Chandelier fixtures
+- Type-89 timed switches now support fire attacks/pulses, independent and
+  linked-gate timers, animation transitions and ordered native gate ownership.
+  4153 bytecode rows cover 23 timelines and all 13 placed constructors; see
+  NATIVE_TIMED_SWITCHES.md. Full second-level gameplay remains unfinished.
+- Latest data-free suite: 105 CTests, 530 player and 25 timed-switch assertions. Chandelier fixtures
   compare 3000 bytecode rows and 24 host runs; intro fixtures
   compare 5460 original-bytecode rows and 48 playback/skip host runs. Linked
   prompt removal adds 352 handler/world rows against original bytecode.
@@ -93,7 +97,8 @@ native fixtures do not establish a complete native play-through.
 8. [ ] **Second-level gameplay.** Add its new type-3 enemies, type-80 collapsing
    platform and type-89 switches, then verify its existing-type variants and all
    twenty passages. Enable New Game/Continue progression into level 1 only after
-   its construction and required controllers work.
+   its construction and required controllers work. Type-89 handler/gate fixtures
+   are implemented; type 3, type 80 and the second-level route remain pending.
 9. [ ] **Full first-level route test.** Start at the ordinary spawn, run the intro,
    traverse rooms/platforms, complete the arena/reward/gate, pass the beams and
    final room, then complete/unload. Exercise checkpoint death/restart/Continue
@@ -108,7 +113,8 @@ native fixtures do not establish a complete native play-through.
 - [ ] Type-61/type-79 destructibles and their mutable collision/render state.
 - [ ] Type-68 spawners and type-69 paired owners; native level-3 paired-player mode.
 - [ ] Type-73 hazards, type-74 spawners, type-75 traps and type-78 hazard areas.
-- [ ] Type-80 collapsing platforms, type-82 groups, type-89 switches and type-95 crushers.
+- [x] Type-89 timed-switch handlers and controlled gate integration; see NATIVE_TIMED_SWITCHES.md.
+- [ ] Type-80 collapsing platforms, type-82 groups and type-95 crushers.
 - [ ] Native level-5 controller/hazard/group links and their saved state, using
   LEVEL5_CONTROLLER.md's original-Java fixtures as reference rather than calling
   that Java coverage a native implementation.

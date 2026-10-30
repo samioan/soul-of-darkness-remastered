@@ -53,6 +53,9 @@ A shared native data owner now loads selected maps, records, scripts, required
 sprites and checkpoints; 983 original-bytecode rows cover all nine level bundles
 and player initialization. Unload clears cached actor/platform/projectile links.
 Normal gameplay remains level 0 only; see [selected-level ownership](soul/docs/NATIVE_SELECTED_LEVELS.md).
+Native timed-switch handlers now match 4153 original-bytecode rows and drive
+linked gates in controlled worlds. Second-level gameplay remains unfinished;
+see [timed-switch coverage](soul/docs/NATIVE_TIMED_SWITCHES.md).
 Native tile drawing now displays all nine gameplay maps at widths 240/569,
 with 45 original-Java map rows and 324 pixel comparisons. See
 [native tiles](soul/docs/NATIVE_TILES.md). A first-level native player prototype

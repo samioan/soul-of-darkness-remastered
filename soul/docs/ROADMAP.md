@@ -1,6 +1,6 @@
 # Soul of Darkness roadmap
 
-Updated 2026-10-29 after the selected-level ownership pass. This is the current
+Updated 2026-10-30 after the selected-level ownership and timed-switch passes. This is the current
 remaining-work list. Historical implementation notes are in
 [ROADMAP_HISTORY.md](ROADMAP_HISTORY.md); their old pending/next descriptions
 are superseded. Update the lists below when work lands instead of appending
@@ -78,6 +78,8 @@ gameplay pack = level index + 3.
 - [ ] Construct the second-level actors and resolve their unsupported handlers
   before enabling entry to that level. Its newly required placed types include
   **3, 80 and 89**; existing types also need their level-1 variants checked.
+  Type 89 now has a verified handler and controlled gate integration; type 3,
+  type 80 and the actual second-level route remain pending.
 - [ ] Record and verify an actual run from first-level spawn through its arena,
   reward/gate, passages, beams, final room and exit. The current controlled host
   fixtures start at selected locations; they are not that full play-through.
@@ -88,8 +90,11 @@ gameplay pack = level index + 3.
   in levels 1-3. Verify attacks, death/loot, respawn and region reconstruction.
 - [ ] Port enemy **types 13/14/70** and their damage/projectile variants; complete
   later-level variants of the already ported type-1/type-2 enemies.
-- [ ] Port **type 80** collapsing platforms and **type 89** timed switches for
-  the second level; verify their linked targets and collision changes.
+- [x] Port **type 89** timed-switch handlers: fire activation, timers, linked-gate
+  conditions and animation transitions. Verified in 4153 bytecode rows and
+  controlled native gate worlds; see [NATIVE_TIMED_SWITCHES.md](NATIVE_TIMED_SWITCHES.md).
+- [ ] Port **type 80** collapsing platforms for the second level; verify their
+  linked targets, attacks and collision changes.
 - [ ] Port remaining placed controllers/objects: **37** gate controller,
   **61/79** destructibles, **64** springs, **68** wave spawners, **69** paired
   owners, **72** linked platforms, **73** hazards, **74** hazard spawners,
@@ -160,7 +165,7 @@ gameplay pack = level index + 3.
 - Completion/progression adds 444 original/reference expectations, including
   actual RMS writes and unload, plus 24 native decision rows and 36 cross-process
   finish/Continue/replay checks; see [NATIVE_FINISH.md](NATIVE_FINISH.md).
-- Current baseline: 530 player assertions and 104 CTests. Script 160 adds 3000
+- Current baseline: 530 player assertions, 25 timed-switch assertions and 105 CTests. Script 160 adds 3000
   original-bytecode rows and 24 host runs at both widths; see
   [NATIVE_CHANDELIER.md](NATIVE_CHANDELIER.md). The intro retains its 5460 rows
   and 48 playback/skip host runs; see [NATIVE_INTRO.md](NATIVE_INTRO.md).

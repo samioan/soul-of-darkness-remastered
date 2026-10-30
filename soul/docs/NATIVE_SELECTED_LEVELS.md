@@ -96,7 +96,7 @@ finish/Continue/replay, intro, chandelier, camera and ice projectile/attachment
 regressions passed, including their width-240/569 and FPS matrices. The rebuilt
 package contains no game data.
 
-The data-free baseline is **104 CTests and 530 player assertions**. Oracles,
+The data-free baseline for this pass was **104 CTests and 530 player assertions**. Oracles,
 verification logs, captures and binaries remain in ignored directories. This
 foundation does not enable level 1, implement later controllers or replace the
 remaining full first-level route test.

@@ -76,3 +76,5 @@ void emitCompletionManifest(const std::filesystem::path&);
 void emitFinishManifest(const std::filesystem::path&);
 
 void emitSelectedLevelManifest(const std::filesystem::path&);
+
+void emitTimedSwitchManifest(const std::filesystem::path&);

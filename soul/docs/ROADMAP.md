@@ -1,6 +1,6 @@
 # Soul of Darkness roadmap
 
-Updated 2026-10-30 after the type-3 decision foundation pass. This is the current
+Updated 2026-10-31 after the level-1 first-encounter pass. This is the current
 remaining-work list. Historical implementation notes are in
 [ROADMAP_HISTORY.md](ROADMAP_HISTORY.md); their old pending/next descriptions
 are superseded. Update the lists below when work lands instead of appending
@@ -78,10 +78,13 @@ gameplay pack = level index + 3.
 - [ ] Construct the second-level actors and resolve their unsupported handlers
   before enabling entry to that level. Its newly required placed types include
   **3, 80 and 89**; existing types also need their level-1 variants checked.
-  Types 89 and 80 now have verified handlers and controlled link/contact
+  Types 89, 80 and 3 now have verified handlers and controlled link/contact
   integration. Type 80 is an energy barrier, not a collapsing platform. Type-3
-  actor integration, remaining level-1 variants and the actual route remain pending.
-  Type-3 decisions now match 10922 bytecode rows; see NATIVE_TYPE3_DECISIONS.md.
+  actors match 11487 bytecode rows and 48 world fixtures (see NATIVE_TYPE3_ACTORS.md);
+  player-overlap trigger 308 now enables actors 62/74. The level-1 first encounter (triggers 100/104/62/103,
+  chest 59, script 95/gate 87) runs in controlled worlds; see NATIVE_LEVEL1_ENCOUNTER.md. The other enabling
+  chains (115/118/123, 187, 322), the type-2 behavior-5 records (UIDs 136/137/181) and the actual route remain
+  pending. The type-1 respawn-fade record (UID 96) is verified in NATIVE_ENEMIES.md.
 - [ ] Record and verify an actual run from first-level spawn through its arena,
   reward/gate, passages, beams, final room and exit. The current controlled host
   fixtures start at selected locations; they are not that full play-through.
@@ -94,9 +97,11 @@ gameplay pack = level index + 3.
 - [x] Port the **type-3 decision foundation**: all three behavior decisions,
   action entries and fixed-point throw aiming. Verified with 10922 bytecode
   rows; see [NATIVE_TYPE3_DECISIONS.md](NATIVE_TYPE3_DECISIONS.md).
-- [ ] Integrate enemy **type 3** in levels 1-3, including AI variants, linked chests
-  and projectile birth/update order. Verify attacks, death/loot, respawn and
-  region reconstruction; type-16 objects and isolated type-3 decisions are ready.
+- [x] Integrate enemy **type 3** in levels 1-2: charger, thrower and linked-chest
+  runner with held-shot birth/release, parent/child dispatch order, death/loot,
+  respawn fade and region reset. Verified against 11487 original-bytecode rows and
+  48 controlled shipped-record world fixtures; see [NATIVE_TYPE3_ACTORS.md](NATIVE_TYPE3_ACTORS.md).
+  Level 3's two type-3 actors stay with the paired-mode item below.
 - [ ] Port enemy **types 13/14/70** and their damage/projectile variants; complete
   later-level variants of the already ported type-1/type-2 enemies.
 - [x] Port **type 89** timed-switch handlers: fire activation, timers, linked-gate
@@ -111,8 +116,8 @@ gameplay pack = level index + 3.
   **75** traps, **78** hazard areas, **82** platform groups and **95** crushers.
 - [ ] Port bosses **90** (level 3) and **100** (level 8), including complete
   phases, projectiles, scripted entry/exit and boss-to-level-completion ownership.
-- [ ] Integrate level **3** paired-actor mode and level **5** controller/hazard/
-  platform-group state natively. Their Java checkpoint checks are not native ports.
+- [ ] Integrate level **3** paired-actor mode (including its two type-3 actors) and
+  level **5** controller/hazard/platform-group state natively. Their Java checkpoint checks are not native ports.
 - [ ] Construct placed **type 48** ability actors and **type 39** effects used
   outside level 0; finish remaining pickup/reward and moving-object variants.
 - [ ] Expand type-40 trigger ownership beyond the selected first-arena/chest/gate
@@ -175,10 +180,11 @@ gameplay pack = level index + 3.
 - Completion/progression adds 444 original/reference expectations, including
   actual RMS writes and unload, plus 24 native decision rows and 36 cross-process
   finish/Continue/replay checks; see [NATIVE_FINISH.md](NATIVE_FINISH.md).
-- Current baseline: 530 player assertions, 25 timed-switch assertions, 17 barrier
-  assertions, 15 thrown-object assertions, 26 type-3 decision assertions and
-  108 CTests. Type-3 decisions add 10922 bytecode rows; see
-  [NATIVE_TYPE3_DECISIONS.md](NATIVE_TYPE3_DECISIONS.md). Script 160 adds 3000
+- Current baseline: 543 player assertions, 25 timed-switch assertions, 17 barrier
+  assertions, 15 thrown-object assertions, 26 type-3 decision assertions, 20 type-3
+  actor assertions and 109 CTests. Type-3 decisions add 10922 bytecode rows and the
+  integrated actor adds 11487 rows plus 48 world and 4 presentation fixtures; see
+  [NATIVE_TYPE3_DECISIONS.md](NATIVE_TYPE3_DECISIONS.md) and [NATIVE_TYPE3_ACTORS.md](NATIVE_TYPE3_ACTORS.md). Script 160 adds 3000
   original-bytecode rows and 24 host runs at both widths; see
   [NATIVE_CHANDELIER.md](NATIVE_CHANDELIER.md). The intro retains its 5460 rows
   and 48 playback/skip host runs; see [NATIVE_INTRO.md](NATIVE_INTRO.md).

@@ -618,7 +618,29 @@ int main() {
         require(!pausedRemoval.cached && pausedRemovalSequence.ticks()==-1,"paused trigger cannot resolve sources or start scripts");
         pausedRemoval.flags|=1024;pausedRemoval.update(1,removalFlags,pausedRemovalSequence);
         require(!pausedRemoval.cached && pausedRemovalSequence.ticks()==-1,"hidden trigger skips source resolution and side effects");
-        auto unsupportedRemoval=removedTriggerRecord;unsupportedRemoval.parameters[10]=4;rejects([&]{soul::RemovedScriptTrigger invalid(unsupportedRemoval);},"other removed-source condition modes remain explicit boundaries");
+        auto unsupportedRemoval=removedTriggerRecord;unsupportedRemoval.parameters[10]=5;rejects([&]{soul::RemovedScriptTrigger invalid(unsupportedRemoval);},"other removed-source condition modes remain explicit boundaries");
+        {
+            // Condition 4 (all sources removed) with the second-level shape: sources 98/102, script UID 95.
+            soul::ActorRecord all{};all.count=19;all.parameters={40,103,100,100,0,8,0,0,30,30,4,1,0,98,102,-1,95,-1,-1};
+            auto scriptData=decodedScript[0];scriptData.uid=95;
+            soul::RemovedScriptTrigger both(all);soul::GateScript sequence(scriptData);std::vector<bool> gone(8);
+            const auto lookup=[&](bool a,bool b){return soul::RemovedScriptTrigger::SourceLookup([a,b](int uid)->std::optional<int>{if(uid==98 && a)return 3;if(uid==102 && b)return 4;return std::nullopt;});};
+            both.updateSources(lookup(true,true),gone,sequence);
+            require(both.indices[0]==3 && both.indices[1]==4 && both.latch==-1 && sequence.ticks()==-1,"condition 4 binds both live sources without starting");
+            gone[3]=true;both.updateSources(lookup(false,true),gone,sequence);
+            require(both.latch==-1 && sequence.ticks()==-1,"condition 4 waits for the second source");
+            gone[4]=true;both.updateSources(lookup(false,false),gone,sequence);
+            require(both.latch==1 && sequence.ticks()==0,"condition 4 starts the script once every cached source is removed");
+            soul::RemovedScriptTrigger lost(all);soul::GateScript lostSequence(scriptData);
+            std::vector<bool> fresh(8);lost.updateSources(lookup(false,true),fresh,lostSequence);
+            require(lost.sourceUids[0]==-1 && lost.indices[1]==4 && lostSequence.ticks()==-1,"condition 4 drops an unresolved first source for good, then still needs the second");
+            fresh[4]=true;lost.updateSources(lookup(false,true),fresh,lostSequence);
+            require(lost.latch==1 && lostSequence.ticks()==0,"an unused first slot is vacuously satisfied under condition 4");
+            auto anyRecord=all;anyRecord.parameters[10]=3;soul::RemovedScriptTrigger any(anyRecord);soul::GateScript anySequence(scriptData);std::vector<bool> oneGone(8);oneGone[4]=true;
+            any.updateSources(lookup(true,true),oneGone,anySequence);
+            require(any.latch==1 && anySequence.ticks()==0,"condition 3 starts on any removed source");
+            rejects([&]{any.update(std::optional<int>(1),oneGone,anySequence);},"single-source form rejects a multi-source trigger");
+        }
         soul::ActorRecord sourceChestRecord{};sourceChestRecord.count=7;sourceChestRecord.parameters={52,57,100,199,0,32,0};
         std::vector<soul::Container> sourceChests;sourceChests.emplace_back(sprite,promptSprite,gateMap,sourceChestRecord);
         soul::Player sourcePlayer(hitSprite,gateMap,r);sourcePlayer.flags|=16384;soul::PlayerMeters sourceMeters;
@@ -633,6 +655,30 @@ int main() {
         sourceWorld.finishContainerSources(sourceChests);sourceWorld.updatePlayer(0,0,2);sourceWorld.finishPlayer();sourceWorld.finishContainerSources(sourceChests);
         require(sourceWorld.gateScriptTicks()==1 && sourceWorld.gates.front().action==104,"selected key zero executes next tick before gate handlers without retriggering");
         rejects([&]{soul::CombatWorld invalid(hitSprite,hitSprite,gateMap,sourcePlayer,sourceMeters,{removedTriggerRecord,sourceChestRecord},stats);},"deferred trigger cannot precede its container source in the supported owner bridge");
+        {
+            // Enemy-owned sources run in their own queue slot (no container deferral) and need both removals under condition 4.
+            soul::ActorRecord foeA{},foeB{},enemyTrigger{};foeA.count=foeB.count=13;
+            foeA.parameters={1,10,180,199,0,2057,-100,-125,200,125,0,0,-1};foeB.parameters=foeA.parameters;foeB.parameters[1]=11;foeB.parameters[2]=260;
+            enemyTrigger.count=19;enemyTrigger.parameters={40,103,100,100,0,8,0,0,30,30,4,1,0,10,11,-1,165,-1,-1};
+            soul::Player foePlayer(hitSprite,gateMap,r);foePlayer.flags|=16384;soul::PlayerMeters foeMeters;
+            const std::vector<soul::ActorRecord> foeRecords{gateRecord,foeA,foeB,enemyTrigger};
+            soul::CombatWorld foeWorld(hitSprite,hitSprite,gateMap,foePlayer,foeMeters,foeRecords,stats);foeWorld.loadGates(hitSprite,gateMap,foeRecords);foeWorld.loadGateScripts(soul::ByteView(scriptBytes));
+            require(foeWorld.removedScriptTriggers.size()==1 && !foeWorld.removedScriptTriggers[0].deferred && foeWorld.gateScriptLoaded(),"enemy-sourced script trigger is owned in-loop and selects the script it names");
+            foeWorld.updatePlayer(0,0,0);foeWorld.finishPlayer();
+            const auto& foeTrigger=foeWorld.removedScriptTriggers[0];
+            require(foeTrigger.indices[0]==1 && foeTrigger.indices[1]==2 && foeTrigger.sourceCached(0) && foeTrigger.sourceCached(1) && foeWorld.gateScriptTicks()==-1,"live placed enemies bind their record-order persistence indices without starting the script");
+            const soul::EnemyTarget strike{foePlayer.x,foePlayer.fixedX,foePlayer.collision,foePlayer.attack,foePlayer.fixedY};
+            const auto kill=[&](soul::EnemyType1& foe){foe.applyDamage(1000,true,strike,{},foeWorld.random);for(int n=0;n<400 && foe.alive;++n){foeWorld.updatePlayer(0,0,n+1);foeWorld.finishPlayer();foeWorld.advance();}};
+            kill(foeWorld.enemies[0]);
+            require(!foeWorld.enemies[0].alive && foeWorld.gateScriptTicks()==-1,"one removed source cannot start a condition-4 trigger");
+            kill(foeWorld.enemies[1]);
+            require(!foeWorld.enemies[1].alive && foeWorld.gateScriptTicks()>=0 && foeTrigger.latch==1,"second removal starts the selected script from the enemy's own queue slot");
+            auto gateTicks=foeWorld.gateScriptTicks();for(int n=0;n<40 && foeWorld.gateScriptTicks()!=-2;++n){foeWorld.updatePlayer(0,0,n);foeWorld.finishPlayer();foeWorld.advance();}
+            require(gateTicks>=0 && foeWorld.gateScriptTicks()==-2 && !foeTrigger.alive,"selected script completes and removes the enemy-sourced trigger");
+            auto mixed=enemyTrigger;mixed.parameters[14]=154;
+            soul::CombatWorld mixedWorld(hitSprite,hitSprite,gateMap,foePlayer,foeMeters,std::vector<soul::ActorRecord>{gateRecord,foeA,mixed},stats);
+            require(mixedWorld.removedScriptTriggers.empty(),"mixed container/enemy sources are not routed");
+        }
         soul::ActorRecord entrance{};entrance.count=12;entrance.parameters={59,10,100,150,0,8,0,0,10,80,11,2};
         auto exitRecord=entrance;exitRecord.parameters[1]=11;exitRecord.parameters[2]=500;exitRecord.parameters[3]=250;exitRecord.parameters[10]=10;exitRecord.parameters[11]=1;
         soul::LinkedPassage passage(entrance),exitPassage(exitRecord);soul::Player traveler(sprite,world,r);traveler.x=100;traveler.y=199;traveler.fixedX=25600;traveler.fixedY=199*256;traveler.vx=2048;traveler.facingLeft=false;traveler.refreshBounds();

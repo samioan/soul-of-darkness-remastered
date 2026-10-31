@@ -13,7 +13,7 @@ void emitEnemyManifest(const std::filesystem::path& root) {
         for(int i=0;i<n;++i) { const int value=reader.i32be(); if(row==0) stats.push_back(value); }
     }
     reader.done();
-    for(const std::string s:{"idle","pursue","right","attack0","attack1","attack2","attack3","fall","ledge0","ledge1","wall","slope16","slope17","slope18","slope19","slope20","slope21","paused","inactive","flag32","touched"}) {
+    for(const std::string s:{"idle","pursue","right","attack0","attack1","attack2","attack3","fall","ledge0","ledge1","wall","slope16","slope17","slope18","slope19","slope20","slope21","paused","inactive","flag32","touched","fade"}) {
         soul::LevelMaps maps; soul::TileGrid grid; grid.width=40; grid.height=20; grid.cells.resize(800);
         for(int i=400;i<800;++i) grid.cells[i]=24;
         if(s.rfind("ledge",0)==0) for(int y=10;y<20;++y) for(int x=0;x<7;++x) grid.cells[y*40+x]=0;
@@ -26,6 +26,7 @@ void emitEnemyManifest(const std::filesystem::path& root) {
         if(s=="fall") record.parameters[3]=119;
         if(s=="inactive") record.parameters[5]|=1024;
         if(s=="flag32") record.parameters[5]|=32;
+        if(s=="fade"){record.parameters[5]|=128;record.parameters[11]=7;}
         soul::EnemyType1 enemy(sprite,maps,record,stats);
         for(int frame=0;frame<96;++frame) {
             const bool paused=s=="paused" && frame>=6 && frame<20;

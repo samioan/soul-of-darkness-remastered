@@ -16,7 +16,7 @@ def main():
     for index, (want, got) in enumerate(zip(expected, actual), 1):
         require(want == got, f'Type-3 decision row {index}:\nJava: {want}\nC++: {got}')
     print('PASS: 10922 original-bytecode rows: ballistic aiming, action entries and all three AI decision variants')
-    print('Boundary: isolated decisions; actor physics, damage/lifecycle, linked chests and child update order remain pending')
+    print('Boundary: isolated decisions; integrated actors are checked by check_native_type3_actors.py')
 
 
 if __name__ == '__main__':

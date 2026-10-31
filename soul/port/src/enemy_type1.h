@@ -24,12 +24,13 @@ public:
     std::vector<EnemyLootSpawn> loot;
     void dropLoot(JavaRandom&,const PlayerMeters&);
     void resetForRegionExit(); // Non-death reset: no loot or respawn-count decrement.
-    bool regionRespawnable() const { return spawnRecord_.parameters[12]<=0; }
+    bool regionRespawnable() const { return respawnable(); }
     bool grounded=false,ceiling=false,wallLeft=false,wallRight=false,facingLeft=false,touched=false;
     std::array<int,4> collision{},attack{},visual{},activation{},interaction{};
     void update(const EnemyTarget&,bool paused=false,JavaRandom* random=nullptr,const PlayerMeters* meters=nullptr,CombatExchange* exchange=nullptr);
     // Explicit damage entry; effects are queued in original spawn order.
-    void applyDamage(int amount,bool reaction,const EnemyTarget&,const Weapon0&,JavaRandom&);
+    virtual ~EnemyType1()=default;
+    virtual void applyDamage(int amount,bool reaction,const EnemyTarget&,const Weapon0&,JavaRandom&);
     bool receiveWeapon(const EnemyTarget&,const Weapon0&,JavaRandom&);
     std::vector<CombatEffectSpawn> effects;
     int contactDamage=0;
@@ -43,6 +44,11 @@ public:
 protected:
     EnemyType1(const BSprite&,const LevelMaps&,const ActorRecord&,const std::vector<int>&,int actorType);
     const BSprite& sprite_; const LevelMaps& maps_; SpriteRenderer renderer_;
+    // Type 1 links (record slot 12 > 0) are never respawned; the other enemy types always are.
+    bool respawnable() const { return type!=1 || spawnRecord_.parameters[12]<=0; }
+    // Called after cleanup/region reset reloads the spawn record, before bounds are final.
+    virtual void finishReinit() {}
+    int hurtAnimation_=3,deathOffset_=20;
     int variant_=0,head_=0,belowHead_=0,feet_=0,aboveFeet_=0,belowFeet_=0,leftFeet_=0,rightFeet_=0;
     int leftSide_=0,rightSide_=0,centerX_=0,centerY_=0;
     bool vertical_=false,dirty_=false;
@@ -50,6 +56,6 @@ protected:
     void cleanup(JavaRandom&,const PlayerMeters&);
     bool respawnFade(const EnemyTarget&);
     int tile(int,int) const; int probe(); void resolve(); void slope(); void fall();
-    bool ending() const; void request(int); void change(int); void interactionBounds();
+    bool ending() const; void request(int); virtual void change(int); void interactionBounds();
 };
 }

@@ -47,7 +47,7 @@ Type3DecisionEvents decideType3(Type3DecisionState& s,const Type3DecisionInput& 
     Type3DecisionEvents e;
     // Keep attachment operations visible to the owner; they are not world ticks.
     auto attachment=in.attachment;
-    const auto spawn=[&]{if(attachment==Type3Attachment::None){e.spawnShot=true;attachment=Type3Attachment::HeldShot;}};
+    const auto spawn=[&]{if(attachment==Type3Attachment::None){e.spawnShot=true;e.spawnFacingLeft=s.facingLeft;e.spawnOffsetX=toward(in,5);attachment=Type3Attachment::HeldShot;}};
     const auto change=[&](int next){auto entry=enterType3Action(s,next,in);if(entry.animation)e.animation=entry.animation;e.restartAnimation=entry.restartAnimation;e.deathEffect=entry.deathEffect;};
     const auto decrement=[&]{s.timer=sub(s.timer,83);};
     switch(s.action){

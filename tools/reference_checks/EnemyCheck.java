@@ -5,7 +5,7 @@ import java.util.List;
 
 /** Type-1 AI with an empty world queue and synthetic non-damaging player rectangles. */
 public final class EnemyCheck {
-    static final String[] CASES={"idle","pursue","right","attack0","attack1","attack2","attack3","fall","ledge0","ledge1","wall","slope16","slope17","slope18","slope19","slope20","slope21","paused","inactive","flag32","touched"};
+    static final String[] CASES={"idle","pursue","right","attack0","attack1","attack2","attack3","fall","ledge0","ledge1","wall","slope16","slope17","slope18","slope19","slope20","slope21","paused","inactive","flag32","touched","fade"};
     static int variant(String s) { return s.startsWith("attack")?s.charAt(6)-'0':s.equals("ledge1")?1:0; }
     static void row(ActorCheck.Access a,Object e,PrintWriter out,String s,int f,int phase) throws Exception {
         out.print("E\t"+s+"\t"+f+"\t"+phase);
@@ -32,6 +32,7 @@ public final class EnemyCheck {
                     short[] record={1,19,180,(short)(scenario.equals("fall")?119:199),0,9,-100,-125,200,125,(short)variant(scenario),0,-1};
                     if(scenario.equals("inactive")) record[5]|=1024;
                     if(scenario.equals("flag32")) record[5]|=32;
+                    if(scenario.equals("fade")){record[5]|=128;record[11]=7;}
                     access.call(e,"a","initializeFromRecord",new Class<?>[]{short[].class,boolean.class,int.class,int.class},java.util.Arrays.copyOf(record,20),true,0,13);
                     byte[] tiles=(byte[])access.global("dL","collisionTiles");
                     for(int i=400;i<800;++i) tiles[i]=24;
@@ -77,6 +78,6 @@ public final class EnemyCheck {
                 if(scenario.equals("fall")) ActorCheck.equal(true,sawFall,"falling AI must execute");
             }
         }
-        System.out.println("type-1 AI: 4032 snapshots; "+ActorCheck.comparisons+" original/reference comparisons; "+output);
+        System.out.println("type-1 AI: 4224 snapshots; "+ActorCheck.comparisons+" original/reference comparisons; "+output);
     }
 }

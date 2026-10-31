@@ -65,6 +65,8 @@ void Container::clearPrompt(const Player& p) {
 }
 void Container::update(const Player& player,unsigned pressed,bool paused,bool magicUnlocked,JavaRandom* random,bool iceUnlocked) {
     drops.clear();
+    // A queued chest whose holder attached it earlier this tick still dispatches: updateContainer keeps it in action 0.
+    if(alive && !paused && !(flags&(1024|16384)) && (flags&256) && (flags&32)) { carriedUpdate(paused); return; }
     if(!alive || paused || (flags&(1024|16384)) || ((flags&32) && !(flags&16))) return;
     fixedX=add(add(fixedX,shl(x-sar(fixedX))),vx); fixedY=add(add(fixedY,shl(y-sar(fixedY))),vy);
     vx=add(vx,ax); vy=add(vy,ay); ax=ay=0; x=sar(fixedX); y=sar(fixedY); bounds();
@@ -116,6 +118,66 @@ void Container::update(const Player& player,unsigned pressed,bool paused,bool ma
     default: throw FormatError("Container action outside prototype subset");
     }
     bounds();
+}
+void Container::carry(int px,int py,bool left) { x=px; y=py; carryLeft_=left; }
+void Container::carriedUpdate(bool paused) {
+    if(!alive || paused || (flags&(1024|16384))) return;
+    fixedX=add(add(fixedX,shl(x-sar(fixedX))),vx); fixedY=add(add(fixedY,shl(y-sar(fixedY))),vy);
+    vx=add(vx,ax); vy=add(vy,ay); ax=ay=0; x=sar(fixedX); y=sar(fixedY);
+    // updateContainer: bounds refresh, vertical stop and forced action 0 while attached and frozen.
+    // Actor.refreshBounds reads flags; the facing bit catches up at the end of the update.
+    bounds(); vy=0; action=0;
+    if(carryLeft_) flags|=1; else flags&=~1;
+}
+void Container::release() {
+    flags&=~32;
+    if(action!=103) { timer=500; action=103; }
+    resolveTiles();
+    flags&=~256;
+}
+void Container::resolveTiles() {
+    // Actor.resolveTileCollisions(true,true), as ported for ordinary actors.
+    int head=0,belowHead=0,feet=0,correction=0; bool vertical=false;
+    const auto probe=[&] {
+        bounds(); const int top=collision[1],bottom=collision[3]+1,tx=x/20;
+        grounded=false; vertical=vy!=0; correction=0;
+        head=tile(tx,top/20); belowHead=tile(tx,top/20+1); feet=tile(tx,bottom/20);
+        const int aboveFeet=tile(tx,bottom/20-1),leftFeet=tile(tx-1,bottom/20),rightFeet=tile(tx+1,bottom/20);
+        if(vy<=-5120 && belowHead>15 && head<=15) head=belowHead;
+        if(head>=15) vertical=true;
+        if(feet>=15 || (feet==0 && aboveFeet>=24 && bottom-top>=20) || (collision[2]-collision[0]>20 && leftFeet>=15 && rightFeet>=15)) {
+            correction=bottom%20;
+            if(aboveFeet>=15) { correction+=20; feet=aboveFeet; }
+            if(correction>0) vertical=true;
+            if(head>=24 && belowHead>=24) vertical=false;
+            grounded=true;
+            if(feet>=18 && feet<=21) {
+                const int u=(x%20)>>1;
+                correction-=feet==18 ? u : feet==19 ? u+10 : feet==20 ? 20-u : 10-u; vertical=true;
+            } else if(feet==16 || feet==17) { correction-=feet==16 ? x%20 : 20-x%20; vertical=true; }
+        }
+    };
+    probe(); const int top=collision[1];
+    if(vertical) {
+        if(vy>=0 && feet>=15) y-=correction;
+        else if(head>=24) y+=20-top%20+1;
+    }
+    bounds(); const int left=collision[0]-1,right=collision[2]+1,rowTop=collision[1],bottom=collision[3]-10;
+    const int innerLeft=tile(left/20+1,bottom/20),innerRight=tile(right/20-1,bottom/20);
+    bool wallLeft=false,wallRight=false; int leftSide=0,rightSide=0;
+    for(int row=rowTop/20;row<=bottom/20;++row) {
+        if(left<0) { leftSide=24; wallLeft=true; break; }
+        int value=tile(left/20,row);
+        if(value>leftSide) { leftSide=value; if(value>=24) { wallLeft=true; if(row==bottom/20 && (innerLeft==16 || innerLeft==18)) wallLeft=false; } }
+        value=tile(right/20,row);
+        if(value>rightSide) { rightSide=value; if(value>=24) { wallRight=true; if(row==bottom/20 && (innerRight==17 || innerRight==20 || innerRight==21)) wallRight=false; } }
+        if(wallLeft || wallRight) break;
+    }
+    bounds();
+    if(wallLeft==wallRight) return;
+    if(vx<=0) { if(wallLeft) x+=20-(left+20)%20-1; else x-=right%20; }
+    else { if(wallRight) x-=right%20; else x+=20-(left+20)%20-1; }
+    probe();
 }
 void Container::advanceAnimation() {
     if(!alive || ((flags&32) && !(flags&16))) return;

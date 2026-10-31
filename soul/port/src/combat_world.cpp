@@ -12,6 +12,34 @@ bool barrierTriggerRecord(const ActorRecord& r,const std::vector<ActorRecord>& r
     return false;
 }
 
+// Removed-source script trigger owners: 1 = one placed container (deferred behind the container handler),
+// 2 = placed enemies of type 1/2/3 (runs in its own queue slot), 0 = not routed.
+int removedScriptSourceKind(const ActorRecord& r,const std::vector<ActorRecord>& records){
+    const auto& p=r.parameters;
+    const auto typeOf=[&](int uid)->int{for(const auto& row:records)if(row.parameters[0]!=0 && row.parameters[1]==uid)return row.parameters[0];return -1;};
+    bool containers=false,enemies=false;
+    for(int slot=13;slot<=15;++slot)if(p[slot]!=-1){
+        const int type=typeOf(p[slot]);
+        if(type==52)containers=true;else if(type==1 || type==2 || type==3)enemies=true;else return 0;
+    }
+    if(containers==enemies)return 0;
+    if(containers && (p[10]!=3 || p[14]!=-1 || p[15]!=-1))return 0;
+    return containers?1:2;
+}
+// Removed-source enable triggers: placed enemy sources and enemy/chest targets that already have native owners.
+bool removedEnemyTriggerRecords(const ActorRecord& r,const std::vector<ActorRecord>& records){
+    const auto& p=r.parameters;
+    const auto typeOf=[&](int uid)->int{for(const auto& row:records)if(row.parameters[0]!=0 && row.parameters[1]==uid)return row.parameters[0];return -1;};
+    for(int slot=13;slot<=14;++slot){const int type=typeOf(p[slot]);if(type!=1 && type!=2 && type!=3)return false;}
+    for(int slot=16;slot<=18;++slot)if(p[slot]!=-1){
+        const auto target=std::find_if(records.begin(),records.end(),[&](const auto& row){return row.parameters[0]!=0 && row.parameters[1]==p[slot];});
+        if(target==records.end())return false;
+        const int type=target->parameters[0];
+        if(type!=1 && type!=2 && type!=3 && type!=52)return false;
+        if(type!=52 && (target->parameters[5]&256))return false;
+    }
+    return true;
+}
 }
 CombatWorld::CombatWorld(const BSprite& enemySprite,const BSprite& effectSprite,const LevelMaps& maps,Player& player,PlayerMeters& meters,const std::vector<ActorRecord>& records,const std::vector<int>& stats)
     :effectSprite_(effectSprite),maps_(maps),player_(player),meters_(meters) {
@@ -20,20 +48,22 @@ CombatWorld::CombatWorld(const BSprite& enemySprite,const BSprite& effectSprite,
         const auto& p=r.parameters;
         if(p[0]!=0)placedUids_.push_back(p[1]);
         if(RemovedScriptTrigger::supported(r)){
-            const auto source=std::find_if(records.begin(),records.end(),[&](const auto& row){return row.parameters[0]==52 && row.parameters[1]==p[13];});
-            if(source==records.end() || &*source>=&r)throw FormatError("Deferred source trigger requires its earlier placed container");
-            removedScriptTriggers.emplace_back(r);
+            const int kind=removedScriptSourceKind(r,records);
+            if(kind==1){
+                const auto source=std::find_if(records.begin(),records.end(),[&](const auto& row){return row.parameters[0]==52 && row.parameters[1]==p[13];});
+                if(source==records.end() || &*source>=&r)throw FormatError("Deferred source trigger requires its earlier placed container");
+            }
+            if(kind!=0){removedScriptTriggers.emplace_back(r);removedScriptTriggers.back().deferred=kind==1;}
         }
         if(RemovedEnemyTrigger::supported(r)){
-            const auto find=[&](int uid,int type){return std::any_of(records.begin(),records.end(),[&](const auto& row){return row.parameters[1]==uid && row.parameters[0]==type;});};
-            if((find(p[13],1) && find(p[14],1) && find(p[17],2) && find(p[18],2)) || (find(p[13],2) && find(p[14],2) && find(p[17],52) && find(p[18],52)))removedEnemyTriggers.emplace_back(r);
+            if(removedEnemyTriggerRecords(r,records))removedEnemyTriggers.emplace_back(r);
         }
         if(p[0]==59)passages.emplace_back(r);
         if(PlayerEnableTrigger::supported(r) && !barrierTriggerRecord(r,records)){
             if(p[13]!=player_.uid)throw FormatError("Enemy enable trigger requires the owned player source");
             for(int slot=16;slot<=18;++slot)if(p[slot]!=-1){
                 const auto target=std::find_if(records.begin(),records.end(),[&](const auto& row){return row.parameters[1]==p[slot];});
-                if(target==records.end() || target->parameters[0]!=1 || (target->parameters[5]&256))throw FormatError("Player enable targets require supported placed type-1 enemies");
+                if(target==records.end() || (target->parameters[0]!=1 && target->parameters[0]!=3) || (target->parameters[5]&256))throw FormatError("Player enable targets require supported placed type-1 or type-3 enemies");
             }
             playerEnableTriggers.emplace_back(r);
         }
@@ -69,7 +99,7 @@ void CombatWorld::detach(){
     bodyPointers_.clear();bodies_.clear();playerEffects_.clear();order_.clear();updateQueue_.clear();contactQueue_.clear();queue_.clear();containerQueue_.clear();
     platformIndex_.clear();bridgeIndex_.clear();gateIndex_.clear();
     thrownObjects.reset();iceMagic.reset();fireMagic.reset();gates.clear();timedSwitches.clear();energyBarriers.clear();platforms.clear();bridges.clear();
-    enemies.clear();flyingEnemies.clear();prompts.clear();beamEmitters.clear();checkpoints.clear();exits.clear();passages.clear();effects.clear();loot.clear();
+    enemies.clear();flyingEnemies.clear();type3Enemies.clear();type3Buckets_.clear();prompts.clear();beamEmitters.clear();checkpoints.clear();exits.clear();passages.clear();effects.clear();loot.clear();
     promptRenderer_.reset();promptSprite_=nullptr;placedUids_.clear();placedRemoved_.clear();buckets_.clear();regions_.clear();
     region_=previousRegion_=-1;regionChanged_=false;regionCameraBounds_={};camera={};completion={};
 }
@@ -82,14 +112,14 @@ void CombatWorld::loadCheckpoints(const std::vector<ActorRecord>& records,std::f
 std::vector<RemovedCheckpointActor> CombatWorld::removedCheckpointActors()const{
     std::vector<RemovedCheckpointActor> result;
     const auto add=[&](const auto& rows){for(const auto& a:rows)if(!a.alive)result.push_back({a.uid,a.flags});};
-    add(energyBarriers);add(barrierTriggers);add(cameraControllers);add(promptRemovalTriggers);add(chandelierTriggers);add(introTriggers);add(prompts);add(enemies);add(flyingEnemies);add(checkpoints);add(bridges);add(removedEnemyTriggers);add(removedScriptTriggers);add(playerEnableTriggers);return result;
+    add(energyBarriers);add(barrierTriggers);add(cameraControllers);add(promptRemovalTriggers);add(chandelierTriggers);add(introTriggers);add(prompts);add(enemies);add(flyingEnemies);add(type3Enemies);add(checkpoints);add(bridges);add(removedEnemyTriggers);add(removedScriptTriggers);add(playerEnableTriggers);return result;
 }
 void CombatWorld::restoreCheckpointActors(const CheckpointSnapshot& saved,const std::vector<ActorRecord>& records){
     if(saved.level!=player_.level())throw FormatError("Checkpoint actor state belongs to another level");
     if(worldFrame_!=0 || !updateQueue_.empty())throw FormatError("Checkpoint restore requires a reconstructed world");
     const auto skip=[&](int uid){const auto r=std::find_if(records.begin(),records.end(),[&](const auto& a){return a.parameters[1]==uid;});return r!=records.end() && saved.skips(*r);};
     const auto remove=[&](auto& rows){for(auto& a:rows)if(skip(a.uid))a.alive=false;};
-    remove(energyBarriers);remove(barrierTriggers);remove(cameraControllers);remove(promptRemovalTriggers);remove(chandelierTriggers);remove(introTriggers);remove(prompts);remove(enemies);remove(flyingEnemies);remove(checkpoints);remove(bridges);remove(removedEnemyTriggers);remove(removedScriptTriggers);remove(playerEnableTriggers);
+    remove(energyBarriers);remove(barrierTriggers);remove(cameraControllers);remove(promptRemovalTriggers);remove(chandelierTriggers);remove(introTriggers);remove(prompts);remove(enemies);remove(flyingEnemies);remove(type3Enemies);remove(checkpoints);remove(bridges);remove(removedEnemyTriggers);remove(removedScriptTriggers);remove(playerEnableTriggers);
     for(std::size_t i=0;i<placedUids_.size();++i)placedRemoved_[i]=skip(placedUids_[i]);
     region_=-1;previousRegion_=-1;regionChanged_=false;refreshRegionSelection();cacheBuckets();
 }
@@ -109,6 +139,24 @@ void CombatWorld::loadFlyingEnemies(const BSprite& sprite,const std::vector<Acto
     if(!flyingEnemies.empty())throw FormatError("Flying enemies already loaded");flyingEnemies.reserve(records.size());
     for(const auto& r:records)if(r.parameters[0]==2)flyingEnemies.emplace_back(sprite,maps_,r,stats);
     rebuildOrder(records);cacheBuckets();
+}
+void CombatWorld::loadType3Enemies(const BSprite& sprite,const std::vector<ActorRecord>& records,const std::vector<int>& stats){
+    if(!type3Enemies.empty())throw FormatError("Type-3 enemies already loaded");
+    if(detached_ || !thrownObjects)throw FormatError("Type-3 enemies need a live world with thrown objects");
+    for(const auto& r:records)if(r.parameters[0]==3)type3Enemies.emplace_back(sprite,maps_,r,stats,player_.level());
+    type3Buckets_.assign(type3Enemies.size(),0);rebuildOrder(records);cacheBuckets();
+}
+EnemyType1& CombatWorld::enemyAt(const ActorSlot& slot){
+    if(slot.kind==ActorKind::Enemy)return enemies[slot.index];
+    if(slot.kind==ActorKind::Type3Enemy)return type3Enemies[slot.index];
+    return flyingEnemies[slot.index];
+}
+Type3Services CombatWorld::type3Services(){
+    Type3Services s;s.shots=thrownObjects.get();
+    s.findChest=[this](int uid)->Container*{if(containers_)for(auto& c:*containers_)if(c.uid==uid && c.alive)return &c;return nullptr;};
+    s.hitActors=[this](ThrownObject& shot){shotHitsActors(shot,EnemyTarget{player_.x,player_.fixedX,player_.collision,player_.attack,player_.fixedY});};
+    s.hitPlayer=[this](ThrownObject& shot){shotHitsPlayer(shot);};
+    return s;
 }
 void CombatWorld::loadPlatforms(const BSprite& sprite,const std::vector<ActorRecord>& records,const std::array<int,256>* trig,int contactDamage) {
     if(!platforms.empty())throw FormatError("Platforms already loaded");
@@ -210,18 +258,36 @@ const int* CombatWorld::resolveAction(int uid) const {
 void CombatWorld::loadGateScripts(ByteView bytes) {
     if(gateScript_)throw FormatError("Gate scripts already loaded");
     auto scripts=decodeScripts(bytes);
-    for(auto& script:scripts)if(script.uid==165){if(gateScript_)throw FormatError("Duplicate gate script UID");gateScript_=std::make_unique<GateScript>(std::move(script));}
+    // The selected script is the one named by the placed removed-source triggers (165 when none are placed).
+    int wanted=165;
+    for(const auto& t:removedScriptTriggers){if(&t!=&removedScriptTriggers.front() && t.scriptUid!=wanted)throw FormatError("Only one selected gate script is supported");wanted=t.scriptUid;}
+    for(auto& script:scripts)if(script.uid==wanted){if(gateScript_)throw FormatError("Duplicate gate script UID");gateScript_=std::make_unique<GateScript>(std::move(script));}
 }
 void CombatWorld::startGateScript(int uid) {
     if(!gateScript_ || gateScript_->uid()!=uid)throw FormatError("Unsupported gate script UID");
     gateScript_->start();
+}
+std::optional<int> CombatWorld::liveEnemyIndex(int uid) const {
+    bool alive=false;
+    for(const auto& e:enemies)if(e.uid==uid && e.alive)alive=true;
+    for(const auto& e:flyingEnemies)if(e.uid==uid && e.alive)alive=true;
+    for(const auto& e:type3Enemies)if(e.uid==uid && e.alive)alive=true;
+    if(alive)for(std::size_t i=0;i<placedUids_.size();++i)if(placedUids_[i]==uid)return static_cast<int>(i);
+    return std::nullopt;
+}
+EnableEnemyTarget CombatWorld::enemyEnableTarget(int uid){
+    for(auto& e:enemies)if(e.uid==uid && e.alive)return {&e.flags,&e.action};
+    for(auto& e:flyingEnemies)if(e.uid==uid && e.alive)return {&e.flags,&e.action};
+    for(auto& e:type3Enemies)if(e.uid==uid && e.alive)return {&e.flags,&e.action};
+    if(containers_)for(auto& c:*containers_)if(c.uid==uid && c.alive)return {&c.flags,&c.action,[this,&c]{effects.emplace_back(effectSprite_,CombatEffectSpawn{28,c.x,c.y,c.flags&1});++effectsSpawned;++containerEnables;}};
+    return {};
 }
 void CombatWorld::finishContainerSources(const std::vector<Container>& containers,bool paused) {
     if(!containerSourcesPending_)return;
     containerSourcesPending_=false;
     for(const auto& c:containers)if(!c.alive)for(std::size_t i=0;i<placedUids_.size();++i)if(placedUids_[i]==c.uid)placedRemoved_[i]=true;
     for(const auto& slot:updateQueue_)if(slot.kind==ActorKind::RemovedScriptTrigger) {
-        auto& t=removedScriptTriggers[slot.index];std::optional<int> source;
+        auto& t=removedScriptTriggers[slot.index];std::optional<int> source;if(!t.deferred)continue;
         for(const auto& c:containers)if(c.uid==t.sourceUid && c.alive)for(std::size_t i=0;i<placedUids_.size();++i)if(placedUids_[i]==c.uid){source=static_cast<int>(i);break;}
         if(gateScript_){t.update(source,placedRemoved_,*gateScript_,paused);if(!t.alive)for(std::size_t i=0;i<placedUids_.size();++i)if(placedUids_[i]==t.uid)placedRemoved_[i]=true;}
     }
@@ -243,6 +309,7 @@ void CombatWorld::rebuildOrder(const std::vector<ActorRecord>& records) {
         if(p[0]==23)for(std::size_t i=0;i<checkpoints.size();++i)if(checkpoints[i].uid==p[1])order_.push_back({ActorKind::Checkpoint,i});
         if(p[0]==1 && !(p[5]&256))for(std::size_t i=0;i<enemies.size();++i)if(enemies[i].uid==p[1])order_.push_back({ActorKind::Enemy,i});
         if(p[0]==2)for(std::size_t i=0;i<flyingEnemies.size();++i)if(flyingEnemies[i].uid==p[1])order_.push_back({ActorKind::FlyingEnemy,i});
+        if(p[0]==3)for(std::size_t i=0;i<type3Enemies.size();++i)if(type3Enemies[i].uid==p[1])order_.push_back({ActorKind::Type3Enemy,i});
         if(p[0]==40)for(std::size_t i=0;i<removedEnemyTriggers.size();++i)if(removedEnemyTriggers[i].uid==p[1])order_.push_back({ActorKind::RemovedEnemyTrigger,i});
         if(p[0]==33 || p[0]==50)for(std::size_t i=0;i<platformIndex_.size();++i)if(platformIndex_[i]->uid==p[1])order_.push_back({ActorKind::Platform,i});
         if(p[0]==45)for(std::size_t i=0;i<bridgeIndex_.size();++i)if(bridgeIndex_[i]->uid==p[1])order_.push_back({ActorKind::Bridge,i});
@@ -267,6 +334,7 @@ void CombatWorld::cacheBuckets() {
     for(auto& t:barrierTriggers)t.bucket=std::abs(t.x-(cx+120))/120+std::abs(t.y-(cy+160))/160;
     for(auto& t:timedSwitches)t.bucket=std::abs(t.x-(cx+120))/120+std::abs(t.y-(cy+160))/160;
     for(auto& e:flyingEnemies)e.bucket=std::abs(e.x-(cx+120))/120+std::abs(e.y-(cy+160))/160;
+    type3Buckets_.resize(type3Enemies.size());for(std::size_t i=0;i<type3Enemies.size();++i)type3Buckets_[i]=std::abs(type3Enemies[i].x-(cx+120))/120+std::abs(type3Enemies[i].y-(cy+160))/160;
     for(auto& t:removedEnemyTriggers)t.bucket=std::abs(t.x-(cx+120))/120+std::abs(t.y-(cy+160))/160;
     for(auto& p:platforms)p.bucket=std::abs(p.x-(cx+120))/120+std::abs(p.y-(cy+160))/160;
     for(auto& b:bridges)b.bucket=std::abs(b.x-(cx+120))/120+std::abs(b.y-(cy+160))/160;
@@ -289,9 +357,10 @@ const std::vector<ContactBody*>& CombatWorld::prepare(bool playerPaused) {
     loot.clear(); playerEffects_.clear(); bodies_.clear(); bodyPointers_.clear();
     for(auto& e:enemies) { e.effects.clear(); e.loot.clear(); }
     for(auto& e:flyingEnemies){e.effects.clear();e.loot.clear();}
+    for(auto& e:type3Enemies){e.effects.clear();e.loot.clear();}
     for(const auto& slot:contactQueue_){
         if(slot.kind==ActorKind::EnergyBarrier){bodies_.push_back(energyBarriers[slot.index].body());continue;}
-        auto& e=slot.kind==ActorKind::Enemy?enemies[slot.index]:static_cast<EnemyType1&>(flyingEnemies[slot.index]);
+        auto& e=enemyAt(slot);
         if(e.alive && !playerPaused && !(player_.flags&(1024|16384)) && player_.animation!=9 && meters_.health>0)e.refreshBounds();bodies_.push_back(e.body());
     }
     for(auto& b:bodies_) bodyPointers_.push_back(&b);
@@ -341,6 +410,7 @@ bool CombatWorld::eligible(const ActorSlot& slot) const {
     case ActorKind::TimedSwitch:{const auto& t=timedSwitches[slot.index];flags=t.flags;bucket=t.bucket;break;}
     case ActorKind::Enemy: {const auto& e=enemies[slot.index];if(!e.alive)return false;flags=e.flags;bucket=buckets_[slot.index];break;}
     case ActorKind::FlyingEnemy:{const auto& e=flyingEnemies[slot.index];if(!e.alive)return false;flags=e.flags;bucket=e.bucket;break;}
+    case ActorKind::Type3Enemy:{const auto& e=type3Enemies[slot.index];if(!e.alive)return false;flags=e.flags;bucket=type3Buckets_[slot.index];break;}
     case ActorKind::RemovedEnemyTrigger:{const auto& t=removedEnemyTriggers[slot.index];if(!t.alive)return false;flags=t.flags;bucket=t.bucket;radius=7;break;}
     case ActorKind::Platform: {const auto& p=*platformIndex_[slot.index];flags=p.flags;bucket=p.bucket;break;}
     case ActorKind::Bridge: {const auto& b=*bridgeIndex_[slot.index];if(!b.alive)return false;flags=b.flags;bucket=b.bucket;radius=4;break;}
@@ -370,6 +440,7 @@ std::vector<int> CombatWorld::updateQueueUids() const {
     case ActorKind::BarrierTrigger:result.push_back(barrierTriggers[slot.index].alive?barrierTriggers[slot.index].uid:-999);break;
     case ActorKind::TimedSwitch:result.push_back(timedSwitches[slot.index].uid);break;
     case ActorKind::FlyingEnemy:result.push_back(flyingEnemies[slot.index].uid);break;
+    case ActorKind::Type3Enemy:result.push_back(type3Enemies[slot.index].uid);break;
     case ActorKind::RemovedEnemyTrigger:result.push_back(removedEnemyTriggers[slot.index].alive?removedEnemyTriggers[slot.index].uid:-999);break;
     case ActorKind::Enemy:result.push_back(enemies[slot.index].uid);break;
     case ActorKind::Platform:result.push_back(platformIndex_[slot.index]->uid);break;
@@ -406,6 +477,12 @@ void CombatWorld::applyRegionTransition() {
             else if(previousRegion_>=0 && overlap(e.collision,regions_[previousRegion_].bounds))e.resetForRegionExit();
         }else if(e.action!=0)e.resetForRegionExit();
     }
+    for(auto& e:type3Enemies)if(e.alive){
+        if(e.regionRespawnable()){
+            if(overlap(e.collision,regions_[region_].bounds))e.flags&=~1024;
+            else if(previousRegion_>=0 && overlap(e.collision,regions_[previousRegion_].bounds)){e.resetForRegionExit();if(!e.alive)e.removeAttachments();}
+        }else if(e.action!=0){e.resetForRegionExit();if(!e.alive)e.removeAttachments();}
+    }
     for(auto& b:energyBarriers)if(b.alive && (b.flags&8192)){
         if(overlap(b.collision,regions_[region_].bounds))b.flags&=~1024;
         else if(previousRegion_>=0 && overlap(b.collision,regions_[previousRegion_].bounds))b.resetForRegionExit();
@@ -425,7 +502,7 @@ bool CombatWorld::finishPlayer(bool paused) {
     if(detached_)throw FormatError("Detached world cannot dispatch actors");
     containerSourcesPending_=false;
     if(iceMagic)for(auto& e:iceMagic->projectiles)e.updatedThisTick=false;
-    for(std::size_t i=0;i<contactQueue_.size();++i){const auto& slot=contactQueue_[i];if(slot.kind==ActorKind::EnergyBarrier){energyBarriers[slot.index].applyContact(bodies_[i]);continue;}auto& e=slot.kind==ActorKind::Enemy?enemies[slot.index]:static_cast<EnemyType1&>(flyingEnemies[slot.index]);e.applyContact(bodies_[i]);}
+    for(std::size_t i=0;i<contactQueue_.size();++i){const auto& slot=contactQueue_[i];if(slot.kind==ActorKind::EnergyBarrier){energyBarriers[slot.index].applyContact(bodies_[i]);continue;}auto& e=enemyAt(slot);e.applyContact(bodies_[i]);}
     if(player_.animation==9 || player_.deathComplete || player_.stoppedByHazard()) return false;
     // Player-spawned blood exists before Game rebuilds the nonplayer queue,
     // so its first handler runs this tick. Enemy-spawned effects join later.
@@ -440,7 +517,7 @@ bool CombatWorld::finishPlayer(bool paused) {
     queue_.clear();updateQueue_.clear();contactQueue_.clear();
     for(const auto& slot:order_)if(eligible(slot)) {
         updateQueue_.push_back(slot);
-        if(slot.kind==ActorKind::Enemy || slot.kind==ActorKind::FlyingEnemy || slot.kind==ActorKind::EnergyBarrier)contactQueue_.push_back(slot);
+        if(slot.kind==ActorKind::Enemy || slot.kind==ActorKind::FlyingEnemy || slot.kind==ActorKind::Type3Enemy || slot.kind==ActorKind::EnergyBarrier)contactQueue_.push_back(slot);
         if(slot.kind==ActorKind::Enemy)queue_.push_back(static_cast<int>(slot.index));
     }
     EnemyTarget target{player_.x,player_.fixedX,player_.collision,player_.attack,player_.fixedY};
@@ -450,6 +527,7 @@ bool CombatWorld::finishPlayer(bool paused) {
         if(slot.kind==ActorKind::Bridge)targets.emplace_back(bridgeIndex_[slot.index]);
         else if(slot.kind==ActorKind::FlyingEnemy)targets.emplace_back(static_cast<EnemyType1*>(&flyingEnemies[slot.index]));
         else if(slot.kind==ActorKind::Enemy)targets.emplace_back(&enemies[slot.index]);
+        else if(slot.kind==ActorKind::Type3Enemy)targets.emplace_back(static_cast<EnemyType1*>(&type3Enemies[slot.index]));
     }
     for(auto& p:platforms)if(p.type==33 && player_.platform==&p.surface && player_.ceiling)p.vy=0;
     for(const auto& slot:updateQueue_) {
@@ -497,15 +575,14 @@ bool CombatWorld::finishPlayer(bool paused) {
         }
         if(slot.kind==ActorKind::PlayerEnableTrigger){
             auto& t=playerEnableTriggers[slot.index];
-            if(t.update(&player_,[&](int uid)->EnableEnemyTarget{for(auto& e:enemies)if(e.uid==uid && e.alive)return {&e.flags,&e.action};return {};},paused)){
+            if(t.update(&player_,[&](int uid)->EnableEnemyTarget{for(auto& e:enemies)if(e.uid==uid && e.alive)return {&e.flags,&e.action};for(auto& e:type3Enemies)if(e.uid==uid && e.alive)return {&e.flags,&e.action};return {};},paused)){
                 ++playerEnableActivations;for(std::size_t i=0;i<placedUids_.size();++i)if(placedUids_[i]==t.uid)placedRemoved_[i]=true;
             }
             target={player_.x,player_.fixedX,player_.collision,player_.attack,player_.fixedY};continue;
         }
         if(slot.kind==ActorKind::RemovedEnemyTrigger){
             auto& t=removedEnemyTriggers[slot.index];
-            if(t.update([&](int uid)->std::optional<int>{bool alive=false;for(const auto& e:enemies)if(e.uid==uid && e.alive)alive=true;for(const auto& e:flyingEnemies)if(e.uid==uid && e.alive)alive=true;if(alive)for(std::size_t i=0;i<placedUids_.size();++i)if(placedUids_[i]==uid)return static_cast<int>(i);return std::nullopt;},placedRemoved_,[&](int uid)->EnableEnemyTarget{for(auto& e:flyingEnemies)if(e.uid==uid && e.alive)return {&e.flags,&e.action};
-                if(containers_)for(auto& c:*containers_)if(c.uid==uid && c.alive)return {&c.flags,&c.action,[this,&c]{effects.emplace_back(effectSprite_,CombatEffectSpawn{28,c.x,c.y,c.flags&1});++effectsSpawned;++containerEnables;}};return {};},paused)){
+            if(t.update([this](int uid){return liveEnemyIndex(uid);},placedRemoved_,[this](int uid){return enemyEnableTarget(uid);},paused)){
                 ++removedEnemyActivations;for(std::size_t i=0;i<placedUids_.size();++i)if(placedUids_[i]==t.uid)placedRemoved_[i]=true;
             }
             continue;
@@ -515,7 +592,14 @@ bool CombatWorld::finishPlayer(bool paused) {
             if(e.crossing){const int source=e.x+(!e.variant && e.direction<8?(e.direction==1?15:-15):0);if(player_.receiveBeamHit(e.damage(),source,e.pushesWhileInvulnerable(),damage,meters_.health,meters_.maxHealth,random,playerEffects_)){++playerHits;++beamHits;}}
             continue;
         }
-        if(slot.kind==ActorKind::RemovedScriptTrigger)continue;
+        if(slot.kind==ActorKind::RemovedScriptTrigger){
+            auto& t=removedScriptTriggers[slot.index];
+            if(!t.deferred && gateScript_){
+                t.updateSources(RemovedScriptTrigger::SourceLookup([this](int uid){return liveEnemyIndex(uid);}),placedRemoved_,*gateScript_,paused);
+                if(!t.alive)for(std::size_t i=0;i<placedUids_.size();++i)if(placedUids_[i]==t.uid)placedRemoved_[i]=true;
+            }
+            continue;
+        }
         if(slot.kind==ActorKind::Gate){gateIndex_[slot.index]->update([&](int uid){return resolveAction(uid);},paused);continue;}
         if(slot.kind==ActorKind::LinkedAreaTrigger){linkedAreaTriggers[slot.index].update(region_<0?nullptr:&regions_[region_].bounds,[&](int uid)->int* {
             for(auto p:platformIndex_)if(p->uid==uid)return &p->flags;
@@ -524,10 +608,15 @@ bool CombatWorld::finishPlayer(bool paused) {
         if(slot.kind==ActorKind::Region){if(!paused && !regionChanged_)updateRegion(slot.index);continue;}
         if(slot.kind==ActorKind::Bridge){bridgeIndex_[slot.index]->update(paused);continue;}
         if(slot.kind==ActorKind::Platform){auto& p=*platformIndex_[slot.index];const int oldKills=p.enemyKills;p.update(player_,paused,&exchange,targets);updateAttachedIce(p,paused);kills+=p.enemyKills-oldKills;continue;}
-        const bool flying=slot.kind==ActorKind::FlyingEnemy;
-        auto& e=flying?static_cast<EnemyType1&>(flyingEnemies[slot.index]):enemies[slot.index]; const int health=e.health;
+        const bool flying=slot.kind==ActorKind::FlyingEnemy,thrower=slot.kind==ActorKind::Type3Enemy;
+        auto& e=enemyAt(slot); const int health=e.health;
         const bool ran=e.alive && !paused && !(e.flags&(1024|16384));
-        if(flying)flyingEnemies[slot.index].update(target,paused,&random,&meters_,&exchange);else e.update(target,paused,&random,&meters_,&exchange);
+        if(flying)flyingEnemies[slot.index].update(target,paused,&random,&meters_,&exchange);
+        else if(thrower){
+            auto& caster=type3Enemies[slot.index];const auto services=type3Services();
+            caster.update(target,paused,&random,&meters_,&exchange,services);
+            if(caster.attachedType()!=0)caster.dispatchAttached(target,paused,services);
+        }else e.update(target,paused,&random,&meters_,&exchange);
         if(health>0 && e.health<=0) ++kills;
         if(!e.alive)for(std::size_t i=0;i<placedUids_.size();++i)if(placedUids_[i]==e.uid)placedRemoved_[i]=true;
         if(ran && e.alive && region_>=0) {
@@ -547,8 +636,8 @@ bool CombatWorld::finishPlayer(bool paused) {
         const auto touches=[](const std::array<int,4>& a,const std::array<int,4>& b){return (a[0]!=a[2] || a[1]!=a[3]) && (b[0]!=b[2] || b[1]!=b[3]) && overlap(a,b);};
         for(const auto& targetSlot:updateQueue_){
             if(targetSlot.kind==ActorKind::Bridge){auto& b=*bridgeIndex_[targetSlot.index];if(b.animation==0 && b.alive && b.action==0 && touches(b.collision,pulse.collision))b.activate(pulse.x);continue;}
-            if(targetSlot.kind!=ActorKind::Enemy && targetSlot.kind!=ActorKind::FlyingEnemy)continue;
-            auto& e=targetSlot.kind==ActorKind::Enemy?enemies[targetSlot.index]:static_cast<EnemyType1&>(flyingEnemies[targetSlot.index]);
+            if(targetSlot.kind!=ActorKind::Enemy && targetSlot.kind!=ActorKind::FlyingEnemy && targetSlot.kind!=ActorKind::Type3Enemy)continue;
+            auto& e=enemyAt(targetSlot);
             if(!e.alive || (e.flags&(1024|16384)) || e.action==3 || e.action==5 || e.action==6 || e.action==7 || e.damageCooldown>0 || (!touches(e.collision,pulse.collision) && !touches(e.collision,pulse.attack)))continue;
             const auto previousEffects=e.effects.size();const int health=e.health;
             const EnemyTarget fireTarget{player_.x,player_.fixedX,player_.collision,player_.attack,player_.fixedY};
@@ -586,6 +675,13 @@ void CombatWorld::advance() {
         const bool queued=std::any_of(contactQueue_.begin(),contactQueue_.end(),[&](const auto& slot){return slot.kind==ActorKind::FlyingEnemy && slot.index==i;});
         if(queued || (nearby && overlap(e.visual,view))){if(!nearby)e.refreshBounds();e.advanceAnimation();}
     }
+    for(std::size_t i=0;i<type3Enemies.size();++i){
+        auto& e=type3Enemies[i];if(!e.alive || (e.flags&1024))continue;
+        const bool nearby=std::abs(e.x-(cx+120))/120+std::abs(e.y-(cy+160))/160<=1;
+        if(nearby)e.refreshBounds();
+        const bool queued=std::any_of(contactQueue_.begin(),contactQueue_.end(),[&](const auto& slot){return slot.kind==ActorKind::Type3Enemy && slot.index==i;});
+        if(queued || (nearby && overlap(e.visual,view))){if(!nearby)e.refreshBounds();e.advanceAnimation();}
+    }
     for(std::size_t i=0;i<beamEmitters.size();++i){auto& e=beamEmitters[i];const bool queued=std::any_of(updateQueue_.begin(),updateQueue_.end(),[&](const auto& s){return s.kind==ActorKind::BeamEmitter && s.index==i;});if(!(e.flags&1024) && (queued || (e.bucket<=1 && overlap(e.visual,view))))e.advanceAnimation();}
     if(promptSprite_)for(auto& p:prompts)if(p.alive && !(p.flags&1024) && ((p.flags&16) || (!(p.flags&(256|32)) && p.bucket<2) || (p.bucket<=1 && p.visible(player_,view))))p.advanceAnimation(*promptSprite_);
     for(auto& effect:effects) effect.advanceAnimation();
@@ -598,7 +694,7 @@ void CombatWorld::advance() {
     if(!intro || !intro->active())camera.advance(player_,maps_.width(),maps_.height());
     completion.entryFrame();cacheBuckets();++worldFrame_;
 }
-void CombatWorld::drawEnemies(Canvas& c,int cx,int cy) { for(auto& e:beamEmitters)e.draw(c,cx,cy); for(auto& e:enemies) e.draw(c,cx,cy);for(auto& e:flyingEnemies)e.draw(c,cx,cy); }
+void CombatWorld::drawEnemies(Canvas& c,int cx,int cy) { for(auto& e:beamEmitters)e.draw(c,cx,cy); for(auto& e:type3Enemies)e.draw(c,cx,cy); for(auto& e:enemies) e.draw(c,cx,cy);for(auto& e:flyingEnemies)e.draw(c,cx,cy); }
 void CombatWorld::drawPlatforms(Canvas& c,int cx,int cy) {
     for(auto& g:gates)g.draw(c,cx,cy);for(auto& t:timedSwitches)t.draw(c,cx,cy);for(auto& b:energyBarriers)b.draw(c,cx,cy);
     for(const auto& slot:order_) {
@@ -610,24 +706,31 @@ void CombatWorld::drawPlatforms(Canvas& c,int cx,int cy) {
 void CombatWorld::drawEffects(Canvas& c,int cx,int cy,BitmapFont& font) {
     for(auto& e:beamEmitters)e.drawTip(c,cx,cy); if(fireMagic)fireMagic->draw(c,cx,cy);if(iceMagic)iceMagic->draw(c,cx,cy);for(auto& effect:effects) effect.draw(c,cx,cy,&font);if(thrownObjects)thrownObjects->draw(c,cx,cy); }
 int CombatWorld::active() const { return static_cast<int>(std::count_if(enemies.begin(),enemies.end(),[](const auto& e){return e.alive && !(e.flags&1024);})); }
+void CombatWorld::shotHitsActors(ThrownObject& shot,const EnemyTarget& target){
+    for(const auto& slot:updateQueue_){
+        if(slot.kind==ActorKind::Bridge){bridgeIndex_[slot.index]->hitByThrown(shot.collision);continue;}
+        if(slot.kind!=ActorKind::Enemy && slot.kind!=ActorKind::FlyingEnemy && slot.kind!=ActorKind::Type3Enemy)continue;
+        auto& enemy=enemyAt(slot);
+        if(!enemy.alive || (enemy.flags&(1024|16384)) || enemy.action==3 || enemy.action==5 || enemy.action==6 || enemy.action==7 || (enemy.collision[0]==enemy.collision[2] && enemy.collision[1]==enemy.collision[3]) || (shot.collision[0]==shot.collision[2] && shot.collision[1]==shot.collision[3]) || !overlap(enemy.collision,shot.collision))continue;
+        const auto oldEffects=enemy.effects.size();const int oldHealth=enemy.health;enemy.applyDamage(500,true,target,{},random);++enemyHits;if(oldHealth>0 && enemy.health<=0)++kills;shot.explode();
+        for(std::size_t n=oldEffects;n<enemy.effects.size();++n){effects.emplace_back(effectSprite_,enemy.effects[n]);++effectsSpawned;}
+    }
+}
+void CombatWorld::shotHitsPlayer(ThrownObject& shot){if(player_.receiveBeamHit(15,shot.x,false,damage,meters_.health,meters_.maxHealth,random,playerEffects_))++playerHits;}
 void CombatWorld::updateThrownObjects(bool paused){
     if(!thrownObjects)return;
-    for(auto& object:thrownObjects->objects){const EnemyTarget target{player_.x,player_.fixedX,player_.collision,player_.attack,player_.fixedY};object.update(target,[&](ThrownObject& shot){
-        for(const auto& slot:updateQueue_){
-            if(slot.kind==ActorKind::Bridge){bridgeIndex_[slot.index]->hitByThrown(shot.collision);continue;}
-            if(slot.kind!=ActorKind::Enemy && slot.kind!=ActorKind::FlyingEnemy)continue;
-            auto& enemy=slot.kind==ActorKind::Enemy?enemies[slot.index]:static_cast<EnemyType1&>(flyingEnemies[slot.index]);
-            if(!enemy.alive || (enemy.flags&(1024|16384)) || enemy.action==3 || enemy.action==5 || enemy.action==6 || enemy.action==7 || (enemy.collision[0]==enemy.collision[2] && enemy.collision[1]==enemy.collision[3]) || (shot.collision[0]==shot.collision[2] && shot.collision[1]==shot.collision[3]) || !overlap(enemy.collision,shot.collision))continue;
-            const auto oldEffects=enemy.effects.size();const int oldHealth=enemy.health;enemy.applyDamage(500,true,target,{},random);++enemyHits;if(oldHealth>0 && enemy.health<=0)++kills;shot.explode();
-            for(std::size_t n=oldEffects;n<enemy.effects.size();++n){effects.emplace_back(effectSprite_,enemy.effects[n]);++effectsSpawned;}
-        }
-    },[&](ThrownObject& shot){if(player_.receiveBeamHit(15,shot.x,false,damage,meters_.health,meters_.maxHealth,random,playerEffects_))++playerHits;},paused);}
+    for(auto& object:thrownObjects->objects){
+        // A shot born during this tick's handlers joins the original update queue on the next tick.
+        if(object.fresh){object.fresh=false;continue;}
+        const EnemyTarget target{player_.x,player_.fixedX,player_.collision,player_.attack,player_.fixedY};
+        object.update(target,[&](ThrownObject& shot){shotHitsActors(shot,target);},[&](ThrownObject& shot){shotHitsPlayer(shot);},paused);
+    }
 }
 void CombatWorld::hitIceTargets(IceProjectile& shot){
             for(const auto& slot:updateQueue_){
                 if(slot.kind==ActorKind::Platform){shot.tryAttach(*platformIndex_[slot.index]);continue;}
-                if(shot.animation!=7 || (slot.kind!=ActorKind::Enemy && slot.kind!=ActorKind::FlyingEnemy))continue;
-                auto& e=slot.kind==ActorKind::Enemy?enemies[slot.index]:static_cast<EnemyType1&>(flyingEnemies[slot.index]);
+                if(shot.animation!=7 || (slot.kind!=ActorKind::Enemy && slot.kind!=ActorKind::FlyingEnemy && slot.kind!=ActorKind::Type3Enemy))continue;
+                auto& e=enemyAt(slot);
                 const auto touches=[](const auto& a,const auto& b){return (a[0]!=a[2] || a[1]!=a[3]) && (b[0]!=b[2] || b[1]!=b[3]) && overlap(a,b);};
                 if(!e.alive || (e.flags&(1024|16384)) || e.action==3 || e.action==5 || e.action==6 || e.action==7 || e.damageCooldown>0 || (!touches(e.collision,shot.collision) && !touches(e.collision,shot.attack)))continue;
                 const auto previous=e.effects.size();const int health=e.health;const EnemyTarget target{player_.x,player_.fixedX,player_.collision,player_.attack,player_.fixedY};

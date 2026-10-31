@@ -15,6 +15,14 @@ public:
     Container(const BSprite&,const BSprite&,const LevelMaps&&,const ActorRecord&)=delete;
     void update(const Player&,unsigned pressed,bool paused=false,bool magicUnlocked=false,JavaRandom* random=nullptr,bool iceUnlocked=false);
     void advanceAnimation();
+    // Type-3 runner carry: the holder positions the chest, then dispatches this update
+    // even though flags 256|32 keep the chest out of the ordinary queue.
+    void carry(int px,int py,bool left);
+    void carriedUpdate(bool paused=false);
+    // Holder death: clear flag 32, fall (action 103), resolve tiles, then clear flag 256.
+    void release();
+    bool carriedLeft() const { return carryLeft_; }
+    void refreshBounds() { bounds(); }
     void draw(Canvas&,int cameraX,int cameraY);
     void drawPrompt(Canvas&,int cameraX,int cameraY);
     void write(std::ostream&) const;
@@ -27,6 +35,8 @@ private:
     const BSprite& sprite_; const BSprite& promptSprite_; const LevelMaps& maps_;
     SpriteRenderer renderer_,promptRenderer_;
     int feet_=0,belowFeet_=0,promptX_=0,promptY_=0,promptStep_=0,promptTick_=0;
+    bool carryLeft_=false;
+    void resolveTiles();
     void bounds(); void probe(); int tile(int,int) const; bool ending() const;
     void request(int); void clearPrompt(const Player&); void stop();
 };

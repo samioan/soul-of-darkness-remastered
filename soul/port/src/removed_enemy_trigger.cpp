@@ -1,6 +1,6 @@
 #include "removed_enemy_trigger.h"
 namespace soul {
-bool RemovedEnemyTrigger::supported(const ActorRecord& r){const auto& p=r.parameters;return r.count==19 && p[0]==40 && (p[5]&8) && !(p[5]&~(4|8|16|32|128|256|1024|16384)) && p[8]>0 && p[9]>0 && p[10]==4 && p[11]==0 && p[12]==0 && p[13]>=0 && p[14]>=0 && p[15]==-1 && p[16]==-1 && p[17]>=0 && p[18]>=0;}
+bool RemovedEnemyTrigger::supported(const ActorRecord& r){const auto& p=r.parameters;return r.count==19 && p[0]==40 && (p[5]&8) && !(p[5]&~(4|8|16|32|128|256|1024|16384)) && p[8]>0 && p[9]>0 && p[10]==4 && p[11]==0 && p[12]==0 && p[13]>=0 && p[14]>=0 && p[15]==-1 && p[16]>=-1 && p[17]>=-1 && p[18]>=-1 && (p[16]>=0 || p[17]>=0 || p[18]>=0);}
 RemovedEnemyTrigger::RemovedEnemyTrigger(const ActorRecord& r){
     if(!supported(r))throw FormatError("Unsupported removed-source enemy trigger");const auto& p=r.parameters;
     uid=p[1];x=static_cast<std::uint16_t>(p[2]);y=static_cast<std::uint16_t>(p[3]);flags=p[5]|128;

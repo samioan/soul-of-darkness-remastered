@@ -123,6 +123,7 @@ def main() -> None:
                  ROOT / "tools/reference_checks/GateCheck.java",
                  ROOT / "tools/reference_checks/GateScriptCheck.java",
                  ROOT / "tools/reference_checks/RemovedGateTriggerCheck.java",
+                 ROOT / "tools/reference_checks/EncounterGateCheck.java",
                  ROOT / "tools/reference_checks/PassageCheck.java",
                  ROOT / "tools/reference_checks/AbilityCheck.java",
                  ROOT / "tools/reference_checks/IcePickupCheck.java",
@@ -168,6 +169,7 @@ def main() -> None:
                  ROOT / "tools/reference_checks/BarrierChainCheck.java",
                  ROOT / "tools/reference_checks/ThrownObjectCheck.java",
                  ROOT / "tools/reference_checks/Type3DecisionCheck.java",
+                 ROOT / "tools/reference_checks/Type3ActorCheck.java",
                  ROOT / "tools/reference_checks/ControllerCheck.java",
                  ROOT / "tools/reference_checks/image_adapter/javax/microedition/lcdui/Image.java",
                  ROOT / "tools/reference_checks/rms_adapter/javax/microedition/rms/RecordStore.java"])
@@ -187,6 +189,7 @@ def main() -> None:
             run([java, "-Djava.awt.headless=true", "-cp", f"{lifecycle}{sep}{harness}", "BarrierChainCheck", EXTRACTED, build, STUBS])
             run([java, "-Djava.awt.headless=true", "-cp", f"{lifecycle}{sep}{harness}", "ThrownObjectCheck", EXTRACTED, build, STUBS])
             run([java, "-Djava.awt.headless=true", "-cp", f"{lifecycle}{sep}{harness}", "Type3DecisionCheck", EXTRACTED, build, STUBS])
+            run([java, "-Djava.awt.headless=true", "-cp", f"{lifecycle}{sep}{harness}", "Type3ActorCheck", EXTRACTED, build, STUBS])
             run([java, "-Djava.awt.headless=true", "-cp", f"{lifecycle}{sep}{harness}", "ControllerCheck", EXTRACTED, build, STUBS, MAP])
             run([java, "-Djava.awt.headless=true", "-cp", harness, "LevelCheck", EXTRACTED, build, STUBS, MAP])
             run([java, "-Djava.awt.headless=true", "-cp", harness, "SaveCheck", EXTRACTED, build, STUBS])
@@ -209,6 +212,7 @@ def main() -> None:
             run([java, "-Djava.awt.headless=true", "-cp", harness, "GateCheck", EXTRACTED, build, STUBS])
             run([java, "-Djava.awt.headless=true", "-cp", harness, "GateScriptCheck", EXTRACTED, build, STUBS])
             run([java, "-Djava.awt.headless=true", "-cp", harness, "RemovedGateTriggerCheck", EXTRACTED, build, STUBS])
+            run([java, "-Djava.awt.headless=true", "-cp", harness, "EncounterGateCheck", EXTRACTED, build, STUBS])
             run([java, "-Djava.awt.headless=true", "-cp", harness, "PassageCheck", EXTRACTED, build, STUBS])
             run([java, "-Djava.awt.headless=true", "-cp", harness, "AbilityCheck", EXTRACTED, build, STUBS])
             for name in ("IcePickupCheck", "IceWeaponCheck", "IceWorldCheck", "IceProjectileCheck", "IceAttachmentCheck"):

@@ -302,6 +302,13 @@ for those rows and twelve live controlled source-removal fixtures.
 `--gate-trigger-script` explicitly removes source 57; it does not execute its
 unported chest/ability reward. See [removed-source scope](../soul/docs/NATIVE_REMOVED_TRIGGERS.md).
 
+`EncounterGateCheck.java` runs with default regeneration and emits ignored
+`analysis/encounter-gate-oracle.tsv`: 2112 original-bytecode rows for the second level's
+condition-4 removed-source script trigger 103, selected script 95 and gate 87 across eleven
+scenarios. Run `python tools/check_native_encounter.py --exe soul/port/build/Debug/soul_assets.exe`
+for those rows and six controlled world fixtures of the full 100/104/62/103 chain.
+See [encounter scope](../soul/docs/NATIVE_LEVEL1_ENCOUNTER.md).
+
 
 `PassageCheck.java` runs in default regeneration and writes ignored
 `analysis/passage-oracle.tsv`: 464 original-bytecode player/passage rows over
@@ -337,9 +344,9 @@ and input. No chest unlock or gate activation is forced. See NATIVE_ENEMY_ACTIVA
 
 `FlyingEnemyCheck.java`, `FlyingWorldCheck.java` and `RemovedEnemyCheck.java`
 run in default regeneration, comparing selected flight/combat/lifetime and
-removed-source branches against original bytecode (5985 expectations). Their
+removed-source branches against original bytecode (6001 expectations). Their
 ignored `analysis/flying-enemy-oracle.tsv`, `flying-world-oracle.tsv` and
-`removed-enemy-oracle.tsv` contain 4655 native-comparable rows.
+`removed-enemy-oracle.tsv` contain 4671 native-comparable rows.
 `python tools/check_native_flying_enemies.py --exe soul/port/build/Debug/soul_assets.exe --port-exe soul/port/build/Debug/soul_port.exe`
 checks those rows and 24 two-wave arena fights at widths 240/569 across FPS and
 interpolation settings. `--movement-preview --second-wave-script --headless`

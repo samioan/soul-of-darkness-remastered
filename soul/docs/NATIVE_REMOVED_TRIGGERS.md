@@ -37,8 +37,8 @@ edits, renames or decompiler patches were needed.
 ## Native ownership and ordering
 
 `RemovedScriptTrigger` supports a single placed source, condition 3, selected
-one-shot mode and script UID 165. Other modes and multi-source conditions remain
-outside this pass.
+one-shot mode and script UID 165 in this pass. Later work adds condition 4, up to three
+enemy sources and script 95; see NATIVE_LEVEL1_ENCOUNTER.md.
 `CombatWorld` records fresh nonplayer placement identities, preserving indices
 even for unported records, and receives actual alive/removed state from the
 separate container owner. Cached indices survive source removal. This is an

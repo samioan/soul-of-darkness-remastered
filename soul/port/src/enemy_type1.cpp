@@ -21,9 +21,9 @@ EnemyType1::EnemyType1(const BSprite& sprite,const LevelMaps& maps,const ActorRe
 EnemyType1::EnemyType1(const BSprite& sprite,const LevelMaps& maps,const ActorRecord& r,const std::vector<int>& stats,int actorType)
     :type(actorType),sprite_(sprite),maps_(maps),renderer_(sprite) {
     const auto& p=r.parameters;
-    if(r.count<13 || r.count>20 || p[0]!=type || !(p[5]&8) || (p[5]&~(1|2|4|8|16|32|64|1024|2048|16384|(type==2?128:0))) ||
-        (type==1?(p[10]<0 || p[10]>3):(p[10]!=4 || p[12]!=-1)) || p[11]<0 || std::size_t(p[11])*3+2>=stats.size() ||
-        p[4]<0 || std::size_t(p[4])>=sprite.animations().size() || sprite.animations().size()<std::size_t(type==2?8:4) ||
+    if(r.count<13 || r.count>20 || p[0]!=type || !(p[5]&8) || (p[5]&~(1|2|4|8|16|32|64|1024|2048|16384|128)) ||
+        (type==1?(p[10]<0 || p[10]>3):type==3?(p[10]!=7 && p[10]!=9 && p[10]!=24):(p[10]!=4 || p[12]!=-1)) || p[11]<0 || std::size_t(p[11])*3+2>=stats.size() ||
+        p[4]<0 || std::size_t(p[4])>=sprite.animations().size() || sprite.animations().size()<std::size_t(type==2?8:type==3?16:4) ||
         !maps.collision || maps.collision->width<=0 || maps.collision->height<=0 || maps.layers[1].height<=0 ||
         maps.collision->width!=maps.layers[1].width || maps.collision->cells.size()!=std::size_t(maps.collision->width)*maps.collision->height)
         throw FormatError("Unsupported enemy record/assets (alternate/linked variants pending)");
@@ -32,7 +32,8 @@ EnemyType1::EnemyType1(const BSprite& sprite,const LevelMaps& maps,const ActorRe
     variant_=type==1?p[10]:0; health=stats[p[11]*3]; respawnCount=stats[p[11]*3+2];
     spawnRecord_=r; spawnHealth_=health; spawnRespawnCount_=respawnCount; contactDamage=stats[p[11]*3+1];
     activation={x+p[6],y+p[7],x+p[6]+p[8],y+p[7]+p[9]}; refreshBounds();
-    if(type==2 && respawnCount!=0 && (flags&128)){action=5;flags&=~1024;timer=1500;} 
+    hurtAnimation_=type==2?7:type==3?13:3; deathOffset_=type==1?20:5;
+    if(respawnCount!=0 && (flags&128)){action=5;flags&=~1024;timer=1500;}
 }
 int EnemyType1::tile(int tx,int ty) const {
     if(tx<0 || ty<0 || tx>=maps_.layers[1].width || ty>=maps_.layers[1].height) return 24;
@@ -207,12 +208,12 @@ void EnemyType1::resetForRegionExit() {
     enabled=false; action=0; vx=vy=ax=ay=0;
     const bool keepFlag=(flags&512)!=0;
     const auto& p=spawnRecord_.parameters;
-    if(uid>=0 && p[12]<=0) {
+    if(uid>=0 && respawnable()) {
         x=static_cast<std::uint16_t>(p[2]); y=static_cast<std::uint16_t>(p[3]); fixedX=shift(x); fixedY=shift(y);
         facingLeft=(p[5]&1)!=0; flags=p[5];
         if(animation!=p[4]) { animation=p[4]; step=tick=0; pending=-1; flags&=~64; }
         health=spawnHealth_; respawnCount=spawnRespawnCount_; enabled=true;
-        activation={x+p[6],y+p[7],x+p[6]+p[8],y+p[7]+p[9]}; interaction={}; refreshBounds();
+        activation={x+p[6],y+p[7],x+p[6]+p[8],y+p[7]+p[9]}; interaction={}; refreshBounds(); finishReinit();
     } else { alive=false; collision={}; attack={}; visual={}; }
     if(keepFlag) flags|=512;
     flags|=1024;
@@ -223,12 +224,12 @@ void EnemyType1::cleanup(JavaRandom& random,const PlayerMeters& meters) {
     const bool fade=(flags&4) || remaining>=0,keepFlag=(flags&512)!=0;
     action=0; vx=vy=ax=ay=0;
     const auto& p=spawnRecord_.parameters;
-    if(uid>=0 && p[12]<=0) {
+    if(uid>=0 && respawnable()) {
         x=static_cast<std::uint16_t>(p[2]); y=static_cast<std::uint16_t>(p[3]); fixedX=shift(x); fixedY=shift(y);
         facingLeft=(p[5]&1)!=0; flags=p[5];
         if(animation!=p[4]) { animation=p[4]; step=tick=0; pending=-1; flags&=~64; }
         health=spawnHealth_; respawnCount=remaining; enabled=true;
-        activation={x+p[6],y+p[7],x+p[6]+p[8],y+p[7]+p[9]}; interaction={}; refreshBounds();
+        activation={x+p[6],y+p[7],x+p[6]+p[8],y+p[7]+p[9]}; interaction={}; refreshBounds(); finishReinit();
         if(fade) flags&=~32;
     } else { alive=false; collision={}; attack={}; visual={}; }
     if(keepFlag) flags|=512;
@@ -253,14 +254,14 @@ void EnemyType1::applyDamage(int amount,bool reaction,const EnemyTarget& player,
     effects.push_back({2,x,y-random.range(10,50),int(!facingLeft),0,0});
     if(health>0) {
         if(reaction) {
-            if(animation==(type==2?7:3)) { pending=type==2?7:3; flags&=~64; dirty_=true; } else request(type==2?7:3);
+            if(animation==hurtAnimation_) { pending=hurtAnimation_; flags&=~64; dirty_=true; } else request(hurtAnimation_);
             facingLeft=player.x<x; vx=vy=ax=ay=0;
             const int delta=add(fixedX,javaInt(0u-std::uint32_t(player.fixedX)));
             vx=delta>256?256:delta< -256?-256:0; action=2;
         }
         damageCooldown=200;
     } else {
-        if(action!=3) effects.push_back({3,x,y-(type==2?5:20),0,0,0});
+        if(action!=3) effects.push_back({3,x,y-deathOffset_,0,0,0});
         action=3;
     }
 }

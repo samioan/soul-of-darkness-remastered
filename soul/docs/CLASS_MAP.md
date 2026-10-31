@@ -423,7 +423,7 @@ facing toggle, including the death effect. Actor.bh condition 4 caches source
 persistence indices and treats missing first/second sources differently;
 Actor.a(int,int,boolean) preserves the index-zero shortcut. Game.W retains
 placed dispatch order and frozen eligibility. The original b.bytecode.txt / e.bytecode.txt dumps
-and 4655 native-comparable rows cover selected branches; no new Java names
+and 4671 native-comparable rows cover selected branches; no new Java names
 were introduced. See NATIVE_FLYING_ENEMIES.md.
 
 Native chest-unlock evidence: original Actor.l(b) clears target flags 32/128
@@ -517,3 +517,19 @@ original b/e bytecode. Flag 256 is removed by release/replacement, while B(I)
 clears the holder directly and preserves the removed object's flag until it is
 discarded. ThrownObjectCheck verifies these paths without executing type-3 AI.
 No names or generated-Java patches changed; see NATIVE_THROWN_OBJECTS.md.
+
+Type-3 actor integration: Actor.initializeFromRecord (type 3: cE[slot 10], stat table 3,
+link slot 12, snapDownToGround before the custom bounds, respawn-fade re-entry when the
+record has flag 128), updateEnemyType3's link/tail, m/n/bI held-shot operations, positionChild,
+Game.W's parent-attached dispatch, updateContainer's carried branch and Game.removeActor's
+setAttachedActor(null) were inspected against original b/e bytecode. Actor.refreshBounds
+reads the flags field (not facingLeft), which explains the one-update chest flip lag.
+No names or generated-Java patches changed; see NATIVE_TYPE3_ACTORS.md.
+
+Level-1 encounter evidence: Actor.updateLinkedTrigger's field roles (aw condition, ax
+target/script flag, au action, y/z/A sources, B/C/D targets or script), Actor.a(int,int,boolean)'s
+unused-slot value (the third argument), the condition-4 first-source clearing, H()'s poll on every
+tick, enableLinkedActor's flag/effect rules and Game.updateSelectedScripts' ordering were inspected
+against the regenerated Java. Shipped level-1 records show 104 targets in slots B/C, 103 starting
+script 95 and 62 enabling chest 59. No names or generated-Java patches changed; see
+NATIVE_LEVEL1_ENCOUNTER.md.

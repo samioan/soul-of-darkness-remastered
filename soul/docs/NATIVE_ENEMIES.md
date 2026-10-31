@@ -92,3 +92,12 @@ first-level enemy ownership and body queues to the movement preview. Preserve
 queue order and run that integration at widths 240/569 and independent FPS
 settings before calling it live combat. The default executable remains a
 calibration scaffold and the complete game is not playable.
+
+## Respawn-fade records (level 1)
+
+Type-1 records with flag 128 and a stat row that allows respawns (shipped level-1 UID 96,
+stat row 7) re-enter the respawn fade at construction, as `initializeFromRecord` does for
+types 1, 2 and 3. The `fade` arena in the enemy oracle (now 4224 rows over 22 arenas) checks
+actions 5, 6, 7, release of flag 128 and the following pursuit against original bytecode.
+Level 1 world construction is still blocked by the type-2 behavior-5 records (variant slot
+49, UIDs 136/137/181).

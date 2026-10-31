@@ -30,6 +30,8 @@ public:
     int fixedX=0,fixedY=0,x=0,y=0,vx=0,vy=0,ax=0,ay=0,flags=16;
     int animation=0,pending=-1,step=0,tick=0,action=101,timer=0,aux=0,damageCooldown=0;
     bool alive=true,grounded=false,ceiling=false,wallLeft=false,wallRight=false,facingLeft=false;
+    // Born during this tick's handlers: absent from the original update queue until the next tick.
+    bool fresh=false;
     std::array<int,4> collision{},attack{},visual{};
 private:
     const BSprite& sprite_;const LevelMaps& maps_;SpriteRenderer renderer_;int level_;
@@ -47,7 +49,8 @@ public:
     ThrownObjects(const BSprite&,const LevelMaps&&,int)=delete;
     ~ThrownObjects();ThrownObjects(const ThrownObjects&)=delete;ThrownObjects& operator=(const ThrownObjects&)=delete;
     ThrownObject& spawn(int x,int y,bool left=false);
-    ThrownObject& spawnHeld(ThrowAttachment&,int parentX,int parentY,bool left);
+    // offsetX is the signed original child offset (applied toward the facing); fresh defers the queue slot to the next tick.
+    ThrownObject& spawnHeld(ThrowAttachment&,int parentX,int parentY,bool left,int offsetX=5,bool fresh=false);
     void clear();void advanceAnimation();void draw(Canvas&,int,int);
     std::list<ThrownObject> objects;
 private:

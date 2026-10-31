@@ -54,7 +54,7 @@ reference Java checks using the analysis ImageIO adapter:
   partial removal, missing/late links, index zero, pause, hidden/frozen state,
   fade targets and hidden sources.
 
-These total 5985 original/reference expectations and 4655 native comparisons.
+These total 6001 original/reference expectations and 4671 native comparisons (the removed-enemy oracle gained the `slot-b` scenario for level 1's trigger 104).
 They establish the selected paths, not general type-2/runtime equivalence.
 
 ```powershell
@@ -77,7 +77,7 @@ region, combat, transient, bridge, platform, gate/script, passage, container,
 ability, first-wave and frontend regressions. Native game captures at both
 widths show the active flying wave, English HUD and clipped arena boundaries.
 `build_dist.bat` rebuilt the data-free package; its binaries match Release and
-pass the 4655-row comparison plus all 24 two-wave fights.
+pass the 4671-row comparison plus all 24 two-wave fights.
 
 Remaining boundaries include other flying variants, linked/projectile enemies,
 broader cutscenes, checkpoint persistence,

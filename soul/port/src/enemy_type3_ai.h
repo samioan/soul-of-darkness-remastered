@@ -23,6 +23,9 @@ struct Type3DecisionEvents {
     bool restartAnimation=false, deathEffect=false;
     bool spawnShot=false, releaseShot=false, dropChest=false, resetAfterDeath=false;
     int releaseX=0, releaseY=0;
+    // Facing and signed x offset (original m(horizontalSpeedTowardPlayer(5),-31)) when spawnShot was decided.
+    bool spawnFacingLeft=false;
+    int spawnOffsetX=0;
 };
 // Original six-int ballistic helper specialized to type 3's +3584/-512 arc.
 // Coordinates and result use the original 8-bit fixed-point representation.

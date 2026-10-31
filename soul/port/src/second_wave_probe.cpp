@@ -30,8 +30,8 @@ void emitFlyingWorldManifest(const std::filesystem::path& root){
     }
 }
 void emitRemovedEnemyManifest(const std::filesystem::path&){
-    for(const std::string s:{"normal","one-left","reverse","missing-source","missing-target","late-target","early-remove","index-zero","pause","hidden","frozen","fade-target","source-hidden"}){
-        soul::ActorRecord r{};r.count=19;r.parameters={40,54,180,150,0,12,0,0,80,80,4,0,0,10,11,-1,-1,20,21};soul::RemovedEnemyTrigger t(r);
+    for(const std::string s:{"normal","one-left","reverse","missing-source","missing-target","late-target","early-remove","index-zero","pause","hidden","frozen","fade-target","source-hidden","slot-b"}){
+        soul::ActorRecord r{};r.count=19;r.parameters=s=="slot-b"?std::array<std::int16_t,20>{40,104,180,150,0,12,0,0,80,80,4,0,0,10,11,-1,20,21,-1}:std::array<std::int16_t,20>{40,54,180,150,0,12,0,0,80,80,4,0,0,10,11,-1,-1,20,21};soul::RemovedEnemyTrigger t(r);
         if(s=="hidden" || s=="frozen")t.flags|=s=="hidden"?1024:16384;
         bool a=s!="missing-source" && s!="early-remove",b=s!="early-remove";std::vector<bool> removed(32);if(s=="early-remove"){removed[5]=true;removed[6]=true;}
         int xFlags=2216,yFlags=2217,action=s=="fade-target"?5:0;

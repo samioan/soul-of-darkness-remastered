@@ -134,7 +134,7 @@ void ThrownObject::write(std::ostream& out)const{for(int n:{fixedX,fixedY,x,y,vx
 ThrownObjects::ThrownObjects(const BSprite& s,const LevelMaps& m,int level):sprite_(s),maps_(m),level_(level){}
 ThrownObjects::~ThrownObjects(){clear();}
 ThrownObject& ThrownObjects::spawn(int x,int y,bool left){objects.emplace_back(sprite_,maps_,level_,x,y,left);return objects.back();}
-ThrownObject& ThrownObjects::spawnHeld(ThrowAttachment& holder,int x,int y,bool left){auto& child=spawn(x,y,left);child.attach(holder);child.placeHeld(x+(left?-5:5),y-31,left);return child;}
+ThrownObject& ThrownObjects::spawnHeld(ThrowAttachment& holder,int x,int y,bool left,int offsetX,bool fresh){auto& child=spawn(x,y,left);child.attach(holder);child.placeHeld(x+(left?-offsetX:offsetX),y-31,left);child.fresh=fresh;return child;}
 void ThrownObjects::clear(){for(auto& object:objects)object.remove(false);objects.clear();}
 void ThrownObjects::advanceAnimation(){for(auto& object:objects)object.advanceAnimation();objects.remove_if([](const auto& o){return !o.alive;});}
 void ThrownObjects::draw(Canvas& c,int cx,int cy){for(auto& object:objects)object.draw(c,cx,cy);}

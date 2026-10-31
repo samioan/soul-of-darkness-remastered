@@ -62,8 +62,15 @@ They were previously mislabelled collapsing platforms; see [barrier coverage](so
 The type-16 projectile foundation now supports held ownership, bouncing,
 reflection, explosion and cleanup, matching 6507 bytecode rows; see
 [thrown-object coverage](soul/docs/NATIVE_THROWN_OBJECTS.md). Type-3 action entries,
-aiming and isolated decisions now match 10922 bytecode rows. Their full native
-actor/world integration remains pending; see [type-3 decision coverage](soul/docs/NATIVE_TYPE3_DECISIONS.md).
+aiming and isolated decisions match 10922 bytecode rows
+([decision coverage](soul/docs/NATIVE_TYPE3_DECISIONS.md)). The integrated type-3
+actors (charger, thrower, linked-chest runner) now run natively for the shipped level
+1 and 2 records, matching 11487 bytecode rows and 48 controlled world fixtures; see
+[type-3 actor coverage](soul/docs/NATIVE_TYPE3_ACTORS.md). The second level's first
+encounter (trigger 100, enemies 96/97, trigger 104, flying pair 98/102, chest 59 and
+gate 87 via script 95) now runs in controlled native worlds against 2112 bytecode rows;
+see [encounter coverage](soul/docs/NATIVE_LEVEL1_ENCOUNTER.md). Level 3's paired mode and
+the actual level routes remain pending.
 Native tile drawing now displays all nine gameplay maps at widths 240/569,
 with 45 original-Java map rows and 324 pixel comparisons. See
 [native tiles](soul/docs/NATIVE_TILES.md). A first-level native player prototype

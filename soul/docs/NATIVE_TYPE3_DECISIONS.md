@@ -2,9 +2,9 @@
 
 `enemy_type3_ai.{h,cpp}` implements the decision layer for the three shipped
 type-3 enemy behaviors: explosive charger (variant 0), thrower (variant 1),
-and linked-chest runner (variant 2). It is not yet connected to `CombatWorld`.
-Normal gameplay still constructs level 0 only; the complete type-3 actor task
-and second-level entry remain unfinished.
+and linked-chest runner (variant 2). `EnemyType3` now owns these decisions inside
+`CombatWorld` for levels 1 and 2; see [NATIVE_TYPE3_ACTORS.md](NATIVE_TYPE3_ACTORS.md).
+Normal gameplay still constructs level 0 only.
 
 ## Original evidence and behavior
 
@@ -78,13 +78,12 @@ thrown-object, barrier and selected-level checks passed, including their
 240/569 and presentation-FPS fixtures. The rebuilt distribution passed its
 package check and contains no game data.
 
-## Remaining actor integration
+## Actor integration
 
-The native owner still needs shipped-record construction and ground snapping,
-tile/body movement, separation, gravity, child positioning, flags/priority,
-damage/contact, palette timers, death/loot, respawn fade and region rebuild.
-Linked chests need stable borrowed links, carried updates, release collision
-and teardown. Projectile birth and the original parent/child update queue must
-be compared before using these decisions in normal gameplay. Level-3 paired
-mode also remains unported. None of those boundaries is established by this
-decision oracle or the separate type-16 projectile fixtures.
+Construction with ground snapping, tile/body movement, gravity, child positioning,
+damage/contact, death/loot, respawn fade, region reset, linked chests and the original
+parent/child update queue are implemented and verified in
+[NATIVE_TYPE3_ACTORS.md](NATIVE_TYPE3_ACTORS.md). `Type3DecisionEvents` gained the spawn
+facing and signed spawn offset there; the decision oracle rows above are unchanged.
+This oracle still proves isolated decisions only. Level-3 paired mode, non-player
+separation and palette timers remain unported.

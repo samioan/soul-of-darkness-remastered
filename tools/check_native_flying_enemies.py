@@ -12,7 +12,7 @@ def main():
     p.add_argument('--data', type=Path, default=DEFAULT_DATA)
     a = p.parse_args()
     expected = []
-    for name, count in [('flying-enemy', 2719), ('flying-world', 1728), ('removed-enemy', 208)]:
+    for name, count in [('flying-enemy', 2719), ('flying-world', 1728), ('removed-enemy', 224)]:
         rows = (ROOT / f'soul/analysis/{name}-oracle.tsv').read_text(encoding='utf-8').splitlines()
         require(len(rows) == count, f'Incomplete {name} oracle')
         expected += rows
@@ -20,7 +20,7 @@ def main():
     require(len(actual) == len(expected), 'Flying enemy row count differs')
     for i, (want, got) in enumerate(zip(expected, actual)):
         require(want == got, f'Flying enemy row {i} differs:\nJava: {want}\nC++:  {got}')
-    print('PASS: 4655 original-bytecode flight, attack, contact, mixed body queue, damage, lifetime, loot and removed-source rows')
+    print('PASS: 4671 original-bytecode flight, attack, contact, mixed body queue, damage, lifetime, loot and removed-source rows')
     if not a.port_exe:
         return
 

@@ -142,6 +142,7 @@ struct MovementPreview {
         const auto& trig=data.trig;
         combat->loadFireMagic(trig);
         combat->loadThrownObjects(data.sprite(data.level.thrownSprite));
+        combat->loadType3Enemies(flyingSprite,records,data.stats(3));
         if(gamePromptScript)for(auto& r:records)if(r.parameters[0]==21 && r.parameters[1]==8){r.parameters[2]=440;r.parameters[3]=200;}
         combat->loadPrompts(promptSprite,records);
         combat->loadBeamEmitters(beamSprite,records,beamStats,trig);

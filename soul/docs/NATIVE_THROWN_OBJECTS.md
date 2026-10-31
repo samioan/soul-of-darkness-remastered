@@ -2,9 +2,11 @@
 
 The native world now owns the type-16 objects required by type-3 throwing
 enemies. Held creation, release, bouncing, resting, reflection, explosion and
-cleanup run on simulation ticks. This is the projectile foundation: type-3 actor
-integration, linked chests and exact birth/update ownership are still pending.
-The isolated [type-3 decisions](NATIVE_TYPE3_DECISIONS.md) are now verified separately.
+cleanup run on simulation ticks. This is the projectile foundation. The type-3 actor
+([NATIVE_TYPE3_ACTORS.md](NATIVE_TYPE3_ACTORS.md)) now supplies held birth, release and
+the parent/child update order on top of it; `spawnHeld` takes the original signed offset
+and a `fresh` flag that defers a newly born shot's queue slot by one tick.
+The isolated [type-3 decisions](NATIVE_TYPE3_DECISIONS.md) are verified separately.
 Level 1 remains unavailable through the frontend.
 
 ## Original evidence
@@ -65,9 +67,8 @@ assets and enemy owners are destroyed. Rendering reads tick-owned animation.
 
 The collection currently runs after placed-actor handlers and before fire/ice
 updates. Full original mixed actor birth/pool order, parent-child double dispatch
-and painter eligibility are still unfinished. Type-3 AI must supply its held
-birth/release/positioning and linked-container paths before the encounter can be
-enabled. Later destructible type-79 targets and full original RMS/pool state
+and painter eligibility are still unfinished. Type-3 AI now supplies its held
+birth/release/positioning and linked-container paths (see NATIVE_TYPE3_ACTORS.md). Later destructible type-79 targets and full original RMS/pool state
 remain outside the current native world.
 
 ## Checks

@@ -11,6 +11,7 @@
 #include "linked_passage.h"
 #include "player_enable_trigger.h"
 #include "enemy_type2.h"
+#include "enemy_type3.h"
 #include "removed_enemy_trigger.h"
 #include "fire_magic.h"
 #include "ice_magic.h"
@@ -27,6 +28,7 @@
 #include "thrown_object.h"
 #include <memory>
 #include <list>
+#include <deque>
 namespace soul {
 // First-level ordinary enemies. Borrows immutable assets/maps and the host player/meters.
 class CombatWorld {
@@ -77,6 +79,12 @@ public:
     int passageTransfers=0,lastPassageUid=-1;
     std::vector<EnemyType1> enemies;
     std::vector<EnemyType2> flyingEnemies;
+    // Ground throwers/chargers/runners. A deque keeps each holder stable for its shot/chest links.
+    std::deque<EnemyType3> type3Enemies;
+    // Requires loadThrownObjects first; mode-3 (paired) levels are rejected by the actor itself.
+    void loadType3Enemies(const BSprite&,const std::vector<ActorRecord>&,const std::vector<int>&);
+    void loadType3Enemies(BSprite&&,const std::vector<ActorRecord>&,const std::vector<int>&)=delete;
+    void loadType3Enemies(const BSprite&&,const std::vector<ActorRecord>&,const std::vector<int>&)=delete;
     std::vector<RemovedEnemyTrigger> removedEnemyTriggers;
     int removedEnemyActivations=0;
     int containerEnables=0;
@@ -163,10 +171,18 @@ private:
     std::vector<Region> regions_; int region_=-1,previousRegion_=-1;
     std::array<int,4> regionCameraBounds_{};
     bool regionChanged_=false;
-    std::vector<int> queue_,buckets_;
-    enum class ActorKind { EnergyBarrier, BarrierTrigger, TimedSwitch, ExitTrigger, CameraController, PromptRemovalTrigger, Enemy,Platform,Bridge,Region,LinkedAreaTrigger,Gate,RemovedScriptTrigger,Passage,PlayerEnableTrigger,FlyingEnemy,RemovedEnemyTrigger,Checkpoint,BeamEmitter,Prompt,IntroTrigger,ChandelierTrigger };
+    std::vector<int> queue_,buckets_,type3Buckets_;
+    // Live placed enemy (types 1/2/3) -> persistence index, for removed-source triggers; nullopt when absent or removed.
+    std::optional<int> liveEnemyIndex(int uid) const;
+    // Enemy/chest enable targets shared by removed-source triggers.
+    EnableEnemyTarget enemyEnableTarget(int uid);
+    Type3Services type3Services();
+    void shotHitsActors(ThrownObject&,const EnemyTarget&);
+    void shotHitsPlayer(ThrownObject&);
+    enum class ActorKind { EnergyBarrier, BarrierTrigger, TimedSwitch, ExitTrigger, CameraController, PromptRemovalTrigger, Enemy,Platform,Bridge,Region,LinkedAreaTrigger,Gate,RemovedScriptTrigger,Passage,PlayerEnableTrigger,FlyingEnemy,Type3Enemy,RemovedEnemyTrigger,Checkpoint,BeamEmitter,Prompt,IntroTrigger,ChandelierTrigger };
     struct ActorSlot { ActorKind kind;std::size_t index; };
     std::vector<ActorSlot> order_,updateQueue_,contactQueue_;
+    EnemyType1& enemyAt(const ActorSlot&);
     std::vector<MovingPlatform*> platformIndex_;
     std::vector<BreakableBridge*> bridgeIndex_;
     std::vector<LinkedGate*> gateIndex_;

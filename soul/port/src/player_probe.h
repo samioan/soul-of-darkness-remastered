@@ -83,3 +83,7 @@ void emitEnergyBarrierManifest(const std::filesystem::path&);
 
 void emitThrownObjectManifest(const std::filesystem::path&);
 void emitType3DecisionManifest(const std::filesystem::path&);
+void emitType3ActorManifest(const std::filesystem::path&);
+void emitType3WorldManifest(const std::filesystem::path&);
+void emitEncounterGateManifest(const std::filesystem::path&);
+void emitEncounterWorldManifest(const std::filesystem::path&);

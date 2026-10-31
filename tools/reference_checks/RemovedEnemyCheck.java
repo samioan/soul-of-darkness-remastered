@@ -1,7 +1,7 @@
 import java.io.PrintWriter;
 import java.nio.file.*;
 import java.util.*;
-/** Condition-four's cache/missing-source quirks and one-shot type-2 enable. */
+/** Condition-four's cache/missing-source quirks and one-shot type-2 enable; slot-b uses the second level's target slots and a type-3 source. */
 public final class RemovedEnemyCheck {
     static String row(ActorCheck.Access c,Object t,Object[] targets,String s,int f)throws Exception{
         var w=new java.io.StringWriter();var out=new PrintWriter(w);out.print("R\t"+s+"\t"+f);
@@ -15,16 +15,16 @@ public final class RemovedEnemyCheck {
         Path assets=Path.of(args[0]),build=Path.of(args[1]),stubs=Path.of(args[2]),file=assets.getParent().resolve("analysis/removed-enemy-oracle.tsv");
         try(var a=new ActorCheck.Access(assets,assets,stubs,false);var b=new ActorCheck.Access(build,assets,stubs,true);var out=new PrintWriter(Files.newBufferedWriter(file))){
             a.loadAssets(assets);b.loadAssets(assets);
-            for(String s:new String[]{"normal","one-left","reverse","missing-source","missing-target","late-target","early-remove","index-zero","pause","hidden","frozen","fade-target","source-hidden"}){
+            for(String s:new String[]{"normal","one-left","reverse","missing-source","missing-target","late-target","early-remove","index-zero","pause","hidden","frozen","fade-target","source-hidden","slot-b"}){
                 Object[][] roots=new Object[2][];
                 for(var c:List.of(a,b)){
                     c.clearWorld();c.player(100,199);c.global("bD","bD",new byte[32]);Object[] r=new Object[5];
-                    for(int i=0;i<2;++i){Object source=c.create();c.set(source,"al","uid",10+i);c.set(source,"am","type",1);if(s.equals("source-hidden"))c.set(source,"c","flags",1024);
+                    for(int i=0;i<2;++i){Object source=c.create();c.set(source,"al","uid",10+i);c.set(source,"am","type",s.equals("slot-b") && i==1?3:1);if(s.equals("source-hidden"))c.set(source,"c","flags",1024);
                         if(!s.equals("missing-source") || i==1){BehaviorCheck.gameCall(c,"b","addActor",new Class<?>[]{c.actor},source);c.set(source,"ae","persistenceIndex",s.equals("index-zero")?0:5+i);}r[i]=source;
                         Object target=c.create();c.set(target,"al","uid",20+i);c.set(target,"am","type",2);c.set(target,"c","flags",2216+i);if(s.equals("fade-target"))c.set(target,"ao","actionState",5);
                         if(!s.equals("missing-target") && !s.equals("late-target"))BehaviorCheck.gameCall(c,"b","addActor",new Class<?>[]{c.actor},target);r[2+i]=target;
                     }
-                    short[] record={40,54,180,150,0,12,0,0,80,80,4,0,0,10,11,-1,-1,20,21};Object t=c.create();c.call(t,"a","initializeFromRecord",new Class<?>[]{short[].class,boolean.class,int.class,int.class},Arrays.copyOf(record,20),true,0,19);BehaviorCheck.gameCall(c,"b","addActor",new Class<?>[]{c.actor},t);r[4]=t;
+                    short[] record=s.equals("slot-b")?new short[]{40,104,180,150,0,12,0,0,80,80,4,0,0,10,11,-1,20,21,-1}:new short[]{40,54,180,150,0,12,0,0,80,80,4,0,0,10,11,-1,-1,20,21};Object t=c.create();c.call(t,"a","initializeFromRecord",new Class<?>[]{short[].class,boolean.class,int.class,int.class},Arrays.copyOf(record,20),true,0,19);BehaviorCheck.gameCall(c,"b","addActor",new Class<?>[]{c.actor},t);r[4]=t;
                     if(s.equals("hidden") || s.equals("frozen"))c.set(t,"c","flags",140|(s.equals("hidden")?1024:16384));
                     if(s.equals("early-remove"))for(int i=0;i<2;++i)BehaviorCheck.gameCall(c,"c","removeActor",new Class<?>[]{c.actor},r[i]);roots[c==a?0:1]=r;
                 }

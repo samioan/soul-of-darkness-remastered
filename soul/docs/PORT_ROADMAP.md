@@ -1,6 +1,6 @@
 # Windows port implementation roadmap
 
-Updated 2026-10-30 after the type-3 decision foundation pass. This file lists the
+Updated 2026-10-31 after the level-1 first-encounter pass. This file lists the
 remaining native work and acceptance conditions. [ROADMAP.md](ROADMAP.md) is
 the overall project checklist. [PORT_ROADMAP_HISTORY.md](PORT_ROADMAP_HISTORY.md)
 preserves the old notes; their claims that gameplay, platforms or Continue are
@@ -48,16 +48,26 @@ Level indices are zero-based; level 0 is the first level and uses pack 3.
 - Type-80 energy barriers (formerly mislabelled collapsing platforms) now have
   priority bodies, release/reset, the selected three-trigger chain and cached
   lightning. 3776 bytecode rows and twelve controlled world runs verify these
-  boundaries; see NATIVE_ENERGY_BARRIERS.md. Type-3 actor integration remains pending.
+  boundaries; see NATIVE_ENERGY_BARRIERS.md.
 - Type-16 projectile owners now implement held/released state, tile bouncing,
   reflection, explosion and target/holder cleanup. 6507 bytecode rows and twelve
-  selected-level world fixtures verify the foundation; the type-3 actor and its exact
-  birth/update sequence remain pending. See NATIVE_THROWN_OBJECTS.md.
+  selected-level world fixtures verify the foundation; the type-3 actor now supplies
+  its birth/release/update sequence. See NATIVE_THROWN_OBJECTS.md and NATIVE_TYPE3_ACTORS.md.
 - Type-3 action entries, fixed-point aiming and all three decision variants
-  match 10922 bytecode rows. The isolated decision layer still needs its native
-  actor/world owner; see NATIVE_TYPE3_DECISIONS.md.
-- Latest data-free suite: 108 CTests, 530 player, 25 timed-switch, 17 barrier,
-  15 thrown-object and 26 type-3 decision assertions. Chandelier fixtures
+  match 10922 bytecode rows; see NATIVE_TYPE3_DECISIONS.md.
+- Native type-3 actors (charger, thrower, linked-chest runner) now own held-shot
+  birth/release, parent/child dispatch, chest carry/drop, damage, loot, respawn
+  fade and region reset for levels 1 and 2. 11487 bytecode rows, 48 shipped-record
+  world fixtures and 20 data-free assertions verify them; level 3's paired mode,
+  trigger enabling and non-player separation remain pending. See NATIVE_TYPE3_ACTORS.md.
+- Level 1's first encounter now runs natively in controlled worlds: player-overlap trigger
+  100 enables enemies 96/97, removal trigger 104 enables flying pair 98/102, and triggers 62/103
+  open chest 59 and run script 95 on gate 87. The removed-source owners were generalized
+  (target slots, type-3 sources, condition 3/4 script triggers, script chosen by trigger).
+  2112 original-bytecode rows, 16 added removed-enemy rows, 13 data-free assertions and six
+  world fixtures verify it; see NATIVE_LEVEL1_ENCOUNTER.md.
+- Latest data-free suite: 109 CTests, 543 player, 25 timed-switch, 17 barrier,
+  15 thrown-object, 26 type-3 decision and 20 type-3 actor assertions. Chandelier fixtures
   compare 3000 bytecode rows and 24 host runs; intro fixtures
   compare 5460 original-bytecode rows and 48 playback/skip host runs. Linked
   prompt removal adds 352 handler/world rows against original bytecode.
@@ -110,10 +120,13 @@ native fixtures do not establish a complete native play-through.
    barrier and type-89 switches, then verify its existing-type variants and all
    twenty passages. Enable New Game/Continue progression into level 1 only after
    its construction and required controllers work. Type-89 handler/gate and
-   type-80 barrier/trigger fixtures are implemented; type 3, existing-type
-   variants and the second-level route remain pending. The type-16 projectile
-   foundation and type-3 decisions are ready; their native type-3 actor owner
-   is not yet connected.
+   type-80 barrier/trigger fixtures and the native type-3 actor owner (levels 1/2)
+   are implemented, including player-overlap enable trigger 308 for actors 62/74. The
+   level-1 first encounter (triggers 100/104/62/103, chest 59, script 95/gate 87) now
+   works in controlled worlds (NATIVE_LEVEL1_ENCOUNTER.md). Remaining: the other level-1
+   triggers (115/118/123 script starts, 187 and 322 enable/animation chains), the type-2
+   behavior-5 records (UIDs 136/137/181), other existing-type variants, the intro camera
+   script 133 and the second-level route.
 9. [ ] **Full first-level route test.** Start at the ordinary spawn, run the intro,
    traverse rooms/platforms, complete the arena/reward/gate, pass the beams and
    final room, then complete/unload. Exercise checkpoint death/restart/Continue
@@ -124,11 +137,13 @@ native fixtures do not establish a complete native play-through.
 
 - [x] Type-16 thrown-object state, tile physics, target contacts and holder/world cleanup; see NATIVE_THROWN_OBJECTS.md.
 - [x] Type-3 decisions, action entries and fixed-point throw aiming; see NATIVE_TYPE3_DECISIONS.md.
-- [ ] Type-3 actor integration, linked chest ownership and exact projectile/effect birth/update order.
+- [x] Type-3 actor integration, linked chest ownership and projectile birth/update order for levels 1/2; see NATIVE_TYPE3_ACTORS.md. Level 3 paired mode is listed below.
+- [x] Removed-source enable/script triggers for condition 3/4 with any target slot, type-3 sources and selected script 95; level 1's first encounter; see NATIVE_LEVEL1_ENCOUNTER.md.
 - [ ] Type-13/type-14/type-70 AI, projectile targeting, damage and respawn variants.
 - [ ] Type-37 gate controller, type-64 springs and type-72 linked platforms.
 - [ ] Type-61/type-79 destructibles and their mutable collision/render state.
-- [ ] Type-68 spawners and type-69 paired owners; native level-3 paired-player mode.
+- [ ] Type-68 spawners and type-69 paired owners; native level-3 paired-player mode,
+  including the paired contact path and level 3's two type-3 actors.
 - [ ] Type-73 hazards, type-74 spawners, type-75 traps and type-78 hazard areas.
 - [x] Type-89 timed-switch handlers and controlled gate integration; see NATIVE_TIMED_SWITCHES.md.
 - [x] Type-80 energy-barrier handler, selected links and controlled priority contacts; see NATIVE_ENERGY_BARRIERS.md.

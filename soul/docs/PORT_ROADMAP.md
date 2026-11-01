@@ -1,6 +1,6 @@
 # Windows port implementation roadmap
 
-Updated 2026-10-31 after the level-1 first-encounter pass. This file lists the
+Updated 2026-11-01 after the level-1 ambush and loader-envelope passes. This file lists the
 remaining native work and acceptance conditions. [ROADMAP.md](ROADMAP.md) is
 the overall project checklist. [PORT_ROADMAP_HISTORY.md](PORT_ROADMAP_HISTORY.md)
 preserves the old notes; their claims that gameplay, platforms or Continue are
@@ -66,7 +66,18 @@ Level indices are zero-based; level 0 is the first level and uses pack 3.
   (target slots, type-3 sources, condition 3/4 script triggers, script chosen by trigger).
   2112 original-bytecode rows, 16 added removed-enemy rows, 13 data-free assertions and six
   world fixtures verify it; see NATIVE_LEVEL1_ENCOUNTER.md.
-- Latest data-free suite: 109 CTests, 543 player, 25 timed-switch, 17 barrier,
+- Level 1's three corridor ambushes now run natively in controlled worlds: player-overlap triggers
+  115/118/123 start scripts 23/24/114, which freeze and reposition enemies 92/93/94, release them
+  through the enemy action entry and drop zero-excursion chandeliers 89/90/91. The chandelier script
+  owner now serves scripts 160/23/24/114 with the original three-slot selected-script bookkeeping;
+  12800 original-bytecode rows, fourteen added data-free assertions and seven world fixtures verify
+  it. Staggered 118/123 starts (a one-pixel strip) are refused because the original would freeze the
+  world under a background script; see NATIVE_LEVEL1_AMBUSH.md.
+- Every shipped level-1 record now constructs through the native loaders (`--level-audit-manifest`): type-2
+  behavior 6 (sine-wave flyers 136/137/181, region-bound handler, 2663 bytecode rows) and beam emitters
+  starting in animation 6 (UIDs 3/5; beam oracle now 13152 rows) were the only rejections. This is envelope
+  coverage; the unverified level-1 variants are listed in NATIVE_LEVEL1_ENVELOPE.md.
+- Latest data-free suite: 109 CTests, 567 player, 25 timed-switch, 17 barrier,
   15 thrown-object, 26 type-3 decision and 20 type-3 actor assertions. Chandelier fixtures
   compare 3000 bytecode rows and 24 host runs; intro fixtures
   compare 5460 original-bytecode rows and 48 playback/skip host runs. Linked
@@ -123,10 +134,13 @@ native fixtures do not establish a complete native play-through.
    type-80 barrier/trigger fixtures and the native type-3 actor owner (levels 1/2)
    are implemented, including player-overlap enable trigger 308 for actors 62/74. The
    level-1 first encounter (triggers 100/104/62/103, chest 59, script 95/gate 87) now
-   works in controlled worlds (NATIVE_LEVEL1_ENCOUNTER.md). Remaining: the other level-1
-   triggers (115/118/123 script starts, 187 and 322 enable/animation chains), the type-2
-   behavior-5 records (UIDs 136/137/181), other existing-type variants, the intro camera
-   script 133 and the second-level route.
+   works in controlled worlds (NATIVE_LEVEL1_ENCOUNTER.md), and the corridor ambushes (triggers
+   115/118/123, scripts 23/24/114, enemies 92/93/94, chandeliers 89/90/91) do too
+   (NATIVE_LEVEL1_AMBUSH.md). The sine flyers and beam variants now construct and match the original
+   (NATIVE_LEVEL1_ENVELOPE.md). Triggers 187/322 are level-2 records, not level-1. Remaining: the
+   unverified level-1 variants (type-50 UIDs 25/33/145/190/169/510, type-33 platforms, gates, bridges,
+   camera controller 125, passages), staggered 118/123 starts, the intro camera trigger 134/script 133 and
+   the second-level route, then enabling New Game/Continue into level 1.
 9. [ ] **Full first-level route test.** Start at the ordinary spawn, run the intro,
    traverse rooms/platforms, complete the arena/reward/gate, pass the beams and
    final room, then complete/unload. Exercise checkpoint death/restart/Continue

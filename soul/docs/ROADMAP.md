@@ -1,6 +1,6 @@
 # Soul of Darkness roadmap
 
-Updated 2026-10-31 after the level-1 first-encounter pass. This is the current
+Updated 2026-11-01 after the level-1 ambush-script pass. This is the current
 remaining-work list. Historical implementation notes are in
 [ROADMAP_HISTORY.md](ROADMAP_HISTORY.md); their old pending/next descriptions
 are superseded. Update the lists below when work lands instead of appending
@@ -82,9 +82,13 @@ gameplay pack = level index + 3.
   integration. Type 80 is an energy barrier, not a collapsing platform. Type-3
   actors match 11487 bytecode rows and 48 world fixtures (see NATIVE_TYPE3_ACTORS.md);
   player-overlap trigger 308 now enables actors 62/74. The level-1 first encounter (triggers 100/104/62/103,
-  chest 59, script 95/gate 87) runs in controlled worlds; see NATIVE_LEVEL1_ENCOUNTER.md. The other enabling
-  chains (115/118/123, 187, 322), the type-2 behavior-5 records (UIDs 136/137/181) and the actual route remain
-  pending. The type-1 respawn-fade record (UID 96) is verified in NATIVE_ENEMIES.md.
+  chest 59, script 95/gate 87) runs in controlled worlds; see NATIVE_LEVEL1_ENCOUNTER.md. The corridor ambushes
+  (triggers 115/118/123 starting scripts 23/24/114 on enemies 92/93/94 and chandeliers 89/90/91, 12800 bytecode
+  rows) also run in controlled worlds; see NATIVE_LEVEL1_AMBUSH.md. The type-2 behavior-6 sine flyers (UIDs
+  136/137/181; 2663 rows) and beam emitters starting in animation 6 (UIDs 3/5; oracle now 13152 rows) match the
+  original, so every shipped level-1 record constructs natively (NATIVE_LEVEL1_ENVELOPE.md). Triggers 187/322 are
+  level-2 records. Still pending: oracle coverage for the remaining level-1 variants (type-50, type-33, gates,
+  bridges, camera controller 125, passages), staggered 118/123 starts, the intro camera script 133 and the actual route. The type-1 respawn-fade record (UID 96) is verified in NATIVE_ENEMIES.md.
 - [ ] Record and verify an actual run from first-level spawn through its arena,
   reward/gate, passages, beams, final room and exit. The current controlled host
   fixtures start at selected locations; they are not that full play-through.
@@ -180,7 +184,7 @@ gameplay pack = level index + 3.
 - Completion/progression adds 444 original/reference expectations, including
   actual RMS writes and unload, plus 24 native decision rows and 36 cross-process
   finish/Continue/replay checks; see [NATIVE_FINISH.md](NATIVE_FINISH.md).
-- Current baseline: 543 player assertions, 25 timed-switch assertions, 17 barrier
+- Current baseline: 567 player assertions, 25 timed-switch assertions, 17 barrier
   assertions, 15 thrown-object assertions, 26 type-3 decision assertions, 20 type-3
   actor assertions and 109 CTests. Type-3 decisions add 10922 bytecode rows and the
   integrated actor adds 11487 rows plus 48 world and 4 presentation fixtures; see

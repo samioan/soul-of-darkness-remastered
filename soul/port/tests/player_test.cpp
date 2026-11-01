@@ -1,3 +1,4 @@
+#include <cmath>
 #include "prompt_removal_trigger.h"
 #include "level_data.h"
 #include "player.h"
@@ -792,6 +793,29 @@ int main() {
         rejects([&]{soul::EnemyType2 invalid(hitSprite,world,unsupportedFlying,{8,10,0});},"unverified flying variants are rejected");
         unsupportedFlying=flyingRecord;unsupportedFlying.parameters[12]=3;
         rejects([&]{soul::EnemyType2 invalid(hitSprite,world,unsupportedFlying,{8,10,0});},"linked flying variants remain outside verified subset");
+        {
+        // Behavior 6 (variant index 49): level-1 sine-wave flyers; leaving the active camera region resets them.
+        std::array<int,256> sineTable{};for(int i=0;i<256;++i)sineTable[i]=static_cast<int>(std::lround(256.0*std::cos(i*2.0*3.14159265358979/256.0)));
+        soul::ActorRecord sineRecord{};sineRecord.count=13;sineRecord.parameters={2,181,180,174,0,8,-200,-200,400,400,49,0,-1};
+        rejects([&]{soul::EnemyType2 invalid(hitSprite,world,sineRecord,{8,10,0});},"behavior-6 flyer needs the trigonometry table");
+        soul::EnemyType2 sine(hitSprite,world,sineRecord,{8,10,0},&sineTable);
+        require(sine.behavior()==6 && soul::EnemyType2(hitSprite,world,flyingRecord,{8,10,0}).behavior()==0,"variant index 49 selects behavior 6 and index 4 keeps behavior 0");
+        const std::array<int,4> wideRegion{0,0,800,400},narrowRegion{0,0,100,400};
+        sine.update(flightTarget);
+        require(sine.action==138 && sine.originX==180 && sine.originY==174 && sine.direction==1 && (sine.flags&16) && sine.animation==2,"behavior 6 enters its wave state with the spawn origin and direction");
+        rejects([&]{sine.update(flightTarget);},"behavior-6 handler needs the active region");
+        sine.activeRegion=&wideRegion;sine.update(flightTarget);
+        require(sine.vx==768 && sine.x==183 && sine.y==171 && sine.action==138,"wave state drifts right three pixels and follows 30*sin(2*(originX-x))>>8 (the failed call above still integrated once)");
+        sine.activeRegion=&narrowRegion;sine.update(flightTarget);
+        require(sine.action==0 && (sine.flags&1024) && !(sine.flags&16) && sine.alive && sine.respawnCount==0,"leaving the region resets the flyer without loot or lives");
+        soul::EnemyType2 regionFlyer(hitSprite,world,sineRecord,{8,10,0},&sineTable);regionFlyer.collision={150,100,170,120};regionFlyer.vx=-500;regionFlyer.vy=400;
+        regionFlyer.clampToRegion(wideRegion);require(regionFlyer.vx==-500 && regionFlyer.vy==400 && !(regionFlyer.flags&1024),"inside the region a behavior-6 flyer is untouched");
+        regionFlyer.clampToRegion(std::array<int,4>{400,0,800,400});require(regionFlyer.action==0 && (regionFlyer.flags&1024),"the end-of-update clamp resets a behavior-6 flyer outside the region");
+        soul::EnemyType2 plain(hitSprite,world,flyingRecord,{8,10,0});plain.collision={0,100,20,120};plain.vx=-500;plain.vy=0;
+        plain.clampToRegion(std::array<int,4>{0,0,800,400});require(plain.vx==0 && !(plain.flags&1024),"behavior 0 keeps the twelve-pixel velocity clamp");
+        soul::EnemyType2 hurt(hitSprite,world,sineRecord,{8,10,0},&sineTable);soul::JavaRandom hurtRandom(1);hurt.applyDamage(3,true,flightTarget,{},hurtRandom);
+        require(hurt.action==2 && hurt.pending==8,"behavior 6 hurt reaction uses animation 8");
+        }
         soul::ActorRecord waveRecord{};waveRecord.count=19;waveRecord.parameters={40,54,180,150,0,12,0,0,80,80,4,0,0,114,117,-1,-1,113,48};
         soul::RemovedEnemyTrigger wave(waveRecord);std::vector<bool> removedWave(8);int nextFlags=2216,nextAction=0;
         const auto waveSources=[](int uid)->std::optional<int>{return uid==114?2:3;};
@@ -1040,6 +1064,42 @@ int main() {
         trigger.update(nullptr,sequence);require(!trigger.alive && trigger.latch==-1 && sequence.offsets()==std::vector<int>({6,6}),"completion releases and rewinds selected script even after source is gone");
         trigger.update(nullptr,sequence);require(sequence.starts==1 && sequence.finishes==1,"removed trigger cannot restart the completed sequence");
         data.tracks[1].kind=1;rejects([&]{soul::ChandelierScript invalid(data);},"chandelier executor rejects camera tracks");
+        }
+
+        {
+        // Level-1 ambush scripts 23/24/114: facing commands, enemy action entry, slots and trigger records (data-free synthetic tracks).
+        const auto make=[](int uid,int enemy,int chandelier,std::vector<soul::ScriptCommand> enemyCommands){
+            soul::ScriptData d;d.uid=uid;
+            soul::ScriptTrack e;e.kind=2;e.target=enemy;e.initial=6;e.raw.resize(11);e.keys.push_back({0,9,std::move(enemyCommands)});
+            soul::ScriptTrack c;c.kind=2;c.target=chandelier;c.initial=6;c.raw.resize(11);c.keys.push_back({0,9,{{22,{5}}}});d.tracks={e,c};return d;};
+        require(soul::ChandelierScript::supportedUid(160) && soul::ChandelierScript::supportedUid(23) && soul::ChandelierScript::supportedUid(24) && soul::ChandelierScript::supportedUid(114) && !soul::ChandelierScript::supportedUid(95),"chandelier script set is exactly 160/23/24/114");
+        rejects([&]{soul::ChandelierScript wrong(make(23,205,34,{{107,{0,64,0,0}}}));},"script 23 cannot target the level-0 pair");
+        rejects([&]{soul::ChandelierScript wrong(make(95,92,89,{{107,{0,64,0,0}}}));},"gate script 95 is not a chandelier script");
+        soul::ChandelierScript left(make(24,93,90,{{23,{1,0,0,0}},{106,{101}}}));
+        int flags=2056,action=0,x=0,y=0,bucket=0,assigned=-1,animated=-1;bool facing=false;
+        soul::ChandelierActor enemy{&x,&y,&flags,&action,&bucket,[](int){},[]{},[&](int a){assigned=a;},&facing};
+        soul::ChandelierActor platform{&x,&y,&flags,&action,&bucket,[&](int a){animated=a;},[]{}};
+        left.start();left.update([&](int uid)->soul::ChandelierActor{return uid==93?enemy:platform;},0,0);
+        require(flags==2057 && facing && assigned==101 && action==0 && animated==5,"command 23 sets flag/facing; command 106 takes the enemy action entry, not a raw assignment");
+        soul::ChandelierScript right(make(24,93,90,{{24,{1,0,0,0}}}));right.start();
+        right.update([&](int uid)->soul::ChandelierActor{return uid==93?enemy:platform;},0,0);
+        require(flags==2056 && !facing,"command 24 clears the flag and recomputes facing");
+        soul::ChandelierScript noop(make(24,93,90,{{23,{0,0,0,0}}}));noop.start();flags=2056;facing=true;
+        noop.update([&](int uid)->soul::ChandelierActor{return uid==93?enemy:platform;},0,0);
+        require(flags==2056 && !facing,"command 23 with an empty operand keeps the flags but recomputes facing");
+        soul::ChandelierScript plain(make(23,92,89,{{106,{101}}}));plain.start();action=0;
+        plain.update([&](int uid)->soul::ChandelierActor{return uid==92?soul::ChandelierActor{&x,&y,&flags,&action,&bucket,[](int){},[]{}}:platform;},0,0);
+        require(action==101,"an actor without an action hook is assigned raw (type-50 behaviour)");
+        soul::SelectedScriptSlots slots;slots.select(1);slots.select(3);
+        require(slots.count==2 && slots.contains(1) && slots.contains(3) && !slots.contains(2),"selected slots record start order");
+        slots.release();require(slots.count==1 && slots.contains(1) && !slots.contains(3) && slots.uids[1]==3,"finishing frees the last slot and leaves the stale entry");
+        slots.select(2);slots.select(4);rejects([&]{slots.select(5);},"a fourth selected script overflows the original three slots");
+        soul::SelectedScriptSlots empty;rejects([&]{empty.release();},"releasing with no selected script is rejected");
+        soul::ActorRecord triggerRecord{};triggerRecord.count=19;triggerRecord.parameters={40,118,398,161,0,8,-71,0,250,100,1,1,0,131,-1,-1,24,-1,-1};
+        require(soul::ChandelierTrigger::supported(triggerRecord),"level-1 trigger 118 is a supported chandelier trigger");
+        soul::ChandelierTrigger trigger(triggerRecord);
+        require(trigger.scriptUid==24 && trigger.sourceUid==131 && trigger.collision==std::array<int,4>({327,161,577,261}),"trigger keeps its own script, source and rectangle");
+        triggerRecord.parameters[16]=95;require(!soul::ChandelierTrigger::supported(triggerRecord),"a gate-script trigger is not routed to the chandelier owner");
         }
 
         {

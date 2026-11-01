@@ -89,7 +89,7 @@ MovingPlatform::MovingPlatform(const BSprite& sprite,const LevelMaps& maps,const
     if(r.count>20 || (type!=33 && type!=50) || (p[5]&~(1|2|8|16|32|64|128|256|1024|16384)) || p[4]<0 || std::size_t(p[4])>=sprite.animations().size() || sprite.animations().size()<12 || !maps.collision || maps.collision->width<=0 || maps.collision->height<=0 || maps.layers[1].width!=maps.collision->width || maps.collision->cells.size()!=std::size_t(maps.collision->width)*maps.collision->height)
         throw FormatError("Unsupported platform record/assets");
     if(type==33 && (r.count<13 || !(p[5]&8) || p[8]<=0 || p[9]<=0 || p[10]<0 || p[10]>8 || p[11]<0))throw FormatError("Unsupported type-33 path");
-    if(type==50 && (r.count<12 || !trig || sprite.animations().size()<14 || p[6]>=0 || p[7]<0 || p[8]<0 || p[9]<=0 || p[9]>80 || p[10]<0 || p[10]>1 || (p[11]!=-1 && p[11]!=1)))throw FormatError("Unsupported type-50 pendulum");
+    if(type==50 && (r.count<12 || !trig || sprite.animations().size()<14 || p[6]>=0 || p[7]<0 || p[8]<0 || p[9]<0 || p[9]>80 || p[10]<0 || p[10]>1 || (p[11]!=-1 && p[11]!=1)))throw FormatError("Unsupported type-50 pendulum");
     uid=p[1];x=static_cast<std::uint16_t>(p[2]);y=static_cast<std::uint16_t>(p[3]);fixedX=shift(x);fixedY=shift(y);flags=p[5]&~64;animation=p[4];
     if(type==33){direction=p[10];timer=delay=p[12];speed=shift(p[11]);limits={x+p[6],y+p[7],x+p[6]+p[8],y+p[7]+p[9]};}
     else {

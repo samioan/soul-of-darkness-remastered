@@ -37,6 +37,8 @@ public:
     void advanceAnimation();
     void refreshBounds();
     void scriptAnimation(int id);
+    // Script command 106 on a basic enemy enters the ordinary action-change entry (no-op for the current state).
+    void scriptAction(int id){change(id);}
     void draw(Canvas&,int cameraX,int cameraY);
     ContactBody body() const;
     void applyContact(const ContactBody&);

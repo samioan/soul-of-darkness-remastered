@@ -92,7 +92,7 @@ void CombatWorld::detach(){
     player_.platform=nullptr;checkpointActivated_={};containers_=nullptr;containerSourcesPending_=false;
     if(thrownObjects)thrownObjects->clear();
     if(iceMagic)iceMagic->clear();if(fireMagic)fireMagic->clear();
-    intro.reset();chandelierScript.reset();gateScript_.reset();
+    intro.reset();chandelierScripts.clear();selected_=SelectedScriptSlots{};gateScript_.reset();
     barrierTriggers.clear();
     linkedAreaTriggers.clear();playerEnableTriggers.clear();removedEnemyTriggers.clear();removedScriptTriggers.clear();
     promptRemovalTriggers.clear();cameraControllers.clear();introTriggers.clear();chandelierTriggers.clear();
@@ -135,9 +135,9 @@ void CombatWorld::bindContainers(std::vector<Container>& containers){
     if(containers_)throw FormatError("Container owner already bound");containers_=&containers;
 }
 bool CombatWorld::containerQueued(int uid)const{return std::find(containerQueue_.begin(),containerQueue_.end(),uid)!=containerQueue_.end();}
-void CombatWorld::loadFlyingEnemies(const BSprite& sprite,const std::vector<ActorRecord>& records,const std::vector<int>& stats){
+void CombatWorld::loadFlyingEnemies(const BSprite& sprite,const std::vector<ActorRecord>& records,const std::vector<int>& stats,const std::array<int,256>* trig){
     if(!flyingEnemies.empty())throw FormatError("Flying enemies already loaded");flyingEnemies.reserve(records.size());
-    for(const auto& r:records)if(r.parameters[0]==2)flyingEnemies.emplace_back(sprite,maps_,r,stats);
+    for(const auto& r:records)if(r.parameters[0]==2)flyingEnemies.emplace_back(sprite,maps_,r,stats,trig);
     rebuildOrder(records);cacheBuckets();
 }
 void CombatWorld::loadType3Enemies(const BSprite& sprite,const std::vector<ActorRecord>& records,const std::vector<int>& stats){
@@ -179,13 +179,20 @@ IntroActor CombatWorld::introActor(int uid){
     return {};
 }
 void CombatWorld::loadChandelierScript(ByteView bytes,const std::vector<ActorRecord>& records){
-    if(chandelierScript)throw FormatError("Chandelier script already loaded");
-    for(auto& s:decodeScripts(bytes))if(s.uid==160)chandelierScript=std::make_unique<ChandelierScript>(std::move(s));
-    if(!chandelierScript)throw FormatError("Missing chandelier script 160");
-    for(const auto& r:records)if(ChandelierTrigger::supported(r)){if(r.parameters[13]!=player_.uid)throw FormatError("Chandelier script trigger needs the owned player");chandelierTriggers.emplace_back(r);}
-    if(chandelierTriggers.size()!=1)throw FormatError("Expected one chandelier script trigger");
+    if(!chandelierScripts.empty())throw FormatError("Chandelier scripts already loaded");
+    auto decoded=decodeScripts(bytes);
+    for(const auto& r:records)if(ChandelierTrigger::supported(r)){
+        if(r.parameters[13]!=player_.uid)throw FormatError("Chandelier script trigger needs the owned player");
+        const int uid=r.parameters[16];
+        if(std::any_of(chandelierScripts.begin(),chandelierScripts.end(),[&](const auto& c){return c->uid()==uid;}))throw FormatError("Chandelier script selected by two triggers");
+        const auto data=std::find_if(decoded.begin(),decoded.end(),[&](const auto& d){return d.uid==uid;});
+        if(data==decoded.end())throw FormatError("Missing chandelier script");
+        chandelierScripts.push_back(std::make_unique<ChandelierScript>(*data));chandelierTriggers.emplace_back(r);
+    }
+    if(chandelierTriggers.empty())throw FormatError("Expected a chandelier script trigger");
     rebuildOrder(records);cacheBuckets();
 }
+ChandelierScript* CombatWorld::chandelierScriptFor(int uid){for(auto& c:chandelierScripts)if(c->uid()==uid)return c.get();return nullptr;}
 void CombatWorld::loadIntro(ByteView scripts,const std::vector<ActorRecord>& records){
     if(intro)throw FormatError("Intro already loaded");
     for(auto& s:decodeScripts(scripts))if(s.uid==76)intro=std::make_unique<IntroCutscene>(std::move(s),maps_.width(),maps_.height());
@@ -372,11 +379,15 @@ void CombatWorld::updatePlayer(unsigned pressed,unsigned held,int frame,bool pau
     if(detached_)throw FormatError("Detached world cannot update player");
     if(!paused){if(promptMagicTicks>0)--promptMagicTicks;else recentPromptMagic=-1;}
     if(gateScript_){const auto [cx,cy]=referenceCamera();gateScript_->update([&](int uid)->LinkedGate*{for(auto& g:gates)if(g.uid==uid)return &g;return nullptr;},cx,cy,paused);}
-    if(chandelierScript){const auto [cx,cy]=referenceCamera();chandelierScript->update([&](int uid)->ChandelierActor{
-        for(std::size_t i=0;i<enemies.size();++i){auto& e=enemies[i];if(e.uid==uid && e.alive)return {&e.x,&e.y,&e.flags,&e.action,&buckets_[i],[&e](int n){e.scriptAnimation(n);},[&e]{e.refreshBounds();}};}
+    if(!chandelierScripts.empty()){const auto [cx,cy]=referenceCamera();
+        // Original slot semantics: a finishing script frees the LAST slot (cj--), so a script that outlives an earlier one would run
+        // as a world-freezing background script. That order cannot be reproduced here and is rejected rather than approximated.
+        for(const auto& c:chandelierScripts)if(c->ticks>=0 && !selected_.contains(c->uid()))throw FormatError("Selected-script slot order would run a chandelier script as a background script");
+        for(int slot=0;slot<selected_.count;++slot){auto* script=chandelierScriptFor(selected_.uids[slot]);if(!script)continue;script->update([&](int uid)->ChandelierActor{
+        for(std::size_t i=0;i<enemies.size();++i){auto& e=enemies[i];if(e.uid==uid && e.alive)return {&e.x,&e.y,&e.flags,&e.action,&buckets_[i],[&e](int n){e.scriptAnimation(n);},[&e]{e.refreshBounds();},[&e](int n){e.scriptAction(n);},&e.facingLeft};}
         for(auto& p:platforms)if(p.uid==uid)return {&p.x,&p.y,&p.flags,&p.action,&p.bucket,[&p](int n){p.scriptAnimation(n);},[&p]{p.refreshBounds();}};
         return {};
-    },cx,cy,paused);}
+    },cx,cy,paused);}}
     const auto& bodies=prepare(paused);
     if(fireMagic && !paused && !(player_.flags&(1024|16384)) && !player_.stoppedByHazard()){
         fireMagic->regenerate(meters_,player_.action);player_.availableMagic=meters_.magic;player_.fireOccupied=fireMagic->occupied();
@@ -557,7 +568,7 @@ bool CombatWorld::finishPlayer(bool paused) {
             }
             continue;
         }
-        if(slot.kind==ActorKind::ChandelierTrigger){auto& t=chandelierTriggers[slot.index];t.update(&player_,*chandelierScript,paused);if(!t.alive)for(std::size_t i=0;i<placedUids_.size();++i)if(placedUids_[i]==t.uid)placedRemoved_[i]=true;continue;}
+        if(slot.kind==ActorKind::ChandelierTrigger){auto& t=chandelierTriggers[slot.index];auto* script=chandelierScriptFor(t.scriptUid);if(!script)throw FormatError("Chandelier trigger script is not loaded");const bool wasAlive=t.alive;const int starts=script->starts;t.update(&player_,*script,paused);if(script->starts!=starts)selected_.select(script->uid());if(wasAlive && !t.alive)selected_.release();if(!t.alive)for(std::size_t i=0;i<placedUids_.size();++i)if(placedUids_[i]==t.uid)placedRemoved_[i]=true;continue;}
         if(slot.kind==ActorKind::IntroTrigger){auto& t=introTriggers[slot.index];if(t.update(player_,paused)){
             const auto [cx,cy]=referenceCamera();intro->start(cx,cy,t.skipAllowed);introInputReset=true;player_.facingLeft=(t.flags&1)!=0;player_.flags=(player_.flags&~1)|int(player_.facingLeft);player_.vx=player_.vy=0;player_.weaponSwitchCooldown=0;
             if(fireMagic)fireMagic->clear();if(iceMagic)iceMagic->clear();effects.clear();
@@ -611,7 +622,7 @@ bool CombatWorld::finishPlayer(bool paused) {
         const bool flying=slot.kind==ActorKind::FlyingEnemy,thrower=slot.kind==ActorKind::Type3Enemy;
         auto& e=enemyAt(slot); const int health=e.health;
         const bool ran=e.alive && !paused && !(e.flags&(1024|16384));
-        if(flying)flyingEnemies[slot.index].update(target,paused,&random,&meters_,&exchange);
+        if(flying){auto& f=flyingEnemies[slot.index];f.activeRegion=region_>=0?&regions_[region_].bounds:nullptr;f.update(target,paused,&random,&meters_,&exchange);}
         else if(thrower){
             auto& caster=type3Enemies[slot.index];const auto services=type3Services();
             caster.update(target,paused,&random,&meters_,&exchange,services);
@@ -621,8 +632,11 @@ bool CombatWorld::finishPlayer(bool paused) {
         if(!e.alive)for(std::size_t i=0;i<placedUids_.size();++i)if(placedUids_[i]==e.uid)placedRemoved_[i]=true;
         if(ran && e.alive && region_>=0) {
             const auto& r=regions_[region_].bounds;
+            if(flying)flyingEnemies[slot.index].clampToRegion(r);
+            else {
             if((r[0]+12>e.collision[0] && e.vx<=0) || (r[2]-12<e.collision[2] && e.vx>=0)) e.vx=0;
             if((r[1]+12>e.collision[1] && e.vy<=0) || (r[3]-12<e.collision[3] && e.vy>=0)) e.vy=0;
+            }
         }
         for(const auto& spawn:e.effects) { effects.emplace_back(effectSprite_,spawn); ++effectsSpawned; }
         for(const auto& spawn:e.loot) { loot.push_back(spawn); ++lootSpawned; }

@@ -94,6 +94,9 @@ also passed. The data-free distribution build passed; its executable matches
 Release, and its asset tool passes the chandelier oracle. Portrait and widescreen
 gameplay captures were inspected. Oracles, captures and binaries remain ignored.
 
+Level 1 reuses this owner for scripts 23/24/114; see [NATIVE_LEVEL1_AMBUSH.md](NATIVE_LEVEL1_AMBUSH.md).
+The sentence above and the single-script wording describe the level-0 slice.
+
 This pass completes script 160/trigger 161. The subsequent
 [linked prompt-removal pass](NATIVE_PROMPT_REMOVAL.md) completes triggers 43/61.
 [Camera controllers 63/167](NATIVE_CAMERA_CONTROLLERS.md) are also implemented.

@@ -41,7 +41,10 @@ public:
     CombatWorld(const BSprite&,const BSprite&&,const LevelMaps&,Player&,PlayerMeters&,const std::vector<ActorRecord>&,const std::vector<int>&)=delete;
     CombatWorld(const BSprite&,const BSprite&,const LevelMaps&&,Player&,PlayerMeters&,const std::vector<ActorRecord>&,const std::vector<int>&)=delete;
     CombatWorld(const CombatWorld&)=delete; CombatWorld& operator=(const CombatWorld&)=delete;
-    std::unique_ptr<ChandelierScript> chandelierScript;
+    // One script per trigger (160 level 0; 23/24/114 level 1). Selection order mirrors the original three-slot array.
+    std::vector<std::unique_ptr<ChandelierScript>> chandelierScripts;
+    ChandelierScript* chandelierScriptFor(int uid);
+    int selectedScriptCount()const{return selected_.count;}
     std::vector<ChandelierTrigger> chandelierTriggers;
     void loadChandelierScript(ByteView,const std::vector<ActorRecord>&);
     std::unique_ptr<IntroCutscene> intro;
@@ -100,9 +103,9 @@ public:
     // Bind the completed host-owned vector once; its elements must remain stable.
     void bindContainers(std::vector<Container>&);
     bool containerQueued(int uid) const;
-    void loadFlyingEnemies(const BSprite&,const std::vector<ActorRecord>&,const std::vector<int>&);
-    void loadFlyingEnemies(BSprite&&,const std::vector<ActorRecord>&,const std::vector<int>&)=delete;
-    void loadFlyingEnemies(const BSprite&&,const std::vector<ActorRecord>&,const std::vector<int>&)=delete;
+    void loadFlyingEnemies(const BSprite&,const std::vector<ActorRecord>&,const std::vector<int>&,const std::array<int,256>* trig=nullptr);
+    void loadFlyingEnemies(BSprite&&,const std::vector<ActorRecord>&,const std::vector<int>&,const std::array<int,256>* =nullptr)=delete;
+    void loadFlyingEnemies(const BSprite&&,const std::vector<ActorRecord>&,const std::vector<int>&,const std::array<int,256>* =nullptr)=delete;
     std::list<MovingPlatform> platforms;
     std::vector<Checkpoint> checkpoints;
     void loadCheckpoints(const std::vector<ActorRecord>&,std::function<void(const Checkpoint&)>);
@@ -162,6 +165,7 @@ private:
     std::unique_ptr<SpriteRenderer> promptRenderer_;
     const BSprite& effectSprite_; const LevelMaps& maps_; Player& player_; PlayerMeters& meters_;
     std::unique_ptr<GateScript> gateScript_;
+    SelectedScriptSlots selected_;
     std::vector<int> placedUids_;
     std::vector<bool> placedRemoved_;
     bool containerSourcesPending_=false;

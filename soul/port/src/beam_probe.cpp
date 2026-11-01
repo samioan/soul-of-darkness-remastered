@@ -9,10 +9,11 @@ void emitBeamManifest(const std::filesystem::path& root){
     const auto sprite=soul::BSprite::parse(pack.resource(10).value()),effect=soul::BSprite::parse(pack.resource(1).value()),ps=soul::BSprite::parse(pack.resource(0).value());
     auto scene=soul::TileScene::load(root,0);const auto records=soul::actorRecords(level.resource(0).value());std::vector<soul::ActorRecord> emitters;for(const auto& r:records)if(r.parameters[0]==10)emitters.push_back(r);
     soul::BinaryReader reader(stat.resource(0).value());const int count=reader.i32be();std::vector<int> stats;for(int t=0;t<count;++t){const int n=reader.i32be();for(int j=0;j<n;++j){const int v=reader.i32be();if(t==9)stats.push_back(v);}}reader.done();const auto trig=soul::loadPlatformTrig(root);
-    for(int scenario=0;scenario<12;++scenario){auto r=emitters.at(scenario<6?scenario:0);auto table=stats;
+    auto level1=soul::TileScene::load(root,1);const auto level1Pack=soul::ResourcePack::numeric(soul::readAssetFile(root/"4"));const auto level1Records=soul::actorRecords(level1Pack.resource(0).value());std::vector<soul::ActorRecord> level1Emitters;for(const auto& r:level1Records)if(r.parameters[0]==10)level1Emitters.push_back(r);
+    for(int scenario=0;scenario<12+int(level1Emitters.size());++scenario){auto r=scenario>=12?level1Emitters.at(scenario-12):emitters.at(scenario<6?scenario:0);auto table=stats;auto& sceneRef=scenario>=12?level1:scene;const auto& playerRecords=scenario>=12?level1Records:records;
         if(scenario>=6 && scenario<=9){r.parameters[4]=scenario==6?0:scenario==7?8:4;r.parameters[5]=8|(scenario==9?1:0);r.parameters[12]=scenario==8?125:scenario==9?-125:0;r.parameters[13]=scenario==6?125:scenario==7?-125:0;}
         if(scenario==10)table[r.parameters[11]*4+2]=0;
-        soul::BeamEmitter e(sprite,effect,scene.maps(),r,table,trig);soul::Player player(ps,scene.maps(),soul::playerRecord(records));
+        soul::BeamEmitter e(sprite,effect,sceneRef.maps(),r,table,trig);soul::Player player(ps,sceneRef.maps(),soul::playerRecord(playerRecords));
         for(int frame=0;frame<360;++frame){const bool paused=scenario==11 && frame>=20 && frame<40;const auto box=e.activation;player.collision=frame==0?std::array<int,4>{box[0]+1,box[1]+1,box[0]+2,box[1]+2}:std::array<int,4>{-1000,-1000,-999,-999};e.update(player,paused);
             for(int phase=0;phase<2;++phase){if(phase && !paused)e.advanceAnimation();std::cout<<"B\tbeam"<<scenario<<'\t'<<frame<<'\t'<<phase;for(int n:{e.action,e.timer,int(e.active),e.endX,e.endY,e.animation,e.pending,e.step,e.tick,e.flags,int(e.active)})std::cout<<'\t'<<n;std::cout<<'\n';}
         }

@@ -533,3 +533,20 @@ tick, enableLinkedActor's flag/effect rules and Game.updateSelectedScripts' orde
 against the regenerated Java. Shipped level-1 records show 104 targets in slots B/C, 103 starting
 script 95 and 62 enabling chest 59. No names or generated-Java patches changed; see
 NATIVE_LEVEL1_ENCOUNTER.md.
+
+Level-1 ambush evidence: Game.executeScriptOpcode case 106 calls changeActionState for basic enemies
+and assigns actionState otherwise; cases 23/24 extend the operand with |=65536 when bit 0 is set and use
+flags |= / &= ~(v>>16), with command 24 recomputing facingLeft outside its tick condition. Actor.a(byte) appends to
+Game.ck[cj] and Actor.c does cj-- without compacting, so an earlier script finishing first leaves a later one
+outside the selected slots; Game.updateBackgroundScripts/hasActiveBackgroundScript then run it and skip
+updateWorldActors. Actor.V with zero excursion and speed flips direction each tick without moving the angle.
+Shipped scripts 23/24/114 and records 89-94/115/118/123 were decoded from pack 4. No names or generated-Java
+patches changed; see NATIVE_LEVEL1_AMBUSH.md.
+
+Level-1 envelope evidence: Actor.cE[49]==12 gives type-2 behavior 6; Actor.aE (updateEnemyType2) state 0
+enters 138 and sets ac/ad/aF/flags|=16, states 138/139 drive the sine path, and Game.au (set by Game.a(Actor) from
+the type-22 handler) is the active camera region, not the player. Actor.aS (clampActorToActiveRegion) resets types
+2 with behavior 3/5/6 outside it (3 removes its spawner). Actor.initializeFromRecord type 10 assigns aF only for
+animations 0/8/4, so animation 6 leaves it 0, and Actor.a(int,int,int,Actor) tests `aF<8`/`aF==1`. All were read in
+the regenerated Java and b.bytecode.txt (lookupswitch at b.aE offsets 63/435/1783). No names or generated-Java
+patches changed; see NATIVE_LEVEL1_ENVELOPE.md.

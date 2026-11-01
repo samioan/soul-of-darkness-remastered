@@ -138,7 +138,7 @@ struct MovementPreview {
         enemySprite(data.sprite(data.level.enemySprite)),flyingSprite(data.sprite(data.level.flyingSprite)),platformSprite(data.sprite(data.level.platformSprite)),bridgeSprite(data.sprite(data.level.bridgeSprite)),beamSprite(data.sprite(data.level.beamSprite)),abilitySprite(data.sprite(data.level.abilitySprite)),fontSprite(data.font),font(fontSprite),crystalRenderer(pickupSprite){
         const auto& stats=data.stats(0);const auto& flyingStats=data.stats(2);const auto& beamStats=data.stats(9);
         combat=std::make_unique<soul::CombatWorld>(enemySprite,effectSprite,scene.maps(),player,meters,records,stats);
-        combat->loadFlyingEnemies(flyingSprite,records,flyingStats);
+        combat->loadFlyingEnemies(flyingSprite,records,flyingStats,&data.trig);
         const auto& trig=data.trig;
         combat->loadFireMagic(trig);
         combat->loadThrownObjects(data.sprite(data.level.thrownSprite));
@@ -1269,7 +1269,7 @@ int main(int argc, char** argv) {
                     << " prompt_removal_triggers=" << std::count_if(movementPreview->combat->promptRemovalTriggers.begin(),movementPreview->combat->promptRemovalTriggers.end(),[](const auto& t){return t.alive;})
                     << " prompt59_alive=" << [&]{for(const auto& p:movementPreview->combat->prompts)if(p.uid==59)return p.alive;return false;}()
                     << " prompt187_alive=" << [&]{for(const auto& p:movementPreview->combat->prompts)if(p.uid==187)return p.alive;return false;}()
-                    << " chandelier_tick=" << movementPreview->combat->chandelierScript->ticks << " chandelier_starts=" << movementPreview->combat->chandelierScript->starts << " chandelier_finishes=" << movementPreview->combat->chandelierScript->finishes
+                    << " chandelier_tick=" << movementPreview->combat->chandelierScripts.front()->ticks << " chandelier_starts=" << movementPreview->combat->chandelierScripts.front()->starts << " chandelier_finishes=" << movementPreview->combat->chandelierScripts.front()->finishes
                     << " chandelier_trigger_alive=" << std::any_of(movementPreview->combat->chandelierTriggers.begin(),movementPreview->combat->chandelierTriggers.end(),[](const auto& t){return t.alive;})
                     << " chandelier34_y=" << [&]{for(const auto& p:movementPreview->combat->platforms)if(p.uid==34)return p.y;return -1;}() << " chandelier34_action=" << [&]{for(const auto& p:movementPreview->combat->platforms)if(p.uid==34)return p.action;return -1;}()
                     << " chandelier205_alive=" << [&]{for(const auto& e:movementPreview->combat->enemies)if(e.uid==205)return e.alive;return false;}() << " chandelier205_flags=" << [&]{for(const auto& e:movementPreview->combat->enemies)if(e.uid==205)return e.flags;return -1;}()

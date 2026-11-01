@@ -309,6 +309,19 @@ scenarios. Run `python tools/check_native_encounter.py --exe soul/port/build/Deb
 for those rows and six controlled world fixtures of the full 100/104/62/103 chain.
 See [encounter scope](../soul/docs/NATIVE_LEVEL1_ENCOUNTER.md).
 
+`AmbushCheck.java` runs with default regeneration and emits ignored `analysis/ambush-oracle.tsv`:
+12800 original-bytecode rows for the second level's chandelier scripts 23/24/114 (triggers
+115/118/123, enemies 92/93/94, chandeliers 89/90/91, selected-slot arrays) across twelve scenarios.
+Run `python tools/check_native_ambush.py --exe soul/port/build/Debug/soul_assets.exe` for those rows
+and seven controlled world fixtures. See [ambush scope](../soul/docs/NATIVE_LEVEL1_AMBUSH.md).
+
+`SineFlyerCheck.java` runs with default regeneration and emits ignored `analysis/sine-flyer-oracle.tsv`:
+2663 original-bytecode rows for type-2 behavior 6 (the second level's sine-wave flyers, a real region
+actor as `Game.au`) across eleven scenarios. `BeamCheck.java` now also covers the six level-1 emitters
+(13152 rows). Run `python tools/check_native_sine_flyers.py --exe soul/port/build/Debug/soul_assets.exe` and
+`python tools/check_native_beams.py --exe ...`; `soul_assets --level-audit-manifest` lists which native loaders
+accept each level. See [loader envelope](../soul/docs/NATIVE_LEVEL1_ENVELOPE.md).
+
 
 `PassageCheck.java` runs in default regeneration and writes ignored
 `analysis/passage-oracle.tsv`: 464 original-bytecode player/passage rows over

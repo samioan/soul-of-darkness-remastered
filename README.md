@@ -69,7 +69,13 @@ actors (charger, thrower, linked-chest runner) now run natively for the shipped 
 [type-3 actor coverage](soul/docs/NATIVE_TYPE3_ACTORS.md). The second level's first
 encounter (trigger 100, enemies 96/97, trigger 104, flying pair 98/102, chest 59 and
 gate 87 via script 95) now runs in controlled native worlds against 2112 bytecode rows;
-see [encounter coverage](soul/docs/NATIVE_LEVEL1_ENCOUNTER.md). Level 3's paired mode and
+see [encounter coverage](soul/docs/NATIVE_LEVEL1_ENCOUNTER.md). The level's three corridor
+ambushes (triggers 115/118/123 start scripts 23/24/114 on enemies 92/93/94 and chandeliers
+89/90/91) also run in controlled worlds against 12800 bytecode rows; see
+[ambush coverage](soul/docs/NATIVE_LEVEL1_AMBUSH.md). The level's type-2 sine-wave flyers and
+animation-6 beam emitters now match the original too (2663 and 13152 rows), so every shipped
+level-1 record constructs through the native loaders; see
+[loader envelope](soul/docs/NATIVE_LEVEL1_ENVELOPE.md). Level 3's paired mode and
 the actual level routes remain pending.
 Native tile drawing now displays all nine gameplay maps at widths 240/569,
 with 45 original-Java map rows and 324 pixel comparisons. See

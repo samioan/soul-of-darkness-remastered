@@ -35,8 +35,8 @@ std::array<int,2> beamRaycast(const LevelMaps& maps,int x,int y,int ex,int ey){
 }
 BeamEmitter::BeamEmitter(const BSprite& s,const BSprite& effect,const LevelMaps& maps,const ActorRecord& r,const std::vector<int>& stats,const std::array<int,256>& trig):sprite_(s),effect_(effect),maps_(maps),trig_(trig),renderer_(s),effectRenderer_(effect){
     const auto& p=r.parameters;
-    if(r.count!=14 || p[0]!=10 || p[8]<=0 || p[9]<=0 || !(p[5]&8) || (p[5]&~(1|2|4|8|16|32|64|128|256|1024|16384)) || (p[4]!=0 && p[4]!=4 && p[4]!=8) || (p[10]!=22 && p[10]!=23) || p[11]<0 || std::size_t(p[11])*4+3>=stats.size() || !maps.collision || s.animations().size()<12 || effect.animations().size()<=13)throw FormatError("Unsupported beam emitter record/assets");
-    uid=p[1];x=static_cast<std::uint16_t>(p[2]);y=static_cast<std::uint16_t>(p[3]);animation=p[4];flags=animation==0?p[5]:p[5]&~64;variant=p[10]==23?1:0;direction=animation==0?8:animation==8?4:(flags&1?2:1);
+    if(r.count!=14 || p[0]!=10 || p[8]<=0 || p[9]<=0 || !(p[5]&8) || (p[5]&~(1|2|4|8|16|32|64|128|256|1024|16384)) || (p[4]!=0 && p[4]!=4 && p[4]!=6 && p[4]!=8) || (p[10]!=22 && p[10]!=23) || p[11]<0 || std::size_t(p[11])*4+3>=stats.size() || !maps.collision || s.animations().size()<12 || effect.animations().size()<=13)throw FormatError("Unsupported beam emitter record/assets");
+    uid=p[1];x=static_cast<std::uint16_t>(p[2]);y=static_cast<std::uint16_t>(p[3]);animation=p[4];flags=animation==0?p[5]:p[5]&~64;variant=p[10]==23?1:0;direction=animation==0?8:animation==8?4:animation==4?(flags&1?2:1):0; // Animation 6 leaves the original aF field at zero.
     activation={x+p[6],y+p[7],x+p[6]+p[8],y+p[7]+p[9]};baseX=endX=x+p[12];baseY=endY=y+p[13];for(int i=0;i<4;++i)stats_[i]=stats[p[11]*4+i];
     if(stats_[1]<=0)throw FormatError("Beam sweep/cycle duration must be positive");bounds();
 }

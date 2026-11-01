@@ -72,7 +72,7 @@ void emitEncounterWorldManifest(const std::filesystem::path& root){
         }
         Player player(data.sprite(data.level.playerSprite),data.scene.maps(),playerRecord(data.records),1);PlayerMeters meters;
         CombatWorld world(data.sprite(data.level.enemySprite),data.sprite(data.level.effectSprite),data.scene.maps(),player,meters,owned,data.stats(0));
-        world.loadFlyingEnemies(data.sprite(data.level.flyingSprite),owned,data.stats(2));
+        world.loadFlyingEnemies(data.sprite(data.level.flyingSprite),owned,data.stats(2),&data.trig);
         world.loadThrownObjects(data.sprite(data.level.thrownSprite));
         world.loadType3Enemies(data.sprite(data.level.flyingSprite),owned,data.stats(3));
         world.loadGates(data.sprite(data.level.platformSprite),data.scene.mutableMaps(),owned);

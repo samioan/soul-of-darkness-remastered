@@ -9,9 +9,11 @@ int i32(const Bytes& b){std::uint32_t u=unsigned(b.at(0))|(unsigned(b.at(1))<<8)
 bool overlap(const std::array<int,4>& a,const std::array<int,4>& b){return (a[0]!=a[2] || a[1]!=a[3]) && (b[0]!=b[2] || b[1]!=b[3]) && a[0]<=b[2] && a[2]>=b[0] && a[1]<=b[3] && a[3]>=b[1];}
 }
 ChandelierScript::ChandelierScript(ScriptData data):data_(std::move(data)){
-    if(data_.uid!=160 || data_.tracks.size()!=2)throw FormatError("Expected chandelier script 160");
-    for(std::size_t i=0;i<data_.tracks.size();++i){const auto& t=data_.tracks[i];if(t.kind!=2 || t.target!=(i?34:205))throw FormatError("Unexpected chandelier script target");
-        for(const auto& k:t.keys)for(const auto& c:k.commands)if(c.opcode!=21 && !(i==0 && (c.opcode==107 || c.opcode==108)) && !(i==1 && (c.opcode==22 || c.opcode==106)))throw FormatError("Unsupported chandelier script command");
+    if(!supportedUid(data_.uid) || data_.tracks.size()!=2)throw FormatError("Expected a chandelier script (160, 23, 24 or 114)");
+    // Script -> {enemy, chandelier}: 160 level 0; 23/24/114 the three level-1 ambushes.
+    const int enemy=data_.uid==160?205:data_.uid==23?92:data_.uid==24?93:94,chandelier=data_.uid==160?34:data_.uid==23?89:data_.uid==24?90:91;
+    for(std::size_t i=0;i<data_.tracks.size();++i){const auto& t=data_.tracks[i];if(t.kind!=2 || t.target!=(i?chandelier:enemy))throw FormatError("Unexpected chandelier script target");
+        for(const auto& k:t.keys)for(const auto& c:k.commands)if(c.opcode!=21 && !(i==0 && (c.opcode==23 || c.opcode==24 || c.opcode==107 || c.opcode==108)) && !(i==1 && c.opcode==22) && c.opcode!=106)throw FormatError("Unsupported chandelier script command");
         offsets_.push_back(t.initial);
     }
 }
@@ -26,7 +28,9 @@ void ChandelierScript::update(const std::function<ChandelierActor(int)>& resolve
         const auto key=std::find_if(t.keys.begin(),t.keys.end(),[&](const auto& k){return k.end>offsets_[i];});if(key==t.keys.end())throw FormatError("Invalid chandelier track offset");int target=-1,tx=0,ty=0;
         for(const auto& c:key->commands){if(c.opcode==21 && tick<=key->tick){tx=s16(c.operands,0);ty=s16(c.operands,2);target=key->tick;}
             else if(c.opcode==22 && key->tick<=tick)a.animate(c.operands.at(0));
-            else if(c.opcode==106 && key->tick==tick)*a.action=c.operands.at(0); // Type 50 is not a basic enemy.
+            else if(c.opcode==106 && key->tick==tick){if(a.scriptAction)a.scriptAction(c.operands.at(0));else *a.action=c.operands.at(0);} // Basic enemies change state; type 50 assigns it.
+            else if(c.opcode==23 && key->tick<=tick){int v=i32(c.operands);if(v&1)v|=65536;*a.flags|=v>>16;if(a.facingLeft)*a.facingLeft=(*a.flags&1)!=0;}
+            else if(c.opcode==24){if(key->tick<=tick){int v=i32(c.operands);if(v&1)v|=65536;*a.flags&=~(v>>16);}if(a.facingLeft)*a.facingLeft=(*a.flags&1)!=0;}
             else if(c.opcode==107 && key->tick==tick)*a.flags|=i32(c.operands);
             else if(c.opcode==108 && key->tick==tick)*a.flags&=~i32(c.operands);
         }
@@ -35,8 +39,8 @@ void ChandelierScript::update(const std::function<ChandelierActor(int)>& resolve
     }
     if(finished){ticks=-2;++finishes;}
 }
-bool ChandelierTrigger::supported(const ActorRecord& r){const auto& p=r.parameters;return r.count==19 && p[0]==40 && (p[5]&8) && !(p[5]&~(1|2|4|8|16|32|128|256|512|1024|16384)) && p[8]>0 && p[9]>0 && p[10]==1 && p[11]==1 && p[12]==0 && p[13]>=0 && p[14]==-1 && p[15]==-1 && p[16]==160 && p[17]==-1 && p[18]==-1;}
-ChandelierTrigger::ChandelierTrigger(const ActorRecord& r){if(!supported(r))throw FormatError("Unsupported chandelier trigger");const auto& p=r.parameters;uid=p[1];x=static_cast<std::uint16_t>(p[2]);y=static_cast<std::uint16_t>(p[3]);flags=p[5]|128;sourceUid=p[13];collision={x+p[6],y+p[7],x+p[6]+p[8],y+p[7]+p[9]};}
+bool ChandelierTrigger::supported(const ActorRecord& r){const auto& p=r.parameters;return r.count==19 && p[0]==40 && (p[5]&8) && !(p[5]&~(1|2|4|8|16|32|128|256|512|1024|16384)) && p[8]>0 && p[9]>0 && p[10]==1 && p[11]==1 && p[12]==0 && p[13]>=0 && p[14]==-1 && p[15]==-1 && ChandelierScript::supportedUid(p[16]) && p[17]==-1 && p[18]==-1;}
+ChandelierTrigger::ChandelierTrigger(const ActorRecord& r){if(!supported(r))throw FormatError("Unsupported chandelier trigger");const auto& p=r.parameters;uid=p[1];x=static_cast<std::uint16_t>(p[2]);y=static_cast<std::uint16_t>(p[3]);flags=p[5]|128;sourceUid=p[13];scriptUid=p[16];collision={x+p[6],y+p[7],x+p[6]+p[8],y+p[7]+p[9]};}
 void ChandelierTrigger::update(Player* player,ChandelierScript& script,bool paused){
     if(!alive || paused || (flags&(1024|16384)))return;
     if(player){if(player->uid!=sourceUid)throw FormatError("Chandelier trigger needs its player source");player->refreshBounds();if(overlap(player->collision,collision) && latch==-1){script.start();latch=1;}}

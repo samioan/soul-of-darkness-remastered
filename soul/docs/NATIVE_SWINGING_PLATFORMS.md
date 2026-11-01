@@ -94,3 +94,8 @@ python tools/rename_sod.py
 python tools/check_native_swinging_platforms.py --exe soul/port/build/Debug/soul_assets.exe --port-exe soul/port/build/Debug/soul_port.exe
 .\soul\port\build\Debug\soul_port.exe --movement-preview --swing-script --data soul/extracted --headless --fps 60 --frames 600
 ```
+
+Level 1 update: the constructor now accepts a zero excursion (`p[9]==0`, still at most 80). The
+verified level-1 case is the mode-1, zero-speed, zero-excursion chandeliers 89/90/91 that hang still
+until script 23/24/114 assigns the falling action; see [NATIVE_LEVEL1_AMBUSH.md](NATIVE_LEVEL1_AMBUSH.md).
+Other level-1 zero-excursion or high-speed type-50 records are accepted but not covered by that oracle.

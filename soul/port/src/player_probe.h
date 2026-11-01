@@ -87,3 +87,8 @@ void emitType3ActorManifest(const std::filesystem::path&);
 void emitType3WorldManifest(const std::filesystem::path&);
 void emitEncounterGateManifest(const std::filesystem::path&);
 void emitEncounterWorldManifest(const std::filesystem::path&);
+void emitAmbushManifest(const std::filesystem::path&);
+void emitAmbushWorldManifest(const std::filesystem::path&);
+void emitLevelAuditManifest(const std::filesystem::path&);
+void emitSineFlyerManifest(const std::filesystem::path&);
+void emitSineFlyerWorldManifest(const std::filesystem::path&);

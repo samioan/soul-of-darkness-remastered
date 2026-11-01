@@ -86,3 +86,5 @@ save integration and the rest of the game.
 The combat-only host checker now expects trigger 55 to reveal both chests after
 the second wave while leaving them unopened. The later arena fixture exercises
 actual chest interaction, magic collection and gate opening; see NATIVE_CHEST_UNLOCK.md.
+
+Behavior 6 (variant index 49, the second level's sine-wave flyers) is covered separately in [NATIVE_LEVEL1_ENVELOPE.md](NATIVE_LEVEL1_ENVELOPE.md). The statements above describe the behavior-0 slice.

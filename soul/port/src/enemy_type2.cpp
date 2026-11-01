@@ -15,10 +15,24 @@ int divide(int a,int b){return b==-1?sub(0,a):a/b;}
 int length(int x,int y){x=absJava(x);y=absJava(y);const int lo=std::min(x,y),hi=std::max(x,y);int n=add(mul(hi,1007),mul(lo,441));if(hi<jint(std::uint32_t(lo)<<4))n=sub(n,mul(hi,40));return sar(add(n,512),10);}
 bool overlap(const std::array<int,4>& a,const std::array<int,4>& b){if((a[0]==a[2] && a[1]==a[3]) || (b[0]==b[2] && b[1]==b[3]))return false;return a[0]<=b[2] && a[2]>=b[0] && a[1]<=b[3] && a[3]>=b[1];}
 }
+EnemyType2::EnemyType2(const BSprite& sprite,const LevelMaps& maps,const ActorRecord& record,const std::vector<int>& stats,const std::array<int,256>* trig)
+    :EnemyType1(sprite,maps,record,stats,2),originY(y),behavior_(record.parameters[10]==49?6:0),trig_(trig){
+    if(behavior_==6){if(!trig_)throw FormatError("Behavior-6 flyer needs the trigonometry table");hurtAnimation_=8;}
+}
+// Re-initialization from the record also reloads the vertical origin (Actor.initializeFromRecord type 2); originX is not reloaded.
+void EnemyType2::finishReinit(){originY=y;}
+void EnemyType2::clampToRegion(const std::array<int,4>& r){
+    if(behavior_==6){if(!overlap(collision,r))resetForRegionExit();return;}
+    if((r[0]+12>collision[0] && vx<=0) || (r[2]-12<collision[2] && vx>=0))vx=0;
+    if((r[1]+12>collision[1] && vy<=0) || (r[3]-12<collision[3] && vy>=0))vy=0;
+}
+int EnemyType2::sine(int degrees)const{int d=sub(90,degrees);while(d<0)d=add(d,360);return trig_->at(std::size_t(d%360*256/360));}
 void EnemyType2::changeFlying(int next){
     if(next==action)return;
     switch(next){
     case 101:request(2);break;
+    case 138:if(animation!=2){animation=2;pending=-1;step=tick=0;flags&=~64;}break;
+    case 139:if(animation!=4){animation=4;pending=-1;step=tick=0;flags&=~64;}break;
     case 200:request(2);vx=vy=ax=ay=0;timer=500;break;
     case 102:request(4);vx=vy=ax=ay=0;break;
     case 103:request(2);timer=500;break;
@@ -32,7 +46,9 @@ void EnemyType2::update(const EnemyTarget& p,bool paused,JavaRandom* random,cons
     vx=add(vx,ax);vy=add(vy,ay);ax=ay=0;x=sar(fixedX,8);y=sar(fixedY,8);
     if(damageCooldown>=0)damageCooldown=add(damageCooldown,-83);
     switch(action){
-    case 0:if(overlap(p.collision,activation))changeFlying(101);break;
+    case 0:if(overlap(p.collision,activation)){
+        if(behavior_==6){changeFlying(138);originX=x;originY=y;direction=facingLeft?2:1;flags|=16;}else changeFlying(101);
+    }break;
     case 101:{
         facingLeft=sub(fixedX,p.fixedX)>0;
         const int dx=sub(p.fixedX,fixedX),dy=sub(sub(p.fixedY,6400),fixedY);distance=length(dx,dy);
@@ -45,7 +61,23 @@ void EnemyType2::update(const EnemyTarget& p,bool paused,JavaRandom* random,cons
     case 200:timer=add(timer,-83);if(timer<=0)changeFlying(102);break;
     case 102:if(ending())changeFlying(103);break;
     case 103:timer=add(timer,-83);if(timer<=0)changeFlying(101);break;
-    case 2:timer=add(timer,-83);if(ending())changeFlying(101);break;
+    case 2:timer=add(timer,-83);if(ending()){if(behavior_==6){originX=x;originY=y;changeFlying(138);}else changeFlying(101);}break;
+    case 138:case 139:{
+        timer=add(timer,-83);
+        if(action==138){
+            if(facingLeft){interaction[2]=collision[0]-15;interaction[0]=interaction[2]-10;}
+            else {interaction[0]=collision[2]+15;interaction[2]=interaction[0]+10;}
+            interaction[1]=collision[1]+15;interaction[3]=collision[3];
+            if(overlap(p.collision,interaction))changeFlying(139);
+        }else if(action==139 && ending())changeFlying(138);
+        if(behavior_!=6)throw FormatError("Flying enemy action outside behavior-zero subset");
+        vx=direction==1?768:-768;
+        y=add(sar(mul(30,sine(mul(2,sub(originX,x)))),8),originY);
+        // Game.au is the active camera region (not the player); leaving it resets the actor without loot or a life.
+        if(!activeRegion)throw FormatError("Behavior-6 flyer needs an active camera region");
+        if(!overlap(*activeRegion,collision)){flags&=~16;resetForRegionExit();return;}
+        break;
+    }
     case 3:
         if(!random || !meters)throw FormatError("Flying enemy death requires world random and meters");
         cleanup(*random,*meters);if(facingLeft)flags|=1;else flags&=~1;return;

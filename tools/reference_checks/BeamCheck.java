@@ -11,13 +11,15 @@ public final class BeamCheck {
     public static void main(String[] args)throws Exception{
         Path assets=Path.of(args[0]),build=Path.of(args[1]),stubs=Path.of(args[2]),file=assets.getParent().resolve("analysis/beam-oracle.tsv");
         var emitters=LevelCheck.records(BehaviorCheck.resource(assets,3,0)).stream().filter(r->r.values()[0]==10).toList();
+        var level1=LevelCheck.records(BehaviorCheck.resource(assets,4,0)).stream().filter(r->r.values()[0]==10).toList();
         try(var out=new PrintWriter(Files.newBufferedWriter(file))){
-            for(int scenario=0;scenario<12;++scenario){String name="beam"+scenario;
+            // Scenarios 12..17 are the six shipped level-1 emitters (two start in animation 6, which leaves Actor.aF at 0).
+            for(int scenario=0;scenario<12+level1.size();++scenario){String name="beam"+scenario;
                 try(var a=new ActorCheck.Access(assets,assets,stubs,false);var b=new ActorCheck.Access(build,assets,stubs,true)){
                     Object[] roots=new Object[2];int which=0;
                     for(var c:List.of(a,b)){
-                        LevelCheck.setup(c,assets,3);c.player(0,100);
-                        short[] r=emitters.get(scenario<6?scenario:0).values().clone();
+                        LevelCheck.setup(c,assets,scenario>=12?4:3);c.player(0,100);
+                        short[] r=(scenario>=12?level1.get(scenario-12):emitters.get(scenario<6?scenario:0)).values().clone();
                         if(scenario>=6 && scenario<=9){r[4]=(short)(scenario==6?0:scenario==7?8:4);r[5]=(short)(8|(scenario==9?1:0));r[12]=(short)(scenario==8?125:scenario==9?-125:0);r[13]=(short)(scenario==6?125:scenario==7?-125:0);}
                         if(scenario==10){int[][] stats=(int[][])c.global("bY","actorStatTables");stats[9][r[11]*4+2]=0;}
                         Object root=c.create();c.call(root,"a","initializeFromRecord",new Class<?>[]{short[].class,boolean.class,int.class,int.class},Arrays.copyOf(r,20),true,0,r.length);roots[which++]=root;

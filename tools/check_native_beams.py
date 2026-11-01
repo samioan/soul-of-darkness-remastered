@@ -10,7 +10,7 @@ p.add_argument("--data", default=Path("soul/extracted"), type=Path)
 a = p.parse_args()
 expected = (Path("soul/analysis") / "beam-oracle.tsv").read_text().splitlines()
 actual = subprocess.check_output([str(a.exe), "--data", str(a.data), "--beam-manifest"], text=True).splitlines()
-assert len(expected) == 8832
+assert len(expected) == 13152
 assert len(actual) == len(expected), (len(actual), len(expected))
 for i, (want, got) in enumerate(zip(expected, actual)):
     assert want == got, f"Beam row {i}:\nJava: {want}\nC++:  {got}"

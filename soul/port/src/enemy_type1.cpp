@@ -22,7 +22,7 @@ EnemyType1::EnemyType1(const BSprite& sprite,const LevelMaps& maps,const ActorRe
     :type(actorType),sprite_(sprite),maps_(maps),renderer_(sprite) {
     const auto& p=r.parameters;
     if(r.count<13 || r.count>20 || p[0]!=type || !(p[5]&8) || (p[5]&~(1|2|4|8|16|32|64|1024|2048|16384|128)) ||
-        (type==1?(p[10]<0 || p[10]>3):type==3?(p[10]!=7 && p[10]!=9 && p[10]!=24):(p[10]!=4 || p[12]!=-1)) || p[11]<0 || std::size_t(p[11])*3+2>=stats.size() ||
+        (type==1?(p[10]<0 || p[10]>3):type==3?(p[10]!=7 && p[10]!=9 && p[10]!=24):((p[10]!=4 && p[10]!=49) || p[12]!=-1)) || p[11]<0 || std::size_t(p[11])*3+2>=stats.size() ||
         p[4]<0 || std::size_t(p[4])>=sprite.animations().size() || sprite.animations().size()<std::size_t(type==2?8:type==3?16:4) ||
         !maps.collision || maps.collision->width<=0 || maps.collision->height<=0 || maps.layers[1].height<=0 ||
         maps.collision->width!=maps.layers[1].width || maps.collision->cells.size()!=std::size_t(maps.collision->width)*maps.collision->height)

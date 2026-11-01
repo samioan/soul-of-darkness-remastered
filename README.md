@@ -75,7 +75,9 @@ ambushes (triggers 115/118/123 start scripts 23/24/114 on enemies 92/93/94 and c
 [ambush coverage](soul/docs/NATIVE_LEVEL1_AMBUSH.md). The level's type-2 sine-wave flyers and
 animation-6 beam emitters now match the original too (2663 and 13152 rows), so every shipped
 level-1 record constructs through the native loaders; see
-[loader envelope](soul/docs/NATIVE_LEVEL1_ENVELOPE.md). Level 3's paired mode and
+[loader envelope](soul/docs/NATIVE_LEVEL1_ENVELOPE.md). The level's own intro scene (trigger 134,
+script 133) runs in controlled worlds against 4760 bytecode rows ([intro coverage](soul/docs/NATIVE_LEVEL1_INTRO.md));
+host wiring and level entry remain pending. Level 3's paired mode and
 the actual level routes remain pending.
 Native tile drawing now displays all nine gameplay maps at widths 240/569,
 with 45 original-Java map rows and 324 pixel comparisons. See

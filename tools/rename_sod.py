@@ -161,6 +161,7 @@ def main() -> None:
                  ROOT / "tools/reference_checks/ChandelierCheck.java",
                  ROOT / "tools/reference_checks/AmbushCheck.java",
                  ROOT / "tools/reference_checks/SineFlyerCheck.java",
+                 ROOT / "tools/reference_checks/LevelOneIntroCheck.java",
                  ROOT / "tools/reference_checks/PromptRemovalCheck.java",
                  ROOT / "tools/reference_checks/CameraControllerCheck.java",
                  ROOT / "tools/reference_checks/MenuCheck.java",
@@ -183,6 +184,7 @@ def main() -> None:
             run([java, "-Djava.awt.headless=true", "-cp", f"{lifecycle}{sep}{harness}", "ChandelierCheck", EXTRACTED, build, STUBS])
             run([java, "-Djava.awt.headless=true", "-cp", f"{lifecycle}{sep}{harness}", "AmbushCheck", EXTRACTED, build, STUBS])
             run([java, "-Djava.awt.headless=true", "-cp", f"{lifecycle}{sep}{harness}", "SineFlyerCheck", EXTRACTED, build, STUBS])
+            run([java, "-Djava.awt.headless=true", "-cp", f"{lifecycle}{sep}{harness}", "LevelOneIntroCheck", EXTRACTED, build, STUBS])
             run([java, "-Djava.awt.headless=true", "-cp", f"{lifecycle}{sep}{harness}", "PromptRemovalCheck", EXTRACTED, build, STUBS])
             run([java, "-Djava.awt.headless=true", "-cp", f"{lifecycle}{sep}{harness}", "CameraControllerCheck", EXTRACTED, build, STUBS])
             run([java, "-Djava.awt.headless=true", "-cp", f"{lifecycle}{sep}{harness}", "MenuCheck", EXTRACTED, build, STUBS, MAP])

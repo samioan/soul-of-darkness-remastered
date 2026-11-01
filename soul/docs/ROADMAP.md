@@ -1,6 +1,6 @@
 # Soul of Darkness roadmap
 
-Updated 2026-11-01 after the level-1 ambush-script pass. This is the current
+Updated 2026-11-01 after the level-1 ambush, envelope and intro passes. This is the current
 remaining-work list. Historical implementation notes are in
 [ROADMAP_HISTORY.md](ROADMAP_HISTORY.md); their old pending/next descriptions
 are superseded. Update the lists below when work lands instead of appending
@@ -88,7 +88,9 @@ gameplay pack = level index + 3.
   136/137/181; 2663 rows) and beam emitters starting in animation 6 (UIDs 3/5; oracle now 13152 rows) match the
   original, so every shipped level-1 record constructs natively (NATIVE_LEVEL1_ENVELOPE.md). Triggers 187/322 are
   level-2 records. Still pending: oracle coverage for the remaining level-1 variants (type-50, type-33, gates,
-  bridges, camera controller 125, passages), staggered 118/123 starts, the intro camera script 133 and the actual route. The type-1 respawn-fade record (UID 96) is verified in NATIVE_ENEMIES.md.
+  bridges, camera controller 125, passages), staggered 118/123 starts, host wiring of the level-1 scripts and the
+  actual route. The level-1 intro (trigger 134/script 133, 4760 rows) now runs in controlled worlds; see
+  NATIVE_LEVEL1_INTRO.md. The type-1 respawn-fade record (UID 96) is verified in NATIVE_ENEMIES.md.
 - [ ] Record and verify an actual run from first-level spawn through its arena,
   reward/gate, passages, beams, final room and exit. The current controlled host
   fixtures start at selected locations; they are not that full play-through.
@@ -184,7 +186,7 @@ gameplay pack = level index + 3.
 - Completion/progression adds 444 original/reference expectations, including
   actual RMS writes and unload, plus 24 native decision rows and 36 cross-process
   finish/Continue/replay checks; see [NATIVE_FINISH.md](NATIVE_FINISH.md).
-- Current baseline: 567 player assertions, 25 timed-switch assertions, 17 barrier
+- Current baseline: 575 player assertions, 25 timed-switch assertions, 17 barrier
   assertions, 15 thrown-object assertions, 26 type-3 decision assertions, 20 type-3
   actor assertions and 109 CTests. Type-3 decisions add 10922 bytecode rows and the
   integrated actor adds 11487 rows plus 48 world and 4 presentation fixtures; see

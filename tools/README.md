@@ -322,6 +322,11 @@ actor as `Game.au`) across eleven scenarios. `BeamCheck.java` now also covers th
 `python tools/check_native_beams.py --exe ...`; `soul_assets --level-audit-manifest` lists which native loaders
 accept each level. See [loader envelope](../soul/docs/NATIVE_LEVEL1_ENVELOPE.md).
 
+`LevelOneIntroCheck.java` runs with default regeneration and emits ignored `analysis/level1-intro-oracle.tsv`:
+4760 original-bytecode rows for the second level's intro (trigger 134, script 133) across seven scenarios.
+Run `python tools/check_native_level1_intro.py --exe soul/port/build/Debug/soul_assets.exe` for those rows and
+four controlled world fixtures. See [intro scope](../soul/docs/NATIVE_LEVEL1_INTRO.md).
+
 
 `PassageCheck.java` runs in default regeneration and writes ignored
 `analysis/passage-oracle.tsv`: 464 original-bytecode player/passage rows over

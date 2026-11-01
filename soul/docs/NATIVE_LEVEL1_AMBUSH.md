@@ -106,5 +106,5 @@ These are controlled fixtures, not a route through level 1 or runtime parity.
   oracle; only the mode-1 zero-excursion chandeliers 89/90/91 are.
 - Triggers 187 and 322 belong to the third level (index 2), not level 1; every level-1 type-40 record now has a
   native owner. The sine flyers (UIDs 136/137/181) and beam variants are covered by
-  [NATIVE_LEVEL1_ENVELOPE.md](NATIVE_LEVEL1_ENVELOPE.md). The intro camera script 133 and the level route
-  are still pending. No camera/render path changed, so no new 240/569 presentation fixture was needed.
+  [NATIVE_LEVEL1_ENVELOPE.md](NATIVE_LEVEL1_ENVELOPE.md). The intro script 133 is covered by [NATIVE_LEVEL1_INTRO.md](NATIVE_LEVEL1_INTRO.md); the level route
+  is still pending. No camera/render path changed, so no new 240/569 presentation fixture was needed.

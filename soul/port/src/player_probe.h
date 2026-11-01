@@ -92,3 +92,5 @@ void emitAmbushWorldManifest(const std::filesystem::path&);
 void emitLevelAuditManifest(const std::filesystem::path&);
 void emitSineFlyerManifest(const std::filesystem::path&);
 void emitSineFlyerWorldManifest(const std::filesystem::path&);
+void emitLevelOneIntroManifest(const std::filesystem::path&);
+void emitLevelOneIntroWorldManifest(const std::filesystem::path&);

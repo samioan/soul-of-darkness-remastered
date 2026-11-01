@@ -1,6 +1,6 @@
 # Windows port implementation roadmap
 
-Updated 2026-11-01 after the level-1 ambush and loader-envelope passes. This file lists the
+Updated 2026-11-01 after the level-1 ambush, loader-envelope and intro passes. This file lists the
 remaining native work and acceptance conditions. [ROADMAP.md](ROADMAP.md) is
 the overall project checklist. [PORT_ROADMAP_HISTORY.md](PORT_ROADMAP_HISTORY.md)
 preserves the old notes; their claims that gameplay, platforms or Continue are
@@ -77,7 +77,10 @@ Level indices are zero-based; level 0 is the first level and uses pack 3.
   behavior 6 (sine-wave flyers 136/137/181, region-bound handler, 2663 bytecode rows) and beam emitters
   starting in animation 6 (UIDs 3/5; beam oracle now 13152 rows) were the only rejections. This is envelope
   coverage; the unverified level-1 variants are listed in NATIVE_LEVEL1_ENVELOPE.md.
-- Latest data-free suite: 109 CTests, 567 player, 25 timed-switch, 17 barrier,
+- Level 1's intro (trigger 134, script 133: player 131, zombie 215, flyer 135, six dialogues, skip) runs in
+  controlled real-record worlds through the generalized intro owner; 4760 original-bytecode rows and eight
+  added assertions verify it. It is not wired into the host yet; see NATIVE_LEVEL1_INTRO.md.
+- Latest data-free suite: 109 CTests, 575 player, 25 timed-switch, 17 barrier,
   15 thrown-object, 26 type-3 decision and 20 type-3 actor assertions. Chandelier fixtures
   compare 3000 bytecode rows and 24 host runs; intro fixtures
   compare 5460 original-bytecode rows and 48 playback/skip host runs. Linked
@@ -139,8 +142,10 @@ native fixtures do not establish a complete native play-through.
    (NATIVE_LEVEL1_AMBUSH.md). The sine flyers and beam variants now construct and match the original
    (NATIVE_LEVEL1_ENVELOPE.md). Triggers 187/322 are level-2 records, not level-1. Remaining: the
    unverified level-1 variants (type-50 UIDs 25/33/145/190/169/510, type-33 platforms, gates, bridges,
-   camera controller 125, passages), staggered 118/123 starts, the intro camera trigger 134/script 133 and
-   the second-level route, then enabling New Game/Continue into level 1.
+   camera controller 125, passages), staggered 118/123 starts, host wiring of the level-1 intro/scripts/
+   chandeliers (the descriptor still opens scripts for level 0 only), the level-1 route and the 240/569
+   presentation checks, then enabling New Game/Continue into level 1. The intro (trigger 134/script 133)
+   itself is ported (NATIVE_LEVEL1_INTRO.md).
 9. [ ] **Full first-level route test.** Start at the ordinary spawn, run the intro,
    traverse rooms/platforms, complete the arena/reward/gate, pass the beams and
    final room, then complete/unload. Exercise checkpoint death/restart/Continue

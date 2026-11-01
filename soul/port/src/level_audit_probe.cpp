@@ -32,6 +32,7 @@ void emitLevelAuditManifest(const std::filesystem::path& root){
         step("barriers",[&]{world->loadEnergyBarriers(data.sprite(data.level.effectSprite),records);});
         step("scripts",[&]{world->loadGateScripts(ByteView(data.scriptBytes));});
         step("chandeliers",[&]{if(std::any_of(records.begin(),records.end(),[](const auto& r){return ChandelierTrigger::supported(r);}))world->loadChandelierScript(ByteView(data.scriptBytes),records);});
+        step("intro",[&]{if(std::any_of(records.begin(),records.end(),[](const auto& r){return r.parameters[0]==20 && r.parameters[4]==8 && (r.parameters[10]==76 || r.parameters[10]==133);}))world->loadIntro(ByteView(data.scriptBytes),records);});
         step("containers",[&]{for(const auto& r:records)if(r.parameters[0]==52)Container(data.sprite(data.level.containerSprite),data.sprite(data.level.promptSprite),data.scene.maps(),r);});
         step("pickups",[&]{for(const auto& r:records)if(r.parameters[0]==35)Pickup(data.sprite(data.level.pickupSprite),r);});
         // Smoke run: park the frozen, invulnerable player on every placed record for 40 ticks. A throw means a handler met a state
@@ -43,7 +44,8 @@ void emitLevelAuditManifest(const std::filesystem::path& root){
             for(const auto& r:records){
                 const int type=r.parameters[0];if(type==0 || type==40)continue;
                 player.x=static_cast<std::uint16_t>(r.parameters[2]);player.y=static_cast<std::uint16_t>(r.parameters[3]);player.fixedX=player.x*256;player.fixedY=player.y*256;player.refreshBounds();
-                for(int i=0;i<40;++i,++tick){world->refreshRegionSelection();world->updatePlayer(0,0,tick,false);world->finishPlayer(false);
+                for(int i=0;i<40;++i,++tick){for(int guard=0;world->intro && world->intro->active() && guard<8;++guard){world->updateIntro(131072,1);world->animateIntro();}
+                    world->refreshRegionSelection();world->updatePlayer(0,0,tick,false);world->finishPlayer(false);
                     for(auto& c:bound)if(world->containerQueued(c.uid))c.update(player,0,false,false,&world->random,false);
                     world->finishContainerSources(bound,false);world->advance();for(auto& c:bound)c.advanceAnimation();
                     for(const auto& f:world->flyingEnemies)if(f.behavior()==6 && (f.action==138 || f.action==139))waved.insert(f.uid);}

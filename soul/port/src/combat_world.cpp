@@ -195,10 +195,10 @@ void CombatWorld::loadChandelierScript(ByteView bytes,const std::vector<ActorRec
 ChandelierScript* CombatWorld::chandelierScriptFor(int uid){for(auto& c:chandelierScripts)if(c->uid()==uid)return c.get();return nullptr;}
 void CombatWorld::loadIntro(ByteView scripts,const std::vector<ActorRecord>& records){
     if(intro)throw FormatError("Intro already loaded");
-    for(auto& s:decodeScripts(scripts))if(s.uid==76)intro=std::make_unique<IntroCutscene>(std::move(s),maps_.width(),maps_.height());
-    if(!intro)throw FormatError("Missing intro script 76");
-    for(const auto& r:records)if(r.parameters[0]==20 && r.parameters[4]==8 && r.parameters[10]==76)introTriggers.emplace_back(r);
+    for(const auto& r:records)if(r.parameters[0]==20 && r.parameters[4]==8 && (r.parameters[10]==76 || r.parameters[10]==133))introTriggers.emplace_back(r);
     if(introTriggers.size()!=1)throw FormatError("Expected one intro trigger");
+    for(auto& s:decodeScripts(scripts))if(s.uid==introTriggers[0].scriptUid)intro=std::make_unique<IntroCutscene>(std::move(s),maps_.width(),maps_.height());
+    if(!intro)throw FormatError("Missing intro script");
     rebuildOrder(records);cacheBuckets();
 }
 void CombatWorld::updateIntro(unsigned pressed,int pages){

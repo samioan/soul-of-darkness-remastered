@@ -1046,6 +1046,17 @@ int main() {
         require(soul::introView(0,0,569,240,320)==std::pair<int,int>{0,0},"intro viewport handles map narrower than screen");
         rejects([]{soul::introView(0,0,0,240,320);},"invalid intro viewport rejected");
         require(soul::introSpeaker(0)==u"KALE" && soul::introSpeaker(3)==u"ZOMBIE" && soul::introText(0).find(u"castle")!=std::u16string_view::npos,"intro desktop dialogue and speakers are English");
+        require(soul::introSpeaker(4)==u"RARACH" && soul::introText(4).find(u"vampires")!=std::u16string_view::npos && soul::introText(10).find(u"steel")!=std::u16string_view::npos,"level-1 intro dialogue and speaker are English");
+        rejects([]{soul::introText(11);},"unknown level-1 intro text is rejected");rejects([]{soul::introSpeaker(1);},"unknown intro speaker is rejected");
+        {
+            soul::ActorRecord triggerRecord{};triggerRecord.count=12;triggerRecord.parameters={20,134,1376,791,8,8,0,0,30,30,133,0};
+            soul::IntroTrigger trigger(triggerRecord);require(trigger.scriptUid==133 && trigger.skipAllowed && trigger.collision==std::array<int,4>({1376,791,1406,821}),"level-1 intro trigger 134 selects script 133");
+            triggerRecord.parameters[10]=95;rejects([&]{soul::IntroTrigger invalid(triggerRecord);},"intro trigger rejects other scripts");
+            soul::ScriptData shell;shell.uid=133;rejects([&]{soul::IntroCutscene invalid(shell,2360,1340);},"script 133 needs its four tracks");
+            soul::ScriptTrack camera;camera.kind=1;soul::ScriptTrack actor;actor.kind=2;actor.target=131;soul::ScriptTrack zombie;zombie.kind=2;zombie.target=215;soul::ScriptTrack flyer;flyer.kind=2;flyer.target=999;
+            shell.tracks={camera,actor,zombie,flyer};rejects([&]{soul::IntroCutscene invalid(shell,2360,1340);},"script 133 pins its flyer target");
+            flyer.target=135;shell.tracks={camera,actor,zombie,flyer};soul::IntroCutscene accepted(shell,2360,1340);require(accepted.uid()==133,"script 133 accepts its shipped track layout");
+        }
         }
         {
         soul::ScriptData data;data.uid=160;

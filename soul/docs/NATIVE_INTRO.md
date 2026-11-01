@@ -131,3 +131,5 @@ Existing Release combat, world, progression, checkpoint and placed-prompt checks
 passed. The frontend checker passed pause/intro freeze/resume and twelve completed-
 intro HUD runs. Updated cross-process saves passed in Debug and Release. Portrait/
 widescreen captures were inspected, including English dialogue and control return.
+
+Level 1 reuses this owner for its own intro (trigger 134/script 133); see [NATIVE_LEVEL1_INTRO.md](NATIVE_LEVEL1_INTRO.md). The text above describes level 0.

@@ -550,3 +550,8 @@ the type-22 handler) is the active camera region, not the player. Actor.aS (clam
 animations 0/8/4, so animation 6 leaves it 0, and Actor.a(int,int,int,Actor) tests `aF<8`/`aF==1`. All were read in
 the regenerated Java and b.bytecode.txt (lookupswitch at b.aE offsets 63/435/1783). No names or generated-Java
 patches changed; see NATIVE_LEVEL1_ENVELOPE.md.
+
+Level-1 intro evidence: script 133's dialogue operands (116: table, index, speaker, unused) were decoded from pack 4 and
+checked against Game.executeScriptOpcode (getString(table,index), getString(0,speaker+77)); command 23's high-word
+extraction yields flag 8192, which Actor.isRespawnable and Game.removeActor read (hide instead of delete). Actor.initializeFromRecord
+and the type-20 trigger path are unchanged from level 0. No names or generated-Java patches changed; see NATIVE_LEVEL1_INTRO.md.

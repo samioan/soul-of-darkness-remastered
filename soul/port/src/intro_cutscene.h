@@ -14,12 +14,13 @@ class IntroTrigger {
 public:
     explicit IntroTrigger(const ActorRecord&);
     bool update(const Player&,bool paused=false);
-    int uid=0,x=0,y=0,flags=0,bucket=0;bool alive=true,skipAllowed=true;
+    int uid=0,x=0,y=0,flags=0,bucket=0,scriptUid=0;bool alive=true,skipAllowed=true;
     std::array<int,4> collision{};
 };
 class IntroCutscene {
 public:
     explicit IntroCutscene(ScriptData,int mapWidth,int mapHeight);
+    int uid()const{return data_.uid;}
     void start(int cameraX,int cameraY,bool allowSkip=true);
     void step(const std::function<IntroActor(int)>& resolve);
     void skip(const std::function<IntroActor(int)>& resolve);

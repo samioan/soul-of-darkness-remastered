@@ -9,6 +9,46 @@ public final class SwingingPlatformCheck {
     static final String[] CASES={"idle","rider","always-left","always-right","slow","jump","pause","timeout","reset","cut","crush","no-cut","enemy-kill","enemy-hurt","enemy-protected"};
     static short[] record(String s){return new short[]{50,3,300,280,5,0,-100,(short)(s.equals("slow")?3:256),(short)(s.equals("slow")?1:16),30,(short)(s.startsWith("always") || s.equals("no-cut")?1:0),(short)(s.equals("always-right")?1:-1)};}
     static boolean far(String s){return s.equals("idle") || s.startsWith("always") || s.startsWith("enemy") || s.equals("cut") || s.equals("crush") || s.equals("no-cut");}
+    static final int[] LEVEL1_UIDS={25,33,145,190,169,510,189};
+    static final String[] LEVEL1_CASES={"idle","rider","cut","jump","pause","reset","hidden","frozen"};
+    static void levelOne(ActorCheck.Access a,ActorCheck.Access b,Path assets,PrintWriter out)throws Exception{
+        var records=LevelCheck.records(BehaviorCheck.resource(assets,4,0));
+        for(int uid:LEVEL1_UIDS)for(String mode:LEVEL1_CASES){
+            short[] record=records.stream().filter(r->r.values()[1]==uid).findFirst().orElseThrow().values();
+            String name="level1-"+uid+"-"+mode;Object[][] roots=new Object[2][];
+            for(var c:List.of(a,b)){
+                LevelCheck.setup(c,assets,4);
+                Object p=c.player(mode.equals("rider")||mode.equals("jump")||mode.equals("pause")||mode.equals("reset")?record[2]:0,record[3]-5);
+                c.set(null,"bm","bm",true);c.set(null,"bn","bn",true);
+                Object m=c.create();c.call(m,"a","initializeFromRecord",new Class<?>[]{short[].class,boolean.class,int.class,int.class},Arrays.copyOf(record,20),true,0,record.length);
+                if(mode.equals("hidden")||mode.equals("frozen"))c.set(m,"c","flags",mode.equals("hidden")?1024:16384);
+                roots[c==a?0:1]=new Object[]{p,m};
+            }
+            boolean boarded=false,fallen=false,broken=false,moved=false;
+            for(int f=0;f<240;++f){boolean paused=mode.equals("pause")&&f>=30&&f<40;
+                for(var c:List.of(a,b)){
+                    Object[] r=roots[c==a?0:1];c.input(mode.equals("jump")&&f==40?16388:0,0);c.global("z","stateFrame",f);c.global("x","state",paused?14:8);
+                    c.call(r[0],"s","update",ActorCheck.NONE);
+                    if(mode.equals("cut")&&f==10){
+                        c.set(r[0],"f","animationId",13);c.set(r[0],"h","animationFrame",0);c.set(r[0],"i","animationTick",0);
+                        int x=(int)c.get(r[1],"K","positionX"),y=(int)c.get(r[1],"L","positionY"),pivot=(int)c.get(r[1],"av","av");
+                        c.set(r[0],"k","attackBounds",new int[]{x-3,pivot,x+3,y});
+                    }
+                    if(mode.equals("reset")&&f==60)c.call(r[1],"T","T",ActorCheck.NONE);
+                    c.call(r[1],"s","update",ActorCheck.NONE);
+                }
+                for(int phase=0;phase<2;++phase){
+                    if(phase==1&&!paused)for(var c:List.of(a,b))for(Object r:roots[c==a?0:1]){c.call(r,"g","refreshBounds",ActorCheck.NONE);c.call(r,"f","advanceAnimation",ActorCheck.NONE);}
+                    row(a,b,roots[0],roots[1],out,name,f,phase);
+                }
+                boarded|=a.get(null,"aK","playerPlatform")==roots[0][1];int action=(int)a.get(roots[0][1],"ao","actionState");fallen|=action==102;broken|=action==104;moved|=(int)a.get(roots[0][1],"aw","aw")!=0;
+            }
+            if(mode.equals("cut")){ActorCheck.equal(record[10]==0,fallen,name+" cut mode");if(record[10]==0)ActorCheck.equal(true,broken,name+" must land/break on shipped map");}
+            if(mode.equals("idle"))ActorCheck.equal(record[10]==1,moved,name+" automatic swing");
+            if(mode.equals("hidden")||mode.equals("frozen"))ActorCheck.equal(false,moved,name+" suppressed controller");
+            if(mode.equals("rider")||mode.equals("jump")||mode.equals("pause")||mode.equals("reset"))ActorCheck.equal(true,boarded,name+" must board shipped platform");
+        }
+    }
     static void row(ActorCheck.Access a,ActorCheck.Access b,Object[] x,Object[] y,PrintWriter out,String s,int f,int phase)throws Exception{
         for(int who=0;who<2;++who){
             ActorCheck.snapshot(a,b,x[who],y[who],s+" "+f+"/"+who);
@@ -74,6 +114,7 @@ public final class SwingingPlatformCheck {
                 if(s.equals("no-cut"))ActorCheck.equal(false,fallen,"mode 1 ignores chain attacks");
                 if(s.startsWith("enemy"))ActorCheck.equal(s.equals("enemy-protected")?50:s.equals("enemy-hurt")? -50:-50,a.get(roots[0][2],"ap","health"),"falling impact health");
             }
+            levelOne(a,b,assets,out);
         }
         System.out.println("swinging platforms: "+ActorCheck.comparisons+" original/reference comparisons; "+file);
     }

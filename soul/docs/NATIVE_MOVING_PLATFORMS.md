@@ -5,7 +5,7 @@ The first-level preview now loads its type-33 platform, UID 64, with sprite
 the rider-controlled mode 8 used by this record. Support remains the stable
 address of its owned `ContactBody`; the world uses a list so insertion cannot
 invalidate a rider's support. World teardown clears the support before releasing
-the platform. Type-50 swinging movement remains pending.
+the platform. Type-50 swinging movement is documented in NATIVE_SWINGING_PLATFORMS.md.
 
 Original `Actor.update` carries an attached rider by the previous velocity's
 signed pixel shifts **before** integrating the platform. Fixed-point motion
@@ -53,5 +53,8 @@ startup tests CTest now has **36 tests** per build.
 python tools/check_native_moving_platforms.py --exe soul/port/build/Release/soul_assets.exe --port-exe soul/port/build/Release/soul_port.exe
 ```
 
-Next: type-50 swinging movement, remaining contacts/region ownership and wider
-level progression. NATIVE_STARTUP.md documents the new title/menu/credits path.
+The three level-1 type-33 variants now also match original bytecode on the shipped collision map:
+the expanded oracle has 26,880 rows and 618,261 original/reference expectations, plus 384 new native
+240/569 render surfaces. See [NATIVE_LEVEL1_PLATFORMS.md](NATIVE_LEVEL1_PLATFORMS.md).
+Remaining work includes general contacts/region ownership and wider level progression;
+these controlled platform fixtures do not establish a full level route.

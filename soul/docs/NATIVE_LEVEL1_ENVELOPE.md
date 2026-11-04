@@ -76,10 +76,14 @@ python tools/check_native_beams.py --exe soul/port/build/Debug/soul_assets.exe
 
 ## Boundaries
 
-- Constructed-but-unverified level-1 variants remain: the type-50 records other than chandeliers 89-91 (UIDs
-  25/33/145/190/169/510), the type-33 platforms (UIDs 219/241/288), prompts with other modes, gates, bridges,
-  the camera controller (UID 125) and the level-1 passage links. (The intro trigger 134/script 133 is ported in
+- Constructed-but-unverified level-1 variants remain: prompts with other modes, gates, bridges,
+  and the camera controller (UID 125). (The intro trigger 134/script 133 is ported in
   [NATIVE_LEVEL1_INTRO.md](NATIVE_LEVEL1_INTRO.md).) Each needs its own original comparison before being called supported.
+- The remaining type-50 records (25/33/145/190/169/510 and the previously omitted 189) and all three
+  type-33 platforms (219/241/288) now have real-map comparisons; see
+  [NATIVE_LEVEL1_PLATFORMS.md](NATIVE_LEVEL1_PLATFORMS.md).
+- All twenty level-1 passage links now have original-bytecode handler comparisons and isolated
+  destination presentation checks; see [NATIVE_LEVEL1_PASSAGES.md](NATIVE_LEVEL1_PASSAGES.md).
 - Flyers 136/137 share the verified handler but are not world-fixtured; the sweep reaches two of three flyers.
 - Behavior-6 interplay with a camera controller or multiple overlapping regions is not exercised.
 - Controlled fixtures only; no level route and no change to the frontend gating.

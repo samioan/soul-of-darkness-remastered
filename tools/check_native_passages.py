@@ -1,9 +1,11 @@
-"""Check type-59 links, the first blocked route, and widescreen room isolation."""
+"""Check first/second-level type-59 links and isolated widescreen destinations."""
 import argparse
 from pathlib import Path
 import subprocess
 import tempfile
 from game_assets import DEFAULT_DATA, ROOT, require
+from game_assets import resources
+from parse_objects import object_records
 
 
 def main():
@@ -15,13 +17,21 @@ def main():
     a=p.parse_args()
     expected=a.oracle.read_text(encoding='utf-8').splitlines()
     names={r.split('\t')[1] for r in expected}
-    require(len(names)==29 and len(expected)==464,'Incomplete passage oracle')
+    modes={'cross','wrong-facing','stationary','wrong-motion','outside','edge','paused','hidden','frozen','late','target-hidden'}
+    records=[r for _,r in object_records(dict(resources(a.data/'4'))[0]) if r[0]==59]
+    require(len(records)==20,'Second-level passage count differs')
+    required={f'level1-{r[1]}-{mode}' for r in records for mode in modes}
+    require(required<=names,'Missing second-level passage scenarios')
+    require(len(names)==249 and len(expected)==3984,'Incomplete passage oracle')
     require(len([n for n in names if n.startswith('level-')])==16,'Missing shipped passage links')
-    actual=subprocess.check_output([str(a.exe),'--data',str(a.data),'--passage-manifest'],text=True).splitlines()
+    output=subprocess.check_output([str(a.exe),'--data',str(a.data),'--passage-manifest'],text=True).splitlines()
+    actual=[r for r in output if r.startswith('P\t')]
+    renders=[r.split('\t') for r in output if r.startswith('R\t')]
+    require(len(renders)==40 and {(int(r[1]),int(r[3])) for r in renders}=={(r[1],w) for r in records for w in (240,569)},'Missing second-level passage presentation checks')
     require(len(actual)==len(expected),'Passage row count differs')
     for i,(want,got) in enumerate(zip(expected,actual)):
         require(want==got,f'Passage row {i} differs:\nJava: {want}\nC++:  {got}')
-    print('PASS: 464 original-bytecode passage/player snapshots; 13 boundary cases and all 16 first-level links')
+    print('PASS: 3984 original-bytecode passage/player snapshots, all 16 first-level and 20 second-level links; 40 destination render checks at 240/569')
     if not a.port_exe:return
     reference=None
     images={}

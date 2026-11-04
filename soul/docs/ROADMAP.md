@@ -1,6 +1,6 @@
 # Soul of Darkness roadmap
 
-Updated 2026-11-01 after the level-1 ambush, envelope and intro passes. This is the current
+Updated 2026-11-04 after the level-1 passage verification pass. This is the current
 remaining-work list. Historical implementation notes are in
 [ROADMAP_HISTORY.md](ROADMAP_HISTORY.md); their old pending/next descriptions
 are superseded. Update the lists below when work lands instead of appending
@@ -75,6 +75,13 @@ gameplay pack = level index + 3.
   the same selected level; detach all borrowed actor/platform references on unload.
   Implemented with a shared data owner, 983 original-bytecode input rows and
   explicit teardown. Gameplay beyond level 0 stays gated; see [NATIVE_SELECTED_LEVELS.md](NATIVE_SELECTED_LEVELS.md).
+- [x] Verify the second-level type-33 platforms **219/241/288** and remaining
+  type-50 pendulums/chandeliers **25/33/145/190/169/510/189** on the shipped collision map.
+  Added 69,120 original-bytecode/native snapshots and 1,280 width-240/569 rendering checks;
+  existing handlers match these variants. See [NATIVE_LEVEL1_PLATFORMS.md](NATIVE_LEVEL1_PLATFORMS.md).
+- [x] Verify all twenty second-level horizontal passages. Added 3,520 original-bytecode/native
+  snapshots and forty destination tile surfaces at widths 240/569; existing handlers match.
+  See [NATIVE_LEVEL1_PASSAGES.md](NATIVE_LEVEL1_PASSAGES.md) for the isolated-fixture limits.
 - [ ] Construct the second-level actors and resolve their unsupported handlers
   before enabling entry to that level. Its newly required placed types include
   **3, 80 and 89**; existing types also need their level-1 variants checked.
@@ -87,8 +94,9 @@ gameplay pack = level index + 3.
   rows) also run in controlled worlds; see NATIVE_LEVEL1_AMBUSH.md. The type-2 behavior-6 sine flyers (UIDs
   136/137/181; 2663 rows) and beam emitters starting in animation 6 (UIDs 3/5; oracle now 13152 rows) match the
   original, so every shipped level-1 record constructs natively (NATIVE_LEVEL1_ENVELOPE.md). Triggers 187/322 are
-  level-2 records. Still pending: oracle coverage for the remaining level-1 variants (type-50, type-33, gates,
-  bridges, camera controller 125, passages), staggered 118/123 starts, host wiring of the level-1 scripts and the
+  level-2 records. Type-33/type-50 platform variants are now verified (NATIVE_LEVEL1_PLATFORMS.md).
+  Still pending: oracle coverage for the remaining level-1 variants (prompt modes, gates,
+  bridges, camera controller 125), passage world/region handoff, staggered 118/123 starts, host wiring of the level-1 scripts and the
   actual route. The level-1 intro (trigger 134/script 133, 4760 rows) now runs in controlled worlds; see
   NATIVE_LEVEL1_INTRO.md. The type-1 respawn-fade record (UID 96) is verified in NATIVE_ENEMIES.md.
 - [ ] Record and verify an actual run from first-level spawn through its arena,

@@ -96,6 +96,10 @@ python tools/check_native_swinging_platforms.py --exe soul/port/build/Debug/soul
 ```
 
 Level 1 update: the constructor now accepts a zero excursion (`p[9]==0`, still at most 80). The
-verified level-1 case is the mode-1, zero-speed, zero-excursion chandeliers 89/90/91 that hang still
+initially verified level-1 case was the mode-1, zero-speed, zero-excursion chandeliers 89/90/91 that hang still
 until script 23/24/114 assigns the falling action; see [NATIVE_LEVEL1_AMBUSH.md](NATIVE_LEVEL1_AMBUSH.md).
+
+The seven other level-1 type-50 records now also match original bytecode on the shipped collision map.
+The expanded oracle has 69,600 rows and 1,840,871 original/reference expectations, plus 896 new
+240/569 native render surfaces; see [NATIVE_LEVEL1_PLATFORMS.md](NATIVE_LEVEL1_PLATFORMS.md).
 Other level-1 zero-excursion or high-speed type-50 records are accepted but not covered by that oracle.

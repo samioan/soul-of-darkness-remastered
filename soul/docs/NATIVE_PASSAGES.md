@@ -33,7 +33,7 @@ Hidden/frozen/paused sources skip their handlers; target UID resolution can
 still find hidden targets. Transfers detach player support and immediately
 refresh supported region ownership when permitted. Later enemies see the new
 player target, while region/transient cleanup remains at the next tick boundary.
-The complete original scripted camera controller is still unported.
+Selected first-level camera controllers are now ported; see NATIVE_CAMERA_CONTROLLERS.md.
 
 Only horizontal modes 1/2 are supported. Missing targets fail before mutating
 player position; malformed records, zero heights and unsupported directions are
@@ -81,6 +81,9 @@ runtime. Captures remain in ignored analysis.
 python tools/check_native_passages.py --exe soul/port/build/Debug/soul_assets.exe --port-exe soul/port/build/Debug/soul_port.exe
 ```
 
-The ability-2 reward/chest-57 unlock sequence remains the next progression
-dependency. Passage repair makes the earlier route traversable; the complete
-first level and game remain unfinished.
+The ability-2 reward/chest-57 unlock sequence is now implemented; see NATIVE_CHEST_UNLOCK.md.
+The complete first-level route and full game remain unfinished.
+
+Second-level verification now covers all twenty placed links and eleven cases per link,
+plus destination tile surfaces at widths 240/569; see [NATIVE_LEVEL1_PASSAGES.md](NATIVE_LEVEL1_PASSAGES.md).
+These are isolated fixtures; second-level progression remains gated.

@@ -77,8 +77,12 @@ animation-6 beam emitters now match the original too (2663 and 13152 rows), so e
 level-1 record constructs through the native loaders; see
 [loader envelope](soul/docs/NATIVE_LEVEL1_ENVELOPE.md). The level's own intro scene (trigger 134,
 script 133) runs in controlled worlds against 4760 bytecode rows ([intro coverage](soul/docs/NATIVE_LEVEL1_INTRO.md));
-host wiring and level entry remain pending. Level 3's paired mode and
-the actual level routes remain pending.
+host wiring and level entry remain pending. The second level's three rider platforms and seven
+remaining pendulums/chandeliers now match 69,120 additional original-bytecode snapshots on their
+collision map, with 1,280 native render checks at widths 240/569; see
+[platform-variant coverage](soul/docs/NATIVE_LEVEL1_PLATFORMS.md). All twenty second-level passages now match 3,520 additional original-bytecode snapshots,
+with forty destination tile surfaces at widths 240/569; see [passage coverage](soul/docs/NATIVE_LEVEL1_PASSAGES.md).
+Level 3's paired mode and the actual level routes remain pending.
 Native tile drawing now displays all nine gameplay maps at widths 240/569,
 with 45 original-Java map rows and 324 pixel comparisons. See
 [native tiles](soul/docs/NATIVE_TILES.md). A first-level native player prototype

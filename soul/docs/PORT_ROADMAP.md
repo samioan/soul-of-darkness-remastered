@@ -1,6 +1,6 @@
 # Windows port implementation roadmap
 
-Updated 2026-11-01 after the level-1 ambush, loader-envelope and intro passes. This file lists the
+Updated 2026-11-04 after the level-1 passage verification pass. This file lists the
 remaining native work and acceptance conditions. [ROADMAP.md](ROADMAP.md) is
 the overall project checklist. [PORT_ROADMAP_HISTORY.md](PORT_ROADMAP_HISTORY.md)
 preserves the old notes; their claims that gameplay, platforms or Continue are
@@ -80,6 +80,10 @@ Level indices are zero-based; level 0 is the first level and uses pack 3.
 - Level 1's intro (trigger 134, script 133: player 131, zombie 215, flyer 135, six dialogues, skip) runs in
   controlled real-record worlds through the generalized intro owner; 4760 original-bytecode rows and eight
   added assertions verify it. It is not wired into the host yet; see NATIVE_LEVEL1_INTRO.md.
+- Level 1's three type-33 platforms and seven remaining type-50 pendulums/chandeliers now match
+  original bytecode on their shipped collision map: 69,120 added snapshots and 1,280 native render
+  checks at widths 240/569. The earlier list omitted continuous pendulum UID 189; it is covered too.
+  This is controlled variant coverage; see NATIVE_LEVEL1_PLATFORMS.md.
 - Latest data-free suite: 109 CTests, 575 player, 25 timed-switch, 17 barrier,
   15 thrown-object, 26 type-3 decision and 20 type-3 actor assertions. Chandelier fixtures
   compare 3000 bytecode rows and 24 host runs; intro fixtures
@@ -141,11 +145,12 @@ native fixtures do not establish a complete native play-through.
    115/118/123, scripts 23/24/114, enemies 92/93/94, chandeliers 89/90/91) do too
    (NATIVE_LEVEL1_AMBUSH.md). The sine flyers and beam variants now construct and match the original
    (NATIVE_LEVEL1_ENVELOPE.md). Triggers 187/322 are level-2 records, not level-1. Remaining: the
-   unverified level-1 variants (type-50 UIDs 25/33/145/190/169/510, type-33 platforms, gates, bridges,
-   camera controller 125, passages), staggered 118/123 starts, host wiring of the level-1 intro/scripts/
+   unverified level-1 variants (prompt modes, gates, bridges,
+   camera controller 125), passage world/region handoff, staggered 118/123 starts, host wiring of the level-1 intro/scripts/
    chandeliers (the descriptor still opens scripts for level 0 only), the level-1 route and the 240/569
    presentation checks, then enabling New Game/Continue into level 1. The intro (trigger 134/script 133)
    itself is ported (NATIVE_LEVEL1_INTRO.md).
+   The type-33/type-50 platform variants are now verified; see NATIVE_LEVEL1_PLATFORMS.md.
 9. [ ] **Full first-level route test.** Start at the ordinary spawn, run the intro,
    traverse rooms/platforms, complete the arena/reward/gate, pass the beams and
    final room, then complete/unload. Exercise checkpoint death/restart/Continue
@@ -154,6 +159,11 @@ native fixtures do not establish a complete native play-through.
 
 ## Remaining owners and handlers for levels 1-8
 
+- [x] Verify all twenty level-1 horizontal passages against original bytecode; 3,520 added
+  snapshots and forty native destination surfaces at widths 240/569. See NATIVE_LEVEL1_PASSAGES.md;
+  full world/region handoff and the continuous route remain separate acceptance work.
+- [x] Verify level-1 type-33 platforms 219/241/288 and remaining type-50 pendulums/chandeliers
+  25/33/145/190/169/510/189 on their real collision map; see NATIVE_LEVEL1_PLATFORMS.md.
 - [x] Type-16 thrown-object state, tile physics, target contacts and holder/world cleanup; see NATIVE_THROWN_OBJECTS.md.
 - [x] Type-3 decisions, action entries and fixed-point throw aiming; see NATIVE_TYPE3_DECISIONS.md.
 - [x] Type-3 actor integration, linked chest ownership and projectile birth/update order for levels 1/2; see NATIVE_TYPE3_ACTORS.md. Level 3 paired mode is listed below.

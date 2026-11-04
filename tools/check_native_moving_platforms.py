@@ -12,12 +12,32 @@ def main():
     p.add_argument('--data', type=Path, default=DEFAULT_DATA)
     a = p.parse_args()
     expected = (ROOT/'soul/analysis/moving-platform-oracle.tsv').read_text().splitlines()
-    require(len(expected) == 11520 and len({r.split('\t')[1] for r in expected}) == 18, 'Incomplete moving-platform oracle')
-    actual = subprocess.check_output([str(a.exe), '--data', str(a.data), '--moving-platform-manifest'], text=True).splitlines()
+    level1_cases = {f'level1-{uid}-{mode}' for uid in (219, 241, 288)
+                    for mode in ('rider', 'crouch', 'left', 'right', 'jump', 'high', 'low', 'pause')}
+    require(len(expected) == 26880 and len({r.split('\t')[1] for r in expected}) == 42, 'Incomplete moving-platform oracle')
+    require({r.split('\t')[1] for r in expected if r.startswith('M\tlevel1-')} == level1_cases,
+            'Missing shipped level-1 moving-platform case')
+    rows = subprocess.check_output([str(a.exe), '--data', str(a.data), '--moving-platform-manifest'], text=True).splitlines()
+    actual = [r for r in rows if not r.startswith('R\t')]
     require(len(actual) == len(expected), 'Moving-platform row count differs')
     for i, (j, n) in enumerate(zip(expected, actual), 1):
         require(j == n, f'Moving platform row {i}:\nJava: {j}\nC++: {n}')
-    print('PASS: 11520 original-Java platform/player snapshots over 2880 ticks across eighteen scenarios')
+    print('PASS: 26880 original-Java platform/player snapshots, including 24 shipped level-1 platform scenarios')
+    renders = [r.split('\t') for r in rows if r.startswith('R\t')]
+    require(len(renders) == 384, 'Incomplete level-1 platform render fixtures')
+    centers = {}
+    keys = set()
+    for _, name, frame, width, crc, center in renders:
+        key = (name, int(frame), int(width))
+        require(name in level1_cases and int(frame) in range(0, 160, 20) and int(width) in (240, 569),
+                'Unexpected level-1 platform render fixture')
+        require(key not in keys, 'Duplicate level-1 platform render fixture')
+        keys.add(key)
+        pair = (name, frame)
+        require(centers.setdefault(pair, center) == center, 'Widescreen changed central platform pixels')
+        if width == '240':
+            require(crc == center, 'Portrait crop differs from its full canvas')
+    print('PASS: 384 portrait/widescreen platform surfaces, repeated drawing preserves state and pixels')
     if a.port_exe:
         reference = None
         for width in (240, 569):

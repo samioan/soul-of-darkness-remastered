@@ -20,6 +20,50 @@ public final class BridgeCheck {
         for(String n:new String[]{"ar","as","at","au","av","aw","ax","ay"})out.print("\t"+c.get(m,n,n));
         for(int n:(int[])c.get(m,"n","moduleMask"))out.print("\t"+n);out.println();return w.toString();
     }
+    static final int[][] LEVEL1_PAIRS={{107,89},{108,90},{109,91},{197,190}};
+    static final String[] LEVEL1_CASES={"idle","activate","fall","pause","hidden","miss"};
+    /** The four shipped second-level bridges on the real pack-4 collision map, with the chandeliers above them. */
+    static void levelOne(ActorCheck.Access a,ActorCheck.Access b,Path assets,PrintWriter out)throws Exception {
+        var records=LevelCheck.records(BehaviorCheck.resource(assets,4,0));
+        for(int[] pair:LEVEL1_PAIRS)for(String mode:LEVEL1_CASES) {
+            short[] br=records.stream().filter(r->r.values()[1]==pair[0]).findFirst().orElseThrow().values();
+            short[] cr=records.stream().filter(r->r.values()[1]==pair[1]).findFirst().orElseThrow().values().clone();
+            if(mode.equals("miss"))cr[2]+=300;
+            String s="level1-"+pair[0]+"-"+mode;boolean chandelier=mode.equals("fall") || mode.equals("hidden") || mode.equals("miss");
+            Object[][] roots=new Object[2][];
+            for(var c:List.of(a,b)) {
+                LevelCheck.setup(c,assets,4);c.player(2000,700);c.set(null,"bm","bm",true);c.set(null,"bn","bn",true);
+                Object bridge=c.create();c.call(bridge,"a","initializeFromRecord",new Class<?>[]{short[].class,boolean.class,int.class,int.class},Arrays.copyOf(br,20),true,0,br.length);BehaviorCheck.gameCall(c,"b","addActor",new Class<?>[]{c.actor},bridge);
+                Object m=null;
+                if(chandelier) {
+                    m=c.create();c.call(m,"a","initializeFromRecord",new Class<?>[]{short[].class,boolean.class,int.class,int.class},Arrays.copyOf(cr,20),true,0,cr.length);
+                    Array.set(c.global("bw","updateActors"),0,bridge);c.global("bx","updateActorCount",1);
+                }
+                if(mode.equals("hidden"))c.set(bridge,"c","flags",1032);
+                roots[c==a?0:1]=new Object[]{bridge,m};
+            }
+            boolean collapsed=false,landed=false;
+            for(int f=0;f<60;++f) {
+                boolean paused=mode.equals("pause") && f>=4 && f<10;
+                for(var c:List.of(a,b)) {
+                    Object bridge=roots[c==a?0:1][0],m=roots[c==a?0:1][1];c.global("x","state",paused?14:8);
+                    if(f==3 && !mode.equals("idle")) {
+                        if(m!=null)c.set(m,"ao","actionState",102);
+                        else {c.set(bridge,"au","au",300);c.call(bridge,"a","setCollisionRectEmpty",new Class<?>[]{int[].class,boolean.class},c.get(bridge,"j","collisionBounds"),true);c.set(bridge,"ao","actionState",100);}
+                    }
+                    if(m!=null)c.call(m,"s","update",ActorCheck.NONE);
+                    if(DeathCheck.actors(c).contains(bridge))c.call(bridge,"s","update",ActorCheck.NONE);
+                }
+                for(int phase=0;phase<2;++phase) {
+                    if(phase==1 && !paused)for(var c:List.of(a,b))for(Object r:roots[c==a?0:1])if(r!=null && (r==roots[c==a?0:1][1] || DeathCheck.actors(c).contains(r)) && ((int)c.get(r,"c","flags")&1024)==0){c.call(r,"g","refreshBounds",ActorCheck.NONE);c.call(r,"f","advanceAnimation",ActorCheck.NONE);}
+                    String row=bridgeRow(a,roots[0][0],s,f,phase);ActorCheck.equal(row,bridgeRow(b,roots[1][0],s,f,phase),"level-1 bridge state/cells");out.print(row);
+                    if(roots[0][1]!=null){row=swingRow(a,roots[0][1],s,f,phase);ActorCheck.equal(row,swingRow(b,roots[1][1],s,f,phase),"level-1 bridge impact motion");out.print(row);}
+                }
+                collapsed|=!DeathCheck.actors(a).contains(roots[0][0]);
+            }
+            ActorCheck.equal(!mode.equals("idle") && !mode.equals("miss") && !mode.equals("hidden"),collapsed,s+" must reach expected removal");
+        }
+    }
     public static void main(String[] args)throws Exception {
         Path assets=Path.of(args[0]),build=Path.of(args[1]),stubs=Path.of(args[2]),file=assets.getParent().resolve("analysis/bridge-oracle.tsv");
         try(var a=new ActorCheck.Access(assets,assets,stubs,false);var b=new ActorCheck.Access(build,assets,stubs,true);var out=new PrintWriter(Files.newBufferedWriter(file))) {
@@ -61,6 +105,7 @@ public final class BridgeCheck {
                 }
                 ActorCheck.equal(!s.equals("idle") && !s.equals("miss") && !s.equals("hidden"),collapsed,"bridge must reach expected removal");
             }
+            levelOne(a,b,assets,out);
         }
         System.out.println("breakable bridges: "+ActorCheck.comparisons+" original/reference expectations; "+file);
     }

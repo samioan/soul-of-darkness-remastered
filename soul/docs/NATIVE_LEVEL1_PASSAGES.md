@@ -62,6 +62,7 @@ for example, transfers to X=20, exactly the destination region's strict left
 boundary. Its ordinary region selection can retain the previous room until
 subsequent movement. The first-level world-order checks remain separate.
 
-No frontend progression was enabled. Second-level gates, bridges, prompt modes,
-camera 125, staggered ambush starts, host script wiring and the continuous route
+No frontend progression was enabled. Second-level gates, bridges, prompts and
+camera 125 were verified afterwards ([NATIVE_LEVEL1_VARIANTS.md](NATIVE_LEVEL1_VARIANTS.md));
+staggered ambush starts, host script wiring and the continuous route
 remain on the roadmap. The full game remains unfinished.

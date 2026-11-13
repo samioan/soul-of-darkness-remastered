@@ -82,6 +82,10 @@ remaining pendulums/chandeliers now match 69,120 additional original-bytecode sn
 collision map, with 1,280 native render checks at widths 240/569; see
 [platform-variant coverage](soul/docs/NATIVE_LEVEL1_PLATFORMS.md). All twenty second-level passages now match 3,520 additional original-bytecode snapshots,
 with forty destination tile surfaces at widths 240/569; see [passage coverage](soul/docs/NATIVE_LEVEL1_PASSAGES.md).
+The second level's four breakable bridges, gates 72/128 with their real timed switches, five prompts and
+camera controller 125 now match further original-bytecode rows on the real map (6,360 bridge, 9,744 gate/switch,
+1,504 prompt and 2,008 camera rows; gate 128 opens only when both its switches are struck in the same tick); see
+[variant coverage](soul/docs/NATIVE_LEVEL1_VARIANTS.md).
 Level 3's paired mode and the actual level routes remain pending.
 Native tile drawing now displays all nine gameplay maps at widths 240/569,
 with 45 original-Java map rows and 324 pixel comparisons. See

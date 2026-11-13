@@ -1,6 +1,6 @@
 # Windows port implementation roadmap
 
-Updated 2026-11-04 after the level-1 passage verification pass. This file lists the
+Updated 2026-11-13 after the level-1 bridge/gate/prompt/camera variant pass. This file lists the
 remaining native work and acceptance conditions. [ROADMAP.md](ROADMAP.md) is
 the overall project checklist. [PORT_ROADMAP_HISTORY.md](PORT_ROADMAP_HISTORY.md)
 preserves the old notes; their claims that gameplay, platforms or Continue are
@@ -84,6 +84,11 @@ Level indices are zero-based; level 0 is the first level and uses pack 3.
   original bytecode on their shipped collision map: 69,120 added snapshots and 1,280 native render
   checks at widths 240/569. The earlier list omitted continuous pendulum UID 189; it is covered too.
   This is controlled variant coverage; see NATIVE_LEVEL1_PLATFORMS.md.
+- Level 1's four type-45 bridges (with the chandeliers that fall on them), gates 72/128 with their real timed switches,
+  the five type-21 prompts and camera controller 125 now match original bytecode on the real pack-4 map: oracles grew to
+  6360 bridge, 9744 gate/switch, 1504 prompt and 2008 camera rows, plus 288 bridge and 110 gate surfaces at widths 240/569.
+  Gate 128 opens only when both mode-1 switches are struck in the same tick. Controlled fixtures only; see
+  NATIVE_LEVEL1_VARIANTS.md.
 - Latest data-free suite: 109 CTests, 575 player, 25 timed-switch, 17 barrier,
   15 thrown-object, 26 type-3 decision and 20 type-3 actor assertions. Chandelier fixtures
   compare 3000 bytecode rows and 24 host runs; intro fixtures
@@ -144,9 +149,7 @@ native fixtures do not establish a complete native play-through.
    works in controlled worlds (NATIVE_LEVEL1_ENCOUNTER.md), and the corridor ambushes (triggers
    115/118/123, scripts 23/24/114, enemies 92/93/94, chandeliers 89/90/91) do too
    (NATIVE_LEVEL1_AMBUSH.md). The sine flyers and beam variants now construct and match the original
-   (NATIVE_LEVEL1_ENVELOPE.md). Triggers 187/322 are level-2 records, not level-1. Remaining: the
-   unverified level-1 variants (prompt modes, gates, bridges,
-   camera controller 125), passage world/region handoff, staggered 118/123 starts, host wiring of the level-1 intro/scripts/
+   (NATIVE_LEVEL1_ENVELOPE.md). Triggers 187/322 are level-2 records, not level-1. The bridge, gate, prompt and camera-125 variants are now verified (NATIVE_LEVEL1_VARIANTS.md). Remaining: passage world/region handoff, staggered 118/123 starts, host wiring of the level-1 intro/scripts/
    chandeliers (the descriptor still opens scripts for level 0 only), the level-1 route and the 240/569
    presentation checks, then enabling New Game/Continue into level 1. The intro (trigger 134/script 133)
    itself is ported (NATIVE_LEVEL1_INTRO.md).

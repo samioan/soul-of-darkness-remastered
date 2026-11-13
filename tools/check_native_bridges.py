@@ -12,12 +12,30 @@ def main():
     p.add_argument('--data', type=Path, default=DEFAULT_DATA)
     a = p.parse_args()
     expected = (ROOT/'soul/analysis/bridge-oracle.tsv').read_text().splitlines()
-    require(len(expected) == 2040 and len({r.split('\t')[1] for r in expected}) == 11, 'Incomplete bridge oracle')
-    actual = subprocess.check_output([str(a.exe), '--data', str(a.data), '--bridge-manifest'], text=True).splitlines()
+    level1_cases = {f'level1-{bridge}-{mode}' for bridge in (107, 108, 109, 197)
+                    for mode in ('idle', 'activate', 'fall', 'pause', 'hidden', 'miss')}
+    require(len(expected) == 6360 and len({r.split('\t')[1] for r in expected}) == 35, 'Incomplete bridge oracle')
+    require({r.split('\t')[1] for r in expected if r.startswith('B\tlevel1-')} == level1_cases,
+            'Missing shipped level-1 bridge case')
+    rows = subprocess.check_output([str(a.exe), '--data', str(a.data), '--bridge-manifest'], text=True).splitlines()
+    actual = [r for r in rows if not r.startswith('R\t')]
     require(len(expected) == len(actual), 'Bridge row counts differ')
     for i, (j, n) in enumerate(zip(expected, actual), 1):
         require(j == n, f'Bridge row {i}:\nJava: {j}\nC++: {n}')
-    print('PASS: 2040 original-Java bridge/collision/chandelier snapshots across eleven scenarios')
+    print('PASS: 6360 original-Java bridge/collision/chandelier snapshots, including 24 shipped level-1 bridge scenarios on its collision map')
+    renders = [r.split('\t') for r in rows if r.startswith('R\t')]
+    require(len(renders) == 288, 'Incomplete level-1 bridge render fixtures')
+    centers, keys = {}, set()
+    for _, name, frame, width, crc, center in renders:
+        key = (name, int(frame), int(width))
+        require(name in level1_cases and int(frame) in range(0, 60, 10) and int(width) in (240, 569),
+                'Unexpected level-1 bridge render fixture')
+        require(key not in keys, 'Duplicate level-1 bridge render fixture')
+        keys.add(key)
+        require(centers.setdefault((name, frame), center) == center, 'Widescreen changed central bridge pixels')
+        if width == '240':
+            require(crc == center, 'Portrait crop differs from its full canvas')
+    print('PASS: 288 portrait/widescreen bridge surfaces, repeated drawing preserves state and pixels')
     if a.port_exe:
         reference = None
         for width in (240, 569):

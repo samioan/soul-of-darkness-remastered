@@ -76,9 +76,9 @@ python tools/check_native_beams.py --exe soul/port/build/Debug/soul_assets.exe
 
 ## Boundaries
 
-- Constructed-but-unverified level-1 variants remain: prompts with other modes, gates, bridges,
-  and the camera controller (UID 125). (The intro trigger 134/script 133 is ported in
-  [NATIVE_LEVEL1_INTRO.md](NATIVE_LEVEL1_INTRO.md).) Each needs its own original comparison before being called supported.
+- The bridges, gates (with their real switches), prompts and camera controller UID 125 now have original comparisons;
+  see [NATIVE_LEVEL1_VARIANTS.md](NATIVE_LEVEL1_VARIANTS.md). (The intro trigger 134/script 133 is ported in
+  [NATIVE_LEVEL1_INTRO.md](NATIVE_LEVEL1_INTRO.md).) No constructed-but-unverified level-1 variant remains in this list.
 - The remaining type-50 records (25/33/145/190/169/510 and the previously omitted 189) and all three
   type-33 platforms (219/241/288) now have real-map comparisons; see
   [NATIVE_LEVEL1_PLATFORMS.md](NATIVE_LEVEL1_PLATFORMS.md).

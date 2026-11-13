@@ -1,6 +1,6 @@
 # Soul of Darkness roadmap
 
-Updated 2026-11-04 after the level-1 passage verification pass. This is the current
+Updated 2026-11-13 after the level-1 bridge/gate/prompt/camera variant pass. This is the current
 remaining-work list. Historical implementation notes are in
 [ROADMAP_HISTORY.md](ROADMAP_HISTORY.md); their old pending/next descriptions
 are superseded. Update the lists below when work lands instead of appending
@@ -95,9 +95,9 @@ gameplay pack = level index + 3.
   136/137/181; 2663 rows) and beam emitters starting in animation 6 (UIDs 3/5; oracle now 13152 rows) match the
   original, so every shipped level-1 record constructs natively (NATIVE_LEVEL1_ENVELOPE.md). Triggers 187/322 are
   level-2 records. Type-33/type-50 platform variants are now verified (NATIVE_LEVEL1_PLATFORMS.md).
-  Still pending: oracle coverage for the remaining level-1 variants (prompt modes, gates,
-  bridges, camera controller 125), passage world/region handoff, staggered 118/123 starts, host wiring of the level-1 scripts and the
-  actual route. The level-1 intro (trigger 134/script 133, 4760 rows) now runs in controlled worlds; see
+  The four type-45 bridges, gates 72/128 with their real type-89 switches, the five type-21 prompts and camera
+  controller 125 now match original bytecode on the real map (NATIVE_LEVEL1_VARIANTS.md). Still pending: passage
+  world/region handoff, staggered 118/123 starts, host wiring of the level-1 scripts and the actual route. The level-1 intro (trigger 134/script 133, 4760 rows) now runs in controlled worlds; see
   NATIVE_LEVEL1_INTRO.md. The type-1 respawn-fade record (UID 96) is verified in NATIVE_ENEMIES.md.
 - [ ] Record and verify an actual run from first-level spawn through its arena,
   reward/gate, passages, beams, final room and exit. The current controlled host

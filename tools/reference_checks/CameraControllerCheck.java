@@ -2,10 +2,13 @@ import java.io.PrintWriter;
 import java.nio.file.*;
 import java.util.*;
 
-/** Level-zero type-49 modes 0/1 and the selected active camera easing path. */
+/** Type-49 modes 0/1 (level-0 controllers 63/167, level-1 controller 125) and the selected active camera easing path. */
 public final class CameraControllerCheck {
     static final String[] CASES={"normal","stationary","outside","edge","point","missing","late","removed","source-hidden","pause","hidden","frozen","region-change","other-active","far-source","upward"};
-    static short[] record(Path assets,int uid)throws Exception{return PromptRemovalCheck.record(assets,uid);}
+    static short[] record(Path assets,int uid)throws Exception{
+        if(uid!=125)return PromptRemovalCheck.record(assets,uid);
+        return LevelCheck.records(BehaviorCheck.resource(assets,4,0)).stream().filter(r->r.values()[1]==125).findFirst().orElseThrow().values();
+    }
     static String row(ActorCheck.Access c,Object[] r,int uid,String name,int f,int phase)throws Exception{
         var w=new java.io.StringWriter();var o=new PrintWriter(w);o.print("C\t"+uid+"\t"+name+"\t"+f+"\t"+phase+"\t"+DeathCheck.actors(c).contains(r[0])+"\t"+c.get(r[0],"c","flags")+"\t"+c.get(r[0],"aB","aB")+"\t"+(c.get(r[0],"v","v")==null?0:1));
         int[] rect=(int[])c.get(r[0],"j","collisionBounds");for(int n:rect==null?new int[4]:rect)o.print("\t"+n);
@@ -42,14 +45,15 @@ public final class CameraControllerCheck {
         Path assets=Path.of(args[0]),build=Path.of(args[1]),stubs=Path.of(args[2]),file=assets.getParent().resolve("analysis/camera-controller-oracle.tsv");
         try(var a=new ActorCheck.Access(assets,assets,stubs,false);var b=new ActorCheck.Access(build,assets,stubs,true);var out=new PrintWriter(Files.newBufferedWriter(file))){
             BehaviorCheck.commonAssets(a,assets);BehaviorCheck.commonAssets(b,assets);
-            for(int uid:new int[]{63,167})for(String name:CASES){short[] tr=record(assets,uid);Object[][] roots=new Object[2][];
+            for(int uid:new int[]{63,167,125})for(String name:CASES){short[] tr=record(assets,uid);boolean levelOne=uid==125;int mapW=levelOne?2360:1820,mapH=levelOne?1340:1680;Object[][] roots=new Object[2][];
                 for(var c:List.of(a,b)){
-                    c.clearWorld();c.set(null,"bm","bm",true);c.set(null,"bn","bn",true);c.global("bD","bD",new byte[300]);
-                    c.global("bQ","mapWidthTiles",91);c.global("bR","mapHeightTiles",84);c.global("bS","levelPixelWidth",1820);c.global("bT","levelPixelHeight",1680);c.global("bc","bc",17);c.global("Z","Z",false);c.global("ai","ai",false);
+                    if(levelOne){LevelCheck.setup(c,assets,4);ActorCheck.equal(mapW,c.global("bS","levelPixelWidth"),"level-1 pixel width");ActorCheck.equal(mapH,c.global("bT","levelPixelHeight"),"level-1 pixel height");}else c.clearWorld();
+                    c.set(null,"bm","bm",true);c.set(null,"bn","bn",true);c.global("bD","bD",new byte[300]);
+                    if(!levelOne){c.global("bQ","mapWidthTiles",91);c.global("bR","mapHeightTiles",84);c.global("bS","levelPixelWidth",1820);c.global("bT","levelPixelHeight",1680);c.global("bc","bc",17);}c.global("Z","Z",false);c.global("ai","ai",false);
                     c.global("aj","cameraControllerActive",name.equals("other-active"));c.global("am","activeCameraControllerUid",name.equals("other-active")?999:-1);c.global("ak","cameraControllerMode",0);
-                    int px=uid==63?1650:1300,py=uid==63?335:800;Object p=c.player(px,py);c.call(p,"g","refreshBounds",ActorCheck.NONE);
+                    int px=uid==63?1650:uid==125?1100:1300,py=uid==63?335:uid==125?300:800;Object p=c.player(px,py);c.call(p,"g","refreshBounds",ActorCheck.NONE);
                     c.global("L","cameraX",px-120);c.global("M","cameraY",py-220);c.global("N","cameraTargetX",px-120);c.global("O","cameraTargetY",py-220);c.global("P","P",0);c.global("Q","Q",0);
-                    c.global("R","R",0);c.global("T","T",0);c.global("S","S",1820);c.global("U","U",1680);BehaviorCheck.gameCall(c,"f","updateViewBounds",ActorCheck.NONE);
+                    c.global("R","R",0);c.global("T","T",0);c.global("S","S",mapW);c.global("U","U",mapH);BehaviorCheck.gameCall(c,"f","updateViewBounds",ActorCheck.NONE);
                     Object t=c.create();c.call(t,"a","initializeFromRecord",new Class<?>[]{short[].class,boolean.class,int.class,int.class},Arrays.copyOf(tr,20),true,0,tr.length);BehaviorCheck.gameCall(c,"b","addActor",new Class<?>[]{c.actor},t);
                     Object source=c.create();short[] sr=record(assets,202);c.call(source,"a","initializeFromRecord",new Class<?>[]{short[].class,boolean.class,int.class,int.class},Arrays.copyOf(sr,20),true,0,sr.length);
                     c.set(t,"ae","persistenceIndex",0);c.set(source,"ae","persistenceIndex",1);
@@ -63,7 +67,7 @@ public final class CameraControllerCheck {
                     for(var c:List.of(a,b)){Object[] r=roots[c==a?0:1];c.global("x","state",paused?14:8);c.global("ai","ai",changed);
                         if(f==4&&name.equals("late")){BehaviorCheck.gameCall(c,"b","addActor",new Class<?>[]{c.actor},r[2]);c.set(r[2],"ae","persistenceIndex",1);}
                         if(f==6&&name.equals("removed"))BehaviorCheck.gameCall(c,"c","removeActor",new Class<?>[]{c.actor},r[2]);
-                        int px=uid==63?1650:1300,py=(uid==63?335:800)+f*2;
+                        int px=uid==63?1650:uid==125?1100:1300,py=(uid==63?335:uid==125?300:800)+f*2;
                         if(name.equals("outside")||name.equals("other-active")||name.equals("normal")&&f>=10&&f<14)px=500;
                         c.set(r[1],"K","positionX",px);c.set(r[1],"L","positionY",py);c.set(r[1],"G","velocityX",name.equals("stationary")?0:256);c.set(r[1],"H","velocityY",name.equals("stationary")?0:name.equals("upward")&&f<10?-512:512);
                         c.call(r[1],"g","refreshBounds",ActorCheck.NONE);

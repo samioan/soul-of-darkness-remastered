@@ -6,22 +6,23 @@
 #include <algorithm>
 #include <iostream>
 void emitCameraControllerManifest(const std::filesystem::path& root){
-    const auto pack=soul::ResourcePack::numeric(soul::readAssetFile(root/"2")),level=soul::ResourcePack::numeric(soul::readAssetFile(root/"3"));
-    const auto ps=soul::BSprite::parse(pack.resource(0).value()),es=soul::BSprite::parse(pack.resource(2).value());auto scene=soul::TileScene::load(root,0);const auto records=soul::actorRecords(level.resource(0).value());
+    const auto pack=soul::ResourcePack::numeric(soul::readAssetFile(root/"2")),level=soul::ResourcePack::numeric(soul::readAssetFile(root/"3")),level1=soul::ResourcePack::numeric(soul::readAssetFile(root/"4"));
+    const auto ps=soul::BSprite::parse(pack.resource(0).value()),es=soul::BSprite::parse(pack.resource(2).value());auto scene=soul::TileScene::load(root,0);const auto records=soul::actorRecords(level.resource(0).value());auto scene1=soul::TileScene::load(root,1);const auto records1=soul::actorRecords(level1.resource(0).value());
     const auto record=[&](int uid){return *std::find_if(records.begin(),records.end(),[&](const auto& r){return r.parameters[1]==uid;});};
-    for(int uid:{63,167})for(const std::string name:{"normal","stationary","outside","edge","point","missing","late","removed","source-hidden","pause","hidden","frozen","region-change","other-active","far-source","upward"}){
-        const auto tr=record(uid);soul::CameraController t(tr);auto pr=record(186);pr.parameters[2]=uid==63?1650:1300;pr.parameters[3]=uid==63?335:800;soul::Player p(ps,scene.maps(),pr);soul::EnemyType1 source(es,scene.maps(),record(202),{10,10,0});
-        bool sourceLive=name!="missing" && name!="late";soul::ControlledCamera c;c.active=name=="other-active";c.uid=c.active?999:-1;c.x=c.targetX=p.x-120;c.y=c.targetY=p.y-220;c.bounds={0,0,1820,1680};
+    const auto record1=[&](int uid){return *std::find_if(records1.begin(),records1.end(),[&](const auto& r){return r.parameters[1]==uid;});};
+    for(int uid:{63,167,125})for(const std::string name:{"normal","stationary","outside","edge","point","missing","late","removed","source-hidden","pause","hidden","frozen","region-change","other-active","far-source","upward"}){
+        const bool levelOne=uid==125;const int mapW=levelOne?2360:1820,mapH=levelOne?1340:1680;const auto tr=levelOne?record1(uid):record(uid);soul::CameraController t(tr);auto pr=levelOne?record1(131):record(186);pr.parameters[2]=uid==63?1650:uid==125?1100:1300;pr.parameters[3]=uid==63?335:uid==125?300:800;soul::Player p(ps,levelOne?scene1.maps():scene.maps(),pr,levelOne?1:0);soul::EnemyType1 source(es,scene.maps(),record(202),{10,10,0});
+        bool sourceLive=name!="missing" && name!="late";soul::ControlledCamera c;c.active=name=="other-active";c.uid=c.active?999:-1;c.x=c.targetX=p.x-120;c.y=c.targetY=p.y-220;c.bounds={0,0,mapW,mapH};
         if(name=="source-hidden")source.flags=1033;if(name=="far-source"){source.x=100;source.y=1500;}
         for(int f=0;f<20;++f){const bool paused=name=="pause" && f>=3 && f<7,changed=name=="region-change" && f<7;
             if(f==4 && name=="late")sourceLive=true;if(f==6 && name=="removed"){sourceLive=false;source.alive=false;}
-            p.x=uid==63?1650:1300;p.y=(uid==63?335:800)+f*2;if(name=="outside"||name=="other-active"||name=="normal" && f>=10 && f<14)p.x=500;
+            p.x=uid==63?1650:uid==125?1100:1300;p.y=(uid==63?335:uid==125?300:800)+f*2;if(name=="outside"||name=="other-active"||name=="normal" && f>=10 && f<14)p.x=500;
             p.vx=name=="stationary"?0:256;p.vy=name=="stationary"?0:name=="upward" && f<10?-512:512;p.refreshBounds();
             if(name=="edge")p.collision={tr.parameters[2]-10,tr.parameters[3],tr.parameters[2],tr.parameters[3]+5};
             if(name=="point")p.collision={tr.parameters[2]+1,tr.parameters[3]+1,tr.parameters[2]+1,tr.parameters[3]+1};
             if(name=="hidden"||name=="frozen")t.flags=8|(f<7?(name=="hidden"?1024:16384):0);
             t.update(p,c,[&](int)->soul::CameraSource{if(!sourceLive)return {};return {&source.x,&source.y,&source.alive,[&]{source.refreshBounds();}};},changed,paused);
-            for(int phase=0;phase<2;++phase){if(phase==1&&!paused)c.advance(p,1820,1680);
+            for(int phase=0;phase<2;++phase){if(phase==1&&!paused)c.advance(p,mapW,mapH);
                 std::cout<<"C\t"<<uid<<'\t'<<name<<'\t'<<f<<'\t'<<phase;t.write(std::cout);c.write(std::cout);std::cout<<'\t'<<p.x<<'\n';
             }
         }

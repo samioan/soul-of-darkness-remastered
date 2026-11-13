@@ -8,7 +8,7 @@ from bsprite import Sprite
 from game_assets import ROOT, DEFAULT_DATA, require, resources
 
 
-def pixels(sprite, row, width):
+def pixels(sprite, row, width, camera_x=80, camera_y=0):
     n = list(map(int, row[4:22]))
     _, x, y, _, _, _, _, flags, animation, _, step, _, _, direction, variant, _, ox, oy = n
     out = [0xff102030] * (width*320)
@@ -17,14 +17,14 @@ def pixels(sprite, row, width):
         frame, _, dx, dy, af = sprite.animation_frames[start+step]
         flip = flags & 3
         left, top, w, h, source = sprite.compose_frame(frame, 0, flip ^ (af & 3))
-        px, py = x-80+(-dx if flip & 1 else dx)+left, y+(-dy if flip & 2 else dy)+top
+        px, py = x-camera_x+(-dx if flip & 1 else dx)+left, y-camera_y+(-dy if flip & 2 else dy)+top
         direction = 4 if direction == 9 else direction
         boundary = (ox if direction <= 2 else oy) + (20*variant if direction in (2, 8) else 0)
         clip = [0, 0, width, 320]
-        if direction == 1: clip[0] = max(0, boundary-80)
-        if direction == 2: clip[2] = min(width, boundary-80)
-        if direction == 4: clip[1] = max(0, boundary)
-        if direction == 8: clip[3] = min(320, boundary)
+        if direction == 1: clip[0] = max(0, boundary-camera_x)
+        if direction == 2: clip[2] = min(width, boundary-camera_x)
+        if direction == 4: clip[1] = max(0, boundary-camera_y)
+        if direction == 8: clip[3] = min(320, boundary-camera_y)
         for sy in range(max(0, clip[1]-py), min(h, clip[3]-py)):
             for sx in range(max(0, clip[0]-px), min(w, clip[2]-px)):
                 color = source[sy*w+sx]
@@ -41,21 +41,29 @@ def main():
     p.add_argument('--data', type=Path, default=DEFAULT_DATA)
     a = p.parse_args()
     expected = (ROOT/'soul/analysis/gate-oracle.tsv').read_text().splitlines()
-    require(len(expected) == 2304 and len({r.split('\t')[1] for r in expected}) == 16, 'Incomplete linked gate oracle')
+    chains = {f'level1-{gate}-{mode}' for gate, modes in ((72, ('idle', 'hit', 'repeat', 'miss', 'pause')),
+                                                           (128, ('idle', 'one', 'both', 'late', 'second', 'same', 'pause')))
+              for mode in modes}
+    require(len(expected) == 9744 and len({r.split('\t')[1] for r in expected}) == 16 + len(chains), 'Incomplete linked gate oracle')
+    require({r.split('\t')[1] for r in expected if r.startswith('G\tlevel1-')} == chains, 'Missing shipped level-1 gate chain')
+    opened = {name for name in chains if any(r.startswith(f'G\t{name}\t') and r.split('\t')[16] == '102' for r in expected)}
+    require(opened == {'level1-72-hit', 'level1-72-repeat', 'level1-72-pause', 'level1-128-same', 'level1-128-pause'},
+            f'Level-1 gates must open exactly when every linked switch is struck in one tick: {sorted(opened)}')
     require(len({r.split('\t')[-1] for r in expected if r.startswith('G\tup\t')}) > 2, 'Gate collision oracle must exercise changing cells')
     actual = subprocess.check_output([str(a.exe), '--data', str(a.data), '--gate-manifest'], text=True).splitlines()
-    states = [r for r in actual if r.startswith('G\t')]
+    states = [r for r in actual if not r.startswith('R\t')]
     require(len(states) == len(expected), 'Gate state row count differs')
     for i, (j, n) in enumerate(zip(expected, states), 1):
         require(j == n, f'Gate row {i}:\nJava: {j}\nC++: {n}')
-    print('PASS: 2304 original-bytecode linked-gate state/collision-grid snapshots across sixteen scenarios')
+    print('PASS: 9744 original-bytecode linked-gate/timed-switch snapshots, including level-1 gates 72/128 with their real switches on its collision map')
     sprite = Sprite.parse(dict(resources(a.data/'2'))[28])
-    original = {(r[1], r[2]): r for line in expected if (r := line.split('\t'))[3] == '1'}
+    original = {(r[1], r[2]): r for line in expected if (r := line.split('\t'))[3] == '1' and r[0] == 'G'}
     render = [r.split('\t') for r in actual if r.startswith('R\t')]
-    require(len(render) == 160, 'Incomplete gate render surfaces')
-    for _, scenario, frame, width, checksum in render:
-        require(int(checksum) == pixels(sprite, original[scenario, frame], int(width)), f'Gate boundary pixels differ: {scenario} {frame} {width}')
-    print('PASS: 160 independently composed clipped gate surfaces at widths 240/569')
+    require(len(render) == 160 + 10 * len(chains), 'Incomplete gate render surfaces')
+    for _, scenario, frame, width, checksum, *camera in render:
+        cx, cy = (int(camera[0]), int(camera[1])) if camera else (80, 0)
+        require(int(checksum) == pixels(sprite, original[scenario, frame], int(width), cx, cy), f'Gate boundary pixels differ: {scenario} {frame} {width}')
+    print('PASS: 270 independently composed clipped gate surfaces at widths 240/569, including the shipped level-1 gates')
     if a.port_exe:
         reference = None
         for width in (240, 569):

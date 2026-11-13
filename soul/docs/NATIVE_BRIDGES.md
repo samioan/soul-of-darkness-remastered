@@ -102,3 +102,8 @@ spawn/UID pools and exact mixed actor dispatch still need integration.
 Transient pickup/effect cleanup on region changes now runs through the separate
 owners; see [native transient scope](NATIVE_TRANSIENTS.md). Next: exact mixed
 region dispatch and further shared world/object integration.
+
+## Second-level bridges
+
+The four shipped level-1 bridges (UIDs 107/108/109/197, widths 80/80/80/120) and the chandeliers that fall on them now
+match the original on the real pack-4 collision map (oracle 6360 rows, 288 widescreen surfaces); see [NATIVE_LEVEL1_VARIANTS.md](NATIVE_LEVEL1_VARIANTS.md).

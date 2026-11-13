@@ -105,3 +105,8 @@ world, progression, checkpoint/restart, beam, startup/English story/HUD/pause
 regressions passed. Desktop save/Continue checks passed in both builds. Ignored
 portrait/widescreen captures show the keyboard captions. The asset-free package
 was rebuilt from Release.
+
+## Second-level prompts
+
+The five shipped level-1 prompts (UIDs 495/499/75/85/84, animations 17/6/14/14/18) match the original in 25 added
+scenarios (oracle 1504 rows); see [NATIVE_LEVEL1_VARIANTS.md](NATIVE_LEVEL1_VARIANTS.md).

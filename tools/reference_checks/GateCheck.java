@@ -14,6 +14,62 @@ public final class GateCheck {
         for(String n:new String[]{"v","w"})o.print("\t"+(c.get(g,n,n)==null?0:1));
         var crc=new CRC32();crc.update((byte[])c.global("dL","collisionTiles"));o.println("\t"+crc.getValue());return w.toString();
     }
+    static final int[][] CHAINS={{72,71,-1},{128,275,277}};
+    static boolean strike(int gate,String mode,int uid,int f){
+        if(mode.equals("pause"))mode=gate==72?"hit":"same";
+        return switch(mode){case "hit","miss"->uid==71&&f==2;case "repeat"->uid==71&&(f==2||f==15||f==25);case "one"->uid==275&&f==2;case "both"->uid==275&&f==2||uid==277&&f==6;case "late"->uid==275&&f==2||uid==277&&f==30;case "second"->uid==277&&f==2;case "same"->(uid==275||uid==277)&&f==2;default->false;};
+    }
+    static String switchRow(ActorCheck.Access c,Object a,String s,int f,int phase)throws Exception{
+        var w=new java.io.StringWriter();var out=new PrintWriter(w);out.print("T\t"+s+"\t"+f+"\t"+phase);
+        for(String[] n:new String[][]{{"al","uid"},{"K","positionX"},{"L","positionY"},{"c","flags"},{"f","animationId"},{"g","pendingAnimationId"},{"h","animationFrame"},{"i","animationTick"},{"ao","actionState"},{"ay","ay"},{"aC","variantData"},{"au","au"},{"as","as"},{"aw","aw"}})out.print("\t"+c.get(a,n[0],n[1]));
+        for(String[] n:new String[][]{{"j","collisionBounds"},{"k","attackBounds"},{"l","visualBounds"}})for(int v:(int[])c.get(a,n[0],n[1]))out.print("\t"+v);
+        out.println();return w.toString();
+    }
+    /** Shipped second-level gates 72/128 with their real type-89 switches on the real pack-4 collision map. */
+    static void chains(ActorCheck.Access a,ActorCheck.Access b,Path assets,PrintWriter out)throws Exception {
+        var records=LevelCheck.records(BehaviorCheck.resource(assets,4,0));
+        for(int[] chain:CHAINS)for(String mode:chain[0]==72?new String[]{"idle","hit","repeat","miss","pause"}:new String[]{"idle","one","both","late","second","same","pause"}) {
+            String s="level1-"+chain[0]+"-"+mode;int n=chain[2]<0?2:3;
+            Object[][] roots=new Object[2][];Object[] players=new Object[2];
+            for(var c:List.of(a,b)) {
+                LevelCheck.setup(c,assets,4);Object p=c.player(2200,200);c.set(null,"aM","aM",null);c.set(null,"aR","aR",null);c.set(null,"bK","activeWeapon",0);c.set(null,"bm","bm",true);c.set(null,"bn","bn",true);
+                Object[] actors=new Object[n];
+                for(int i=0;i<n;++i) {
+                    int uid=chain[i];short[] r=records.stream().filter(x->x.values()[1]==uid).findFirst().orElseThrow().values();
+                    actors[i]=c.create();c.call(actors[i],"a","initializeFromRecord",new Class<?>[]{short[].class,boolean.class,int.class,int.class},Arrays.copyOf(r,20),true,0,r.length);
+                    if(i>0)c.call(actors[i],"g","refreshBounds",ActorCheck.NONE);
+                }
+                for(Object x:actors)BehaviorCheck.gameCall(c,"b","addActor",new Class<?>[]{c.actor},x);
+                roots[c==a?0:1]=actors;players[c==a?0:1]=p;
+            }
+            boolean opened=false,switched=false;int firstOpen=-1;
+            for(int f=0;f<120;++f) {
+                boolean paused=mode.equals("pause") && f>=5 && f<15;
+                for(var c:List.of(a,b)) {
+                    Object[] r=roots[c==a?0:1];Object p=players[c==a?0:1];c.global("x","state",paused?14:8);
+                    for(int i=0;i<n;++i) {
+                        if(i>0) {
+                            boolean hit=strike(chain[0],mode,chain[i],f);int[] bounds=((int[])c.get(r[i],"j","collisionBounds")).clone();
+                            if(mode.equals("miss"))bounds=new int[]{0,0,1,1};
+                            c.set(p,"f","animationId",hit?13:0);c.set(p,"k","attackBounds",bounds);
+                        }
+                        c.call(r[i],"s","update",ActorCheck.NONE);
+                    }
+                }
+                for(int phase=0;phase<2;++phase) {
+                    if(phase==1 && !paused)for(var c:List.of(a,b))for(Object x:roots[c==a?0:1])if(((int)c.get(x,"c","flags")&1024)==0){c.call(x,"g","refreshBounds",ActorCheck.NONE);c.call(x,"f","advanceAnimation",ActorCheck.NONE);}
+                    String row=row(a,roots[0][0],s,f,phase);ActorCheck.equal(row,row(b,roots[1][0],s,f,phase),"level-1 gate state/tiles");out.print(row);
+                    for(int i=1;i<n;++i){row=switchRow(a,roots[0][i],s,f,phase);ActorCheck.equal(row,switchRow(b,roots[1][i],s,f,phase),"level-1 gate switch");out.print(row);}
+                }
+                if((int)a.get(roots[0][0],"ao","actionState")==102 && !opened){opened=true;firstOpen=f;}
+                for(int i=1;i<n;++i)switched|=(int)a.get(roots[0][i],"ao","actionState")==101;
+            }
+            boolean expectOpen=mode.equals("hit") || mode.equals("repeat") || mode.equals("same") || mode.equals("pause");
+            ActorCheck.equal(expectOpen,opened,s+" gate opens only when every linked switch is struck in one tick");
+            ActorCheck.equal(expectOpen || mode.equals("one") || mode.equals("both") || mode.equals("late") || mode.equals("second"),switched,s+" switch strike registers");
+            if(expectOpen)ActorCheck.equal(3,firstOpen,s+" gate activates the tick after the strike");
+        }
+    }
     public static void main(String[] args)throws Exception {
         Path assets=Path.of(args[0]),build=Path.of(args[1]),stubs=Path.of(args[2]),file=assets.getParent().resolve("analysis/gate-oracle.tsv");
         try(var a=new ActorCheck.Access(assets,assets,stubs,false);var b=new ActorCheck.Access(build,assets,stubs,true);var out=new PrintWriter(Files.newBufferedWriter(file))) {
@@ -54,6 +110,7 @@ public final class GateCheck {
                     }
                 }
             }
+            chains(a,b,assets,out);
         }
         System.out.println("linked gates: "+ActorCheck.comparisons+" original/reference expectations; "+file);
     }

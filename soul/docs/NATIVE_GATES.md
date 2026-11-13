@@ -111,3 +111,9 @@ The executable remains a first-level preview; full gameplay is unfinished.
 The subsequent [native script pass](NATIVE_SCRIPTS.md) executes script 165 in
 controlled host runs. Normal activation still depends on chest 57 and the
 unported linked trigger/reward sequence.
+
+## Second-level gates
+
+Level-1 gates 72 and 128 run against their real type-89 switches on the real pack-4 map in 12 original-bytecode chains
+(oracle 9744 rows, 270 independently composed surfaces). Gate 128 opens only if both mode-1 switches are struck in the
+same tick; see [NATIVE_LEVEL1_VARIANTS.md](NATIVE_LEVEL1_VARIANTS.md).

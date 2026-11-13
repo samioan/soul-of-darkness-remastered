@@ -132,3 +132,8 @@ The subsequent [exit/completion pass](NATIVE_COMPLETION.md) implements exit 173
 and state 15. The [finishLevel pass](NATIVE_FINISH.md) now implements native first-level
 completion saves and unload. Selected-level construction and later levels
 remain unfinished.
+
+## Second-level controller 125
+
+Level-1 controller UID 125 (mode 1, rectangle (980,200) 280x540, no source) runs the same sixteen handler scenarios on the
+2360x1340 map; the oracle is now 2008 rows. Handler/camera level only; see [NATIVE_LEVEL1_VARIANTS.md](NATIVE_LEVEL1_VARIANTS.md).

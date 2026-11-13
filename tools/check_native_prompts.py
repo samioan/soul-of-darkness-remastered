@@ -10,10 +10,12 @@ p.add_argument("--data", default=Path("soul/extracted"), type=Path)
 a = p.parse_args()
 expected = Path("soul/analysis/prompt-oracle.tsv").read_text().splitlines()
 actual = subprocess.check_output([str(a.exe), "--data", str(a.data), "--prompt-manifest"], text=True).splitlines()
-assert len(expected) == 704 and len(actual) == len(expected), (len(actual), len(expected))
+assert len(expected) == 1504 and len(actual) == len(expected), (len(actual), len(expected))
+level1 = {r.split("\t")[1] for r in expected if r.split("\t")[1].startswith("level1-")}
+assert level1 == {f"level1-{uid}-{mode}" for uid in (495, 499, 75, 85, 84) for mode in ("overlap", "miss", "pause", "hidden", "cast")}, level1
 for i, (want, got) in enumerate(zip(expected, actual)):
     assert want == got, f"Prompt row {i}:\nJava: {want}\nC++:  {got}"
-print("PASS: 704 original-bytecode prompt lifecycle/visibility/animation rows")
+print("PASS: 1504 original-bytecode prompt lifecycle/visibility/animation rows, including the five shipped level-1 prompts")
 
 if a.port_exe:
     def run(width, fps, game=False, interpolate=True, frames=None):

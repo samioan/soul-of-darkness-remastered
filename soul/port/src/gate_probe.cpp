@@ -1,7 +1,23 @@
 #include "player_probe.h"
 #include "linked_gate.h"
+#include "timed_switch.h"
+#include "fire_magic.h"
+#include "tile_world.h"
+#include <algorithm>
 #include <iostream>
+#include <memory>
 namespace {
+bool chainStrike(int gate,std::string mode,int uid,int f){
+    if(mode=="pause")mode=gate==72?"hit":"same";
+    if(mode=="hit" || mode=="miss")return uid==71 && f==2;
+    if(mode=="repeat")return uid==71 && (f==2 || f==15 || f==25);
+    if(mode=="one")return uid==275 && f==2;
+    if(mode=="both")return (uid==275 && f==2) || (uid==277 && f==6);
+    if(mode=="late")return (uid==275 && f==2) || (uid==277 && f==30);
+    if(mode=="second")return uid==277 && f==2;
+    if(mode=="same")return (uid==275 || uid==277) && f==2;
+    return false;
+}
 std::uint32_t crc(const soul::Bytes& bytes){std::uint32_t n=0xffffffff;for(auto b:bytes){n^=b;for(int i=0;i<8;++i)n=(n>>1)^((n&1)?0xedb88320:0);}return n^0xffffffff;}
 }
 void emitGateManifest(const std::filesystem::path& root) {
@@ -24,6 +40,45 @@ void emitGateManifest(const std::filesystem::path& root) {
                 if(phase==1 && (f==0 || f==10 || f==23 || f==38 || f==55))for(int width:{240,569}) {
                     soul::Canvas canvas(width,320,0xff102030);g.draw(canvas,80,0);
                     std::cout<<"R\t"<<s<<'\t'<<f<<'\t'<<width<<'\t'<<canvas.checksum()<<'\n';
+                }
+            }
+        }
+    }
+    // Shipped second-level gates 72/128 with their real type-89 switches on the real pack-4 collision map.
+    const auto playerSprite=soul::BSprite::parse(pack.resource(0).value()),effectSprite=soul::BSprite::parse(pack.resource(1).value());
+    const auto levelPack=soul::ResourcePack::numeric(soul::readAssetFile(root/"4"));
+    const auto records=soul::actorRecords(levelPack.resource(0).value());
+    const auto scene=soul::TileScene::load(root,1);
+    const auto find=[&](int uid){const auto it=std::find_if(records.begin(),records.end(),[&](const auto& r){return r.parameters[1]==uid;});if(it==records.end())throw soul::FormatError("Missing level-1 gate fixture record");return *it;};
+    for(const std::array<int,3> chain:{std::array<int,3>{72,71,-1},{128,275,277}}) {
+        const std::vector<std::string> modes=chain[0]==72?std::vector<std::string>{"idle","hit","repeat","miss","pause"}:std::vector<std::string>{"idle","one","both","late","second","same","pause"};
+        const int count=chain[2]<0?2:3;
+        for(const auto& mode:modes) {
+            const std::string s="level1-"+std::to_string(chain[0])+"-"+mode;
+            auto maps=scene.maps();
+            soul::ActorRecord pr{};pr.count=6;pr.parameters={0,186,2200,200,0,0};soul::Player player(playerSprite,maps,pr,1);
+            std::array<int,256> trig{};soul::FireMagic fire(effectSprite,trig);
+            const auto gateRecord=find(chain[0]);soul::LinkedGate gate(sprite,maps,gateRecord);
+            std::vector<std::unique_ptr<soul::TimedSwitch>> switches;
+            for(int i=1;i<count;++i){switches.push_back(std::make_unique<soul::TimedSwitch>(sprite,find(chain[i])));switches.back()->refreshBounds();}
+            const auto resolveSwitch=[&](int uid)->const int*{for(const auto& sw:switches)if(sw->uid==uid)return &sw->action;return nullptr;};
+            const auto resolveGate=[&](int uid)->const int*{return uid==gate.uid?&gate.action:nullptr;};
+            for(int f=0;f<120;++f) {
+                const bool paused=mode=="pause" && f>=5 && f<15;
+                gate.update(resolveSwitch,paused);
+                for(auto& sw:switches) {
+                    const bool hit=chainStrike(chain[0],mode,sw->uid,f);auto bounds=sw->collision;if(mode=="miss")bounds={0,0,1,1};
+                    player.animation=hit?13:0;player.attack=bounds;fire.clear();
+                    sw->update(sw->struckBy(player,&fire),resolveGate,paused);
+                }
+                for(int phase=0;phase<2;++phase) {
+                    if(phase==1 && !paused){gate.advanceAnimation();for(auto& sw:switches){sw->refreshBounds();sw->advanceAnimation();}}
+                    std::cout<<"G\t"<<s<<'\t'<<f<<'\t'<<phase;gate.write(std::cout);std::cout<<'\t'<<crc(maps.collision->cells)<<'\n';
+                    for(const auto& sw:switches){std::cout<<"T\t"<<s<<'\t'<<f<<'\t'<<phase;sw->write(std::cout);std::cout<<'\n';}
+                    if(phase==1 && (f==0 || f==10 || f==23 || f==38 || f==55))for(int width:{240,569}) {
+                        soul::Canvas canvas(width,320,0xff102030);const int cameraX=gate.x-80,cameraY=gate.y-100;gate.draw(canvas,cameraX,cameraY);
+                        std::cout<<"R\t"<<s<<'\t'<<f<<'\t'<<width<<'\t'<<canvas.checksum()<<'\t'<<cameraX<<'\t'<<cameraY<<'\n';
+                    }
                 }
             }
         }

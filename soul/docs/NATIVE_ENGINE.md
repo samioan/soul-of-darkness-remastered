@@ -134,4 +134,4 @@ frames. The `native` frame-rate setting shows one frame per tick with interpolat
 - Touch input (pointer events) is not wired to the mouse.
 - Sub-pixel or animation-frame interpolation; per-effect layers.
 - Non-Windows hosts. The engine and runtime are portable C++17; the host is Win32.
-- Publishing: no destination is configured.
+- A first published release; the launcher's self-update has not yet been exercised against one.

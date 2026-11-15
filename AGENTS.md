@@ -37,9 +37,13 @@ soul/docs/NATIVE_ENGINE.md documents the translator, runtime, widescreen and int
   camera logic. Frame interpolation replays recorded draw calls; never re-run game draw code
   between ticks (Actor.paint advances animation, timers and random numbers).
 - Full-game equivalence is measured under fuzzed input and compares state, not pixels. No complete
-  playthrough is recorded. Keep status statements accurate. Do not add publishing/updating to a
-  guessed repo.
+  playthrough is recorded. Keep status statements accurate.
+- The repository is github.com/samioan/soul-of-darkness-remastered. Releases come only from a
+  pushed tag vX.Y.Z (.github/workflows/release.yml); the launcher (soul/port/launcher,
+  SoulOfDarkness.exe) updates installs from those releases. Its package check expects
+  SoulOfDarkness.exe at the top and bin/soul_of_darkness.exe; keep build_dist.bat, check_dist.ps1
+  and launcher/updater.cpp in step. A -dev version never offers updates.
 
 Commands: .\setup.ps1 [-Jar PATH]; python tools/build_reference.py [--jar PATH];
-python tools/gen_port.py; .\soul\port\build.bat [Debug|Release]; .\soul\port\build_dist.bat;
+python tools/gen_port.py; .\soul\port\build.bat [Debug|Release]; .\soul\port\build_dist.bat [version];
 python tools/check_engine.py; python tools/check_narrowing.py. CI builds without any game data.

@@ -33,6 +33,11 @@ Indices are zero-based: level 0 is the first level.
   (display, audio, keyboard, gamepad).
 - [x] Music and effects, original RMS save record, user-JAR loading with SHA-256 identity check,
   data-free package (`soul/port/build_dist.bat`).
+- [x] Launcher (`SoulOfDarkness.exe`, `soul/port/launcher`): banner artwork, JAR pick/auto-detect
+  with the game's own identity check, window size or fullscreen, Play, and self-update from the
+  GitHub releases of samioan/soul-of-darkness-remastered (tag `vX.Y.Z` ->
+  `.github/workflows/release.yml`). Headless smoke test in CTest; window, auto-detect, Play and
+  return checked in an unattended run.
 
 ## Remaining
 
@@ -49,8 +54,9 @@ Indices are zero-based: level 0 is the first level.
   behavior) or stay at the original 240-pixel radius.
 - [ ] Interpolation refinements: per-effect layers and sub-pixel motion.
 - [ ] Test on a clean Windows machine; non-Windows hosts.
-- [ ] Configure publishing/updating only after a real destination is supplied; no repository or
-  hosting destination is currently configured.
+- [ ] Cut the first release (`git tag v0.1.0 && git push origin v0.1.0`) and check an update end
+  to end. The launcher's update check is unauthenticated, so it sees releases only while the
+  repository is public.
 
 ## Verification
 

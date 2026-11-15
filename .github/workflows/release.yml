@@ -1,0 +1,92 @@
+name: Release
+
+# Push a tag, get a downloadable release that every installed launcher offers as an update:
+#
+#     git tag v0.1.0 && git push origin v0.1.0
+#
+# The tag is the version: it is compiled into the launcher (SOD_VERSION, shown in its corner and
+# compared with the newest release by soul/port/launcher/update_check.cpp), so nothing needs bumping
+# by hand. The launcher only sees releases while the repository is public: its update check is an
+# unauthenticated GitHub API call.
+
+on:
+  push:
+    tags: ['v*']
+  # So a release can be re-cut without moving the tag, e.g. if the upload failed rather than the build.
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: 'Existing tag to build and release (e.g. v0.1.0)'
+        required: true
+
+permissions:
+  contents: write   # to create the release and upload to it
+
+jobs:
+  windows:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.inputs.tag || github.ref }}
+
+      - name: Install Ninja
+        run: choco install ninja -y --no-progress
+
+      - name: Work out the version
+        id: version
+        shell: pwsh
+        run: |
+          $tag = if ($env:INPUT_TAG) { $env:INPUT_TAG } else { $env:GITHUB_REF_NAME }
+          if ($tag -notmatch '^v(\d+\.\d+\.\d+.*)$') {
+            throw "tag '$tag' is not a version tag -- expected something like v0.1.0"
+          }
+          $version = $Matches[1]
+          "tag=$tag" >> $env:GITHUB_OUTPUT
+          "version=$version" >> $env:GITHUB_OUTPUT
+          "zip=SoulOfDarknessRemastered-$tag-win64.zip" >> $env:GITHUB_OUTPUT
+          Write-Host "building $tag as version $version"
+        env:
+          INPUT_TAG: ${{ github.event.inputs.tag }}
+
+      # A release that fails its own build should not exist. build_dist.bat builds Release with the
+      # tag's version, runs every data-free test (the launcher smoke test included) and checks the
+      # package layout the launcher's updater requires.
+      - name: Build, test and package
+        shell: cmd
+        run: soul\port\build_dist.bat ${{ steps.version.outputs.version }}
+
+      - name: Zip it
+        shell: pwsh
+        run: |
+          Compress-Archive -Path soul/port/dist/* `
+                           -DestinationPath ${{ steps.version.outputs.zip }} `
+                           -CompressionLevel Optimal
+          Get-Item ${{ steps.version.outputs.zip }} |
+            ForEach-Object { "{0}: {1:N1} MB" -f $_.Name, ($_.Length / 1MB) }
+
+      # `gh` is on the runner already, so this needs no third-party action.
+      # --verify-tag so a typo cannot invent a tag that does not exist.
+      - name: Publish
+        shell: pwsh
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          $tag = "${{ steps.version.outputs.tag }}"
+          $notesPath = "release_notes.md"
+          (Get-Content .github/release_notes_template.md -Raw -Encoding utf8).Replace('{{TAG}}', $tag) |
+            Set-Content $notesPath -Encoding utf8
+          $existing = gh release view $tag --json tagName 2>$null
+          if ($LASTEXITCODE -eq 0) {
+            Write-Host "release $tag already exists -- replacing its asset"
+            gh release upload $tag ${{ steps.version.outputs.zip }} --clobber
+          } else {
+            # Pre-release while the major version is 0 (the launcher's update check includes
+            # pre-releases); tagging v1.0.0 flips it with no workflow edit.
+            $ghArgs = @('release', 'create', $tag, '${{ steps.version.outputs.zip }}',
+                        '--title', "Soul of Darkness Remastered ${{ steps.version.outputs.version }}",
+                        '--notes-file', $notesPath, '--verify-tag')
+            if ("${{ steps.version.outputs.version }}" -match '^0\.' -or
+                "${{ steps.version.outputs.version }}" -match '-') { $ghArgs += '--prerelease' }
+            gh @ghArgs
+          }

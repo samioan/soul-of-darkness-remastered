@@ -180,7 +180,6 @@ void hostAudioStart(const std::vector<std::uint8_t>& data, bool midi, int loops)
 void hostAudioStop();
 bool hostAudioPlaying();
 void hostQuit();
-bool inflateRaw(const std::uint8_t* data, std::size_t size, std::vector<std::uint8_t>& out); // raw DEFLATE (ZIP entries)
 bool decodePng(const std::uint8_t* data, std::size_t size, int& width, int& height, std::vector<std::uint32_t>& argb, bool& alpha);
 
 } // namespace sod

@@ -1,14 +1,27 @@
-name: Windows build
-on: [push, pull_request, workflow_dispatch]
+name: CI
+
+# What a machine without game data can prove: everything compiles (game, headless checker,
+# launcher), the engine starts and keeps ticking without data at 240 and 569, the launcher's logic
+# passes its smoke test (versions, release parsing, package shape, zip paths, config, JAR checks,
+# banner decode), and the Release package has exactly the layout the launcher's updater expects.
+
+on:
+  push:
+    branches: [master]
+  pull_request:
+  workflow_dispatch:
+
 jobs:
   windows:
     runs-on: windows-latest
     steps:
       - uses: actions/checkout@v4
-      - name: Debug build and checks
+      - name: Install Ninja
+        run: choco install ninja -y --no-progress
+      - name: Debug build and tests
         shell: cmd
         run: soul\port\build.bat
-      - name: Release build and package
+      - name: Release build, tests and package
         shell: cmd
         run: soul\port\build_dist.bat
       - uses: actions/upload-artifact@v4

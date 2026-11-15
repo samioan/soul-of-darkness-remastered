@@ -18,4 +18,12 @@ code is inferred or assigned here. Tool provenance and checksums are recorded
 in tools/README.md and tools/bootstrap.py. Vineflower is Apache-2.0 software;
 MIDP/CLDC/Nokia stub binaries retain their respective owners' terms.
 
-The native build/package contains the executables and a readme only. Players' game data must remain separate from future builds.
+The launcher (soul/port/launcher) was ported from the user's own shadowkey-decomp
+and tes-travels-decomp (Dawnstar) launchers. Its banner and icon are made from
+soul/port/launcher/assets/banner_source.jpg, artwork supplied by the user for
+this project; the depicted game, title and character remain Gameloft's.
+
+The native build/package contains the launcher, the game executable, its
+checker, a readme and this notice only. Players' game data must remain separate
+from future builds: the launcher copies the player's own JAR into the install
+at run time, and updates never replace it.

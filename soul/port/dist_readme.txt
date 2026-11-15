@@ -6,7 +6,7 @@ This package contains no game data. You need your own copy of Gameloft's
 
 Which JAR
 ---------
-soul_of_darkness.exe plays version 1.0.1 for 240x320
+This port plays version 1.0.1 for 240x320
 (the HTC P3450 build, SoulOfDarkness_HTC_P3450_EN_IGPL_EU_101), in English, with
 weapon upgrades, transformations, eleven chapters, parallax backgrounds, ten
 music tracks and sound effects.
@@ -17,9 +17,19 @@ and are untested.
 
 Starting
 --------
-1. Put the .jar next to the program (any file name), or start the program and
-   pick the .jar when asked. Nothing is extracted or modified.
-2. Run soul_of_darkness.exe.
+1. Run SoulOfDarkness.exe (the launcher).
+2. Choose your .jar when it asks -- or put the .jar next to SoulOfDarkness.exe
+   before starting it, and the supported build is picked up by itself. The
+   launcher checks it and keeps a copy in game\, so the original can be
+   moved or deleted.
+3. Pick a window size or fullscreen, and press Play.
+
+The launcher also updates this folder when a new release is published: an
+Update button appears beside the version number. Your JAR (game\), the
+launcher's choices (launcher.cfg), settings and saves are never touched.
+
+bin\soul_of_darkness.exe is the game itself and can be started directly too
+(--jar FILE, or a .jar next to it).
 
 Settings
 --------
@@ -56,8 +66,8 @@ Files
 -----
 Settings and the save record live in %LOCALAPPDATA%\SoulOfDarkness101:
 settings.ini and dvseed.sav.
-A settings.ini placed next to the program takes precedence. Run with --help
-for command line options.
+A settings.ini placed next to bin\soul_of_darkness.exe takes precedence. Run
+the game with --help for command line options.
 
-soul_engine_check.exe is the project's verification tool; it is not needed to
-play.
+bin\soul_engine_check.exe is the project's verification tool; it is not needed
+to play.

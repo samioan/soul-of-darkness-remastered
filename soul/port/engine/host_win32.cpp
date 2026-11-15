@@ -977,7 +977,7 @@ int WINAPI wWinMain(HINSTANCE instance, HINSTANCE, PWSTR, int show) {
     std::wstring dataArg, jarArg, configArg, logArg;
     defaultBindings(g_settings);
     g_saveDir = userDir();
-    bool widthOverride = false, fpsOverride = false, fullscreenOverride = false, windowed = false, noFocusPause = false, noOptionsMenu = false;
+    bool widthOverride = false, fpsOverride = false, scaleOverride = false, fullscreenOverride = false, windowed = false, noFocusPause = false, noOptionsMenu = false;
     Settings cli;
     for (int i = 1; i < argc; ++i) {
         std::wstring a = argv[i];
@@ -988,6 +988,7 @@ int WINAPI wWinMain(HINSTANCE instance, HINSTANCE, PWSTR, int show) {
         else if (a == L"--save-dir") { g_saveDir = value(); CreateDirectoryW(g_saveDir.c_str(), nullptr); }
         else if (a == L"--width") { std::wstring v = value(); cli.width = (v == L"auto") ? 0 : std::clamp(_wtoi(v.c_str()), 240, 960); widthOverride = true; }
         else if (a == L"--fps") { std::wstring v = value(); cli.fps = v == L"display" ? -1 : v == L"unlimited" ? 0 : v == L"native" ? kNativeFps : std::clamp(_wtoi(v.c_str()), 1, 1000); fpsOverride = true; }
+        else if (a == L"--scale") { cli.windowScale = std::clamp(_wtoi(value().c_str()), 1, 8); scaleOverride = true; }
         else if (a == L"--fullscreen") fullscreenOverride = true;
         else if (a == L"--windowed") windowed = true;
         else if (a == L"--no-focus-pause") noFocusPause = true;
@@ -1009,6 +1010,7 @@ int WINAPI wWinMain(HINSTANCE instance, HINSTANCE, PWSTR, int show) {
                 L"--data DIR        use an extracted data folder instead\n"
                 L"--width N|auto    logical width: 240 original, 427, 569, 747 or auto\n"
                 L"--fps N|display|unlimited|native\n"
+                L"--scale N         window size as a multiple of the original pixels (1-8)\n"
                 L"--fullscreen / --windowed\n"
                 L"--no-focus-pause  keep running while another window has focus\n"
                 L"--config FILE     settings file (default: settings.ini beside the program, else in %LOCALAPPDATA%\\SoulOfDarkness101)\n"
@@ -1021,6 +1023,7 @@ int WINAPI wWinMain(HINSTANCE instance, HINSTANCE, PWSTR, int show) {
     const bool hadSettings = loadSettings(g_settingsPath, g_settings);
     if (widthOverride) g_settings.width = cli.width;
     if (fpsOverride) g_settings.fps = cli.fps;
+    if (scaleOverride) g_settings.windowScale = cli.windowScale;
     if (fullscreenOverride) g_settings.fullscreen = true;
     if (windowed) g_settings.fullscreen = false;
     if (noFocusPause) g_settings.pauseUnfocused = false;

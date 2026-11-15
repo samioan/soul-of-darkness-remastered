@@ -1,5 +1,7 @@
-// Small platform-independent helpers for the desktop host: SHA-256 and reading entries out of a JAR.
+// Small platform-independent helpers shared by the game host and the launcher: SHA-256, the JAR's
+// central directory, and the identity of the supported JAR. Nothing here depends on the engine.
 #pragma once
+#include <cstddef>
 #include <cstdint>
 #include <string>
 #include <vector>
@@ -13,7 +15,18 @@ struct ZipEntry {
     std::vector<std::uint8_t> data;
 };
 
-// Reads every stored/deflated file entry from a ZIP/JAR image. Returns false on a malformed archive.
+// One file in a ZIP/JAR's central directory, with where its (possibly compressed) bytes start.
+struct ZipDirEntry {
+    std::string name;
+    unsigned method = 0;            // 0 stored, 8 deflated
+    std::size_t compressed = 0, uncompressed = 0, dataStart = 0;
+};
+
+// Lists the file entries (not directories) of a ZIP/JAR image, checking every offset against its size.
+bool readZipDirectory(const std::vector<std::uint8_t>& archive, std::vector<ZipDirEntry>& out, std::string& error);
+
+// Reads every stored/deflated file entry from a ZIP/JAR image (host_zip.cpp, with inflate.cpp
+// inflater). Returns false on a malformed archive.
 bool readZip(const std::vector<std::uint8_t>& archive, std::vector<ZipEntry>& out, std::string& error);
 
 // Identity of the JAR this executable was built for: Gameloft Soul of Darkness 1.0.1, 240x320

@@ -1,10 +1,6 @@
 #include "host_util.h"
 #include <cstring>
 
-namespace sod {
-bool inflateRaw(const std::uint8_t* data, std::size_t size, std::vector<std::uint8_t>& out);
-}
-
 namespace sodhost {
 
 namespace {
@@ -51,7 +47,7 @@ std::string sha256Hex(const std::vector<std::uint8_t>& data) {
     return out;
 }
 
-bool readZip(const std::vector<std::uint8_t>& z, std::vector<ZipEntry>& out, std::string& error) {
+bool readZipDirectory(const std::vector<std::uint8_t>& z, std::vector<ZipDirEntry>& out, std::string& error) {
     if (z.size() < 22) { error = "file is too small to be a JAR"; return false; }
     std::size_t eocd = std::string::npos;
     for (std::size_t i = z.size() - 22;; --i) {
@@ -63,29 +59,19 @@ bool readZip(const std::vector<std::uint8_t>& z, std::vector<ZipEntry>& out, std
     std::size_t pos = le32(&z[eocd + 16]);
     for (std::size_t n = 0; n < count; ++n) {
         if (pos + 46 > z.size() || le32(&z[pos]) != 0x02014b50u) { error = "corrupt central directory"; return false; }
-        const std::uint16_t method = le16(&z[pos + 10]);
-        const std::size_t compressed = le32(&z[pos + 20]), uncompressed = le32(&z[pos + 24]);
+        ZipDirEntry entry;
+        entry.method = le16(&z[pos + 10]);
+        entry.compressed = le32(&z[pos + 20]);
+        entry.uncompressed = le32(&z[pos + 24]);
         const std::size_t nameLen = le16(&z[pos + 28]), extraLen = le16(&z[pos + 30]), commentLen = le16(&z[pos + 32]);
         const std::size_t local = le32(&z[pos + 42]);
         if (pos + 46 + nameLen > z.size()) { error = "corrupt entry name"; return false; }
-        ZipEntry entry;
         entry.name.assign(reinterpret_cast<const char*>(&z[pos + 46]), nameLen);
         pos += 46 + nameLen + extraLen + commentLen;
         if (entry.name.empty() || entry.name.back() == '/') continue;
         if (local + 30 > z.size() || le32(&z[local]) != 0x04034b50u) { error = "corrupt local header"; return false; }
-        const std::size_t dataStart = local + 30 + le16(&z[local + 26]) + le16(&z[local + 28]);
-        if (dataStart + compressed > z.size()) { error = "truncated entry " + entry.name; return false; }
-        if (method == 0) {
-            entry.data.assign(z.begin() + static_cast<std::ptrdiff_t>(dataStart), z.begin() + static_cast<std::ptrdiff_t>(dataStart + compressed));
-        } else if (method == 8) {
-            if (!sod::inflateRaw(&z[dataStart], compressed, entry.data) || entry.data.size() != uncompressed) {
-                error = "cannot decompress " + entry.name;
-                return false;
-            }
-        } else {
-            error = "unsupported compression in " + entry.name;
-            return false;
-        }
+        entry.dataStart = local + 30 + le16(&z[local + 26]) + le16(&z[local + 28]);
+        if (entry.dataStart > z.size() || entry.compressed > z.size() - entry.dataStart) { error = "truncated entry " + entry.name; return false; }
         out.push_back(std::move(entry));
     }
     return true;

@@ -18,13 +18,25 @@ state under random input, not pixels, and **no complete playthrough has been rec
 python tools/gen_port.py              # regenerate soul/port/gen after Java or patch changes
 .\soul\port\build_dist.bat            # Release build, tests, package in soul/port/dist
 python tools/check_engine.py          # original bytecode vs. the built engine
-.\soul\port\dist\soul_of_darkness.exe --jar <that jar>
+.\soul\port\dist\SoulOfDarkness.exe   # the launcher
 ```
 
-Put your own JAR beside the executable, or pick it when asked; nothing is extracted. OPTIONS in
-the main and pause menus covers display, audio, keyboard and gamepad. Press F1 in the game for
+`SoulOfDarkness.exe` is the launcher: it shows the banner, takes your JAR (picked, or found next
+to it), checks it with the game's own SHA-256 and resource rules, keeps a copy in `game\`, offers
+2x/3x or fullscreen, and starts `bin\soul_of_darkness.exe`. It updates the install from this
+repository's GitHub releases. The game itself reads the JAR in place; nothing is extracted. OPTIONS
+in the main and pause menus covers display, audio, keyboard and gamepad. Press F1 in the game for
 controls; F8 cycles width (auto, 240, 427, 569, 747), F9 frame rate, F10 interpolation, F11
 fullscreen. See [soul/port/dist_readme.txt](soul/port/dist_readme.txt).
+
+## Releases
+
+Repository: [samioan/soul-of-darkness-remastered](https://github.com/samioan/soul-of-darkness-remastered).
+Pushing a tag `vX.Y.Z` runs [.github/workflows/release.yml](.github/workflows/release.yml): it
+builds with that version, runs the data-free tests, checks the package and publishes
+`SoulOfDarknessRemastered-vX.Y.Z-win64.zip`. Installed launchers then offer it as an update. The
+update check is an unauthenticated GitHub API call, so it only sees releases while the repository
+is public. Local builds carry a `-dev` version and never offer updates.
 
 ## Layout
 
@@ -37,6 +49,7 @@ fullscreen. See [soul/port/dist_readme.txt](soul/port/dist_readme.txt).
 | `soul/docs/` | [BUILD_101.md](soul/docs/BUILD_101.md) (the build, its artifact fixes and evidence), [NATIVE_ENGINE.md](soul/docs/NATIVE_ENGINE.md) (translator, runtime, widescreen, interpolation), [ROADMAP.md](soul/docs/ROADMAP.md), `names.map` |
 | `soul/port/gen/` | The reference Java translated to C++ (generated, tracked) |
 | `soul/port/engine/` | Hand-written Java/MIDP runtime, glue and Win32 host |
+| `soul/port/launcher/` | The launcher (`SoulOfDarkness.exe`) and its artwork; ported from the Dawnstar/Shadowkey launchers |
 | `tools/` | Pipeline and checks; see [tools/README.md](tools/README.md) |
 
 ## Pipeline
@@ -47,7 +60,8 @@ fullscreen. See [soul/port/dist_readme.txt](soul/port/dist_readme.txt).
 2. `python tools/gen_port.py` applies the desktop patches (`tools/port_patches.py`), adds
    `tools/port_java`, and translates the result to `soul/port/gen` with `tools/j2cpp`.
 3. `soul\port\build.bat [Debug|Release]` builds and runs the data-free tests;
-   `soul\port\build_dist.bat` packages the Release build.
+   `soul\port\build_dist.bat [version]` packages the Release build (launcher at the top, game in
+   `bin\`).
 4. `python tools/check_engine.py` runs the original class files on a JVM and the built engine side
    by side and fails on the first tick whose state differs. `python tools/check_narrowing.py`
    finds decompiler type-narrowing and overload artifacts in `soul/src`.

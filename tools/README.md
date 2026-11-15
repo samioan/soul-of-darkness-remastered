@@ -14,6 +14,8 @@ paths relative to their own location.
 | `python tools/check_narrowing.py` | Narrowing-cast counts and call targets of `soul/src` vs. the original class files |
 | `python tools/outline.py Game` | Member line ranges; `--big N` filters large methods; `--calls NAME` approximates callers/callees |
 | `python tools/bytecode.py e` | Original instructions in ignored `soul/analysis/e.bytecode.txt` |
+| `python tools/make_banner.py soul/port/launcher/assets/banner_source.jpg` | The launcher's embedded banner (`banner.jpg`), via System.Drawing; from shadowkey-decomp |
+| `python tools/make_icon.py soul/port/launcher/assets/banner_source.jpg` | The launcher's `.ico` (the hero's face, 16-256 px); from shadowkey-decomp |
 
 `bootstrap.py` contains SHA256 pins for all tool JARs. Existing matching copies are used first,
 then copies from `gow-betrayal-decomp`, `rac-j2me-decomp` or `tes-travels-decomp` beside this

@@ -22,3 +22,6 @@ display.ini
 # Local native game progress
 *.sav
 *.sav.tmp
+
+# Full 1.0.1 build: extracted data
+soul_full/extracted/

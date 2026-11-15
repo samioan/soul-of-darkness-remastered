@@ -1,252 +1,88 @@
 # Windows port implementation roadmap
 
-Updated 2026-11-13 after the level-1 bridge/gate/prompt/camera variant pass. This file lists the
-remaining native work and acceptance conditions. [ROADMAP.md](ROADMAP.md) is
+Updated 2026-11-15 after porting the full 1.0.1 build. [ROADMAP.md](ROADMAP.md) is
 the overall project checklist. [PORT_ROADMAP_HISTORY.md](PORT_ROADMAP_HISTORY.md)
 preserves the old notes; their claims that gameplay, platforms or Continue are
 still absent are superseded. Maintain these lists in place as tasks finish.
 
 Level indices are zero-based; level 0 is the first level and uses pack 3.
 
+## Two native code paths
+
+1. **Translated engine (the game).** The reference Java is translated to C++ by
+   `tools/j2cpp` and runs on `soul/port/engine`. Two builds share it:
+   `soul_of_darkness.exe` is the full 1.0.1 game (`soul_full/src` -> `soul/port/gen_full`,
+   eleven levels, in-game OPTIONS screen; see [BUILD_101.md](../../soul_full/docs/BUILD_101.md));
+   `soul_of_darkness_v137.exe` is the cut-down 1.3.7 game (`soul/src` -> `soul/port/gen`).
+   Evidence, design and limits: [NATIVE_ENGINE.md](NATIVE_ENGINE.md).
+2. **Hand-ported handlers (evidence and tooling).** `soul_port.exe`,
+   `soul_assets.exe`, `soul/port/src`, the `check_native_*.py` oracles and the
+   NATIVE_*.md documents. Level 0 and controlled level-1 fixtures, each compared
+   with original bytecode. Kept because they are independent verification of the
+   same original behavior and useful for analysis; not extended further.
+
 ## Implemented baseline
 
-- Win32 C++17 executable, MSVC/CMake builds, data-free CI/package, asset discovery,
-  independent FPS pacing, resize/fullscreen, display settings and headless captures.
-- Native resource/sprite/font/tile readers and rendering; all nine gameplay maps
-  can be previewed. Normal gameplay still constructs only level 0.
-- English startup/title/menu/credits/prologue, first-level selection, health/MP
-  HUD, pause/resume, focus-loss pause, checkpoint restart, disk autosave and Continue.
-- Level-0 movement, tile/body contacts, melee, twenty type-1 and seven type-2
-  enemies, loot, chests, fragment/ability rewards, fire/ice spells and weapon switch.
-- First-arena trigger 129, waves 54/55, chest 57 reward, trigger 166 and gate
-  script 165. All sixteen room passages and region-clipped widescreen rendering.
-- Rider platform, six chandeliers, two bridges, six stationary/sweeping beam
-  emitters and nine placed tutorial prompts. Original-handler limits remain in
-  the corresponding NATIVE_*.md docs.
-- Opening trigger 82/script 76, with four English dialogues, camera focus,
-  actor/prompt ownership, skip and input handoff. See NATIVE_INTRO.md.
-- Trigger 161/script 160 controls enemy 205 and chandelier 34 during normal play,
-  with flag release and completed-trigger cleanup. See NATIVE_CHANDELIER.md.
-- Linked triggers 43/61 remove prompts 187/59 on chandelier overlap, with lazy
-  source/target lookup and ordered removal. See NATIVE_PROMPT_REMOVAL.md.
-- Camera controllers 63/167 now own linked-enemy framing, removal/release and
-  falling-camera tracking; 1368 original-bytecode/native rows and 58 host checks
-  verify the supported modes. See NATIVE_CAMERA_CONTROLLERS.md.
-- Exit 173/state 15 now runs inclusive contact, death-pose rejection, closing
-  bars, English completion text and a one-time selection handoff. Completion
-  now persists, unloads the world and selects the next (currently unavailable)
-  chapter. Version-1 checkpoint saves migrate to version 2; Continue and replay
-  keep distinct position/stat rules. See NATIVE_COMPLETION.md and NATIVE_FINISH.md.
-- Shared selected-level data owner, player initialization and required assets
-  compare across all nine levels in 983 bytecode rows. Explicit teardown clears
-  cached links and projectile/rider support before targets unload. Normal
-  gameplay remains gated to level 0; see NATIVE_SELECTED_LEVELS.md.
-- Type-89 timed switches now support fire attacks/pulses, independent and
-  linked-gate timers, animation transitions and ordered native gate ownership.
-  4153 bytecode rows cover 23 timelines and all 13 placed constructors; see
-  NATIVE_TIMED_SWITCHES.md. Full second-level gameplay remains unfinished.
-- Type-80 energy barriers (formerly mislabelled collapsing platforms) now have
-  priority bodies, release/reset, the selected three-trigger chain and cached
-  lightning. 3776 bytecode rows and twelve controlled world runs verify these
-  boundaries; see NATIVE_ENERGY_BARRIERS.md.
-- Type-16 projectile owners now implement held/released state, tile bouncing,
-  reflection, explosion and target/holder cleanup. 6507 bytecode rows and twelve
-  selected-level world fixtures verify the foundation; the type-3 actor now supplies
-  its birth/release/update sequence. See NATIVE_THROWN_OBJECTS.md and NATIVE_TYPE3_ACTORS.md.
-- Type-3 action entries, fixed-point aiming and all three decision variants
-  match 10922 bytecode rows; see NATIVE_TYPE3_DECISIONS.md.
-- Native type-3 actors (charger, thrower, linked-chest runner) now own held-shot
-  birth/release, parent/child dispatch, chest carry/drop, damage, loot, respawn
-  fade and region reset for levels 1 and 2. 11487 bytecode rows, 48 shipped-record
-  world fixtures and 20 data-free assertions verify them; level 3's paired mode,
-  trigger enabling and non-player separation remain pending. See NATIVE_TYPE3_ACTORS.md.
-- Level 1's first encounter now runs natively in controlled worlds: player-overlap trigger
-  100 enables enemies 96/97, removal trigger 104 enables flying pair 98/102, and triggers 62/103
-  open chest 59 and run script 95 on gate 87. The removed-source owners were generalized
-  (target slots, type-3 sources, condition 3/4 script triggers, script chosen by trigger).
-  2112 original-bytecode rows, 16 added removed-enemy rows, 13 data-free assertions and six
-  world fixtures verify it; see NATIVE_LEVEL1_ENCOUNTER.md.
-- Level 1's three corridor ambushes now run natively in controlled worlds: player-overlap triggers
-  115/118/123 start scripts 23/24/114, which freeze and reposition enemies 92/93/94, release them
-  through the enemy action entry and drop zero-excursion chandeliers 89/90/91. The chandelier script
-  owner now serves scripts 160/23/24/114 with the original three-slot selected-script bookkeeping;
-  12800 original-bytecode rows, fourteen added data-free assertions and seven world fixtures verify
-  it. Staggered 118/123 starts (a one-pixel strip) are refused because the original would freeze the
-  world under a background script; see NATIVE_LEVEL1_AMBUSH.md.
-- Every shipped level-1 record now constructs through the native loaders (`--level-audit-manifest`): type-2
-  behavior 6 (sine-wave flyers 136/137/181, region-bound handler, 2663 bytecode rows) and beam emitters
-  starting in animation 6 (UIDs 3/5; beam oracle now 13152 rows) were the only rejections. This is envelope
-  coverage; the unverified level-1 variants are listed in NATIVE_LEVEL1_ENVELOPE.md.
-- Level 1's intro (trigger 134, script 133: player 131, zombie 215, flyer 135, six dialogues, skip) runs in
-  controlled real-record worlds through the generalized intro owner; 4760 original-bytecode rows and eight
-  added assertions verify it. It is not wired into the host yet; see NATIVE_LEVEL1_INTRO.md.
-- Level 1's three type-33 platforms and seven remaining type-50 pendulums/chandeliers now match
-  original bytecode on their shipped collision map: 69,120 added snapshots and 1,280 native render
-  checks at widths 240/569. The earlier list omitted continuous pendulum UID 189; it is covered too.
-  This is controlled variant coverage; see NATIVE_LEVEL1_PLATFORMS.md.
-- Level 1's four type-45 bridges (with the chandeliers that fall on them), gates 72/128 with their real timed switches,
-  the five type-21 prompts and camera controller 125 now match original bytecode on the real pack-4 map: oracles grew to
-  6360 bridge, 9744 gate/switch, 1504 prompt and 2008 camera rows, plus 288 bridge and 110 gate surfaces at widths 240/569.
-  Gate 128 opens only when both mode-1 switches are struck in the same tick. Controlled fixtures only; see
-  NATIVE_LEVEL1_VARIANTS.md.
-- Latest data-free suite: 109 CTests, 575 player, 25 timed-switch, 17 barrier,
-  15 thrown-object, 26 type-3 decision and 20 type-3 actor assertions. Chandelier fixtures
-  compare 3000 bytecode rows and 24 host runs; intro fixtures
-  compare 5460 original-bytecode rows and 48 playback/skip host runs. Linked
-  prompt removal adds 352 handler/world rows against original bytecode.
+- Win32 C++17 executables, MSVC/CMake builds, data-free CI and package.
+- Translated engine: every original state, level, script, boss, save and music
+  path. Shipped Release build identical to the original class files over 197,897
+  fuzzed ticks at width 240 with original text; unpatched translation over
+  237,353. State comparison, not pixels; no recorded full playthrough.
+- Widescreen 427/569/747/auto with the original camera untouched and a derived
+  wide view; rooms narrower than the screen are centred; panels keep 240 layout.
+- Display-rate presentation with layer interpolation from recorded draw calls;
+  replay at alpha 1 reproduces tick frames exactly in every checked run.
+- Keyboard + XInput with context mapping and `settings.ini` bindings; MIDI via
+  MCI; original RMS record on disk; JAR loaded in place with SHA-256 check;
+  English text with F7 toggle.
+- Hand-port baseline (unchanged, 109 of the 111 CTests): the modules and counts
+  listed in the NATIVE_*.md documents.
 
-The full game is not yet ported. Asset decoding, Java comparisons and controlled
-native fixtures do not establish a complete native play-through.
+## Closed as superseded
 
-## Ordered first-level work
+These were open hand-port tasks. They are not ported by hand and will not be;
+the translated engine runs the original code for each. Listed so nobody reads
+their absence from `soul/port/src` as missing gameplay.
 
-1. [x] **Intro script 76 and trigger 82.** Add type-20 animation-8 activation,
-   cutscene enter/leave ownership, position/animation/flag commands for UIDs
-   19/83/84/186/267, camera command 12, anchored dialogue command 116 and removal
-   command 113. Accept when the original intro can play, be skipped where allowed,
-   and hand control to Kale without stuck flags or orphaned actors. Implemented
-   and verified; see [NATIVE_INTRO.md](NATIVE_INTRO.md).
-2. [x] **Script 160 and trigger 161.** Implement the player-overlap script-start
-   condition, enemy-205 flag commands 107/108 and chandelier-34 position,
-   animation/action tracks. Accept when actual overlap starts the sequence once
-   and its finished actors return to normal world ownership. Implemented and
-   verified; see [NATIVE_CHANDELIER.md](NATIVE_CHANDELIER.md).
-3. [x] **Linked prompt-removal triggers 43/61.** Resolve chandelier UIDs 3/34,
-   evaluate their original trigger conditions and remove prompt UIDs 187/59.
-   Source lookup, trigger removal and update-queue timing now match bytecode;
-   see [NATIVE_PROMPT_REMOVAL.md](NATIVE_PROMPT_REMOVAL.md).
-4. [x] **Camera controllers 63/167.** Implement the link from 63 to enemy 202,
-   missing/removed-link release, strict overlap, active-controller selection and
-   controller 167's falling-camera branch. Adapt targets/clamps to 240/569
-   explicitly; never replace every 240/120 constant globally. Implemented and
-   verified; see [NATIVE_CAMERA_CONTROLLERS.md](NATIVE_CAMERA_CONTROLLERS.md).
-5. [x] **Exit trigger 173 and completion state 15.** Compare inclusive contact,
-   defeated-player rejection, one-time entry, closing bars, completion message
-   and acknowledge input against the original flow. Implemented and verified;
-   see [NATIVE_COMPLETION.md](NATIVE_COMPLETION.md). Task 6 now implements its
-   save/unload/next-selection handoff, with entry to unported levels disabled.
-6. [x] **Complete/unlock/save transition.** Port `finishLevel` effects, including
-   the completion flag, maximum unlocked level, state unload/reset and next-level
-   selection. Extend desktop saves with version migration and test restart vs
-   Continue vs completed-level Continue after exiting/reopening the executable.
-   Implemented for level 0, including version-1 migration and a guarded chapter-2
-   selection; see [NATIVE_FINISH.md](NATIVE_FINISH.md). Level 1 remains unavailable
-   until task 8 supplies its world handlers and verifies its variants.
-7. [x] **Selected-level construction.** Replace hardcoded level-0 scene/object/
-   script loads with one level descriptor shared by player, sprites, records,
-   scripts, regions and checkpoints. Rebuild all owners on load; release platform,
-   projectile, script and cached UID links before destroying their targets.
-   Implemented and verified for shared inputs across all nine selections and
-   controlled unload/restart fixtures; see [NATIVE_SELECTED_LEVELS.md](NATIVE_SELECTED_LEVELS.md).
-   Later native actor construction and gameplay remain task 8.
-8. [ ] **Second-level gameplay.** Add its new type-3 enemies, type-80 energy
-   barrier and type-89 switches, then verify its existing-type variants and all
-   twenty passages. Enable New Game/Continue progression into level 1 only after
-   its construction and required controllers work. Type-89 handler/gate and
-   type-80 barrier/trigger fixtures and the native type-3 actor owner (levels 1/2)
-   are implemented, including player-overlap enable trigger 308 for actors 62/74. The
-   level-1 first encounter (triggers 100/104/62/103, chest 59, script 95/gate 87) now
-   works in controlled worlds (NATIVE_LEVEL1_ENCOUNTER.md), and the corridor ambushes (triggers
-   115/118/123, scripts 23/24/114, enemies 92/93/94, chandeliers 89/90/91) do too
-   (NATIVE_LEVEL1_AMBUSH.md). The sine flyers and beam variants now construct and match the original
-   (NATIVE_LEVEL1_ENVELOPE.md). Triggers 187/322 are level-2 records, not level-1. The bridge, gate, prompt and camera-125 variants are now verified (NATIVE_LEVEL1_VARIANTS.md). Remaining: passage world/region handoff, staggered 118/123 starts, host wiring of the level-1 intro/scripts/
-   chandeliers (the descriptor still opens scripts for level 0 only), the level-1 route and the 240/569
-   presentation checks, then enabling New Game/Continue into level 1. The intro (trigger 134/script 133)
-   itself is ported (NATIVE_LEVEL1_INTRO.md).
-   The type-33/type-50 platform variants are now verified; see NATIVE_LEVEL1_PLATFORMS.md.
-9. [ ] **Full first-level route test.** Start at the ordinary spawn, run the intro,
-   traverse rooms/platforms, complete the arena/reward/gate, pass the beams and
-   final room, then complete/unload. Exercise checkpoint death/restart/Continue
-   along the route at 240/569 and native/30/60/144 FPS. Current fixtures start at
-   controlled positions and do not replace this test.
+- [x] Second-level gameplay wiring, staggered ambush starts, passage/region handoff.
+- [x] Types 13/14/70, 37, 64, 72, 61/79, 68, 69, 73, 74, 75, 78, 82, 95, 90, 100.
+- [x] Level-3 paired mode and level-5 controller/hazard/group state and snapshots.
+- [x] Remaining type-1/2, platform, bridge, gate, beam and passage variants.
+- [x] Type-35/48 rewards, placed type-39 effects, type-40/20/49 later-level modes.
+- [x] General UID/pool and ordered dispatch/painter ownership.
+- [x] All 17 scripts / 47 tracks, dialogue, QTEs, skip, fades, bars.
+- [x] Selection map, upgrade/progression data, Help, pause, game over, ending.
+- [x] Original HUD, boss bar, weather and backgrounds.
+- [x] English text for all visible strings.
+- [x] Render interpolation with snap boundaries; 240/569 then 427/747 checks.
+- [x] Full save record; original RMS layout by construction.
+- [x] Music backend, mute/volume, focus-loss suspension and delayed resume.
+- [x] Configurable keyboard/controller bindings.
+- [x] User-owned JAR loading with identity check; data-free package.
 
-## Remaining owners and handlers for levels 1-8
+## Remaining
 
-- [x] Verify all twenty level-1 horizontal passages against original bytecode; 3,520 added
-  snapshots and forty native destination surfaces at widths 240/569. See NATIVE_LEVEL1_PASSAGES.md;
-  full world/region handoff and the continuous route remain separate acceptance work.
-- [x] Verify level-1 type-33 platforms 219/241/288 and remaining type-50 pendulums/chandeliers
-  25/33/145/190/169/510/189 on their real collision map; see NATIVE_LEVEL1_PLATFORMS.md.
-- [x] Type-16 thrown-object state, tile physics, target contacts and holder/world cleanup; see NATIVE_THROWN_OBJECTS.md.
-- [x] Type-3 decisions, action entries and fixed-point throw aiming; see NATIVE_TYPE3_DECISIONS.md.
-- [x] Type-3 actor integration, linked chest ownership and projectile birth/update order for levels 1/2; see NATIVE_TYPE3_ACTORS.md. Level 3 paired mode is listed below.
-- [x] Removed-source enable/script triggers for condition 3/4 with any target slot, type-3 sources and selected script 95; level 1's first encounter; see NATIVE_LEVEL1_ENCOUNTER.md.
-- [ ] Type-13/type-14/type-70 AI, projectile targeting, damage and respawn variants.
-- [ ] Type-37 gate controller, type-64 springs and type-72 linked platforms.
-- [ ] Type-61/type-79 destructibles and their mutable collision/render state.
-- [ ] Type-68 spawners and type-69 paired owners; native level-3 paired-player mode,
-  including the paired contact path and level 3's two type-3 actors.
-- [ ] Type-73 hazards, type-74 spawners, type-75 traps and type-78 hazard areas.
-- [x] Type-89 timed-switch handlers and controlled gate integration; see NATIVE_TIMED_SWITCHES.md.
-- [x] Type-80 energy-barrier handler, selected links and controlled priority contacts; see NATIVE_ENERGY_BARRIERS.md.
-- [ ] Type-82 platform groups and type-95 crushers.
-- [ ] Native level-5 controller/hazard/group links and their saved state, using
-  LEVEL5_CONTROLLER.md's original-Java fixtures as reference rather than calling
-  that Java coverage a native implementation.
-- [ ] Type-90/type-100 complete boss controllers, projectiles, script handoffs,
-  health HUD and terminal/ending transitions.
-- [ ] Remaining type-1/type-2, platform, bridge, gate, beam and passage variants
-  present in later records; support for a type in level 0 is not coverage of all variants.
-- [ ] Remaining type-35/type-48 rewards, placed type-39 effects, rank/progression
-  pickups and all later-level container outputs.
-- [ ] Type-40 conditions/effects and type-20/type-49 modes used by later levels.
-- [ ] Complete general UID/pool, ordered actor/contact/transient/painter ownership.
-  Integrate external containers/pickups and independent beam-cap animation with
-  that owner; retain stable lifetime and original birth/removal/update order.
-
-## Script, UI and presentation work
-
-- [ ] Run all 17 scripts / 47 decoded tracks: camera and global tracks, cinematic
-  actor creation, UID-targeted properties, flags, commands and completion modes.
-  Selected scripts 76 (intro), 160 (enemy/chandelier) and 165 (gate) now run
-  natively; the other scripts and general command ownership remain unfinished.
-- [ ] Dialogue layout/English text, interaction locks, QTE success/failure, allowed
-  skip, audio/shake/fade commands and cutscene bars. Complete the original
-  Game.paint mutations on simulation ticks before adding faster presentation.
-- [ ] Dynamic prompt camera/player-follow modes and script-spawned prompts.
-  The nine placed type-21 handlers and desktop key captions are implemented;
-  other owners must not be silently routed through that placed-only loader.
-- [ ] Original animated selection map, unlock-dependent navigation and the
-  selected-level stat/checkpoint-position decision. Only level 0 is playable from the current card.
-- [ ] Weapon/magic upgrade menus, all upgrade arrays/ranks and their save ownership.
-- [ ] Help/options, remaining pause/game-over actions, completion and ending screens;
-  retain the working keyboard display controls until equivalent menu options exist.
-- [ ] Remaining non-tile background/weather effects, original HUD/boss display and
-  overlays; the two visual tile layers and first-level backdrop already render. Keep the existing desktop HP/MP HUD accurately described as such.
-- [ ] English replacements for remaining visible Czech text; preserve credit names.
-- [ ] Player/actor/platform/camera render interpolation with explicit snap boundaries
-  at passage transfer, restart, script reposition and scene load. Keep collision,
-  animation events, damage, timers and save capture on 83 ms simulation ticks.
-- [ ] Verify 240/569 through all new camera/script/HUD paths, then 427/747 and live
-  resize/fullscreen. Widescreen must reveal world without exposing disconnected
-  packed rooms or stretching the 240-wide startup panels.
-
-## Persistence, audio, controls and delivery
-
-- [ ] Extend version-2 level/completion/unlock saves beyond level 0, including
-  upgrade arrays and remaining flags; retain version-1 migration. The next
-  selected level is already derived from completion, with construction gated.
-- [ ] Native level-3 paired and level-5 controller snapshots through checkpoint,
-  Restart, Continue and completed-level advancement.
-- [ ] Decide original RMS compatibility scope; before offering it, implement and
-  compare the full 1313-byte layout and its original flag-order/restoration quirks.
-  Desktop checkpoint persistence already works and must not be listed as absent.
-- [ ] Music and effects backend, mute/volume, focus-loss suspension and delayed resume.
-- [ ] Configurable keyboard/controller bindings with consistent menu and gameplay
-  edge/held input; preserve the current working A/D/arrows/Space/E/J/K/Q controls.
-- [ ] User-owned JAR import with expected identity checks, asset extraction/location
-  errors and an installer/launcher. Keep assets/JARs/saves out of git and packages.
-- [ ] Continuous play-through, save round-trip, boss/exit and scene-unload regressions
-  across all nine levels and supported display settings; test on a clean Windows machine.
-- [ ] Supply a real publishing/updater destination before configuring remote hosting.
-  No remote repository, automatic updater or playable-release target is configured.
+- [ ] Recorded complete playthrough and save round trip across all nine levels.
+- [ ] Human verification of display modes, fullscreen, live resize, gamepad and
+  audio output; clean-machine test.
+- [ ] Widescreen activation-distance decision (see ROADMAP.md).
+- [x] In-game settings/rebinding UI (1.0.1 build: OPTIONS screen, PortMenu).
+- [ ] Mouse for the 1.0.1 build's touch input; OPTIONS for the 1.3.7 program; desktop tutorial icons.
+- [ ] Interpolation refinements (per-effect layers, sub-pixel).
+- [ ] Supply a real publishing/updater destination before configuring hosting.
 
 ## Acceptance rule for each task
 
-- Inspect the original call sites/bytecode; use names.map or asserting patches
-  for generated Java changes and regenerate rather than editing generated trees.
-- Add meaningful original/reference/native fixtures for the newly ported behavior;
-  explicitly separate controlled fixtures from actual route tests and runtime parity.
-- Pass applicable Debug/Release checks and package validation. Record detailed
-  counts, evidence and limitations in the feature doc; mark this current checklist
-  rather than appending an outdated statement that the feature is still missing.
+- Game behavior comes from the reference Java. Fix decompiler artifacts in
+  `names.map`/`PATCHES` (tools/rename_sod.py) with bytecode evidence, regenerate
+  `soul/src`, then `python tools/gen_port.py`. Never edit `soul/src` or `soul/port/gen`.
+- Desktop behavior goes in `tools/port_patches_full.py` + `tools/port_java_full` (1.0.1) or
+  `tools/port_patches.py` + `tools/port_java` (1.3.7): exact text, exact match count. Add no field to Game/Actor/BSprite. Every helper
+  must be a no-op at width 240 with original text.
+- `python tools/check_engine.py` must report identical fingerprints for the
+  Release `soul_engine_check.exe`. A translator or runtime change that needs a
+  longer run to trust should get one (`--ticks`, `--seeds`).
+- Run `soul_engine_check --verify-replay` at 240 and a wide width after touching
+  drawing or recording; look at frames (`--shot`) after touching layout.
+- Pass Debug/Release builds, CTest and package validation. Keep status statements
+  accurate: state what was measured and what was only inspected or not run.

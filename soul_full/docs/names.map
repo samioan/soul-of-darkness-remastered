@@ -1,0 +1,54 @@
+# Soul of Darkness 1.0.1 (HTC P3450 build). Same six-class layout as 1.3.7.
+# Format: see tools/rename_sod.py. Only names with call-site evidence are added.
+class a InGamePromotion
+class b Actor
+class c ErrorReporter
+class d BSprite
+class e Game
+
+# --- Game: identifiers the native glue, oracle and port patches refer to.
+# Evidence is positional: each is the direct counterpart of the 1.3.7 member of the same name
+# (same statements around it; see soul/docs/names.map and CLASS_MAP.md), checked at the cited use.
+field e.F state
+field e.G previousState
+field e.I stateFrame
+field e.O suspended
+field e.c random
+field e.d graphics
+field e.e paintComplete
+# paint(): watchdog timestamp (hide/showNotify after a 2.5 s gap) and run(): ms since the last frame
+field e.k lastPaintMs
+field e.M frameDeltaMs
+field e.fP soundResumeFrames
+field e.fO resumeSoundId
+method e.o(int,int) playSound
+method e.K() hasActiveBackgroundScript
+field e.bx modalActive
+field e.bz dialogText
+field e.bX player
+field e.du saveLoaded
+method e.b(boolean) accessSaveRecord
+field e.bf levelIndex
+field e.bg maxUnlockedLevel
+field e.aa cameraX
+field e.ab cameraY
+field e.ap viewBounds
+field e.cf actors
+field e.cg actorCount
+field e.x health
+field e.y maxHealth
+field e.A magic
+field e.B maxMagic
+# --- Actor
+field b.K positionX
+field b.L positionY
+field b.f animationId
+field b.am facingLeft
+field b.j collisionBounds
+field b.ao type
+field GloftSOFD.a instance
+field GloftSOFD.b game
+field GloftSOFD.c display
+field e.ag regionLeft
+field e.ah regionRight
+field e.cA levelPixelWidth

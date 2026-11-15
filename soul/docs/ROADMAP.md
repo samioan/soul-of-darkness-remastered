@@ -1,6 +1,6 @@
 # Soul of Darkness roadmap
 
-Updated 2026-11-13 after the level-1 bridge/gate/prompt/camera variant pass. This is the current
+Updated 2026-11-15 after porting the full 1.0.1 build. This is the current
 remaining-work list. Historical implementation notes are in
 [ROADMAP_HISTORY.md](ROADMAP_HISTORY.md); their old pending/next descriptions
 are superseded. Update the lists below when work lands instead of appending
@@ -8,199 +8,127 @@ another conflicting progress narrative.
 
 ## Target and current status
 
-- Target: Gameloft Soul of Darkness J2ME 1.3.7, nine gameplay levels.
+- **Primary target since 2026-11-15: Soul of Darkness 1.0.1, 240x320 (HTC P3450 build)**,
+  `roms/SoulOfDarkness_HTC_P3450_EN_IGPL_EU_101_S8000.jar`, SHA256
+  `3da9ea7fe8dfaa2c090e8b3714eaed15127f51dc8b67ed9ef9fed51172e4bea4`. It is the full-featured
+  game: native English, eleven chapters, weapon upgrades, transformations, parallax backgrounds,
+  ten music tracks and sound effects. `soul_of_darkness.exe` plays it, with widescreen,
+  interpolated frame rates, keyboard/gamepad and an in-game OPTIONS screen in the game's own
+  style. Reference tree `soul_full/`; details, artifact fixes and evidence in
+  [BUILD_101.md](../../soul_full/docs/BUILD_101.md).
+- Its shipped Release engine at width 240 matches the original class files over 187,499 fuzzed
+  ticks in 44 scenarios across all eleven levels; the unpatched translation over 202,630.
+  State comparison under random input, not pixels: **no complete playthrough has been recorded.**
+- The 1.3.7 JAR below is a cut-down edition (Czech text, nine shorter levels, no upgrades). Its
+  translation still builds as `soul_of_darkness_v137.exe` and still passes; the rest of this
+  section describes it.
+- Secondary target: Gameloft Soul of Darkness J2ME 1.3.7, nine gameplay levels.
 - Input: `roms/Soul-of-Darkness_J2ME_EN_v137.jar`, 347896 bytes,
   SHA256 `9d839e59d6cb2f80575736fbf867babe0da852312652490dd9025d0a0654dd6b`.
 - All six classes decompile; generated reference Java compiles and has selected
-  original-bytecode checks. This does not establish full runtime equivalence.
-- Native Windows startup reaches English title/menu/credits/prologue and the
-  playable first-level slice. The executable is no longer just a frame test.
-- Native level 0 supports movement/collision, ground/flying enemies, melee,
-  fire/ice magic, pickups/chests/rewards, platforms/chandeliers/bridges, regions,
-  all 16 passages, the arena/reward/gate chain, six beam hazards and nine placed
-  tutorial prompts. Intro trigger 82/script 76 now plays with English dialogue,
-  camera control, skip and verified return to gameplay. Trigger 161/script 160
-  now runs the enemy/chandelier sequence during ordinary play. Linked triggers
-  43/61 remove their chandelier tutorial prompts. Camera controllers 63/167 now
-  provide linked-enemy framing and falling-camera tracking. Exit 173 now enters
-  closing bars/completion and acknowledges to the current selection card.
-  Completion now saves progress, unloads the world and selects chapter 2 with
-  entry disabled until its native gameplay is ready; chapter 1 remains replayable.
-  See the NATIVE_*.md docs.
-- Six first-level checkpoints support R/menu Restart and desktop autosave/Continue.
-  The desktop format covers the supported native subset; it is not original RMS.
-- All nine selected data bundles and players load against 983 bytecode rows;
-  the shared owner keeps maps, records, scripts, assets and checkpoints aligned.
-  Cached links and projectile/rider references detach before targets unload.
-  See [NATIVE_SELECTED_LEVELS.md](NATIVE_SELECTED_LEVELS.md).
-- All nine gameplay maps decode/render, but normal gameplay constructs **level 0
-  only**. The other eight levels are not yet playable through the frontend.
-- Rendering supports portrait/widescreen widths; simulation runs at 83 ms.
-  Gameplay interpolation and audio are not implemented. The full game is unfinished.
+  original-bytecode checks.
+- **`soul_of_darkness.exe` runs the whole game natively**: the reference Java is
+  translated to C++ (`tools/gen_port.py` -> `soul/port/gen`) on a small Java/MIDP
+  runtime (`soul/port/engine`). All nine levels, menus, cutscenes, both bosses,
+  the original save record and music are present because they are the original
+  code. See [NATIVE_ENGINE.md](NATIVE_ENGINE.md).
+- The shipped Release engine at width 240 with original text matches the original
+  class files field for field over 197,897 fuzzed ticks in 45 scenarios across all
+  nine levels (`tools/check_engine.py`); the unpatched translation matches over
+  237,353 ticks in 54 scenarios. This compares game state, not pixels, and fuzzing
+  does not reach every room: **no complete playthrough has been recorded.**
+- Desktop features on top: widescreen (auto, 240, 427, 569, 747), display-rate
+  presentation with render interpolation, keyboard and XInput gamepad with
+  rebinding, MIDI music, English text, direct JAR loading with identity check.
+- `soul_port.exe`/`soul_assets.exe` and the NATIVE_*.md handler ports remain as
+  independent per-handler evidence and analysis tooling for level 0 and parts of
+  level 1. They are no longer the path to a playable game, and their unfinished
+  handler lists are closed below as superseded rather than as ported by hand.
 
-Indices below are zero-based: level 0 is the first level, level 1 the second;
-gameplay pack = level index + 3.
+Indices below are zero-based: level 0 is the first level; gameplay pack =
+level index + 3.
 
-## Next: finish the first-level flow
+## Done by the translated engine
 
-- [x] Implement type-20 intro trigger **UID 82** and cutscene **script 76**.
-  Its tracks control enemy 19, flying actors 83/84, player 186, prompt 267 and
-  the camera; implement flags, positions, actor removal, anchored dialogue,
-  input lock/skip and return to ordinary play. Completed and verified in
-  [NATIVE_INTRO.md](NATIVE_INTRO.md).
-- [x] Implement type-40 **UID 161 -> script 160**: the player-overlap trigger
-  starts the track for enemy **205** and chandelier **34**. Add its flag/action/
-  animation/position commands and completion cleanup. Completed and verified in
-  [NATIVE_CHANDELIER.md](NATIVE_CHANDELIER.md); script 165 already runs.
-- [x] Implement type-40 **UIDs 43 and 61**, which link chandeliers **3/34** to
-  removal of prompts **187/59**. Completed with original-bytecode handler and
-  ordered-world comparisons; see [NATIVE_PROMPT_REMOVAL.md](NATIVE_PROMPT_REMOVAL.md).
-- [x] Implement type-49 camera controller **UID 63**, including its link to
-  **UID 202**, and controller **UID 167**. Check activation/release, linked-source
-  removal and falling-camera behavior at widths 240/569. Completed with
-  handler, active-camera and ordered-world comparisons; see
-  [NATIVE_CAMERA_CONTROLLERS.md](NATIVE_CAMERA_CONTROLLERS.md).
-- [x] Implement type-20 exit **UID 173**: normal overlap enters completion state
-  15, a defeated player cannot trigger it, and the closing-bars/acknowledge flow
-  runs once. Completed with original exit/bar/input checks and a native
-  selection handoff; see [NATIVE_COMPLETION.md](NATIVE_COMPLETION.md).
-  Its completion transition is implemented in [NATIVE_FINISH.md](NATIVE_FINISH.md).
-- [x] Implement `finishLevel`: update completion/max-unlock progression, persist
-  it, unload the old world and select the next level. Add original-bytecode
-  checks for the completion/save/Continue branch. Completed for native level 0;
-  version-2 desktop saves retain version-1 migration. Next-level selection is
-  gated until its construction/handlers are playable; see [NATIVE_FINISH.md](NATIVE_FINISH.md).
-- [x] Make native world construction accept a selected level instead of hardcoded
-  pack 3/level 0. Keep player, assets, actor records, scripts and checkpoints on
-  the same selected level; detach all borrowed actor/platform references on unload.
-  Implemented with a shared data owner, 983 original-bytecode input rows and
-  explicit teardown. Gameplay beyond level 0 stays gated; see [NATIVE_SELECTED_LEVELS.md](NATIVE_SELECTED_LEVELS.md).
-- [x] Verify the second-level type-33 platforms **219/241/288** and remaining
-  type-50 pendulums/chandeliers **25/33/145/190/169/510/189** on the shipped collision map.
-  Added 69,120 original-bytecode/native snapshots and 1,280 width-240/569 rendering checks;
-  existing handlers match these variants. See [NATIVE_LEVEL1_PLATFORMS.md](NATIVE_LEVEL1_PLATFORMS.md).
-- [x] Verify all twenty second-level horizontal passages. Added 3,520 original-bytecode/native
-  snapshots and forty destination tile surfaces at widths 240/569; existing handlers match.
-  See [NATIVE_LEVEL1_PASSAGES.md](NATIVE_LEVEL1_PASSAGES.md) for the isolated-fixture limits.
-- [ ] Construct the second-level actors and resolve their unsupported handlers
-  before enabling entry to that level. Its newly required placed types include
-  **3, 80 and 89**; existing types also need their level-1 variants checked.
-  Types 89, 80 and 3 now have verified handlers and controlled link/contact
-  integration. Type 80 is an energy barrier, not a collapsing platform. Type-3
-  actors match 11487 bytecode rows and 48 world fixtures (see NATIVE_TYPE3_ACTORS.md);
-  player-overlap trigger 308 now enables actors 62/74. The level-1 first encounter (triggers 100/104/62/103,
-  chest 59, script 95/gate 87) runs in controlled worlds; see NATIVE_LEVEL1_ENCOUNTER.md. The corridor ambushes
-  (triggers 115/118/123 starting scripts 23/24/114 on enemies 92/93/94 and chandeliers 89/90/91, 12800 bytecode
-  rows) also run in controlled worlds; see NATIVE_LEVEL1_AMBUSH.md. The type-2 behavior-6 sine flyers (UIDs
-  136/137/181; 2663 rows) and beam emitters starting in animation 6 (UIDs 3/5; oracle now 13152 rows) match the
-  original, so every shipped level-1 record constructs natively (NATIVE_LEVEL1_ENVELOPE.md). Triggers 187/322 are
-  level-2 records. Type-33/type-50 platform variants are now verified (NATIVE_LEVEL1_PLATFORMS.md).
-  The four type-45 bridges, gates 72/128 with their real type-89 switches, the five type-21 prompts and camera
-  controller 125 now match original bytecode on the real map (NATIVE_LEVEL1_VARIANTS.md). Still pending: passage
-  world/region handoff, staggered 118/123 starts, host wiring of the level-1 scripts and the actual route. The level-1 intro (trigger 134/script 133, 4760 rows) now runs in controlled worlds; see
-  NATIVE_LEVEL1_INTRO.md. The type-1 respawn-fade record (UID 96) is verified in NATIVE_ENEMIES.md.
-- [ ] Record and verify an actual run from first-level spawn through its arena,
-  reward/gate, passages, beams, final room and exit. The current controlled host
-  fixtures start at selected locations; they are not that full play-through.
+Each item was an open ticket; it is satisfied by running the original code
+natively, with the evidence and limits in [NATIVE_ENGINE.md](NATIVE_ENGINE.md).
 
-## Remaining gameplay across levels 1-8
+- [x] Second-level actors, handlers, passages, scripts and route; entry from the
+  frontend. (Superseded: all levels construct and run from the original loaders.)
+- [x] Enemy types 13/14/70, later variants of types 1/2/3, and every placed
+  controller/object type (37, 61/79, 64, 68, 69, 72, 73, 74, 75, 78, 82, 95).
+- [x] Bosses 90 (level 3) and 100 (level 8) with phases, projectiles and
+  scripted entry/exit; level 3 paired mode; level 5 controller/hazard/group state.
+- [x] Type 48/39/35 rewards and effects, all type-40/20/49 trigger and camera modes.
+- [x] All 17 scripts: camera, global and cinematic actor tracks, dialogue,
+  input locks/skip, QTEs, fades, shakes, letterbox.
+- [x] Original UID/pool, dispatch and painter ordering; dynamic prompts; original
+  HUD, boss bar, weather and backgrounds.
+- [x] Saves: the original 1313-byte RMS record with all level, upgrade, unlock,
+  checkpoint and level-3/5 snapshot data, written to `dvseed.sav`.
+- [x] Animated level-selection map, unlock navigation, Help, pause, game over,
+  completion and ending flows, as the original draws them.
+- [x] English text for every interface string and all nine levels' dialogue
+  (`tools/port_java/PortEnglish.java`); credited names preserved; F7 shows the
+  JAR's own text.
+- [x] Music, mute/volume, focus-loss suspend and the original resume delay.
+- [x] Keyboard and controller bindings in `settings.ini`, shared by menus and play.
+- [x] User-JAR loading with SHA-256 identity check; data-free package
+  (`soul/port/build_dist.bat`).
+- [x] Render-only interpolation for tiles, world, actors and camera, snapping on
+  jumps; collision, animation events, timers and saves stay on 83 ms ticks.
+- [x] Widescreen that reveals more world at 427/569/747 with explicit camera view,
+  culling, tile, HUD and panel handling; 240 stays identical to the original.
 
-- [x] Port the **type-16 thrown-object foundation**: held ownership, flight,
-  reflection, explosion, target contacts and cleanup. Verified in 6507 bytecode
-  rows and twelve controlled world fixtures; see [NATIVE_THROWN_OBJECTS.md](NATIVE_THROWN_OBJECTS.md).
-- [x] Port the **type-3 decision foundation**: all three behavior decisions,
-  action entries and fixed-point throw aiming. Verified with 10922 bytecode
-  rows; see [NATIVE_TYPE3_DECISIONS.md](NATIVE_TYPE3_DECISIONS.md).
-- [x] Integrate enemy **type 3** in levels 1-2: charger, thrower and linked-chest
-  runner with held-shot birth/release, parent/child dispatch order, death/loot,
-  respawn fade and region reset. Verified against 11487 original-bytecode rows and
-  48 controlled shipped-record world fixtures; see [NATIVE_TYPE3_ACTORS.md](NATIVE_TYPE3_ACTORS.md).
-  Level 3's two type-3 actors stay with the paired-mode item below.
-- [ ] Port enemy **types 13/14/70** and their damage/projectile variants; complete
-  later-level variants of the already ported type-1/type-2 enemies.
-- [x] Port **type 89** timed-switch handlers: fire activation, timers, linked-gate
-  conditions and animation transitions. Verified in 4153 bytecode rows and
-  controlled native gate worlds; see [NATIVE_TIMED_SWITCHES.md](NATIVE_TIMED_SWITCHES.md).
-- [x] Port **type 80** energy barriers: lifecycle, priority collision, selected
-  second-level enable/release triggers and cached lightning. Verified with 3776
-  bytecode rows and twelve controlled world runs; see [NATIVE_ENERGY_BARRIERS.md](NATIVE_ENERGY_BARRIERS.md).
-- [ ] Port remaining placed controllers/objects: **37** gate controller,
-  **61/79** destructibles, **64** springs, **68** wave spawners, **69** paired
-  owners, **72** linked platforms, **73** hazards, **74** hazard spawners,
-  **75** traps, **78** hazard areas, **82** platform groups and **95** crushers.
-- [ ] Port bosses **90** (level 3) and **100** (level 8), including complete
-  phases, projectiles, scripted entry/exit and boss-to-level-completion ownership.
-- [ ] Integrate level **3** paired-actor mode (including its two type-3 actors) and
-  level **5** controller/hazard/platform-group state natively. Their Java checkpoint checks are not native ports.
-- [ ] Construct placed **type 48** ability actors and **type 39** effects used
-  outside level 0; finish remaining pickup/reward and moving-object variants.
-- [ ] Expand type-40 trigger ownership beyond the selected first-arena/chest/gate
-  and chandelier chains; verify each later-level source/target condition.
-- [ ] Walk every level's shipped records and scripts through their full route;
-  compare behavior against the original and test each boss/exit/restart boundary.
+## Done for the 1.0.1 build (2026-11-15)
 
-## Scripts, rendering and ownership still to finish
+- [x] Decompile, rename and compile-check the 1.0.1 build; fix its decompiler artifacts (two
+  known ones, unboxing, 18 narrowed locals, 21 mis-resolved overloads) with bytecode evidence;
+  add `tools/check_narrowing.py` to find such artifacts mechanically.
+- [x] Translate and run it natively; extend the runtime (Vector, plain Canvas, Font) and the
+  oracle (`tools/check_engine.py --game full`).
+- [x] Port widescreen, interpolation layers and input to its three-layer renderer and bottom
+  icon bar; verify replay at 240/427/569/747.
+- [x] In-game settings and rebinding screens in the game's art style (OPTIONS in the main and
+  pause menus: display, audio, keyboard, gamepad).
+- [x] Per-build JAR identity, save folders and package (`soul_of_darkness.exe` = 1.0.1,
+  `soul_of_darkness_v137.exe` = 1.3.7).
 
-- [ ] Execute camera tracks, global tracks and cinematic actor tracks, and extend
-  existing-actor tracks beyond the selected scripts 76/160/165. Decoding
-  all 17 scripts is already done; executing them all is not.
-- [ ] Implement dialogue, cutscene input locks/skip, QTEs and the remaining
-  script global/property commands, fades, shakes and letterbox transitions.
-- [ ] Connect dynamic type-21 prompts owned by chests/enemies/camera/player-follow
-  interactions beyond the existing chest prompt. Placed tutorials are now done.
-- [ ] Complete original UID/pool and mixed actor dispatch/painter ownership;
-  remove the remaining external container/pickup and endpoint-glow timing limits
-  documented in NATIVE_WORLD_ORDER.md, NATIVE_CHECKPOINTS.md and NATIVE_BEAMS.md.
-- [ ] Port remaining non-tile background/weather effects and boss/HUD/cutscene visuals.
-  The existing health/magic HUD is a desktop design, not original HUD parity.
-- [ ] Add render-only interpolation for player, actors, platforms and camera,
-  snapping at passages/restarts/scene changes. Keep collision/events/saves on ticks.
+## Remaining
 
-## Saves, interface, audio and distribution still to finish
-
-- [ ] Extend the existing version-2 level-0 completion/unlock saves to later
-  levels, upgrade arrays and remaining flags; support checkpoints/Continue
-  across every playable level while retaining version-1 migration.
-- [ ] Port original level-3/5 special save snapshots and implement original
-  1313-byte RMS import/compatibility if that compatibility is to be offered.
-- [ ] Implement the animated level-selection map, unlocked-level selection and
-  the selected-level stats/checkpoint-position decision.
-- [ ] Add weapon/magic upgrade screens and their native rank/progression ownership.
-- [ ] Finish Help/settings/pause/game-over and remaining completion/ending menu flows and expose
-  supported display/input options through the interface.
-- [ ] Translate remaining dialogue/tutorial/menu resources that become visible;
-  preserve credited names. The supplied resource set contains Czech text.
-- [ ] Implement music/effects, volume/mute and focus-loss/resume audio behavior.
-- [ ] Add remappable keyboard and controller input; verify menus and gameplay
-  share consistent bindings and edge/held semantics.
-- [ ] Add a user-JAR import launcher with identity checks and an asset-free
-  Windows package. The current data-free executable package already builds.
-- [ ] Complete continuous play-through and save round-trip checks across all nine
-  levels at widths 240/569, then 427/747, live resize/fullscreen and FPS presets.
+- [ ] Wire the 1.0.1 build's touch input (pointer events) to the mouse, if wanted.
+- [ ] Human check of the OPTIONS screen flows: rebinding by capture, gamepad page, returning to
+  the pause menu. Only the top page and the display page were seen in an unattended run.
+- [ ] Record and verify a complete playthrough, first spawn to credits, including
+  every boss, exit, checkpoint death/restart and Continue. Current evidence is
+  per-tick equivalence under fuzzed input plus inspected frames.
+- [ ] Human pass in each display mode (240, 427, 569, 747, auto with live resize,
+  fullscreen) and at native/30/60/144 fps. Unattended runs covered startup,
+  cutscenes, gameplay, music start and saving; nobody has watched a whole level.
+- [ ] Test gamepad input and audio output on real hardware; both are implemented
+  but were only exercised as far as an unattended run can.
+- [ ] Decide whether widescreen activation distance should scale with the view
+  (current behavior) or stay at the original 240-pixel radius.
+- [ ] An OPTIONS screen for the 1.3.7 program too (it still uses a file plus F-keys).
+- [ ] Replace phone-key tutorial icons and Czech HUD bar labels, which are sprite
+  art, if English/desktop art is wanted.
+- [ ] Interpolation refinements: per-effect layers and sub-pixel motion.
+- [ ] Test on a clean Windows machine; non-Windows hosts.
 - [ ] Configure publishing/updating only after a real destination is supplied;
   no repository or hosting destination is currently configured.
 
 ## Verification and implementation detail
 
-- Run default `python tools/rename_sod.py` after Java naming/patch/check changes.
-- Run Debug/Release builds, checks appropriate to each native change and
-  `soul/port/build_dist.bat`; retain all data and screenshots outside git.
-- Linked prompt removal adds 352 original-bytecode/native rows and verified
-  removal in the chandelier host fixtures; see [NATIVE_PROMPT_REMOVAL.md](NATIVE_PROMPT_REMOVAL.md).
-- Camera controllers add 1368 handler/camera/world rows and 58 controlled host
-  checks at 240/569; see [NATIVE_CAMERA_CONTROLLERS.md](NATIVE_CAMERA_CONTROLLERS.md).
-- Exit/completion adds 1008 original-bytecode/native rows and 58 host checks;
-  see [NATIVE_COMPLETION.md](NATIVE_COMPLETION.md).
-- Completion/progression adds 444 original/reference expectations, including
-  actual RMS writes and unload, plus 24 native decision rows and 36 cross-process
-  finish/Continue/replay checks; see [NATIVE_FINISH.md](NATIVE_FINISH.md).
-- Current baseline: 575 player assertions, 25 timed-switch assertions, 17 barrier
-  assertions, 15 thrown-object assertions, 26 type-3 decision assertions, 20 type-3
-  actor assertions and 109 CTests. Type-3 decisions add 10922 bytecode rows and the
-  integrated actor adds 11487 rows plus 48 world and 4 presentation fixtures; see
-  [NATIVE_TYPE3_DECISIONS.md](NATIVE_TYPE3_DECISIONS.md) and [NATIVE_TYPE3_ACTORS.md](NATIVE_TYPE3_ACTORS.md). Script 160 adds 3000
-  original-bytecode rows and 24 host runs at both widths; see
-  [NATIVE_CHANDELIER.md](NATIVE_CHANDELIER.md). The intro retains its 5460 rows
-  and 48 playback/skip host runs; see [NATIVE_INTRO.md](NATIVE_INTRO.md).
-- [PORT_ROADMAP.md](PORT_ROADMAP.md) gives the native implementation order and
-  concrete acceptance conditions; feature docs retain detailed evidence/limits.
+- 1.0.1: `python tools/build_full.py` after changing `soul_full/docs/names.map` or its artifact
+  fixes, then `python tools/gen_port.py`; `python tools/check_narrowing.py soul_full` and
+  `python tools/check_engine.py` must stay clean.
+- 1.3.7: `python tools/rename_sod.py`, then `python tools/gen_port.py --game v137` and
+  `python tools/check_engine.py --game v137`.
+- `soul\port\build.bat` (Debug + 112 CTests) and `soul\port\build_dist.bat`
+  (Release, tests, package validation). CI needs no game data.
+- `python tools/check_engine.py` (needs the extracted data and a JDK) after any
+  change to the translator, runtime, port patches or port Java. It must stay
+  identical; a divergence names the first differing tick and fields.
+- `soul_engine_check --verify-replay` after touching recording or drawing.
+- [PORT_ROADMAP.md](PORT_ROADMAP.md) gives the native layout and acceptance rules;
+  feature docs retain detailed evidence and limits.

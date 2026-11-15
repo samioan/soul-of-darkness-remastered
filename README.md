@@ -5,7 +5,52 @@ J2ME v1.3.7. Follows the approach in `../tes-travels-decomp`,
 `../gow-betrayal-decomp` and `../rac-j2me-decomp`: recover Java, verify and rename
 it, document assets, then build a native C++17 port with CMake, Ninja and MSVC.
 
-**Launching the Windows port now opens a logo/title/menu flow when game data is found. New Game enters the playable first-level slice with an in-game HUD, movement, combat, loot and a rider-controlled platform. The complete game remains unfinished.**
+**`soul_of_darkness.exe` now plays the full-featured Soul of Darkness 1.0.1 (the 240x320 HTC
+P3450 build): native English, eleven chapters, weapon upgrades, transformations, parallax
+backgrounds, music and sound effects, with widescreen, display-rate frame interpolation,
+keyboard and gamepad, and an in-game OPTIONS screen drawn in the game's own style.** Its
+shipped engine matches that build's original class files over 187,499 fuzzed ticks across all
+eleven levels; see [soul_full/docs/BUILD_101.md](soul_full/docs/BUILD_101.md). No complete
+playthrough has been recorded yet.
+
+```powershell
+python tools/build_full.py --jar <SoulOfDarkness_HTC_P3450_EN_IGPL_EU_101_S8000.jar>   # once
+python tools/gen_port.py; .\soul\port\build_dist.bat; python tools/check_engine.py
+.\soul\port\dist\soul_of_darkness.exe --jar <that jar>
+```
+
+The 1.3.7 JAR this project started from turned out to be a cut-down edition (Czech text, nine
+shorter levels, no upgrades). Everything below about it still holds, and it still builds, as
+`soul_of_darkness_v137.exe` (`--game v137` for the tools).
+
+**The 1.3.7 translation runs that whole game natively: all nine levels, menus,
+cutscenes, bosses, the original save record and music, with widescreen, display-rate
+frame interpolation, keyboard and gamepad.** It is the verified reference Java translated
+to C++ (`python tools/gen_port.py`) on a small runtime, not an emulator. The shipped Release
+engine at the original 240 width matches the original class files field for field over
+197,897 fuzzed ticks across all nine levels (`python tools/check_engine.py`). That compares
+game state under random input, not pixels, and **no complete playthrough has been recorded
+yet**; see [the engine notes](soul/docs/NATIVE_ENGINE.md) for exactly what was and was not checked.
+
+```powershell
+.\setup.ps1                                   # once: extract, decompile, verify
+python tools/gen_port.py --game v137          # regenerate soul/port/gen after Java or patch changes
+.\soul\port\build_dist.bat                    # Release build, tests, package in soul/port/dist
+.\soul\port\dist\soul_of_darkness_v137.exe --jar .\Soul-of-Darkness_J2ME_EN_v137.jar
+python tools/check_engine.py --game v137      # original bytecode vs. the built engine
+```
+
+Put your own JAR beside the executable, or pick it when asked; nothing is extracted. Press F1
+in the game for controls. F8 cycles width (auto, 240, 427, 569, 747), F9 frame rate, F10
+interpolation, F11 fullscreen, F7 English/original text; bindings live in `settings.ini`.
+See [soul/port/dist_readme.txt](soul/port/dist_readme.txt).
+
+The rest of this file describes the earlier hand-ported path (`soul_port.exe`,
+`soul_assets.exe`): level 0 and parts of level 1 rebuilt handler by handler, each checked
+against original bytecode. It remains as independent evidence and analysis tooling and is no
+longer how the game is played. Statements below that something "remains unfinished" refer to
+that path only.
+
 All six classes are decompiled and the renamed Java compiles with zero errors.
 The Game/BSprite/Actor read-throughs map 236 fields and 354 methods,
 with behavioral checks against the original bytecode. All 36 sprites decode

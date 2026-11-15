@@ -479,3 +479,39 @@ across FPS/interpolation. --intro-script / --game-intro-script use the ordinary
 spawn and real input; their skip variants fast-forward via Backspace's mask.
 Normal New Game enables the intro automatically. NATIVE_INTRO.md records the
 remaining interpreter, original-renderer and owner limits.
+
+## Translated engine (the playable game)
+
+`python tools/gen_port.py` copies `soul/src`, applies the asserting desktop patches in
+`tools/port_patches.py`, adds `tools/port_java/*.java`, compile-checks the result and
+translates it to C++17 with `tools/j2cpp/J2Cpp.java` (javac attributed trees; needs the
+JDK 17+ that the rest of the pipeline already uses). Output: `soul/port/gen/`, tracked,
+never edited by hand. `--vanilla` writes the unpatched translation to
+`soul/analysis/gen_vanilla`.
+
+`python tools/check_engine.py` runs the original class files
+(`reference_checks/EngineOracle.java` with the no-draw API in
+`reference_checks/engine_adapter/`) against `soul/port/build/Release/soul_engine_check.exe`
+with identical seeds and scripted input, comparing a fingerprint of all Game/Actor/BSprite
+statics and all live actor fields after every tick. `--ticks`, `--seeds`, `--level` and
+`--exe` select longer or different runs; traces go to ignored `soul/analysis/engine-*.txt`.
+
+`soul_engine_check.exe` is the headless driver: `--data DIR --ticks N --script FILE
+--width W --english --shot TICK FILE --mid-shot TICK FILE --verify-replay --describe`.
+See `soul/docs/NATIVE_ENGINE.md`.
+
+### Two builds
+
+The tools above default to the full 1.0.1 build (`soul_full/`): `tools/build_full.py` produces its
+reference tree, `tools/gen_port.py` writes `soul/port/gen_full`, `tools/check_engine.py` compares
+`soul_engine_check.exe`. Pass `--game v137` to `gen_port.py` and `check_engine.py` for the 1.3.7
+build (`soul/src` -> `soul/port/gen`, `soul_engine_check_v137.exe`).
+
+`python tools/check_narrowing.py [soul_full|soul]` recompiles a reference tree and compares each
+method's narrowing-cast counts and call descriptors with the original class files. It finds two
+decompiler artifact classes that compile cleanly but change behavior: int locals declared as
+byte/short, and calls that Java overload resolution sends to a different method than the
+bytecode did. See `soul_full/docs/BUILD_101.md`.
+
+`soul_engine_check --trace-throws N` prints a symbolized stack for the first N Java exceptions the
+runtime raises (needs a build with debug information).

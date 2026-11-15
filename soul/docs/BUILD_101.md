@@ -41,9 +41,17 @@ All are asserting patches with their bytecode evidence in the script.
 
 `python tools/check_narrowing.py` recompiles the reference and compares, per method,
 narrowing-instruction counts and call descriptors with the original class files; it is what
-located every site in 3 and 4. Its remaining findings are understood and harmless: three
-redundant `(byte)` casts on small constants in the LZMA decoder, and inherited-method owner
-names (`getAppProperty`, `getWidth`, `repaint`) that javac records differently.
+located every site in 3 and 4. It also compares constructors and the keyword-renamed `do_()`
+(both were silently skipped until 2026-11-15). Its six remaining findings are understood and
+harmless: three redundant `(byte)` casts on the constants 7-11 in the LZMA decoder (the local
+they feed was widened to `int` by `WIDEN`), and inherited-method owner names (`getAppProperty`,
+`getWidth`/`getHeight`, `repaint`, `setFullScreenMode`) that javac records under the subclass.
+
+A wider per-method comparison (2026-11-15, not a checked-in tool) of every compiler-independent
+operation (int/long arithmetic, shifts, logic, conversions, typed array loads and stores, field
+writes) between the original class files and the recompiled reference found no other
+difference than those casts and two compound assignments on array elements
+(`a[i] += x` printed as `a[i] = a[i] + x`, side-effect-free index, in `Game.ak`/`Game.ar`).
 
 ## Verification (2026-11-15)
 

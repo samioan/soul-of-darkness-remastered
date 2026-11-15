@@ -21,7 +21,7 @@ target_link_libraries(soul_of_darkness PRIVATE sod_engine user32 gdi32 shell32 w
 add_executable(soul_engine_check engine/engine_check.cpp)
 target_link_libraries(soul_engine_check PRIVATE sod_engine dbghelp)
 if(MSVC)
-  # Java int arithmetic wraps; MSVC wraps too in practice, and tools/check_engine.py verifies the built binary.
+  # Java int arithmetic wraps; the translator emits it through unsigned helpers (jrt.h), so there is no signed overflow.
   target_compile_options(sod_engine PRIVATE /utf-8 /bigobj /W3 /wd4102 /wd4244 /wd4101 /wd4702)
   target_compile_options(soul_of_darkness PRIVATE /W4 /utf-8)
   target_compile_options(soul_engine_check PRIVATE /W4 /utf-8)

@@ -46,18 +46,18 @@ void PortMenu::update() {
    (font)->m_a_GraphicsStringIII(g, ((PortMenu::page < 0) ? Ref<String>(jlit(u"OPTIONS")) : Ref<String>((PortMenu::PAGES)[PortMenu::page])), 120, 16, 17);
    jint n = PortMenu::count();
    if (((PortMenu::row >= n))) {
-      (PortMenu::row = ((n > 0) ? (n - 1) : 0));
+      (PortMenu::row = ((n > 0) ? jsub32(n, 1) : 0));
    }
    if (((PortMenu::row < PortMenu::scroll))) {
       (PortMenu::scroll = PortMenu::row);
    }
-   if (((PortMenu::row >= (PortMenu::scroll + 12)))) {
-      (PortMenu::scroll = ((PortMenu::row - 12) + 1));
+   if (((PortMenu::row >= jadd32(PortMenu::scroll, 12)))) {
+      (PortMenu::scroll = jadd32(jsub32(PortMenu::row, 12), 1));
    }
    {
       jint i = PortMenu::scroll;
-      for (; ((i < n) && (i < (PortMenu::scroll + 12))); (i++)) {
-         jint y = (44 + (((i - PortMenu::scroll)) * 19));
+      for (; ((i < n) && (i < jadd32(PortMenu::scroll, 12))); (i++)) {
+         jint y = jadd32(44, jmul32((jsub32(i, PortMenu::scroll)), 19));
          ((font)->z = ((i == PortMenu::row) ? 2 : 5));
          if (((PortMenu::page < 0))) {
             (font)->m_a_GraphicsStringIII(g, (PortMenu::PAGES)[i], 120, y, 17);
@@ -71,7 +71,7 @@ void PortMenu::update() {
    if (((PortMenu::scroll > 0))) {
       (font)->m_a_GraphicsStringIII(g, jlit(u"+"), 120, 32, 17);
    }
-   if ((((PortMenu::scroll + 12) < n))) {
+   if (((jadd32(PortMenu::scroll, 12) < n))) {
       (font)->m_a_GraphicsStringIII(g, jlit(u"+"), 120, 272, 17);
    }
    jboolean capturing = PortNative::settingCapturing();
@@ -81,9 +81,9 @@ void PortMenu::update() {
       return;
    }
    if ((((n > 0) && Game::m_G_I(16388)))) {
-      (PortMenu::row = jrem32((((PortMenu::row + n) - 1)), n));
+      (PortMenu::row = jrem32((jsub32(jadd32(PortMenu::row, n), 1)), n));
    } else if ((((n > 0) && Game::m_G_I(33024)))) {
-      (PortMenu::row = jrem32(((PortMenu::row + 1)), n));
+      (PortMenu::row = jrem32((jadd32(PortMenu::row, 1)), n));
    } else if ((Game::m_G_I(131072))) {
       if (((PortMenu::page < 0))) {
          PortMenu::close();

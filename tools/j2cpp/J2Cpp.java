@@ -825,10 +825,17 @@ public final class J2Cpp {
             : prefix + "(" + String.join(", ", strs) + ")";
     }
 
+    /** Java int/long +, -, * and negation wrap; plain C++ signed arithmetic would be undefined on overflow. */
+    static String wrapBits(Type t) {
+        TypeTag tag = t.getTag();
+        return tag == TypeTag.LONG ? "64" : tag == TypeTag.INT ? "32" : null;
+    }
+
     String unary(JCUnary u) {
+        if (u.type.constValue() != null && isPrimitive(u.type)) return constant(u.type.constValue(), u.type);
         String a = expr(u.arg);
         switch (u.getTag()) {
-            case NEG: return "(-" + a + ")";
+            case NEG: return wrapBits(u.type) != null ? "jneg" + wrapBits(u.type) + "(" + a + ")" : "(-" + a + ")";
             case POS: return "(+" + a + ")";
             case NOT: return "(!" + a + ")";
             case COMPL: return "(~" + a + ")";
@@ -862,9 +869,9 @@ public final class J2Cpp {
         String bits = wide ? "64" : "32";
         String cast = wide ? "(jlong)" : "(jint)";
         switch (tag) {
-            case PLUS: return "(" + a + " + " + b + ")";
-            case MINUS: return "(" + a + " - " + b + ")";
-            case MUL: return "(" + a + " * " + b + ")";
+            case PLUS: return wrapBits(result) != null ? "jadd" + bits + "(" + a + ", " + b + ")" : "(" + a + " + " + b + ")";
+            case MINUS: return wrapBits(result) != null ? "jsub" + bits + "(" + a + ", " + b + ")" : "(" + a + " - " + b + ")";
+            case MUL: return wrapBits(result) != null ? "jmul" + bits + "(" + a + ", " + b + ")" : "(" + a + " * " + b + ")";
             case DIV: return safeDivisor ? "(" + a + " / " + b + ")" : "jdiv" + bits + "(" + a + ", " + b + ")";
             case MOD: return safeDivisor ? "(" + a + " % " + b + ")" : "jrem" + bits + "(" + a + ", " + b + ")";
             case SL: return "jshl" + bits + "(" + cast + "(" + a + "), (jint)(" + b + "))";

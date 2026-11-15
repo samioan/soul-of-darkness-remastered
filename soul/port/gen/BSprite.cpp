@@ -30,13 +30,13 @@ void BSprite::m_a_ABI(Arr<jbyte> var1, jint var2) {
    Ref<BSprite> _self(this);
    try {
       System::gc();
-      if (((((jshort)((([&]{ auto _t0 = (((var1)[(var2++)] & 255)); auto _t1 = (jshl32((jint)((((var1)[(var2++)] & 255))), (jint)(8))); return (_t0 + _t1); }())))) != 991))) {
+      if (((((jshort)((([&]{ auto _t0 = (((var1)[(var2++)] & 255)); auto _t1 = (jshl32((jint)((((var1)[(var2++)] & 255))), (jint)(8))); return jadd32(_t0, _t1); }())))) != 991))) {
          (System::out)->println(jlit(u"ERROR: Invalid BSprite version !"));
       }
-      ((this)->B = ([&]{ auto _t6 = ([&]{ auto _t4 = ([&]{ auto _t2 = (((var1)[(var2++)] & 255)); auto _t3 = (jshl32((jint)((((var1)[(var2++)] & 255))), (jint)(8))); return (_t2 + _t3); }()); auto _t5 = (jshl32((jint)((((var1)[(var2++)] & 255))), (jint)(16))); return (_t4 + _t5); }()); auto _t7 = (jshl32((jint)((((var1)[(var2++)] & 255))), (jint)(24))); return (_t6 + _t7); }()));
+      ((this)->B = ([&]{ auto _t6 = ([&]{ auto _t4 = ([&]{ auto _t2 = (((var1)[(var2++)] & 255)); auto _t3 = (jshl32((jint)((((var1)[(var2++)] & 255))), (jint)(8))); return jadd32(_t2, _t3); }()); auto _t5 = (jshl32((jint)((((var1)[(var2++)] & 255))), (jint)(16))); return jadd32(_t4, _t5); }()); auto _t7 = (jshl32((jint)((((var1)[(var2++)] & 255))), (jint)(24))); return jadd32(_t6, _t7); }()));
       jint var4 = 0;
       if ((((((this)->B & 1)) != 0))) {
-         ((this)->b = ([&]{ auto _t8 = (((var1)[(var2++)] & 255)); auto _t9 = (jshl32((jint)((((var1)[(var2++)] & 255))), (jint)(8))); return (_t8 + _t9); }()));
+         ((this)->b = ([&]{ auto _t8 = (((var1)[(var2++)] & 255)); auto _t9 = (jshl32((jint)((((var1)[(var2++)] & 255))), (jint)(8))); return jadd32(_t8, _t9); }()));
          if ((((this)->b > 0))) {
             if ((((((this)->B & 4)) != 0))) {
                ((this)->e = jnewarray<Arr<jbyte>>((this)->b));
@@ -69,34 +69,34 @@ void BSprite::m_a_ABI(Arr<jbyte> var1, jint var2) {
       }
       if ((((((this)->B & 256)) != 0))) {
          jint var63{};
-         if (((((var63 = ([&]{ auto _t10 = (((var1)[(var2++)] & 255)); auto _t11 = (jshl32((jint)((((var1)[(var2++)] & 255))), (jint)(8))); return (_t10 + _t11); }()))) > 0))) {
+         if (((((var63 = ([&]{ auto _t10 = (((var1)[(var2++)] & 255)); auto _t11 = (jshl32((jint)((((var1)[(var2++)] & 255))), (jint)(8))); return jadd32(_t10, _t11); }()))) > 0))) {
             ((this)->l = jnewarray<Arr<jshort>>(jshl32((jint)(var63), (jint)(2))));
             {
                jint var6 = 0;
                for (; (var6 < var63); (var6++)) {
-                  (((this)->l)[(var6 * 4)] = (var1)[(var2++)]);
+                  (((this)->l)[jmul32(var6, 4)] = (var1)[(var2++)]);
                   if ((((((this)->B & 1024)) != 0))) {
-                     (((this)->l)[((var6 * 4) + 1)] = ((jshort)((([&]{ auto _t12 = (((var1)[(var2++)] & 255)); auto _t13 = (jshl32((jint)((((var1)[(var2++)] & 255))), (jint)(8))); return (_t12 + _t13); }())))));
-                     (((this)->l)[((var6 * 4) + 2)] = ((jshort)((([&]{ auto _t14 = (((var1)[(var2++)] & 255)); auto _t15 = (jshl32((jint)((((var1)[(var2++)] & 255))), (jint)(8))); return (_t14 + _t15); }())))));
+                     (((this)->l)[jadd32(jmul32(var6, 4), 1)] = ((jshort)((([&]{ auto _t12 = (((var1)[(var2++)] & 255)); auto _t13 = (jshl32((jint)((((var1)[(var2++)] & 255))), (jint)(8))); return jadd32(_t12, _t13); }())))));
+                     (((this)->l)[jadd32(jmul32(var6, 4), 2)] = ((jshort)((([&]{ auto _t14 = (((var1)[(var2++)] & 255)); auto _t15 = (jshl32((jint)((((var1)[(var2++)] & 255))), (jint)(8))); return jadd32(_t14, _t15); }())))));
                   } else {
-                     (((this)->l)[((var6 * 4) + 1)] = (var1)[(var2++)]);
-                     (((this)->l)[((var6 * 4) + 2)] = (var1)[(var2++)]);
+                     (((this)->l)[jadd32(jmul32(var6, 4), 1)] = (var1)[(var2++)]);
+                     (((this)->l)[jadd32(jmul32(var6, 4), 2)] = (var1)[(var2++)]);
                   }
-                  (((this)->l)[((var6 * 4) + 3)] = (var1)[(var2++)]);
+                  (((this)->l)[jadd32(jmul32(var6, 4), 3)] = (var1)[(var2++)]);
                }
             }
          }
          jint var68{};
-         if (((((var68 = ([&]{ auto _t16 = (((var1)[(var2++)] & 255)); auto _t17 = (jshl32((jint)((((var1)[(var2++)] & 255))), (jint)(8))); return (_t16 + _t17); }()))) > 0))) {
+         if (((((var68 = ([&]{ auto _t16 = (((var1)[(var2++)] & 255)); auto _t17 = (jshl32((jint)((((var1)[(var2++)] & 255))), (jint)(8))); return jadd32(_t16, _t17); }()))) > 0))) {
             ((this)->k = jnewarray<Arr<jbyte>>(jshl32((jint)(var68), (jint)(2))));
             System::arraycopy(var1, var2, (this)->k, 0, ((this)->k).length());
-            (var2 = (jint)((var2 + ((this)->k).length())));
+            (var2 = (jint)(jadd32(var2, ((this)->k).length())));
          }
-         if (((((var68 = ([&]{ auto _t18 = (((var1)[(var2++)] & 255)); auto _t19 = (jshl32((jint)((((var1)[(var2++)] & 255))), (jint)(8))); return (_t18 + _t19); }()))) > 0))) {
+         if (((((var68 = ([&]{ auto _t18 = (((var1)[(var2++)] & 255)); auto _t19 = (jshl32((jint)((((var1)[(var2++)] & 255))), (jint)(8))); return jadd32(_t18, _t19); }()))) > 0))) {
             ((this)->h = jnewarray<Arr<jbyte>>(var68));
             ((this)->i = jnewarray<Arr<jshort>>(var68));
             jshort var7 = 0;
-            ((this)->j = jnewarray<Arr<jshort>>((var68 + 1)));
+            ((this)->j = jnewarray<Arr<jshort>>(jadd32(var68, 1)));
             (((this)->j)[0] = 0);
             {
                jint var8 = 0;
@@ -104,22 +104,22 @@ void BSprite::m_a_ABI(Arr<jbyte> var1, jint var2) {
                   (((this)->h)[var8] = (var1)[(var2++)]);
                   jint var168 = (++var2);
                   (var2++);
-                  (((this)->i)[var8] = ((jshort)((((((var1)[var168] & 255)) + (jshl32((jint)((((var1)[(var2++)] & 255))), (jint)(8))))))));
-                  (var7 = ((jshort)(((var7 + (var1)[(var2++)])))));
-                  (((this)->j)[(var8 + 1)] = var7);
+                  (((this)->i)[var8] = ((jshort)((jadd32((((var1)[var168] & 255)), (jshl32((jint)((((var1)[(var2++)] & 255))), (jint)(8))))))));
+                  (var7 = ((jshort)((jadd32(var7, (var1)[(var2++)])))));
+                  (((this)->j)[jadd32(var8, 1)] = var7);
                }
             }
          }
       }
       if ((((((this)->B & 65536)) != 0))) {
          jint var64{};
-         if (((((var64 = ([&]{ auto _t20 = (((var1)[(var2++)] & 255)); auto _t21 = (jshl32((jint)((((var1)[(var2++)] & 255))), (jint)(8))); return (_t20 + _t21); }()))) > 0))) {
-            ((this)->o = jnewarray<Arr<jbyte>>((var64 * 5)));
+         if (((((var64 = ([&]{ auto _t20 = (((var1)[(var2++)] & 255)); auto _t21 = (jshl32((jint)((((var1)[(var2++)] & 255))), (jint)(8))); return jadd32(_t20, _t21); }()))) > 0))) {
+            ((this)->o = jnewarray<Arr<jbyte>>(jmul32(var64, 5)));
             System::arraycopy(var1, var2, (this)->o, 0, ((this)->o).length());
-            (var2 = (jint)((var2 + ((this)->o).length())));
+            (var2 = (jint)(jadd32(var2, ((this)->o).length())));
          }
          jint var70{};
-         if (((((var70 = ([&]{ auto _t22 = (((var1)[(var2++)] & 255)); auto _t23 = (jshl32((jint)((((var1)[(var2++)] & 255))), (jint)(8))); return (_t22 + _t23); }()))) > 0))) {
+         if (((((var70 = ([&]{ auto _t22 = (((var1)[(var2++)] & 255)); auto _t23 = (jshl32((jint)((((var1)[(var2++)] & 255))), (jint)(8))); return jadd32(_t22, _t23); }()))) > 0))) {
             ((this)->m = jnewarray<Arr<jbyte>>(var70));
             ((this)->n = jnewarray<Arr<jshort>>(var70));
             {
@@ -128,13 +128,13 @@ void BSprite::m_a_ABI(Arr<jbyte> var1, jint var2) {
                   (((this)->m)[var74] = (var1)[(var2++)]);
                   jint var170 = (++var2);
                   (var2++);
-                  (((this)->n)[var74] = ((jshort)((((((var1)[var170] & 255)) + (jshl32((jint)((((var1)[(var2++)] & 255))), (jint)(8))))))));
+                  (((this)->n)[var74] = ((jshort)((jadd32((((var1)[var170] & 255)), (jshl32((jint)((((var1)[(var2++)] & 255))), (jint)(8))))))));
                }
             }
          }
       }
       if ((((((this)->B & 16777216)) != 0))) {
-         jshort var65 = ((jshort)((([&]{ auto _t24 = (((var1)[(var2++)] & 255)); auto _t25 = (jshl32((jint)((((var1)[(var2++)] & 255))), (jint)(8))); return (_t24 + _t25); }()))));
+         jshort var65 = ((jshort)((([&]{ auto _t24 = (((var1)[(var2++)] & 255)); auto _t25 = (jshl32((jint)((((var1)[(var2++)] & 255))), (jint)(8))); return jadd32(_t24, _t25); }()))));
          ((this)->v = jnewarray<Arr<Arr<Arr<jint>>>>(var4, (this)->x));
          Arr<jint> var71 = jnewarray<Arr<jint>>(var4);
          {
@@ -158,7 +158,7 @@ void BSprite::m_a_ABI(Arr<jbyte> var1, jint var2) {
                         {
                            jint var11 = 0;
                            for (; (var11 < var9); (var11++)) {
-                              jint var12 = ([&]{ auto _t26 = (((var1)[(var2++)] & 255)); auto _t27 = (jshl32((jint)((((var1)[(var2++)] & 255))), (jint)(8))); return (_t26 + _t27); }());
+                              jint var12 = ([&]{ auto _t26 = (((var1)[(var2++)] & 255)); auto _t27 = (jshl32((jint)((((var1)[(var2++)] & 255))), (jint)(8))); return jadd32(_t26, _t27); }());
                               jint var13 = -16777216;
                               if (((((var12 & 32768)) != 32768))) {
                                  (var13 = 0);
@@ -173,14 +173,14 @@ void BSprite::m_a_ABI(Arr<jbyte> var1, jint var2) {
                }
             }
          }
-         ((this)->C = ((jshort)((([&]{ auto _t28 = (((var1)[(var2++)] & 255)); auto _t29 = (jshl32((jint)((((var1)[(var2++)] & 255))), (jint)(8))); return (_t28 + _t29); }())))));
+         ((this)->C = ((jshort)((([&]{ auto _t28 = (((var1)[(var2++)] & 255)); auto _t29 = (jshl32((jint)((((var1)[(var2++)] & 255))), (jint)(8))); return jadd32(_t28, _t29); }())))));
          if ((((this)->C == 25840))) {
             ((this)->D = jnewarray<Arr<jint>>(var4));
             ((this)->E = jnewarray<Arr<jint>>(var4));
             {
                jint var76 = 0;
                for (; (var76 < var4); (var76++)) {
-                  jint var80 = ((var71)[var76] - 1);
+                  jint var80 = jsub32((var71)[var76], 1);
                   (((this)->D)[var76] = 1);
                   {
                      (((this)->E)[var76] = 0);
@@ -200,37 +200,37 @@ void BSprite::m_a_ABI(Arr<jbyte> var1, jint var2) {
             {
                jint var85 = 0;
                for (; (var85 < (this)->b); (var85++)) {
-                  jint var88 = ([&]{ auto _t30 = (((var1)[(var81++)] & 255)); auto _t31 = (jshl32((jint)((((var1)[(var81++)] & 255))), (jint)(8))); return (_t30 + _t31); }());
+                  jint var88 = ([&]{ auto _t30 = (((var1)[(var81++)] & 255)); auto _t31 = (jshl32((jint)((((var1)[(var81++)] & 255))), (jint)(8))); return jadd32(_t30, _t31); }());
                   (((this)->G)[var85] = var77);
-                  (var81 = (jint)((var81 + var88)));
-                  (var77 = (jint)((var77 + var88)));
+                  (var81 = (jint)(jadd32(var81, var88)));
+                  (var77 = (jint)(jadd32(var77, var88)));
                }
             }
             ((this)->F = jnewarray<Arr<jbyte>>(var77));
             {
                jint var86 = 0;
                for (; (var86 < (this)->b); (var86++)) {
-                  jint var89 = ([&]{ auto _t32 = (((var1)[(var2++)] & 255)); auto _t33 = (jshl32((jint)((((var1)[(var2++)] & 255))), (jint)(8))); return (_t32 + _t33); }());
+                  jint var89 = ([&]{ auto _t32 = (((var1)[(var2++)] & 255)); auto _t33 = (jshl32((jint)((((var1)[(var2++)] & 255))), (jint)(8))); return jadd32(_t32, _t33); }());
                   System::arraycopy(var1, var2, (this)->F, ((this)->G)[var86], var89);
-                  (var2 = (jint)((var2 + var89)));
+                  (var2 = (jint)(jadd32(var2, var89)));
                }
             }
          }
       }
       if (((((((this)->B & 536870912)) != 0) && ((((this)->B & 4)) == 0)))) {
-         jint var66 = ([&]{ auto _t34 = (((var1)[(var2++)] & 255)); auto _t35 = (jshl32((jint)((((var1)[(var2++)] & 255))), (jint)(8))); return (_t34 + _t35); }());
+         jint var66 = ([&]{ auto _t34 = (((var1)[(var2++)] & 255)); auto _t35 = (jshl32((jint)((((var1)[(var2++)] & 255))), (jint)(8))); return jadd32(_t34, _t35); }());
          ((this)->F = jnewarray<Arr<jbyte>>(var66));
          System::arraycopy(var1, var2, (this)->F, 0, var66);
-         (var2 = (jint)((var2 + var66)));
+         (var2 = (jint)(jadd32(var2, var66)));
          ((this)->x = ((var1)[(var2++)] & 255));
          ((this)->y = ((var1)[(var2++)] & 255));
          if ((((this)->y == 0))) {
             ((this)->y = 256);
          }
-         jint var72 = (((((this)->y * 3) + 4) + (this)->y) + 4);
-         ((this)->w = jnewarray<Arr<jbyte>>(((this)->x * var72)));
-         System::arraycopy(var1, var2, (this)->w, 0, ((this)->x * var72));
-         (var2 = (jint)((var2 + ((this)->x * var72))));
+         jint var72 = jadd32(jadd32(jadd32(jmul32((this)->y, 3), 4), (this)->y), 4);
+         ((this)->w = jnewarray<Arr<jbyte>>(jmul32((this)->x, var72)));
+         System::arraycopy(var1, var2, (this)->w, 0, jmul32((this)->x, var72));
+         (var2 = (jint)(jadd32(var2, jmul32((this)->x, var72))));
       }
       if (((((((this)->B & 4)) != 0) && ((((this)->B & 16777216)) == 0)))) {
          jint var67 = ((var1)[(var2++)] & 255);
@@ -241,9 +241,9 @@ void BSprite::m_a_ABI(Arr<jbyte> var1, jint var2) {
             jint var73 = 0;
             for (; (var73 < var67); (var73++)) {
                jint var78{};
-               Arr<jbyte> var84 = jnewarray<Arr<jbyte>>((var78 = ([&]{ auto _t36 = (((var1)[(var2++)] & 255)); auto _t37 = (jshl32((jint)((((var1)[(var2++)] & 255))), (jint)(8))); return (_t36 + _t37); }())));
+               Arr<jbyte> var84 = jnewarray<Arr<jbyte>>((var78 = ([&]{ auto _t36 = (((var1)[(var2++)] & 255)); auto _t37 = (jshl32((jint)((((var1)[(var2++)] & 255))), (jint)(8))); return jadd32(_t36, _t37); }())));
                System::arraycopy(var1, var2, var84, 0, var78);
-               (var2 = (jint)((var2 + var78)));
+               (var2 = (jint)(jadd32(var2, var78)));
                jint var87{};
                if (((((var87 = ((var1)[(var2++)] & 255))) == 0))) {
                   (((this)->H)[var73] = jnewarray<Arr<Ref<Image>>>(1));
@@ -261,14 +261,14 @@ void BSprite::m_a_ABI(Arr<jbyte> var1, jint var2) {
                      for (; (var91 < var87); (var91++)) {
                         System::gc();
                         jint var92{};
-                        Arr<jbyte> var93 = jnewarray<Arr<jbyte>>((var92 = ((var90 * 3) + 4)));
+                        Arr<jbyte> var93 = jnewarray<Arr<jbyte>>((var92 = jadd32(jmul32(var90, 3), 4)));
                         System::arraycopy(var1, var2, var93, 0, var92);
-                        (var2 = (jint)((var2 + var92)));
+                        (var2 = (jint)(jadd32(var2, var92)));
                         System::arraycopy(var93, 0, var84, 41, var92);
-                        Arr<jbyte> var14 = jnewarray<Arr<jbyte>>((var90 + 4));
-                        System::arraycopy(var1, var2, var14, 0, (var90 + 4));
-                        (var2 = (jint)((var2 + (var90 + 4))));
-                        System::arraycopy(var14, 0, var84, (49 + var92), (var14).length());
+                        Arr<jbyte> var14 = jnewarray<Arr<jbyte>>(jadd32(var90, 4));
+                        System::arraycopy(var1, var2, var14, 0, jadd32(var90, 4));
+                        (var2 = (jint)(jadd32(var2, jadd32(var90, 4))));
+                        System::arraycopy(var14, 0, var84, jadd32(49, var92), (var14).length());
                         ([&]{ auto _t41 = ((this)->H)[var73]; auto _t42 = var91; auto _t43 = (Ref<Image>)(Image::createImage(var84, 0, (var84).length())); return _t41[_t42] = _t43; }());
                      }
                   }
@@ -301,7 +301,7 @@ void BSprite::m_a_IIII(jint var1, jint var2, jint var3, jint var4) {
 void BSprite::m_a_BSpriteIIII(Ref<BSprite> var1, jint var2, jint var3, jint var4, jint var5) {
    Ref<BSprite> _self(this);
    if (((var4 == -1))) {
-      (var4 = ((this)->b - 1));
+      (var4 = jsub32((this)->b, 1));
    }
    if ((((this)->H == nullptr))) {
       ((this)->H = jnewarray<Arr<Arr<Ref<Image>>>>((this)->x));
@@ -348,7 +348,7 @@ void BSprite::m_a_BSpriteIIII(Ref<BSprite> var1, jint var2, jint var3, jint var4
                   }
                   if (((var15 != nullptr))) {
                      jboolean var22 = false;
-                     jint var23 = (var13 * var14);
+                     jint var23 = jmul32(var13, var14);
                      {
                         jint var18 = 0;
                         for (; (var18 < var23); (var18++)) {
@@ -374,10 +374,10 @@ void BSprite::m_a_BSpriteIIII(Ref<BSprite> var1, jint var2, jint var3, jint var4
       if (((((this)->H)[var2] == nullptr))) {
          (((this)->H)[var2] = jnewarray<Arr<Ref<Image>>>(1));
       }
-      jint var20 = (((this)->y * 3) + 4);
-      jint var21 = ((this)->y + 4);
-      System::arraycopy((this)->w, (var2 * ((var20 + var21))), (this)->F, 41, var20);
-      System::arraycopy((this)->w, ((var2 * ((var20 + var21))) + var20), (this)->F, ((41 + var20) + 8), var21);
+      jint var20 = jadd32(jmul32((this)->y, 3), 4);
+      jint var21 = jadd32((this)->y, 4);
+      System::arraycopy((this)->w, jmul32(var2, (jadd32(var20, var21))), (this)->F, 41, var20);
+      System::arraycopy((this)->w, jadd32(jmul32(var2, (jadd32(var20, var21))), var20), (this)->F, jadd32(jadd32(41, var20), 8), var21);
       ([&]{ auto _t3 = ((this)->H)[var2]; auto _t4 = 0; auto _t5 = (Ref<Image>)(Image::createImage((this)->F, 0, ((this)->F).length())); return _t3[_t4] = _t5; }());
    }
    System::gc();
@@ -385,7 +385,7 @@ void BSprite::m_a_BSpriteIIII(Ref<BSprite> var1, jint var2, jint var3, jint var4
 
 jint BSprite::m_a_III(jint var1, jint var2, jint var3) {
    Ref<BSprite> _self(this);
-   return jshl32((jint)(((((this)->o)[((((((this)->n)[var1] + var2)) * 5) + 1)] & 255))), (jint)(var3));
+   return jshl32((jint)(((((this)->o)[jadd32(jmul32((jadd32(((this)->n)[var1], var2)), 5), 1)] & 255))), (jint)(var3));
 }
 
 jint BSprite::m_a_I(jint var1) {
@@ -395,52 +395,52 @@ jint BSprite::m_a_I(jint var1) {
 
 jint BSprite::m_a_II(jint var1, jint var2) {
    Ref<BSprite> _self(this);
-   jint var3 = jshl32((jint)((((this)->i)[var1] + var2)), (jint)(2));
-   return ((this)->l)[(var3 + 1)];
+   jint var3 = jshl32((jint)(jadd32(((this)->i)[var1], var2)), (jint)(2));
+   return ((this)->l)[jadd32(var3, 1)];
 }
 
 jint BSprite::m_b_II(jint var1, jint var2) {
    Ref<BSprite> _self(this);
-   jint var3 = jshl32((jint)((((this)->i)[var1] + var2)), (jint)(2));
-   return ((this)->l)[(var3 + 2)];
+   jint var3 = jshl32((jint)(jadd32(((this)->i)[var1], var2)), (jint)(2));
+   return ((this)->l)[jadd32(var3, 2)];
 }
 
 jint BSprite::m_c_II(jint var1, jint var2) {
    Ref<BSprite> _self(this);
-   jint var3 = jshl32((jint)((((this)->i)[var1] + var2)), (jint)(2));
-   jint var4 = ((((this)->l)[var3] & 255) | jshl32((jint)((((((this)->l)[(var3 + 3)] & 255) & 192))), (jint)(2)));
+   jint var3 = jshl32((jint)(jadd32(((this)->i)[var1], var2)), (jint)(2));
+   jint var4 = ((((this)->l)[var3] & 255) | jshl32((jint)((((((this)->l)[jadd32(var3, 3)] & 255) & 192))), (jint)(2)));
    return (((this)->f)[var4] & 255);
 }
 
 jint BSprite::m_d_II(jint var1, jint var2) {
    Ref<BSprite> _self(this);
-   jint var3 = jshl32((jint)((((this)->i)[var1] + var2)), (jint)(2));
-   jint var4 = ((((this)->l)[var3] & 255) | jshl32((jint)((((((this)->l)[(var3 + 3)] & 255) & 192))), (jint)(2)));
+   jint var3 = jshl32((jint)(jadd32(((this)->i)[var1], var2)), (jint)(2));
+   jint var4 = ((((this)->l)[var3] & 255) | jshl32((jint)((((((this)->l)[jadd32(var3, 3)] & 255) & 192))), (jint)(2)));
    return (((this)->g)[var4] & 255);
 }
 
 void BSprite::m_a_AIIIIIII(Arr<jint> var1, jint var2, jint var3, jint var4, jint var5, jint var6, jint var7) {
    Ref<BSprite> _self(this);
-   jint var8 = (((((this)->n)[var2] + var3)) * 5);
-   jint var9 = ((((this)->o)[var8] & 255) | jshl32((jint)(((((this)->o)[(var8 + 4)] & 192))), (jint)(2)));
+   jint var8 = jmul32((jadd32(((this)->n)[var2], var3)), 5);
+   jint var9 = ((((this)->o)[var8] & 255) | jshl32((jint)(((((this)->o)[jadd32(var8, 4)] & 192))), (jint)(2)));
    if (((((var5 & 1)) != 0))) {
-      (var6 = (jint)((var6 + ((this)->o)[(var8 + 2)])));
+      (var6 = (jint)(jadd32(var6, ((this)->o)[jadd32(var8, 2)])));
    } else {
-      (var6 = (jint)((var6 - ((this)->o)[(var8 + 2)])));
+      (var6 = (jint)(jsub32(var6, ((this)->o)[jadd32(var8, 2)])));
    }
    if (((((var5 & 2)) != 0))) {
-      (var7 = (jint)((var7 + ((this)->o)[(var8 + 3)])));
+      (var7 = (jint)(jadd32(var7, ((this)->o)[jadd32(var8, 3)])));
    } else {
-      (var7 = (jint)((var7 - ((this)->o)[(var8 + 3)])));
+      (var7 = (jint)(jsub32(var7, ((this)->o)[jadd32(var8, 3)])));
    }
-   this->m_a_AIIIIII(var1, var9, var4, (var5 ^ (((this)->o)[(var8 + 4)] & 15)), var6, var7);
+   this->m_a_AIIIIII(var1, var9, var4, (var5 ^ (((this)->o)[jadd32(var8, 4)] & 15)), var6, var7);
 }
 
 void BSprite::m_a_AIIIIII(Arr<jint> var1, jint var2, jint var3, jint var4, jint var5, jint var6) {
    Ref<BSprite> _self(this);
    if (((var3 != -1))) {
-      (var3 = (jint)((var3 + ((this)->j)[var2])));
-      if (((((this)->j)[(var2 + 1)] <= var3))) {
+      (var3 = (jint)(jadd32(var3, ((this)->j)[var2])));
+      if (((((this)->j)[jadd32(var2, 1)] <= var3))) {
          ((var1)[0] = ((var1)[1] = ((var1)[2] = ((var1)[3] = 0))));
       } else {
          jint var18 = jshl32((jint)(var3), (jint)(2));
@@ -449,19 +449,19 @@ void BSprite::m_a_AIIIIII(Arr<jint> var1, jint var2, jint var3, jint var4, jint 
          jint var24 = (((this)->k)[(var18++)] & 255);
          jint var25 = (((this)->k)[var18] & 255);
          if (((((var4 & 1)) != 0))) {
-            (var5 = (jint)((var5 + (var22 + var24))));
+            (var5 = (jint)(jadd32(var5, jadd32(var22, var24))));
          } else {
-            (var5 = (jint)((var5 - var22)));
+            (var5 = (jint)(jsub32(var5, var22)));
          }
          if (((((var4 & 2)) != 0))) {
-            (var6 = (jint)((var6 + (var23 + var25))));
+            (var6 = (jint)(jadd32(var6, jadd32(var23, var25))));
          } else {
-            (var6 = (jint)((var6 - var23)));
+            (var6 = (jint)(jsub32(var6, var23)));
          }
-         ((var1)[0] = (-var5));
-         ((var1)[1] = (-var6));
-         ((var1)[2] = ((var1)[0] + var24));
-         ((var1)[3] = ((var1)[1] + var25));
+         ((var1)[0] = jneg32(var5));
+         ((var1)[1] = jneg32(var6));
+         ((var1)[2] = jadd32((var1)[0], var24));
+         ((var1)[3] = jadd32((var1)[1], var25));
       }
    } else {
       jint var7 = 0;
@@ -474,50 +474,50 @@ void BSprite::m_a_AIIIIII(Arr<jint> var1, jint var2, jint var3, jint var4, jint 
          for (; (var12 < var11); (var12++)) {
             this->m_a_AIII(var1, var2, var12);
             if ((((var1)[0] < var7))) {
-               (var9 = ((var7 + var9) - (var1)[0]));
+               (var9 = jsub32(jadd32(var7, var9), (var1)[0]));
                (var7 = (var1)[0]);
             }
             if ((((var1)[1] < var8))) {
-               (var10 = ((var8 + var10) - (var1)[1]));
+               (var10 = jsub32(jadd32(var8, var10), (var1)[1]));
                (var8 = (var1)[1]);
             }
-            if ((((var1)[2] > (var7 + var9)))) {
-               (var9 = ((var1)[2] - var7));
+            if ((((var1)[2] > jadd32(var7, var9)))) {
+               (var9 = jsub32((var1)[2], var7));
             }
-            if ((((var1)[3] > (var8 + var10)))) {
-               (var10 = ((var1)[3] - var8));
+            if ((((var1)[3] > jadd32(var8, var10)))) {
+               (var10 = jsub32((var1)[3], var8));
             }
          }
       }
       if (((((var4 & 1)) != 0))) {
-         (var5 = (jint)((var5 + (var7 + var9))));
+         (var5 = (jint)(jadd32(var5, jadd32(var7, var9))));
       } else {
-         (var5 = (jint)((var5 - var7)));
+         (var5 = (jint)(jsub32(var5, var7)));
       }
       if (((((var4 & 2)) != 0))) {
-         (var6 = (jint)((var6 + (var8 + var10))));
+         (var6 = (jint)(jadd32(var6, jadd32(var8, var10))));
       } else {
-         (var6 = (jint)((var6 - var8)));
+         (var6 = (jint)(jsub32(var6, var8)));
       }
-      ((var1)[0] = (-var5));
-      ((var1)[1] = (-var6));
-      ((var1)[2] = ((var1)[0] + var9));
-      ((var1)[3] = ((var1)[1] + var10));
+      ((var1)[0] = jneg32(var5));
+      ((var1)[1] = jneg32(var6));
+      ((var1)[2] = jadd32((var1)[0], var9));
+      ((var1)[3] = jadd32((var1)[1], var10));
    }
 }
 
 void BSprite::m_a_AIII(Arr<jint> var1, jint var2, jint var3) {
    Ref<BSprite> _self(this);
-   jint var4 = jshl32((jint)((((this)->i)[var2] + var3)), (jint)(2));
-   jint var5 = (((this)->l)[(var4 + 3)] & 255);
+   jint var4 = jshl32((jint)(jadd32(((this)->i)[var2], var3)), (jint)(2));
+   jint var5 = (((this)->l)[jadd32(var4, 3)] & 255);
    jint var6 = ((((this)->l)[var4] & 255) | jshl32((jint)(((var5 & 192))), (jint)(2)));
    if (((((var5 & 16)) != 0))) {
       this->m_a_AIIIIII(var1, var6, -1, 0, 0, 0);
    } else {
       ((var1)[0] = this->m_a_II(var2, var3));
       ((var1)[1] = this->m_b_II(var2, var3));
-      ((var1)[2] = ([&]{ auto _t0 = (var1)[0]; auto _t1 = this->m_c_II(var2, var3); return (_t0 + _t1); }()));
-      ((var1)[3] = ([&]{ auto _t2 = (var1)[1]; auto _t3 = this->m_d_II(var2, var3); return (_t2 + _t3); }()));
+      ((var1)[2] = ([&]{ auto _t0 = (var1)[0]; auto _t1 = this->m_c_II(var2, var3); return jadd32(_t0, _t1); }()));
+      ((var1)[3] = ([&]{ auto _t2 = (var1)[1]; auto _t3 = this->m_d_II(var2, var3); return jadd32(_t2, _t3); }()));
    }
 }
 
@@ -531,19 +531,19 @@ void BSprite::m_b_AIII(Arr<jint> var1, jint var2, jint var3) {
 
 void BSprite::m_a_GraphicsIIIIIII(Ref<Graphics> var1, jint var2, jint var3, jint var4, jint var5, jint var6, jint var7, jint var8) {
    Ref<BSprite> _self(this);
-   jint var9 = (((((this)->n)[var2] + var3)) * 5);
-   jint var10 = ((((this)->o)[var9] & 255) | jshl32((jint)(((((this)->o)[(var9 + 4)] & 192))), (jint)(2)));
+   jint var9 = jmul32((jadd32(((this)->n)[var2], var3)), 5);
+   jint var10 = ((((this)->o)[var9] & 255) | jshl32((jint)(((((this)->o)[jadd32(var9, 4)] & 192))), (jint)(2)));
    if (((((var6 & 1)) != 0))) {
-      (var7 = (jint)((var7 + ((this)->o)[(var9 + 2)])));
+      (var7 = (jint)(jadd32(var7, ((this)->o)[jadd32(var9, 2)])));
    } else {
-      (var7 = (jint)((var7 - ((this)->o)[(var9 + 2)])));
+      (var7 = (jint)(jsub32(var7, ((this)->o)[jadd32(var9, 2)])));
    }
    if (((((var6 & 2)) != 0))) {
-      (var8 = (jint)((var8 + ((this)->o)[(var9 + 3)])));
+      (var8 = (jint)(jadd32(var8, ((this)->o)[jadd32(var9, 3)])));
    } else {
-      (var8 = (jint)((var8 - ((this)->o)[(var9 + 3)])));
+      (var8 = (jint)(jsub32(var8, ((this)->o)[jadd32(var9, 3)])));
    }
-   this->m_a_GraphicsIIIIII(var1, var10, (var4 - var7), (var5 - var8), (var6 ^ (((this)->o)[(var9 + 4)] & 15)), var7, var8);
+   this->m_a_GraphicsIIIIII(var1, var10, jsub32(var4, var7), jsub32(var5, var8), (var6 ^ (((this)->o)[jadd32(var9, 4)] & 15)), var7, var8);
 }
 
 void BSprite::m_a_GraphicsIIIIII(Ref<Graphics> var1, jint var2, jint var3, jint var4, jint var5, jint var6, jint var7) {
@@ -561,53 +561,53 @@ void BSprite::m_a_GraphicsIIIIII(Ref<Graphics> var1, jint var2, jint var3, jint 
 
 void BSprite::m_b_GraphicsIIIIIII(Ref<Graphics> var1, jint var2, jint var3, jint var4, jint var5, jint var6, jint var7, jint var8) {
    Ref<BSprite> _self(this);
-   jint var9 = jshl32((jint)((((this)->i)[var2] + var3)), (jint)(2));
-   jint var10 = (((this)->l)[(var9 + 3)] & 255);
+   jint var9 = jshl32((jint)(jadd32(((this)->i)[var2], var3)), (jint)(2));
+   jint var10 = (((this)->l)[jadd32(var9, 3)] & 255);
    jint var11 = ((((this)->l)[var9] & 255) | jshl32((jint)(((var10 & 192))), (jint)(2)));
    if (((this)->P)) {
       if (((BSprite::I == nullptr))) {
          if (((((var6 & 1)) != 0))) {
-            (var4 = (jint)((var4 - jdiv32((((this)->l)[(var9 + 1)] * (this)->Q), (this)->R))));
+            (var4 = (jint)(jsub32(var4, jdiv32(jmul32(((this)->l)[jadd32(var9, 1)], (this)->Q), (this)->R))));
          } else {
-            (var4 = (jint)((var4 + jdiv32((((this)->l)[(var9 + 1)] * (this)->Q), (this)->R))));
+            (var4 = (jint)(jadd32(var4, jdiv32(jmul32(((this)->l)[jadd32(var9, 1)], (this)->Q), (this)->R))));
          }
          if (((((var6 & 2)) != 0))) {
-            (var5 = (jint)((var5 - jdiv32((((this)->l)[(var9 + 2)] * (this)->Q), (this)->R))));
+            (var5 = (jint)(jsub32(var5, jdiv32(jmul32(((this)->l)[jadd32(var9, 2)], (this)->Q), (this)->R))));
          } else {
-            (var5 = (jint)((var5 + jdiv32((((this)->l)[(var9 + 2)] * (this)->Q), (this)->R))));
+            (var5 = (jint)(jadd32(var5, jdiv32(jmul32(((this)->l)[jadd32(var9, 2)], (this)->Q), (this)->R))));
          }
       } else {
          if (((((var6 & 1)) != 0))) {
-            (var4 = (jint)((var4 - jdiv32((((this)->l)[(var9 + 1)] * (BSprite::J)[(this)->Q]), (this)->R))));
+            (var4 = (jint)(jsub32(var4, jdiv32(jmul32(((this)->l)[jadd32(var9, 1)], (BSprite::J)[(this)->Q]), (this)->R))));
          } else {
-            (var4 = (jint)((var4 + jdiv32((((this)->l)[(var9 + 1)] * (BSprite::J)[(this)->Q]), (this)->R))));
+            (var4 = (jint)(jadd32(var4, jdiv32(jmul32(((this)->l)[jadd32(var9, 1)], (BSprite::J)[(this)->Q]), (this)->R))));
          }
          if (((((var6 & 2)) != 0))) {
-            (var5 = (jint)((var5 - jdiv32((((this)->l)[(var9 + 2)] * (BSprite::J)[(this)->Q]), (this)->R))));
+            (var5 = (jint)(jsub32(var5, jdiv32(jmul32(((this)->l)[jadd32(var9, 2)], (BSprite::J)[(this)->Q]), (this)->R))));
          } else {
-            (var5 = (jint)((var5 + jdiv32((((this)->l)[(var9 + 2)] * (BSprite::J)[(this)->Q]), (this)->R))));
+            (var5 = (jint)(jadd32(var5, jdiv32(jmul32(((this)->l)[jadd32(var9, 2)], (BSprite::J)[(this)->Q]), (this)->R))));
          }
       }
    } else {
       if (((((var6 & 1)) != 0))) {
-         (var4 = (jint)((var4 - ((this)->l)[(var9 + 1)])));
+         (var4 = (jint)(jsub32(var4, ((this)->l)[jadd32(var9, 1)])));
       } else {
-         (var4 = (jint)((var4 + ((this)->l)[(var9 + 1)])));
+         (var4 = (jint)(jadd32(var4, ((this)->l)[jadd32(var9, 1)])));
       }
       if (((((var6 & 2)) != 0))) {
-         (var5 = (jint)((var5 - ((this)->l)[(var9 + 2)])));
+         (var5 = (jint)(jsub32(var5, ((this)->l)[jadd32(var9, 2)])));
       } else {
-         (var5 = (jint)((var5 + ((this)->l)[(var9 + 2)])));
+         (var5 = (jint)(jadd32(var5, ((this)->l)[jadd32(var9, 2)])));
       }
    }
    if (((((var10 & 16)) != 0))) {
       this->m_a_GraphicsIIIIII(var1, var11, var4, var5, (var6 ^ (var10 & 15)), var7, var8);
    } else {
       if (((((var6 & 1)) != 0))) {
-         (var4 = (jint)((var4 - (((this)->f)[var11] & 255))));
+         (var4 = (jint)(jsub32(var4, (((this)->f)[var11] & 255))));
       }
       if (((((var6 & 2)) != 0))) {
-         (var5 = (jint)((var5 - (((this)->g)[var11] & 255))));
+         (var5 = (jint)(jsub32(var5, (((this)->g)[var11] & 255))));
       }
       this->m_a_GraphicsIIII(var1, var11, var4, var5, (var6 ^ (var10 & 15)));
    }
@@ -625,7 +625,7 @@ void BSprite::m_b_V() {
    {
       jint var4 = 0;
       for (; (var4 < (BSprite::J).length()); (var4++)) {
-         ([&]{ auto _t0 = BSprite::I; auto _t1 = var4; auto _t2 = (Ref<Image>)(BSprite::m_a_ImageII(var1, jdiv32((var2 * (BSprite::J)[var4]), (this)->R), ((var3 * (BSprite::J)[var4]) / 10))); return _t0[_t1] = _t2; }());
+         ([&]{ auto _t0 = BSprite::I; auto _t1 = var4; auto _t2 = (Ref<Image>)(BSprite::m_a_ImageII(var1, jdiv32(jmul32(var2, (BSprite::J)[var4]), (this)->R), (jmul32(var3, (BSprite::J)[var4]) / 10))); return _t0[_t1] = _t2; }());
       }
    }
 }
@@ -650,7 +650,7 @@ void BSprite::m_a_GraphicsIIII(Ref<Graphics> var1, jint var2, jint var3, jint va
             }
          }
       }
-      if (((((this)->p == -1) || ((((((((1 & (this)->p)) == 0) || ((var3 + var6) > (this)->q))) && (((((2 & (this)->p)) == 0) || (var3 < (this)->q)))) && (((((4 & (this)->p)) == 0) || ((var4 + var7) > (this)->r)))) && (((((8 & (this)->p)) == 0) || (var4 < (this)->r))))))) {
+      if (((((this)->p == -1) || ((((((((1 & (this)->p)) == 0) || (jadd32(var3, var6) > (this)->q))) && (((((2 & (this)->p)) == 0) || (var3 < (this)->q)))) && (((((4 & (this)->p)) == 0) || (jadd32(var4, var7) > (this)->r)))) && (((((8 & (this)->p)) == 0) || (var4 < (this)->r))))))) {
          jint var9 = 0;
          jint var10 = 0;
          Arr<jint> var11 = nullptr;
@@ -661,15 +661,15 @@ void BSprite::m_a_GraphicsIIII(Ref<Graphics> var1, jint var2, jint var3, jint va
                (System::out)->println(jlit(u"DecodeImage() FAILED !"));
                return;
             }
-            if (((((var6 + var3) > 0) && ((var7 + var4) > 0)))) {
+            if ((((jadd32(var6, var3) > 0) && (jadd32(var7, var4) > 0)))) {
                if (((var4 < 0))) {
-                  (var12 = (0 - (var4 * var6)));
-                  (var7 = (jint)((var7 + var4)));
+                  (var12 = jsub32(0, jmul32(var4, var6)));
+                  (var7 = (jint)(jadd32(var7, var4)));
                   (var4 = 0);
                }
                if (((var3 < 0))) {
-                  (var12 = (jint)((var12 - var3)));
-                  (var6 = (jint)((var6 + var3)));
+                  (var12 = (jint)(jsub32(var12, var3)));
+                  (var6 = (jint)(jadd32(var6, var3)));
                   (var3 = 0);
                }
             }
@@ -678,7 +678,7 @@ void BSprite::m_a_GraphicsIIII(Ref<Graphics> var1, jint var2, jint var3, jint va
             (var7 = (var8)->getHeight());
             if (((this)->P)) {
                if (((BSprite::I == nullptr))) {
-                  (var8 = BSprite::m_a_ImageII(var8, jdiv32((var6 * (this)->Q), (this)->R), jdiv32((var7 * (this)->Q), (this)->R)));
+                  (var8 = BSprite::m_a_ImageII(var8, jdiv32(jmul32(var6, (this)->Q), (this)->R), jdiv32(jmul32(var7, (this)->Q), (this)->R)));
                } else {
                   (var8 = (BSprite::I)[(this)->Q]);
                }
@@ -690,48 +690,48 @@ void BSprite::m_a_GraphicsIIII(Ref<Graphics> var1, jint var2, jint var3, jint va
                (var7 = (((this)->g)[var2] & 255));
                if (((this)->P)) {
                   if (((BSprite::I == nullptr))) {
-                     (var9 = jdiv32((var9 * (this)->Q), (this)->R));
-                     (var10 = jdiv32((var10 * (this)->Q), (this)->R));
+                     (var9 = jdiv32(jmul32(var9, (this)->Q), (this)->R));
+                     (var10 = jdiv32(jmul32(var10, (this)->Q), (this)->R));
                   } else {
-                     (var9 = jdiv32((var9 * (BSprite::J)[(this)->Q]), (this)->R));
-                     (var10 = jdiv32((var10 * (BSprite::J)[(this)->Q]), (this)->R));
+                     (var9 = jdiv32(jmul32(var9, (BSprite::J)[(this)->Q]), (this)->R));
+                     (var10 = jdiv32(jmul32(var10, (BSprite::J)[(this)->Q]), (this)->R));
                   }
                }
             }
             if (((this)->P)) {
                if (((BSprite::I == nullptr))) {
-                  (var6 = jdiv32((var6 * (this)->Q), (this)->R));
-                  (var7 = jdiv32((var7 * (this)->Q), (this)->R));
+                  (var6 = jdiv32(jmul32(var6, (this)->Q), (this)->R));
+                  (var7 = jdiv32(jmul32(var7, (this)->Q), (this)->R));
                } else {
-                  (var6 = jdiv32((var6 * (BSprite::J)[(this)->Q]), (this)->R));
-                  (var7 = jdiv32((var7 * (BSprite::J)[(this)->Q]), (this)->R));
+                  (var6 = jdiv32(jmul32(var6, (BSprite::J)[(this)->Q]), (this)->R));
+                  (var7 = jdiv32(jmul32(var7, (BSprite::J)[(this)->Q]), (this)->R));
                }
             }
          }
          if ((((this)->p != -1))) {
             if ((((this)->q != -1))) {
-               if (((((((1 & (this)->p)) != 0) && ((var3 + var6) > (this)->q)) && (var3 < (this)->q)))) {
-                  (var12 = (jint)((var12 + ((this)->q - var3))));
-                  (var6 = ((var3 + var6) - (this)->q));
+               if (((((((1 & (this)->p)) != 0) && (jadd32(var3, var6) > (this)->q)) && (var3 < (this)->q)))) {
+                  (var12 = (jint)(jadd32(var12, jsub32((this)->q, var3))));
+                  (var6 = jsub32(jadd32(var3, var6), (this)->q));
                   (var3 = (this)->q);
                }
-               if (((((((2 & (this)->p)) != 0) && ((var3 + var6) > (this)->q)) && (var3 < (this)->q)))) {
-                  (var6 = ((this)->q - var3));
+               if (((((((2 & (this)->p)) != 0) && (jadd32(var3, var6) > (this)->q)) && (var3 < (this)->q)))) {
+                  (var6 = jsub32((this)->q, var3));
                }
             }
             if ((((this)->r != -1))) {
-               if (((((((8 & (this)->p)) != 0) && ((var4 + var7) > (this)->r)) && (var4 < (this)->r)))) {
-                  (var7 = ((this)->r - var4));
+               if (((((((8 & (this)->p)) != 0) && (jadd32(var4, var7) > (this)->r)) && (var4 < (this)->r)))) {
+                  (var7 = jsub32((this)->r, var4));
                }
-               if (((((((4 & (this)->p)) != 0) && ((var4 + var7) > (this)->r)) && (var4 < (this)->r)))) {
-                  (var12 = (((((this)->r - var4)) * var13) + ((var13 - var6))));
-                  (var7 = (jint)((var7 - ((this)->r - var4))));
+               if (((((((4 & (this)->p)) != 0) && (jadd32(var4, var7) > (this)->r)) && (var4 < (this)->r)))) {
+                  (var12 = jadd32(jmul32((jsub32((this)->r, var4)), var13), (jsub32(var13, var6))));
+                  (var7 = (jint)(jsub32(var7, jsub32((this)->r, var4))));
                   (var4 = (this)->r);
                }
             }
          }
          if (((var8 == nullptr))) {
-            if (((((var6 + var3) > 0) && ((var7 + var4) > 0)))) {
+            if ((((jadd32(var6, var3) > 0) && (jadd32(var7, var4) > 0)))) {
                (var1)->drawRGB(var11, var12, var13, var3, var4, var6, var7, (this)->A);
             }
          } else if (((((var5 & 1)) != 0))) {
@@ -759,8 +759,8 @@ Arr<jint> BSprite::m_c_AIII(Arr<jint> var1, jint var2, jint var3) {
    if (((((this)->F != nullptr) && ((this)->G != nullptr)))) {
       jint var4 = (((this)->f)[var2] & 255);
       jint var5 = (((this)->g)[var2] & 255);
-      if ((((var4 * var5) > (BSprite::a).length()))) {
-         (System::out)->println(jcat(jstr(jcat(jstr(jcat(jstr(jcat(jstr(jcat(jstr(jcat(jstr(jcat(jstr(jcat(jstr(jlit(u"ERROR: sizeX x sizeY > temp.length (")), jstr(var4))), jstr(jlit(u" x ")))), jstr(var5))), jstr(jlit(u" = ")))), jstr((var4 * var5)))), jstr(jlit(u" > ")))), jstr((BSprite::a).length()))), jstr(jlit(u") !!!"))));
+      if (((jmul32(var4, var5) > (BSprite::a).length()))) {
+         (System::out)->println(jcat(jstr(jcat(jstr(jcat(jstr(jcat(jstr(jcat(jstr(jcat(jstr(jcat(jstr(jcat(jstr(jlit(u"ERROR: sizeX x sizeY > temp.length (")), jstr(var4))), jstr(jlit(u" x ")))), jstr(var5))), jstr(jlit(u" = ")))), jstr(jmul32(var4, var5)))), jstr(jlit(u" > ")))), jstr((BSprite::a).length()))), jstr(jlit(u") !!!"))));
          return nullptr;
       }
       Arr<jint> var6 = var1;
@@ -778,7 +778,7 @@ Arr<jint> BSprite::m_c_AIII(Arr<jint> var1, jint var2, jint var3) {
       Arr<jbyte> var9 = (this)->F;
       jint var10 = ((this)->G)[var2];
       jint var11 = 0;
-      jint var12 = (var4 * var5);
+      jint var12 = jmul32(var4, var5);
       if ((((this)->C == 25840))) {
          if (((!(this)->t))) {
             if (((this)->L)) {
@@ -833,7 +833,7 @@ Arr<jint> BSprite::m_c_AIII(Arr<jint> var1, jint var2, jint var3) {
                while (((var11 < var12))) {
                   jint var44{};
                   if (((((var44 = ((var9)[(var10++)] & 255))) > 127))) {
-                     (var44 = (jint)((var44 - 128)));
+                     (var44 = (jint)(jsub32(var44, 128)));
                      while ((((var44--) > 0))) {
                         jint var61{};
                         if (((((var61 = (var7)[((var9)[(var10++)] & 255)])) != (this)->O))) {
@@ -857,7 +857,7 @@ Arr<jint> BSprite::m_c_AIII(Arr<jint> var1, jint var2, jint var3) {
                while (((var11 < var12))) {
                   jint var42{};
                   if (((((var42 = ((var9)[(var10++)] & 255))) > 127))) {
-                     (var42 = (jint)((var42 - 128)));
+                     (var42 = (jint)(jsub32(var42, 128)));
                      while ((((var42--) > 0))) {
                         jint var59{};
                         if (((((var59 = (var7)[((var9)[(var10++)] & 255)])) != (this)->O))) {
@@ -881,7 +881,7 @@ Arr<jint> BSprite::m_c_AIII(Arr<jint> var1, jint var2, jint var3) {
                while (((var11 < var12))) {
                   jint var40{};
                   if (((((var40 = ((var9)[(var10++)] & 255))) > 127))) {
-                     (var40 = (jint)((var40 - 128)));
+                     (var40 = (jint)(jsub32(var40, 128)));
                      while ((((var40--) > 0))) {
                         jint var57 = (var7)[((var9)[(var10++)] & 255)];
                         ((var6)[(var11++)] = var57);
@@ -959,7 +959,7 @@ Arr<jint> BSprite::m_c_AIII(Arr<jint> var1, jint var2, jint var3) {
             if (((((var38 = ((var9)[(var10++)] & 255))) > 127))) {
                jint var55 = ((var9)[(var10++)] & 255);
                jint var15 = (var7)[var55];
-               (var38 = (jint)((var38 - 128)));
+               (var38 = (jint)(jsub32(var38, 128)));
                while ((((var38--) > 0))) {
                   ((var6)[(var11++)] = var15);
                }
@@ -971,14 +971,14 @@ Arr<jint> BSprite::m_c_AIII(Arr<jint> var1, jint var2, jint var3) {
       if (((((var3 & 1)) != 0))) {
          jint var62 = 0;
          {
-            jint var64 = (var4 - 1);
+            jint var64 = jsub32(var4, 1);
             for (; (var62 < var64); (var64--)) {
                {
                   jint var16 = 0;
-                  for (; (var16 < var12); (var16 = (jint)((var16 + var4)))) {
-                     jint var50 = (var6)[(var16 + var62)];
-                     ((var6)[(var16 + var62)] = (var6)[(var16 + var64)]);
-                     ((var6)[(var16 + var64)] = var50);
+                  for (; (var16 < var12); (var16 = (jint)(jadd32(var16, var4)))) {
+                     jint var50 = (var6)[jadd32(var16, var62)];
+                     ((var6)[jadd32(var16, var62)] = (var6)[jadd32(var16, var64)]);
+                     ((var6)[jadd32(var16, var64)] = var50);
                   }
                }
                (var62++);
@@ -988,17 +988,17 @@ Arr<jint> BSprite::m_c_AIII(Arr<jint> var1, jint var2, jint var3) {
       if (((((var3 & 2)) != 0))) {
          jint var63 = 0;
          {
-            jint var65 = (((var5 - 1)) * var4);
-            for (; (var63 < var65); (var65 = (jint)((var65 - var4)))) {
+            jint var65 = jmul32((jsub32(var5, 1)), var4);
+            for (; (var63 < var65); (var65 = (jint)(jsub32(var65, var4)))) {
                {
                   jint var66 = 0;
                   for (; (var66 < var4); (var66++)) {
-                     jint var51 = (var6)[(var63 + var66)];
-                     ((var6)[(var63 + var66)] = (var6)[(var65 + var66)]);
-                     ((var6)[(var65 + var66)] = var51);
+                     jint var51 = (var6)[jadd32(var63, var66)];
+                     ((var6)[jadd32(var63, var66)] = (var6)[jadd32(var65, var66)]);
+                     ((var6)[jadd32(var65, var66)] = var51);
                   }
                }
-               (var63 = (jint)((var63 + var4)));
+               (var63 = (jint)(jadd32(var63, var4)));
             }
          }
       }
@@ -1009,7 +1009,7 @@ Arr<jint> BSprite::m_c_AIII(Arr<jint> var1, jint var2, jint var3) {
 }
 
 jint BSprite::m_b_III(jint var0, jint var1, jint var2) {
-   return jdiv32((((var0 * var1) + (jshr32((jint)(var2), (jint)(1))))), var2);
+   return jdiv32((jadd32(jmul32(var0, var1), (jshr32((jint)(var2), (jint)(1))))), var2);
 }
 
 Ref<Image> BSprite::m_a_ImageII(Ref<Image> var0, jint var1, jint var2) {
@@ -1018,8 +1018,8 @@ Ref<Image> BSprite::m_a_ImageII(Ref<Image> var0, jint var1, jint var2) {
    }
    jint var3 = (var0)->getWidth();
    jint var4 = (var0)->getHeight();
-   Arr<jint> var5 = jnewarray<Arr<jint>>((var3 * var4));
-   Arr<jint> var6 = jnewarray<Arr<jint>>((var1 * var2));
+   Arr<jint> var5 = jnewarray<Arr<jint>>(jmul32(var3, var4));
+   Arr<jint> var6 = jnewarray<Arr<jint>>(jmul32(var1, var2));
    (var0)->getRGB(var5, 0, var3, 0, 0, var3, var4);
    jint var7 = 0;
    jint var8 = 0;
@@ -1030,12 +1030,12 @@ Ref<Image> BSprite::m_a_ImageII(Ref<Image> var0, jint var1, jint var2) {
             jint var10 = 0;
             for (; (var10 < var2); (var10++)) {
                if (((((var7 = BSprite::m_b_III(var10, var4, var2))) >= var4))) {
-                  (var7 = (var4 - 1));
+                  (var7 = jsub32(var4, 1));
                }
                if (((((var8 = BSprite::m_b_III(var9, var3, var1))) >= var3))) {
-                  (var8 = (var3 - 1));
+                  (var8 = jsub32(var3, 1));
                }
-               ((var6)[((var10 * var1) + var9)] = (var5)[((var7 * var3) + var8)]);
+               ((var6)[jadd32(jmul32(var10, var1), var9)] = (var5)[jadd32(jmul32(var7, var3), var8)]);
             }
          }
       }
@@ -1058,19 +1058,19 @@ void BSprite::m_c_V() {
 jint BSprite::m_a_C(jchar var0) {
    jint var1{};
    if ((((var0 >= ((jchar)65)) && (var0 <= ((jchar)90))))) {
-      (var1 = ((var0 - ((jchar)65)) + 31));
+      (var1 = jadd32(jsub32(var0, ((jchar)65)), 31));
    } else if ((((var0 >= ((jchar)97)) && (var0 <= ((jchar)122))))) {
-      (var1 = ((var0 - ((jchar)97)) + 31));
+      (var1 = jadd32(jsub32(var0, ((jchar)97)), 31));
    } else if ((((var0 >= ((jchar)48)) && (var0 <= ((jchar)57))))) {
-      (var1 = ((var0 - ((jchar)48)) + 14));
+      (var1 = jadd32(jsub32(var0, ((jchar)48)), 14));
    } else {
       (var1 = (jlit(u" !\"#$%&'*+,_./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ()-\u00c4" u"\u00d6" u"\u00dc" u"\u00df" u"\u00a1" u"\u00bf" u"\u00c1" u"\u00c0" u"\u00c3" u"\u00c8" u"\u00c9" u"\u00ca" u"\u00ce" u"\u00cf" u"\u00cd" u"\u00d3" u"\u00d4" u"\u00d5" u"\u00da" u"\u00d9" u"\u00d1" u"\u00c7" u"\u00d2" u"\u00a9" u"\u011e" u"\u00c2" u"\u00cc" u"\u015e" u"\u0130" u""))->indexOf((jint)(var0)));
    }
    if (((var1 == -1))) {
-      (var1 = (jlit(u" !\"#$%&'*+,_./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ()-\u00c4" u"\u00d6" u"\u00dc" u"\u00df" u"\u00a1" u"\u00bf" u"\u00c1" u"\u00c0" u"\u00c3" u"\u00c8" u"\u00c9" u"\u00ca" u"\u00ce" u"\u00cf" u"\u00cd" u"\u00d3" u"\u00d4" u"\u00d5" u"\u00da" u"\u00d9" u"\u00d1" u"\u00c7" u"\u00d2" u"\u00a9" u"\u011e" u"\u00c2" u"\u00cc" u"\u015e" u"\u0130" u""))->indexOf((var0 - ((jchar)32))));
+      (var1 = (jlit(u" !\"#$%&'*+,_./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ()-\u00c4" u"\u00d6" u"\u00dc" u"\u00df" u"\u00a1" u"\u00bf" u"\u00c1" u"\u00c0" u"\u00c3" u"\u00c8" u"\u00c9" u"\u00ca" u"\u00ce" u"\u00cf" u"\u00cd" u"\u00d3" u"\u00d4" u"\u00d5" u"\u00da" u"\u00d9" u"\u00d1" u"\u00c7" u"\u00d2" u"\u00a9" u"\u011e" u"\u00c2" u"\u00cc" u"\u015e" u"\u0130" u""))->indexOf(jsub32(var0, ((jchar)32))));
    }
    if (((var1 == -1))) {
-      (var1 = (jlit(u" !\"#$%&'*+,_./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ()-\u00c4" u"\u00d6" u"\u00dc" u"\u00df" u"\u00a1" u"\u00bf" u"\u00c1" u"\u00c0" u"\u00c3" u"\u00c8" u"\u00c9" u"\u00ca" u"\u00ce" u"\u00cf" u"\u00cd" u"\u00d3" u"\u00d4" u"\u00d5" u"\u00da" u"\u00d9" u"\u00d1" u"\u00c7" u"\u00d2" u"\u00a9" u"\u011e" u"\u00c2" u"\u00cc" u"\u015e" u"\u0130" u""))->indexOf((var0 - 1)));
+      (var1 = (jlit(u" !\"#$%&'*+,_./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ()-\u00c4" u"\u00d6" u"\u00dc" u"\u00df" u"\u00a1" u"\u00bf" u"\u00c1" u"\u00c0" u"\u00c3" u"\u00c8" u"\u00c9" u"\u00ca" u"\u00ce" u"\u00cf" u"\u00cd" u"\u00d3" u"\u00d4" u"\u00d5" u"\u00da" u"\u00d9" u"\u00d1" u"\u00c7" u"\u00d2" u"\u00a9" u"\u011e" u"\u00c2" u"\u00cc" u"\u015e" u"\u0130" u""))->indexOf(jsub32(var0, 1)));
    }
    return var1;
 }
@@ -1089,14 +1089,14 @@ jint BSprite::m_a_String(Ref<String> var1) {
          if ((((((var6 = (var1)->charAt(var5))) != ((jchar)123)) && (var6 != ((jchar)125))))) {
             if (((var6 == ((jchar)126)))) {
                (var5++);
-               (var2 = (jint)((var2 + (((this)->f)[0] * 2))));
+               (var2 = (jint)(jadd32(var2, jmul32(((this)->f)[0], 2))));
             } else {
                jint var7{};
                if (((((var7 = BSprite::m_a_C(var6))) == -1))) {
-                  (var2 = (jint)((var2 + (((this)->f)[0] & 255))));
+                  (var2 = (jint)(jadd32(var2, (((this)->f)[0] & 255))));
                } else {
                   jint var8 = (((this)->l)[jshl32((jint)(var7), (jint)(2))] & 255);
-                  (var2 = (jint)((var2 + (((((this)->f)[var8] & 255)) + ((this)->l)[1]))));
+                  (var2 = (jint)(jadd32(var2, jadd32(((((this)->f)[var8] & 255)), ((this)->l)[1]))));
                }
             }
          }
@@ -1114,14 +1114,14 @@ void BSprite::m_a_GraphicsStringIII(Ref<Graphics> var1, Ref<String> var2, jint v
       if (((((var5 & 43)) != 0))) {
          this->m_a_String(var2);
          if (((((var5 & 8)) != 0))) {
-            (var3 = (jint)((var3 - BSprite::S)));
+            (var3 = (jint)(jsub32(var3, BSprite::S)));
          } else if (((((var5 & 1)) != 0))) {
-            (var3 = (jint)((var3 - jshr32((jint)(BSprite::S), (jint)(1)))));
+            (var3 = (jint)(jsub32(var3, jshr32((jint)(BSprite::S), (jint)(1)))));
          }
          if (((((var5 & 32)) != 0))) {
-            (var4 = (jint)((var4 - BSprite::T)));
+            (var4 = (jint)(jsub32(var4, BSprite::T)));
          } else if (((((var5 & 2)) != 0))) {
-            (var4 = (jint)((var4 - jshr32((jint)(BSprite::T), (jint)(1)))));
+            (var4 = (jint)(jsub32(var4, jshr32((jint)(BSprite::T), (jint)(1)))));
          }
       }
       jint var6 = var3;
@@ -1140,33 +1140,33 @@ void BSprite::m_a_GraphicsStringIII(Ref<Graphics> var1, Ref<String> var2, jint v
                ((this)->z = BSprite::Z);
             } else if (((var11 == ((jchar)126)))) {
                (var10++);
-               jint var12 = ((var2)->charAt(var10) - ((jchar)48));
-               ((Game::b)[31])->m_a_GraphicsIIIIIII(var1, var12, jrem32(Game::stateFrame, (BSprite::X)[var12]), (var6 + (BSprite::Y)[var12]), ((var7 + ((((this)->g)[1] & 255))) - (BSprite::W)[((jshl32((jint)(var12), (jint)(1))) + 1)]), 0, 0, 0);
-               (var6 = (jint)((var6 + ((((this)->f)[0] + (BSprite::W)[jshl32((jint)(var12), (jint)(1))]) + ((BSprite::Y)[var12] / 2)))));
+               jint var12 = jsub32((var2)->charAt(var10), ((jchar)48));
+               ((Game::b)[31])->m_a_GraphicsIIIIIII(var1, var12, jrem32(Game::stateFrame, (BSprite::X)[var12]), jadd32(var6, (BSprite::Y)[var12]), jsub32(jadd32(var7, ((((this)->g)[1] & 255))), (BSprite::W)[jadd32((jshl32((jint)(var12), (jint)(1))), 1)]), 0, 0, 0);
+               (var6 = (jint)(jadd32(var6, jadd32(jadd32(((this)->f)[0], (BSprite::W)[jshl32((jint)(var12), (jint)(1))]), ((BSprite::Y)[var12] / 2)))));
             } else if (((var11 == ((jchar)36)))) {
                jint var14{};
-               if (((((var14 = ((var2)->charAt((++var10)) - ((jchar)48)))) == 1))) {
-                  ((Game::b)[16])->m_a_GraphicsIIIIIII(var1, 35, (Game::stateFrame % 3), var6, (var7 - 7), 0, 0, 0);
-                  (var6 = (jint)((var6 + 40)));
+               if (((((var14 = jsub32((var2)->charAt((++var10)), ((jchar)48)))) == 1))) {
+                  ((Game::b)[16])->m_a_GraphicsIIIIIII(var1, 35, (Game::stateFrame % 3), var6, jsub32(var7, 7), 0, 0, 0);
+                  (var6 = (jint)(jadd32(var6, 40)));
                }
                if (((var14 == 2))) {
-                  ((Game::b)[16])->m_a_GraphicsIIIIIII(var1, 36, (Game::stateFrame % 3), (var6 - 30), (var7 - 7), 0, 0, 0);
-                  (var6 = (jint)((var6 + 10)));
+                  ((Game::b)[16])->m_a_GraphicsIIIIIII(var1, 36, (Game::stateFrame % 3), jsub32(var6, 30), jsub32(var7, 7), 0, 0, 0);
+                  (var6 = (jint)(jadd32(var6, 10)));
                }
                if (((var14 == 3))) {
-                  ([&]{ auto _t0 = (Game::b)[16]; auto _t1 = var1; auto _t2 = 41; auto _t3 = Game::m_b_II(Game::aX, 2); auto _t4 = (var6 - 30); auto _t5 = (var7 - 7); auto _t6 = 0; auto _t7 = 0; auto _t8 = 0; return _t0->m_a_GraphicsIIIIIII(_t1, _t2, _t3, _t4, _t5, _t6, _t7, _t8); }());
-                  (var7 = (jint)((var7 + 10)));
-                  (var6 = (jint)((var6 + 5)));
+                  ([&]{ auto _t0 = (Game::b)[16]; auto _t1 = var1; auto _t2 = 41; auto _t3 = Game::m_b_II(Game::aX, 2); auto _t4 = jsub32(var6, 30); auto _t5 = jsub32(var7, 7); auto _t6 = 0; auto _t7 = 0; auto _t8 = 0; return _t0->m_a_GraphicsIIIIIII(_t1, _t2, _t3, _t4, _t5, _t6, _t7, _t8); }());
+                  (var7 = (jint)(jadd32(var7, 10)));
+                  (var6 = (jint)(jadd32(var6, 5)));
                   (Game::aX++);
                }
             } else {
                jint var15{};
                if (((((var15 = BSprite::m_a_C(var11))) == -1))) {
-                  (var6 = (jint)((var6 + (((this)->f)[0] & 255))));
+                  (var6 = (jint)(jadd32(var6, (((this)->f)[0] & 255))));
                } else {
                   this->m_b_GraphicsIIIIIII(var1, 0, var15, var6, var7, 0, 0, 0);
                   jint var13 = (((this)->l)[jshl32((jint)(var15), (jint)(2))] & 255);
-                  (var6 = (jint)((var6 + (((this)->f)[var13] & 255))));
+                  (var6 = (jint)(jadd32(var6, (((this)->f)[var13] & 255))));
                }
             }
          }
@@ -1195,12 +1195,12 @@ void BSprite::m_a_StringI(Ref<String> var1, jint var2) {
                ((BSprite::aa)[(var4++)] = var8);
                (var6 = 0);
                (var5 = 0);
-            } else if (((((var3 > 0) && ((((var9 == ((jchar)94)) || (var9 == ((jchar)32))) || (var8 == (var7 - 1))))) && (var6 > var3)))) {
+            } else if (((((var3 > 0) && ((((var9 == ((jchar)94)) || (var9 == ((jchar)32))) || (var8 == jsub32(var7, 1))))) && (var6 > var3)))) {
                do {
                   (var8--);
-               } while (((((var1)->charAt(var8) != ((jchar)32)) && (var8 > (((var4 > 0) ? (BSprite::aa)[(var4 - 1)] : 0))))));
-               if (((var8 == (((var4 > 0) ? (BSprite::aa)[(var4 - 1)] : 0))))) {
-                  (var8 = ((((var4 > 0) ? (BSprite::aa)[(var4 - 1)] : 0)) + var5));
+               } while (((((var1)->charAt(var8) != ((jchar)32)) && (var8 > (((var4 > 0) ? (BSprite::aa)[jsub32(var4, 1)] : 0))))));
+               if (((var8 == (((var4 > 0) ? (BSprite::aa)[jsub32(var4, 1)] : 0))))) {
+                  (var8 = jadd32((((var4 > 0) ? (BSprite::aa)[jsub32(var4, 1)] : 0)), var5));
                }
                ((BSprite::aa)[(var4++)] = var8);
                (BSprite::ab = var4);
@@ -1211,14 +1211,14 @@ void BSprite::m_a_StringI(Ref<String> var1, jint var2) {
                if ((((var9 != ((jchar)123)) && (var9 != ((jchar)125))))) {
                   if (((var9 == ((jchar)126)))) {
                      (var8++);
-                     (var6 = (jint)((var6 + (((this)->f)[0] * 2))));
+                     (var6 = (jint)(jadd32(var6, jmul32(((this)->f)[0], 2))));
                   } else {
                      jint var10{};
                      if (((((var10 = BSprite::m_a_C(var9))) == -1))) {
-                        (var6 = (jint)((var6 + (((this)->f)[0] & 255))));
+                        (var6 = (jint)(jadd32(var6, (((this)->f)[0] & 255))));
                      } else {
                         jint var11 = (((this)->l)[jshl32((jint)(var10), (jint)(2))] & 255);
-                        (var6 = (jint)((var6 + (((this)->f)[var11] & 255))));
+                        (var6 = (jint)(jadd32(var6, (((this)->f)[var11] & 255))));
                      }
                   }
                }
@@ -1235,20 +1235,20 @@ jint BSprite::m_a_GraphicsStringIIIIII(Ref<Graphics> var1, Ref<String> var2, jin
    Ref<BSprite> _self(this);
    (var2 = jcat(jstr(((jchar)125)), jstr(var2)));
    this->m_a_StringI(var2, var6);
-   jint var9 = ((this)->ad + ((((this)->g)[1] & 255)));
+   jint var9 = jadd32((this)->ad, ((((this)->g)[1] & 255)));
    if (((Game::state == 20))) {
-      (var9 = (jint)((var9 + 3)));
+      (var9 = (jint)(jadd32(var9, 3)));
    }
    if (((((var5 & 32)) != 0))) {
-      (var4 = (jint)((var4 - (var9 * ((BSprite::ab - 1))))));
+      (var4 = (jint)(jsub32(var4, jmul32(var9, (jsub32(BSprite::ab, 1))))));
    } else if (((((var5 & 2)) != 0))) {
-      (var4 = (jint)((var4 - jshr32((jint)((var9 * ((BSprite::ab - 1)))), (jint)(1)))));
+      (var4 = (jint)(jsub32(var4, jshr32((jint)(jmul32(var9, (jsub32(BSprite::ab, 1)))), (jint)(1)))));
    }
    (BSprite::Z = (this)->z);
    if (((var7 > 0))) {
       {
          jint var10 = 0;
-         for (; (var10 < (BSprite::aa)[(var7 - 1)]); (var10++)) {
+         for (; (var10 < (BSprite::aa)[jsub32(var7, 1)]); (var10++)) {
             jchar var11{};
             if (((((var11 = (var2)->charAt(var10))) == ((jchar)123)))) {
                ((this)->z = 2);
@@ -1261,36 +1261,36 @@ jint BSprite::m_a_GraphicsStringIIIIII(Ref<Graphics> var1, Ref<String> var2, jin
    {
       jint var15 = var7;
       for (; (var15 < BSprite::ab); (var15++)) {
-         (BSprite::U = ((var15 > 0) ? ((BSprite::aa)[(var15 - 1)] + 1) : 0));
+         (BSprite::U = ((var15 > 0) ? jadd32((BSprite::aa)[jsub32(var15, 1)], 1) : 0));
          (BSprite::V = (BSprite::aa)[var15]);
-         jint var16 = (var4 + (((var15 - var7)) * var9));
+         jint var16 = jadd32(var4, jmul32((jsub32(var15, var7)), var9));
          if (((Game::state == 20))) {
             if ((((var16 < 100) && (var16 >= 68)))) {
                ((Game::a)->t = true);
                jint var17{};
-               jint var18 = ((jshl32((jint)(((var17 = (var16 - 68)))), (jint)(8))) / 32);
-               ((Game::a)->K = jshr32((jint)((255 * var18)), (jint)(8)));
+               jint var18 = ((jshl32((jint)(((var17 = jsub32(var16, 68)))), (jint)(8))) / 32);
+               ((Game::a)->K = jshr32((jint)(jmul32(255, var18)), (jint)(8)));
             } else if ((((var16 < 244) && (var16 >= 210)))) {
                ((Game::a)->t = true);
                jint var12{};
-               jint var13 = ((jshl32((jint)(((var12 = (var16 - 210)))), (jint)(8))) / 34);
-               ((Game::a)->K = jshr32((jint)((65280 - (255 * var13))), (jint)(8)));
+               jint var13 = ((jshl32((jint)(((var12 = jsub32(var16, 210)))), (jint)(8))) / 34);
+               ((Game::a)->K = jshr32((jint)(jsub32(65280, jmul32(255, var13))), (jint)(8)));
             }
          }
          this->m_a_GraphicsStringIII(var1, var2, var3, var16, var5);
          if (((Game::state == 20))) {
             ((Game::a)->t = false);
          }
-         if ((((var8 != -1) && ((var15 - var7) >= (var8 - 1))))) {
+         if ((((var8 != -1) && (jsub32(var15, var7) >= jsub32(var8, 1))))) {
             (BSprite::U = -1);
             (BSprite::V = -1);
-            return (var4 + (var15 * var9));
+            return jadd32(var4, jmul32(var15, var9));
          }
       }
    }
    (BSprite::U = -1);
    (BSprite::V = -1);
-   return (var4 + (BSprite::ab * var9));
+   return jadd32(var4, jmul32(BSprite::ab, var9));
 }
 
 void BSprite::m_a_BSpriteII(Ref<BSprite> var0, jint var1, jint var2) {

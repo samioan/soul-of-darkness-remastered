@@ -29,7 +29,8 @@ differ from C++ are made explicit in the output:
 - strict left-to-right evaluation of operands, call arguments and array stores; where order is
   observable the expression is emitted as a sequenced lambda;
 - compound assignment reads its target before evaluating the right-hand side;
-- masked shift counts, `>>>`, division by zero and `INT_MIN / -1`;
+- wrapping int/long `+`, `-`, `*` and negation (through unsigned arithmetic; signed overflow is
+  undefined in C++), masked shift counts, `>>>`, division by zero and `INT_MIN / -1`;
 - array bounds, null dereference and negative array size raise Java exceptions that the game's
   own `catch (Exception)` blocks see, as on the phone;
 - string literals are interned (the game compares softkey labels with `!= ""`);

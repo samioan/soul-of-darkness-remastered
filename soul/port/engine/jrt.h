@@ -191,6 +191,17 @@ template<class T, class U> inline bool jinstanceof(const Ref<U>& v) { return v.p
 
 // ---------------------------------------------------------------- integer semantics
 
+// Java int/long arithmetic wraps; signed overflow is undefined in C++, so +, -, * and negation go
+// through unsigned arithmetic (same machine instructions, defined result).
+inline jint jadd32(jint a, jint b) { return static_cast<jint>(static_cast<std::uint32_t>(a) + static_cast<std::uint32_t>(b)); }
+inline jint jsub32(jint a, jint b) { return static_cast<jint>(static_cast<std::uint32_t>(a) - static_cast<std::uint32_t>(b)); }
+inline jint jmul32(jint a, jint b) { return static_cast<jint>(static_cast<std::uint32_t>(a) * static_cast<std::uint32_t>(b)); }
+inline jint jneg32(jint a) { return static_cast<jint>(0u - static_cast<std::uint32_t>(a)); }
+inline jlong jadd64(jlong a, jlong b) { return static_cast<jlong>(static_cast<std::uint64_t>(a) + static_cast<std::uint64_t>(b)); }
+inline jlong jsub64(jlong a, jlong b) { return static_cast<jlong>(static_cast<std::uint64_t>(a) - static_cast<std::uint64_t>(b)); }
+inline jlong jmul64(jlong a, jlong b) { return static_cast<jlong>(static_cast<std::uint64_t>(a) * static_cast<std::uint64_t>(b)); }
+inline jlong jneg64(jlong a) { return static_cast<jlong>(0ull - static_cast<std::uint64_t>(a)); }
+
 inline jint jdiv32(jint a, jint b) {
     if (b == 0) throwArithmetic();
     if (b == -1) return static_cast<jint>(0u - static_cast<std::uint32_t>(a));

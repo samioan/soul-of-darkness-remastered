@@ -146,14 +146,14 @@ void Actor::m_b_V() {
 
 void Actor::m_a_Z(jboolean var1) {
    Ref<Actor> _self(this);
-   jint var2 = jdiv32((Game::health * 100), Game::maxHealth);
-   jint var3 = ((10000 + (var2 * var2)) - (jshr32((jint)((var2 * 1500)), (jint)(3))));
+   jint var2 = jdiv32(jmul32(Game::health, 100), Game::maxHealth);
+   jint var3 = jsub32(jadd32(10000, jmul32(var2, var2)), (jshr32((jint)(jmul32(var2, 1500)), (jint)(3))));
    if (((Game::m_i_II(0, 10000) < var3))) {
       ([&]{ auto _t0 = 35; auto _t1 = 31; auto _t2 = 0; auto _t3 = Game::m_i_II(-40, 40); auto _t4 = Game::m_i_II(-20, -100); auto _t5 = 308; auto _t6 = false; return this->m_a_IIIIIIZ(_t0, _t1, _t2, _t3, _t4, _t5, _t6); }());
       (Actor::aU)->m_b_V();
    }
-   if ((((Game::magic <= ((Game::maxMagic * 40) / 100)) && Actor::bD))) {
-      (var2 = (100 - jdiv32((Game::magic * 60), Game::maxMagic)));
+   if ((((Game::magic <= (jmul32(Game::maxMagic, 40) / 100)) && Actor::bD))) {
+      (var2 = jsub32(100, jdiv32(jmul32(Game::magic, 60), Game::maxMagic)));
       if (((Game::m_i_II(0, 100) < var2))) {
          ([&]{ auto _t7 = 35; auto _t8 = 31; auto _t9 = 2; auto _t10 = Game::m_i_II(-40, 40); auto _t11 = Game::m_i_II(-20, -100); auto _t12 = 308; auto _t13 = false; return this->m_a_IIIIIIZ(_t7, _t8, _t9, _t10, _t11, _t12, _t13); }());
          (Actor::aU)->m_b_V();
@@ -162,7 +162,7 @@ void Actor::m_a_Z(jboolean var1) {
    (var2 = Game::m_i_II(1, 3));
    {
       jint var6 = 0;
-      for (; (var6 < (Actor::m_a_II((this->m_B_I(0) * 10), 128) + var2)); (var6++)) {
+      for (; (var6 < jadd32(Actor::m_a_II(jmul32(this->m_B_I(0), 10), 128), var2)); (var6++)) {
          ([&]{ auto _t14 = 35; auto _t15 = 31; auto _t16 = (var1 ? 5 : 4); auto _t17 = Game::m_i_II(-40, 40); auto _t18 = Game::m_i_II(-20, -100); auto _t19 = 308; auto _t20 = false; return this->m_a_IIIIIIZ(_t14, _t15, _t16, _t17, _t18, _t19, _t20); }());
          (Actor::aU)->m_b_V();
       }
@@ -170,7 +170,7 @@ void Actor::m_a_Z(jboolean var1) {
 }
 
 jint Actor::m_a_II(jint var0, jint var1) {
-   return (jdiv32(var0, var1) + (((jdiv32((jrem32(var0, var1) * 10), var1) >= 5) ? 1 : 0)));
+   return jadd32(jdiv32(var0, var1), (((jdiv32(jmul32(jrem32(var0, var1), 10), var1) >= 5) ? 1 : 0)));
 }
 
 jboolean Actor::m_c_V() {
@@ -188,7 +188,7 @@ jboolean Actor::m_c_V() {
                this->m_I_V();
             }
             this->m_a_IIIIIIZ(39, 17, 57, 0, 0, 302, false);
-            ((Actor::aU)->positionY = ((Actor::aU)->positionY - (jshr32((jint)((((this)->collisionBounds)[3] - ((this)->collisionBounds)[1])), (jint)(1)))));
+            ((Actor::aU)->positionY = jsub32((Actor::aU)->positionY, (jshr32((jint)(jsub32(((this)->collisionBounds)[3], ((this)->collisionBounds)[1])), (jint)(1)))));
             ((this)->aq = 7);
             return true;
          case 7:
@@ -254,7 +254,7 @@ void Actor::m_a_ZZ(jboolean var1, jboolean var2) {
          {
             jint var8 = 0;
             for (; (var8 < (var6)[1]); (var8++)) {
-               ((Game::cr)[var8] = ((jshort)((([&]{ auto _t2 = (((Game::cs)[(var7++)] & 255)); auto _t3 = (jshl32((jint)((Game::cs)[(var7++)]), (jint)(8))); return (_t2 + _t3); }())))));
+               ((Game::cr)[var8] = ((jshort)((([&]{ auto _t2 = (((Game::cs)[(var7++)] & 255)); auto _t3 = (jshl32((jint)((Game::cs)[(var7++)]), (jint)(8))); return jadd32(_t2, _t3); }())))));
             }
          }
          this->m_a_ASZII(Game::cr, false, (var6)[0], (var6)[1]);
@@ -377,7 +377,7 @@ void Actor::m_b_I(jint var1) {
 jboolean Actor::m_e_V() {
    Ref<Actor> _self(this);
    jint var1{};
-   return (([&]{ auto _t4 = (this)->h; auto _t5 = (((this)->p)->m_a_I((this)->animationId) - 1); return (_t4 != _t5); }()) ? false : ((((var1 = ([&]{ auto _t0 = (this)->p; auto _t1 = (this)->animationId; auto _t2 = (this)->h; auto _t3 = this->m_f_V(); return _t0->m_a_III(_t1, _t2, _t3); }()))) <= 1) || ((this)->i == (var1 - 1))));
+   return (([&]{ auto _t4 = (this)->h; auto _t5 = jsub32(((this)->p)->m_a_I((this)->animationId), 1); return (_t4 != _t5); }()) ? false : ((((var1 = ([&]{ auto _t0 = (this)->p; auto _t1 = (this)->animationId; auto _t2 = (this)->h; auto _t3 = this->m_f_V(); return _t0->m_a_III(_t1, _t2, _t3); }()))) <= 1) || ((this)->i == jsub32(var1, 1))));
 }
 
 jint Actor::m_f_V() {
@@ -398,13 +398,13 @@ void Actor::m_b_II(jint var1, jint var2) {
          if (((!Game::bi))) {
             jint var5 = (((Game::stateFrame % 2) == 0) ? 1 : -1);
             if (((((((((this)->type == 37) && ((this)->aA > 50)) && ((this)->aA < 1000)) && ((this)->animationId == 1)) || (((this)->type == 35) && ((this)->animationId == 7))) || (((this)->type == 75) && ((this)->aq == 109))))) {
-               (var3 = (jint)((var3 + var5)));
+               (var3 = (jint)(jadd32(var3, var5)));
             }
             if (((((this)->type == 95) && ((this)->aq == 101)))) {
                if (((((this)->av % 2) == 0))) {
-                  (var3 = (jint)((var3 + var5)));
+                  (var3 = (jint)(jadd32(var3, var5)));
                } else {
-                  (var4 = (jint)((var4 + var5)));
+                  (var4 = (jint)(jadd32(var4, var5)));
                }
             }
          }
@@ -432,13 +432,13 @@ void Actor::m_c_I(jint var1) {
    } else if ((((((((this)->c & 64)) == 0) && ((this)->p != nullptr)) && ((this)->i >= 0)))) {
       jint var2{};
       if (((((var2 = ([&]{ auto _t0 = (this)->p; auto _t1 = (this)->animationId; auto _t2 = (this)->h; auto _t3 = this->m_f_V(); return _t0->m_a_III(_t1, _t2, _t3); }()))) != 0))) {
-         if (((([&]{ auto _t4 = (this)->h; auto _t5 = (((this)->p)->m_a_I((this)->animationId) - 1); return (_t4 == _t5); }()) && (((this)->i + var1) >= var2)))) {
+         if (((([&]{ auto _t4 = (this)->h; auto _t5 = jsub32(((this)->p)->m_a_I((this)->animationId), 1); return (_t4 == _t5); }()) && (jadd32((this)->i, var1) >= var2)))) {
             (var1 = 1);
          }
-         ((this)->i = (jint)(((this)->i + var1)));
+         ((this)->i = (jint)(jadd32((this)->i, var1)));
          if (((var2 <= (this)->i))) {
             while ((((this)->i >= var2))) {
-               ((this)->i = (jint)(((this)->i - var2)));
+               ((this)->i = (jint)(jsub32((this)->i, var2)));
                if ((([&]{ auto _t6 = (this)->h; auto _t7 = ((this)->p)->m_a_I((this)->animationId); return (_t6 >= _t7); }()))) {
                   break;
                }
@@ -474,7 +474,7 @@ Arr<jint> Actor::m_g_V() {
       }
       if (((((this)->type == 42) || ((this)->type == 78)))) {
          (((this)->collisionBounds)[0] = ((this)->m)[0]);
-         (((this)->collisionBounds)[1] = (((this)->m)[1] - (this)->av));
+         (((this)->collisionBounds)[1] = jsub32(((this)->m)[1], (this)->av));
          (((this)->collisionBounds)[2] = ((this)->m)[2]);
          (((this)->collisionBounds)[3] = ((this)->m)[3]);
          return (this)->collisionBounds;
@@ -501,10 +501,10 @@ Arr<jint> Actor::m_g_V() {
       } else {
          ((this)->p)->m_a_AIIIIII((this)->l, (this)->animationId, -1, (this)->c, 0, 0);
       }
-      (((this)->l)[0] = (((this)->l)[0] + (this)->positionX));
-      (((this)->l)[1] = (((this)->l)[1] + (this)->positionY));
-      (((this)->l)[2] = (((this)->l)[2] + (this)->positionX));
-      (((this)->l)[3] = (((this)->l)[3] + (this)->positionY));
+      (((this)->l)[0] = jadd32(((this)->l)[0], (this)->positionX));
+      (((this)->l)[1] = jadd32(((this)->l)[1], (this)->positionY));
+      (((this)->l)[2] = jadd32(((this)->l)[2], (this)->positionX));
+      (((this)->l)[3] = jadd32(((this)->l)[3], (this)->positionY));
    }
    if ((((this)->type == 94))) {
       ([&]{ auto _t0 = (this)->k; auto _t1 = 0; auto _t2 = (jint)((((this)->collisionBounds)[0] = 0)); return _t0[_t1] = _t2; }());
@@ -512,10 +512,10 @@ Arr<jint> Actor::m_g_V() {
       ([&]{ auto _t6 = (this)->k; auto _t7 = 2; auto _t8 = (jint)((((this)->collisionBounds)[2] = 60)); return _t6[_t7] = _t8; }());
       ([&]{ auto _t9 = (this)->k; auto _t10 = 3; auto _t11 = (jint)((((this)->collisionBounds)[3] = 80)); return _t9[_t10] = _t11; }());
    }
-   (((this)->collisionBounds)[0] = (((this)->collisionBounds)[0] + (this)->positionX));
-   (((this)->collisionBounds)[1] = (((this)->collisionBounds)[1] + (this)->positionY));
-   (((this)->collisionBounds)[2] = (((this)->collisionBounds)[2] + (this)->positionX));
-   (((this)->collisionBounds)[3] = (((this)->collisionBounds)[3] + (this)->positionY));
+   (((this)->collisionBounds)[0] = jadd32(((this)->collisionBounds)[0], (this)->positionX));
+   (((this)->collisionBounds)[1] = jadd32(((this)->collisionBounds)[1], (this)->positionY));
+   (((this)->collisionBounds)[2] = jadd32(((this)->collisionBounds)[2], (this)->positionX));
+   (((this)->collisionBounds)[3] = jadd32(((this)->collisionBounds)[3], (this)->positionY));
    if ((((((this)->collisionBounds)[0] == ((this)->collisionBounds)[2]) && (((this)->collisionBounds)[1] == ((this)->collisionBounds)[3])))) {
       {
          jint var1 = 0;
@@ -524,12 +524,12 @@ Arr<jint> Actor::m_g_V() {
          }
       }
    }
-   (((this)->k)[0] = (((this)->k)[0] + (this)->positionX));
-   (((this)->k)[1] = (((this)->k)[1] + (this)->positionY));
-   (((this)->k)[2] = (((this)->k)[2] + (this)->positionX));
-   (((this)->k)[3] = (((this)->k)[3] + (this)->positionY));
+   (((this)->k)[0] = jadd32(((this)->k)[0], (this)->positionX));
+   (((this)->k)[1] = jadd32(((this)->k)[1], (this)->positionY));
+   (((this)->k)[2] = jadd32(((this)->k)[2], (this)->positionX));
+   (((this)->k)[3] = jadd32(((this)->k)[3], (this)->positionY));
    if (((((this)->type == -101) && ((this)->animationId == 1)))) {
-      (((this)->k)[0] = (((this)->k)[0] - 30));
+      (((this)->k)[0] = jsub32(((this)->k)[0], 30));
    }
    return (this)->collisionBounds;
 }
@@ -625,40 +625,40 @@ jint Actor::m_aA_V() {
    Ref<Actor> _self(this);
    jint var2 = 0;
    {
-      jint var3 = (Game::ck - 1);
+      jint var3 = jsub32(Game::ck, 1);
       for (; (var3 >= 0); (var3--)) {
          Ref<Actor> var1{};
          if (((((((var1 = (Game::cj)[var3])) != nullptr) && (var1 != this)) && (var1)->N))) {
             (var1)->m_g_V();
             if ((((this)->type == 0))) {
                if (((((((var1 != Actor::aT) && ((var1)->type != 82)) && Actor::m_b_AIAI((var1)->collisionBounds, (this)->collisionBounds)) && ((this)->positionY > ((var1)->collisionBounds)[1])) && (!(var1)->O)))) {
-                  if (((((this)->positionX <= (var1)->positionX) && ((((this)->collisionBounds)[2] - ((var1)->collisionBounds)[0]) > 0)))) {
+                  if (((((this)->positionX <= (var1)->positionX) && (jsub32(((this)->collisionBounds)[2], ((var1)->collisionBounds)[0]) > 0)))) {
                      if (((!(this)->eL))) {
-                        ((this)->positionX = ((this)->positionX - ((((this)->collisionBounds)[2] - ((var1)->collisionBounds)[0]))));
+                        ((this)->positionX = jsub32((this)->positionX, (jsub32(((this)->collisionBounds)[2], ((var1)->collisionBounds)[0]))));
                      } else {
-                        ((this)->positionX = ((this)->positionX + ((((var1)->collisionBounds)[2] - ((this)->collisionBounds)[0]))));
+                        ((this)->positionX = jadd32((this)->positionX, (jsub32(((var1)->collisionBounds)[2], ((this)->collisionBounds)[0]))));
                      }
-                  } else if (((((this)->positionX >= (var1)->positionX) && ((((var1)->collisionBounds)[2] - ((this)->collisionBounds)[0]) > 0)))) {
+                  } else if (((((this)->positionX >= (var1)->positionX) && (jsub32(((var1)->collisionBounds)[2], ((this)->collisionBounds)[0]) > 0)))) {
                      if (((!(this)->eM))) {
-                        ((this)->positionX = ((this)->positionX + ((((var1)->collisionBounds)[2] - ((this)->collisionBounds)[0]))));
+                        ((this)->positionX = jadd32((this)->positionX, (jsub32(((var1)->collisionBounds)[2], ((this)->collisionBounds)[0]))));
                      } else {
-                        ((this)->positionX = ((this)->positionX - ((((this)->collisionBounds)[2] - ((var1)->collisionBounds)[0]))));
+                        ((this)->positionX = jsub32((this)->positionX, (jsub32(((this)->collisionBounds)[2], ((var1)->collisionBounds)[0]))));
                      }
                   }
                }
             } else if ((((var1)->type == 37))) {
                if ((((!(var1)->O) || ((this)->type != 0)))) {
-                  if (((((this)->positionX <= (var1)->positionX) && ((((this)->collisionBounds)[2] - ((var1)->collisionBounds)[0]) > 0)))) {
+                  if (((((this)->positionX <= (var1)->positionX) && (jsub32(((this)->collisionBounds)[2], ((var1)->collisionBounds)[0]) > 0)))) {
                      if (((!(this)->eL))) {
-                        ((this)->positionX = ((this)->positionX - ((((this)->collisionBounds)[2] - ((var1)->collisionBounds)[0]))));
+                        ((this)->positionX = jsub32((this)->positionX, (jsub32(((this)->collisionBounds)[2], ((var1)->collisionBounds)[0]))));
                      } else {
-                        ((this)->positionX = ((this)->positionX + ((((var1)->collisionBounds)[2] - ((this)->collisionBounds)[0]))));
+                        ((this)->positionX = jadd32((this)->positionX, (jsub32(((var1)->collisionBounds)[2], ((this)->collisionBounds)[0]))));
                      }
-                  } else if (((((this)->positionX >= (var1)->positionX) && ((((var1)->collisionBounds)[2] - ((this)->collisionBounds)[0]) > 0)))) {
+                  } else if (((((this)->positionX >= (var1)->positionX) && (jsub32(((var1)->collisionBounds)[2], ((this)->collisionBounds)[0]) > 0)))) {
                      if (((!(this)->eM))) {
-                        ((this)->positionX = ((this)->positionX + ((((var1)->collisionBounds)[2] - ((this)->collisionBounds)[0]))));
+                        ((this)->positionX = jadd32((this)->positionX, (jsub32(((var1)->collisionBounds)[2], ((this)->collisionBounds)[0]))));
                      } else {
-                        ((this)->positionX = ((this)->positionX - ((((this)->collisionBounds)[2] - ((var1)->collisionBounds)[0]))));
+                        ((this)->positionX = jsub32((this)->positionX, (jsub32(((this)->collisionBounds)[2], ((var1)->collisionBounds)[0]))));
                      }
                   }
                }
@@ -668,8 +668,8 @@ jint Actor::m_aA_V() {
                   this->m_q_I(0);
                }
                if (((((this->m_aq_V() && (var1)->m_ap_V()) && ((var1)->H > 0)) && ((var1)->H > (this)->H)))) {
-                  jint var5 = jshr32((jint)(((var1)->b + (var1)->H)), (jint)(8));
-                  if (((((((var1)->positionY <= ((this)->collisionBounds)[1]) && (((var1)->collisionBounds)[2] > ((this)->collisionBounds)[0])) && (((var1)->collisionBounds)[0] < ((this)->collisionBounds)[2])) && (var5 >= (((this)->collisionBounds)[1] + (jshr32((jint)((this)->H), (jint)(8)))))))) {
+                  jint var5 = jshr32((jint)(jadd32((var1)->b, (var1)->H)), (jint)(8));
+                  if (((((((var1)->positionY <= ((this)->collisionBounds)[1]) && (((var1)->collisionBounds)[2] > ((this)->collisionBounds)[0])) && (((var1)->collisionBounds)[0] < ((this)->collisionBounds)[2])) && (var5 >= jadd32(((this)->collisionBounds)[1], (jshr32((jint)((this)->H), (jint)(8)))))))) {
                      ((var1)->T = this);
                      if (((!this->m_c_Actor(this)))) {
                         ((this)->U = var1);
@@ -677,8 +677,8 @@ jint Actor::m_aA_V() {
                      ((var1)->H = 0);
                   }
                } else if ((((((var1)->m_aq_V() && this->m_ap_V()) && ((this)->H > 0)) && ((this)->H > (var1)->H)))) {
-                  jint var4 = jshr32((jint)(((this)->b + (this)->H)), (jint)(8));
-                  if (((((((this)->positionY <= ((var1)->collisionBounds)[1]) && (((this)->collisionBounds)[2] > ((var1)->collisionBounds)[0])) && (((this)->collisionBounds)[0] < ((var1)->collisionBounds)[2])) && (var4 >= (((var1)->collisionBounds)[1] + (jshr32((jint)((var1)->H), (jint)(8)))))))) {
+                  jint var4 = jshr32((jint)(jadd32((this)->b, (this)->H)), (jint)(8));
+                  if (((((((this)->positionY <= ((var1)->collisionBounds)[1]) && (((this)->collisionBounds)[2] > ((var1)->collisionBounds)[0])) && (((this)->collisionBounds)[0] < ((var1)->collisionBounds)[2])) && (var4 >= jadd32(((var1)->collisionBounds)[1], (jshr32((jint)((var1)->H), (jint)(8)))))))) {
                      ((this)->T = var1);
                      if (((!this->m_c_Actor(this)))) {
                         ((var1)->U = this);
@@ -687,11 +687,11 @@ jint Actor::m_aA_V() {
                   }
                }
                if (((((Actor::m_b_AIAI((var1)->collisionBounds, (this)->collisionBounds) && ((var1)->type != 82)) && ((var1)->T != this)) && ((this)->T != var1)))) {
-                  if (((((this)->positionX < (var1)->positionX) && ((((this)->collisionBounds)[2] - ((var1)->collisionBounds)[0]) >= 0)))) {
-                     ((this)->positionX = ((this)->positionX - ((((this)->collisionBounds)[2] - ((var1)->collisionBounds)[0]))));
+                  if (((((this)->positionX < (var1)->positionX) && (jsub32(((this)->collisionBounds)[2], ((var1)->collisionBounds)[0]) >= 0)))) {
+                     ((this)->positionX = jsub32((this)->positionX, (jsub32(((this)->collisionBounds)[2], ((var1)->collisionBounds)[0]))));
                      (var2 = (jint)((var2 | 2)));
-                  } else if (((((this)->positionX > (var1)->positionX) && ((((var1)->collisionBounds)[2] - ((this)->collisionBounds)[0]) >= 0)))) {
-                     ((this)->positionX = ((this)->positionX + ((((var1)->collisionBounds)[2] - ((this)->collisionBounds)[0]))));
+                  } else if (((((this)->positionX > (var1)->positionX) && (jsub32(((var1)->collisionBounds)[2], ((this)->collisionBounds)[0]) >= 0)))) {
+                     ((this)->positionX = jadd32((this)->positionX, (jsub32(((var1)->collisionBounds)[2], ((this)->collisionBounds)[0]))));
                      (var2 = (jint)((var2 | 1)));
                   }
                }
@@ -711,41 +711,41 @@ jboolean Actor::m_h_V() {
       if (((((this)->type == 21) && ((this)->an == -1)))) {
          return true;
       }
-      if (((((this)->type != 81) || (((this)->aq != 101) && (((((this)->n == nullptr) || (((this)->n)[((this)->ax - 1)] <= 0)) || (((this)->n)[((this)->ax - 1)] > 7))))))) {
+      if (((((this)->type != 81) || (((this)->aq != 101) && (((((this)->n == nullptr) || (((this)->n)[jsub32((this)->ax, 1)] <= 0)) || (((this)->n)[jsub32((this)->ax, 1)] > 7))))))) {
          if ((((this)->type == 93))) {
             ((Actor::ey)[1] = (this)->positionY);
             ((Actor::ey)[0] = (this)->positionX);
             if ((((this)->aC != 18))) {
-               ((Actor::ey)[2] = (((this)->positionX + (this)->ay) + 40));
+               ((Actor::ey)[2] = jadd32(jadd32((this)->positionX, (this)->ay), 40));
                {
                   switch (((this)->ax)) {
                      case 0:
-                        ((Actor::ey)[3] = ((this)->positionY + 80));
+                        ((Actor::ey)[3] = jadd32((this)->positionY, 80));
                         break;
                      case 1:
-                        ((Actor::ey)[3] = ((this)->positionY + 120));
+                        ((Actor::ey)[3] = jadd32((this)->positionY, 120));
                         break;
                      case 2:
-                        ((Actor::ey)[3] = ((this)->positionY + 160));
+                        ((Actor::ey)[3] = jadd32((this)->positionY, 160));
                   }
                }
-               ((Actor::ey)[3] = ((Actor::ey)[3] + 40));
+               ((Actor::ey)[3] = jadd32((Actor::ey)[3], 40));
             } else {
-               ((Actor::ey)[3] = ((this)->positionY + 20));
-               ((Actor::ey)[2] = (((this)->positionX + ((((this)->av - 1)) * (this)->az)) + 20));
+               ((Actor::ey)[3] = jadd32((this)->positionY, 20));
+               ((Actor::ey)[2] = jadd32(jadd32((this)->positionX, jmul32((jsub32((this)->av, 1)), (this)->az)), 20));
             }
             return Actor::m_b_AIAI(Game::viewBounds, Actor::ey);
          } else {
-            jint var1 = ([&]{ auto _t0 = (this)->positionX; auto _t1 = PortConfig::viewCenterX(); return (_t0 - _t1); }());
-            jint var2 = ((this)->positionY - ((Game::cameraY + 160)));
+            jint var1 = ([&]{ auto _t0 = (this)->positionX; auto _t1 = PortConfig::viewCenterX(); return jsub32(_t0, _t1); }());
+            jint var2 = jsub32((this)->positionY, (jadd32(Game::cameraY, 160)));
             if (((var1 < 0))) {
-               (var1 = (-var1));
+               (var1 = jneg32(var1));
             }
             if (((var2 < 0))) {
-               (var2 = (-var2));
+               (var2 = jneg32(var2));
             }
-            ([&]{ auto _t2 = this; auto _t3 = (jint)((jdiv32(var1, PortConfig::viewHalfWidth()) + (var2 / 160))); return _t2->ak = _t3; }());
-            if ((((this)->ak <= ((this)->al + 1)))) {
+            ([&]{ auto _t2 = this; auto _t3 = (jint)(jadd32(jdiv32(var1, PortConfig::viewHalfWidth()), (var2 / 160))); return _t2->ak = _t3; }());
+            if ((((this)->ak <= jadd32((this)->al, 1)))) {
                this->m_g_V();
                if ((((((this)->type != 21) && ((this)->type != 22)) && ((this)->type != 23)))) {
                   if (((((((((this)->type == 41) || ((this)->type == 42)) || ((this)->type == 45)) || ((this)->type == 49)) || ((this)->type == 78)) || ((this)->l == nullptr)))) {
@@ -791,31 +791,31 @@ void Actor::m_k_II(jint var1, jint var2) {
    } else if (((((var2 & 4096)) != 0))) {
       ((this)->positionX = ((this)->collisionBounds)[2]);
    } else if (((((var2 & 4)) != 0))) {
-      jint var3 = jshr32((jint)((((this)->collisionBounds)[0] + ((this)->collisionBounds)[2])), (jint)(1));
-      ((this)->positionX = ((this)->positionX + (((this)->eA - var3))));
+      jint var3 = jshr32((jint)(jadd32(((this)->collisionBounds)[0], ((this)->collisionBounds)[2])), (jint)(1));
+      ((this)->positionX = jadd32((this)->positionX, (jsub32((this)->eA, var3))));
    } else if (((((var2 & 8)) != 0))) {
-      ((this)->positionX = ((this)->positionX - ((((this)->positionX % 20) - 10))));
+      ((this)->positionX = jsub32((this)->positionX, (jsub32(((this)->positionX % 20), 10))));
    }
    if (((((var2 & 64)) != 0))) {
       ((this)->positionY = ((this)->collisionBounds)[1]);
    } else if (((((var2 & 128)) != 0))) {
       ((this)->positionY = ((this)->collisionBounds)[3]);
    } else if (((((var2 & 8192)) != 0))) {
-      ((this)->positionY = (((((this)->collisionBounds)[3] / 20) * 20) - 1));
+      ((this)->positionY = jsub32(jmul32((((this)->collisionBounds)[3] / 20), 20), 1));
    } else if (((((var2 & 16384)) != 0))) {
-      ((this)->positionY = (((((((this)->collisionBounds)[3] + 10)) / 20) * 20) - 1));
+      ((this)->positionY = jsub32(jmul32(((jadd32(((this)->collisionBounds)[3], 10)) / 20), 20), 1));
    } else if (((((var2 & 256)) != 0))) {
-      ((this)->positionY = (((((this)->collisionBounds)[1] / 20) * 20) - 1));
+      ((this)->positionY = jsub32(jmul32((((this)->collisionBounds)[1] / 20), 20), 1));
    } else if (((((var2 & 512)) != 0))) {
-      ((this)->positionY = (((((((this)->collisionBounds)[1] / 20) + 1)) * 20) - 1));
+      ((this)->positionY = jsub32(jmul32((jadd32((((this)->collisionBounds)[1] / 20), 1)), 20), 1));
    } else if (((((var2 & 32)) != 0))) {
-      jint var4 = jshr32((jint)((((this)->collisionBounds)[1] + ((this)->collisionBounds)[3])), (jint)(1));
-      ((this)->positionY = ((this)->positionY + (((this)->eB - var4))));
+      jint var4 = jshr32((jint)(jadd32(((this)->collisionBounds)[1], ((this)->collisionBounds)[3])), (jint)(1));
+      ((this)->positionY = jadd32((this)->positionY, (jsub32((this)->eB, var4))));
    } else if (((((var2 & 1024)) != 0))) {
-      ((this)->positionY = ((this)->positionY + (((this)->positionY - ((this)->collisionBounds)[1]))));
+      ((this)->positionY = jadd32((this)->positionY, (jsub32((this)->positionY, ((this)->collisionBounds)[1]))));
    }
    if (((((var2 & 16)) != 0))) {
-      ((this)->positionY = ((this)->positionY - ((((this)->positionY % 20) - 10))));
+      ((this)->positionY = jsub32((this)->positionY, (jsub32(((this)->positionY % 20), 10))));
    }
    if (((((var2 & 1)) != 0))) {
       this->m_a_I(var1);
@@ -840,8 +840,8 @@ jboolean Actor::m_d_I(jint var0) {
    }
    if (((Game::health > 0))) {
       jint var1{};
-      (var0 = jshr32((jint)(((var1 = (var0 * ((((jshl32((jint)((Game::maxHealth - 60)), (jint)(7))) / 60) + 256)))))), (jint)(8)));
-      (Game::health = (jint)((Game::health - var0)));
+      (var0 = jshr32((jint)(((var1 = jmul32(var0, (jadd32(((jshl32((jint)(jsub32(Game::maxHealth, 60)), (jint)(7))) / 60), 256)))))), (jint)(8)));
+      (Game::health = (jint)(jsub32(Game::health, var0)));
       if (((Game::health < 0))) {
          (Game::health = 0);
       }
@@ -854,7 +854,7 @@ jboolean Actor::m_e_I(jint var0) {
       if ((Actor::aP)) {
          return true;
       }
-      (Game::magic = (jint)((Game::magic - var0)));
+      (Game::magic = (jint)(jsub32(Game::magic, var0)));
       (Actor::bc = 0);
       return true;
    } else {
@@ -866,7 +866,7 @@ void Actor::m_i_V() {
    if (((!Actor::bD))) {
       (Game::magic = 0);
    } else {
-      (Actor::bc = (Actor::bc + Game::h));
+      (Actor::bc = jadd32(Actor::bc, Game::h));
       {
          switch (((Game::player)->aq)) {
             case 0:
@@ -875,7 +875,7 @@ void Actor::m_i_V() {
                if ((((Game::magic != Game::maxMagic) && (Actor::bc >= 5000)))) {
                   (Actor::bc = 0);
                   if (((Game::magic < Game::maxMagic))) {
-                     (Game::magic = (jint)((Game::magic + 10)));
+                     (Game::magic = (jint)(jadd32(Game::magic, 10)));
                      if (((Game::magic > Game::maxMagic))) {
                         (Game::magic = Game::maxMagic);
                      }
@@ -904,12 +904,12 @@ Actor::Actor() {
 
 jboolean Actor::m_b_AII(Arr<jint> var0, jint var1) {
    jboolean var2 = false;
-   jint var3 = ((((var0).length() + 1)) / 2);
+   jint var3 = ((jadd32((var0).length(), 1)) / 2);
    {
       jint var4 = 0;
-      for (; (var4 < Math::min((var3 - 1), var1)); (var4++)) {
-         if (((((Game::player)->animationId == (var0)[var4]) && Game::m_F_I((var0)[(var4 + var3)])))) {
-            (Actor::e = (var0)[(var4 + 1)]);
+      for (; (var4 < Math::min(jsub32(var3, 1), var1)); (var4++)) {
+         if (((((Game::player)->animationId == (var0)[var4]) && Game::m_F_I((var0)[jadd32(var4, var3)])))) {
+            (Actor::e = (var0)[jadd32(var4, 1)]);
             return true;
          }
       }
@@ -959,7 +959,7 @@ void Actor::m_b_AI(Arr<jint> var1) {
 
 void Actor::m_k_V() {
    Ref<Actor> _self(this);
-   (Actor::bp = (Actor::bp - Game::h));
+   (Actor::bp = jsub32(Actor::bp, Game::h));
    if (((((!Actor::bq) && (Actor::bp <= 0)) || (Actor::bq && this->m_e_V())))) {
       (Actor::bn++);
       if (((jshl32((jint)(Actor::bn), (jint)(2)) >= (Actor::bo).length()))) {
@@ -973,17 +973,17 @@ void Actor::m_k_V() {
 
 void Actor::m_l_V() {
    Ref<Actor> _self(this);
-   this->m_a_I((Actor::bo)[((Actor::bn * 4) + 0)]);
-   ((this)->G = jshl32((jint)((Actor::bo)[((Actor::bn * 4) + 1)]), (jint)(8)));
-   ((this)->H = jshl32((jint)((Actor::bo)[((Actor::bn * 4) + 2)]), (jint)(8)));
-   (Actor::bp = (Actor::bo)[((Actor::bn * 4) + 3)]);
+   this->m_a_I((Actor::bo)[jadd32(jmul32(Actor::bn, 4), 0)]);
+   ((this)->G = jshl32((jint)((Actor::bo)[jadd32(jmul32(Actor::bn, 4), 1)]), (jint)(8)));
+   ((this)->H = jshl32((jint)((Actor::bo)[jadd32(jmul32(Actor::bn, 4), 2)]), (jint)(8)));
+   (Actor::bp = (Actor::bo)[jadd32(jmul32(Actor::bn, 4), 3)]);
    this->m_an_V();
    if (((Actor::bp <= 0))) {
       (Actor::bq = true);
    } else {
       (Actor::bq = false);
    }
-   if ((((Actor::bo)[((Actor::bn * 4) + 0)] == 32))) {
+   if ((((Actor::bo)[jadd32(jmul32(Actor::bn, 4), 0)] == 32))) {
       if (((Actor::ba == nullptr))) {
          (Actor::ba = jnewarray<Arr<Ref<Actor>>>(4));
       }
@@ -1017,7 +1017,7 @@ jboolean Actor::m_aC_V() {
 void Actor::m_aD_V() {
    Ref<Actor> _self(this);
    if ((Actor::m_aX_V())) {
-      ([&]{ auto _t0 = 39; auto _t1 = 17; auto _t2 = (((0 + Actor::ch) == 0) ? Game::m_i_II(0, 2) : Game::m_i_II(2, 4)); auto _t3 = 0; auto _t4 = (-Game::m_i_II(10, 50)); auto _t5 = 302; auto _t6 = false; return this->m_a_IIIIIIZ(_t0, _t1, _t2, _t3, _t4, _t5, _t6); }());
+      ([&]{ auto _t0 = 39; auto _t1 = 17; auto _t2 = ((jadd32(0, Actor::ch) == 0) ? Game::m_i_II(0, 2) : Game::m_i_II(2, 4)); auto _t3 = 0; auto _t4 = jneg32(Game::m_i_II(10, 50)); auto _t5 = 302; auto _t6 = false; return this->m_a_IIIIIIZ(_t0, _t1, _t2, _t3, _t4, _t5, _t6); }());
    }
 }
 
@@ -1027,7 +1027,7 @@ jboolean Actor::m_e_Z(jboolean var1) {
       if ((((!this->m_at_V()) && (!this->m_e_AI((this)->collisionBounds))))) {
          return false;
       }
-      this->m_b_IZ((([&]{ auto _t0 = Actor::m_x_V(); auto _t1 = Actor::m_e_II(Actor::ch, (this)->type); return (_t0 * _t1); }()) / 100), var1);
+      this->m_b_IZ((([&]{ auto _t0 = Actor::m_x_V(); auto _t1 = Actor::m_e_II(Actor::ch, (this)->type); return jmul32(_t0, _t1); }()) / 100), var1);
       this->m_aD_V();
       return true;
    } else {
@@ -1047,18 +1047,18 @@ void Actor::m_b_IZ(jint var1, jboolean var2) {
    ((Actor::aU)->ay = var1);
    jint var3 = 100;
    if ((((Actor::cj)[Actor::ch] == 3))) {
-      (var3 = (jint)((var3 - 10)));
+      (var3 = (jint)(jsub32(var3, 10)));
    }
    if ((((Actor::ck)[Actor::ch] == 4))) {
-      (var3 = (jint)((var3 - 15)));
+      (var3 = (jint)(jsub32(var3, 15)));
    }
-   (var1 = ((var1 * var3) / 100));
-   ((this)->as = (jint)(((this)->as - var1)));
+   (var1 = (jmul32(var1, var3) / 100));
+   ((this)->as = (jint)(jsub32((this)->as, var1)));
    if ((((((this)->type == 14) && ((this)->animationId != 2)) && ((this)->animationId != 3)))) {
-      ([&]{ auto _t0 = 18; auto _t1 = 12; auto _t2 = 6; auto _t3 = 0; auto _t4 = (-Game::m_i_II(10, 50)); auto _t5 = 302; auto _t6 = (((Game::random)->nextInt() % 2) == 0); return this->m_a_IIIIIIZ(_t0, _t1, _t2, _t3, _t4, _t5, _t6); }());
+      ([&]{ auto _t0 = 18; auto _t1 = 12; auto _t2 = 6; auto _t3 = 0; auto _t4 = jneg32(Game::m_i_II(10, 50)); auto _t5 = 302; auto _t6 = (((Game::random)->nextInt() % 2) == 0); return this->m_a_IIIIIIZ(_t0, _t1, _t2, _t3, _t4, _t5, _t6); }());
       ((Actor::aU)->aq = 3);
    } else {
-      ([&]{ auto _t7 = 39; auto _t8 = 17; auto _t9 = this->m_aF_V(); auto _t10 = 0; auto _t11 = (-Game::m_i_II(10, 50)); auto _t12 = 302; auto _t13 = true; return this->m_a_IIIIIIZ(_t7, _t8, _t9, _t10, _t11, _t12, _t13); }());
+      ([&]{ auto _t7 = 39; auto _t8 = 17; auto _t9 = this->m_aF_V(); auto _t10 = 0; auto _t11 = jneg32(Game::m_i_II(10, 50)); auto _t12 = 302; auto _t13 = true; return this->m_a_IIIIIIZ(_t7, _t8, _t9, _t10, _t11, _t12, _t13); }());
    }
    if ((((this)->as > 0))) {
       if ((var2)) {
@@ -1090,7 +1090,7 @@ void Actor::m_b_IZ(jint var1, jboolean var2) {
 
 jint Actor::m_aF_V() {
    Ref<Actor> _self(this);
-   return (4 + Game::m_i_II(0, 3));
+   return jadd32(4, Game::m_i_II(0, 3));
 }
 
 jboolean Actor::m_r_I(jint var1) {
@@ -1275,10 +1275,10 @@ void Actor::m_a_ASZII(Arr<jshort> var1, jboolean var2, jint var3, jint var4) {
       if ((((this)->m == nullptr))) {
          ((this)->m = jnewarray<Arr<jint>>(4));
       }
-      (((this)->m)[0] = ((var1)[6] + (this)->positionX));
-      (((this)->m)[1] = ((var1)[7] + (this)->positionY));
-      (((this)->m)[2] = (((this)->m)[0] + (var1)[8]));
-      (((this)->m)[3] = (((this)->m)[1] + (var1)[9]));
+      (((this)->m)[0] = jadd32((var1)[6], (this)->positionX));
+      (((this)->m)[1] = jadd32((var1)[7], (this)->positionY));
+      (((this)->m)[2] = jadd32(((this)->m)[0], (var1)[8]));
+      (((this)->m)[3] = jadd32(((this)->m)[1], (var1)[9]));
    }
    {
       {
@@ -1290,7 +1290,7 @@ void Actor::m_a_ASZII(Arr<jshort> var1, jboolean var2, jint var3, jint var4) {
                break;
             case 1:
                ((this)->aC = (var1)[10]);
-               ((this)->aH = (Actor::ex)[(((this)->aC < 4) ? (this)->aC : ((this)->aC - 4))]);
+               ((this)->aH = (Actor::ex)[(((this)->aC < 4) ? (this)->aC : jsub32((this)->aC, 4))]);
                if ((((this)->aC >= 4))) {
                   ((this)->c = (jint)(((this)->c | 128)));
                }
@@ -1378,7 +1378,7 @@ void Actor::m_a_ASZII(Arr<jshort> var1, jboolean var2, jint var3, jint var4) {
                   if (((this->m_ar_V() == 1))) {
                      ((this)->aB = ((this)->collisionBounds)[3]);
                      ((this)->ad = (this)->positionY);
-                     ((this)->positionY = ((this)->positionY + ((((this)->collisionBounds)[3] - ((this)->collisionBounds)[1]))));
+                     ((this)->positionY = jadd32((this)->positionY, (jsub32(((this)->collisionBounds)[3], ((this)->collisionBounds)[1]))));
                      ((this)->av = (this)->positionY);
                   }
                } else if ((((var1)[4] == 4))) {
@@ -1386,15 +1386,15 @@ void Actor::m_a_ASZII(Arr<jshort> var1, jboolean var2, jint var3, jint var4) {
                   if (((this->m_ar_V() == 1))) {
                      ((this)->aB = ((this)->collisionBounds)[1]);
                      ((this)->ad = (this)->positionY);
-                     ((this)->positionY = ((this)->positionY + ((((this)->collisionBounds)[1] - ((this)->collisionBounds)[3]))));
+                     ((this)->positionY = jadd32((this)->positionY, (jsub32(((this)->collisionBounds)[1], ((this)->collisionBounds)[3]))));
                      ((this)->av = (this)->positionY);
                   }
                } else if ((((var1)[4] == 2))) {
                   ((this)->aK = ((this)->facingLeft ? 2 : 1));
                   if (((this->m_ar_V() == 1))) {
-                     ((this)->aB = ((((this)->facingLeft ? ((this)->collisionBounds)[2] : ((this)->collisionBounds)[0])) - 1));
+                     ((this)->aB = jsub32((((this)->facingLeft ? ((this)->collisionBounds)[2] : ((this)->collisionBounds)[0])), 1));
                      ((this)->ac = (this)->positionX);
-                     ((this)->positionX = ((this)->positionX + (((this)->facingLeft ? (((this)->collisionBounds)[2] - ((this)->collisionBounds)[0]) : (((this)->collisionBounds)[0] - ((this)->collisionBounds)[2])))));
+                     ((this)->positionX = jadd32((this)->positionX, (((this)->facingLeft ? jsub32(((this)->collisionBounds)[2], ((this)->collisionBounds)[0]) : jsub32(((this)->collisionBounds)[0], ((this)->collisionBounds)[2])))));
                      ((this)->ay = (this)->positionX);
                   }
                }
@@ -1508,7 +1508,7 @@ void Actor::m_a_ASZII(Arr<jshort> var1, jboolean var2, jint var3, jint var4) {
                if ((((this->m_ar_V() == 2) || (this->m_ar_V() == 3)))) {
                   ((this)->ac = (this)->positionX);
                   ((this)->ad = (this)->positionY);
-                  ((this)->av = ((this)->positionY + -50));
+                  ((this)->av = jadd32((this)->positionY, -50));
                   this->m_g_V();
                   ((this)->aB = ((this)->collisionBounds)[1]);
                }
@@ -1516,8 +1516,8 @@ void Actor::m_a_ASZII(Arr<jshort> var1, jboolean var2, jint var3, jint var4) {
             case 10:
                ((this)->aH = (Actor::ex)[(var1)[10]]);
                ((this)->aI = (var1)[11]);
-               ((this)->ay = ((this)->positionX + (var1)[12]));
-               ((this)->av = ((this)->positionY + (var1)[13]));
+               ((this)->ay = jadd32((this)->positionX, (var1)[12]));
+               ((this)->av = jadd32((this)->positionY, (var1)[13]));
                ((this)->ac = (this)->ay);
                ((this)->ad = (this)->av);
                ((this)->ap = 81);
@@ -1591,13 +1591,13 @@ void Actor::m_a_ASZII(Arr<jshort> var1, jboolean var2, jint var3, jint var4) {
             case 31:
                this->m_g_V();
                ((this)->aH = ((((this)->animationId != 4) && ((this)->animationId != 15)) ? 5 : 4));
-               ((this)->fv = (20 * (this)->aH));
+               ((this)->fv = jmul32(20, (this)->aH));
                ((this)->aC = (var1)[6]);
                ((this)->az = (this)->positionY);
                ((this)->aw = (this)->positionX);
                if ((((var1)[6] == 9))) {
                   ((this)->aq = 104);
-                  ((this)->az = ((this)->az + ((((this)->collisionBounds)[3] - ((this)->collisionBounds)[1]))));
+                  ((this)->az = jadd32((this)->az, (jsub32(((this)->collisionBounds)[3], ((this)->collisionBounds)[1]))));
                }
                if ((((this)->m == nullptr))) {
                   ((this)->m = jnewarray<Arr<jint>>(4));
@@ -1632,8 +1632,8 @@ void Actor::m_a_ASZII(Arr<jshort> var1, jboolean var2, jint var3, jint var4) {
                ((this)->fv = (var1)[8]);
                ((this)->fw = (var1)[9]);
                ((this)->fx = true);
-               ((this)->positionY = (jint)(((this)->positionY + 98)));
-               ((this)->positionY = ((this)->positionY - (this)->fw));
+               ((this)->positionY = (jint)(jadd32((this)->positionY, 98)));
+               ((this)->positionY = jsub32((this)->positionY, (this)->fw));
                ((this)->aq = (((this)->aC == Actor::es) ? 101 : 100));
                break;
             case 38:
@@ -1663,14 +1663,14 @@ void Actor::m_a_ASZII(Arr<jshort> var1, jboolean var2, jint var3, jint var4) {
             case 41:
                ((this)->al = 5);
                if ((var2)) {
-                  ((Game::bM)[((Game::bN * 5) + 0)] = ((this)->m)[0]);
-                  ((Game::bM)[((Game::bN * 5) + 1)] = ((this)->m)[1]);
-                  ((Game::bM)[((Game::bN * 5) + 2)] = (var1)[8]);
-                  ((Game::bM)[((Game::bN * 5) + 3)] = (var1)[9]);
+                  ((Game::bM)[jadd32(jmul32(Game::bN, 5), 0)] = ((this)->m)[0]);
+                  ((Game::bM)[jadd32(jmul32(Game::bN, 5), 1)] = ((this)->m)[1]);
+                  ((Game::bM)[jadd32(jmul32(Game::bN, 5), 2)] = (var1)[8]);
+                  ((Game::bM)[jadd32(jmul32(Game::bN, 5), 3)] = (var1)[9]);
                   if ((((var1)[4] != 0))) {
-                     ((Game::bM)[((Game::bN * 5) + 4)] = 2);
+                     ((Game::bM)[jadd32(jmul32(Game::bN, 5), 4)] = 2);
                      if ((((var1)[4] == 2))) {
-                        ((Game::bM)[((Game::bN * 5) + 4)] = 3);
+                        ((Game::bM)[jadd32(jmul32(Game::bN, 5), 4)] = 3);
                      }
                   }
                   ([&]{ auto _t33 = this; auto _t34 = (jint)((Game::bN++)); return _t33->aB = _t34; }());
@@ -1686,11 +1686,11 @@ void Actor::m_a_ASZII(Arr<jshort> var1, jboolean var2, jint var3, jint var4) {
                ((this)->C = (var1)[16]);
                ((this)->av = 0);
                ((this)->aC = (var1)[10]);
-               if ((((((this)->m)[3] - ((this)->m)[1]) >= (var1)[11]))) {
+               if (((jsub32(((this)->m)[3], ((this)->m)[1]) >= (var1)[11]))) {
                   ((this)->aw = ((this)->m)[1]);
-                  ((this)->ax = (((this)->m)[3] - (var1)[11]));
+                  ((this)->ax = jsub32(((this)->m)[3], (var1)[11]));
                } else {
-                  ((this)->aw = (((this)->m)[3] - (var1)[11]));
+                  ((this)->aw = jsub32(((this)->m)[3], (var1)[11]));
                   ((this)->ax = ((this)->m)[1]);
                }
                if ((((this)->aC == 1))) {
@@ -1718,7 +1718,7 @@ void Actor::m_a_ASZII(Arr<jshort> var1, jboolean var2, jint var3, jint var4) {
                ((this)->al = 4);
                ((this)->aw = (this)->positionX);
                ((this)->av = (var1)[6]);
-               ((this)->az = ((this)->positionY + (this)->av));
+               ((this)->az = jadd32((this)->positionY, (this)->av));
                ((this)->n = jnewarray<Arr<jint>>(12));
                ([&]{ auto _t35 = (this)->n; auto _t36 = 5; auto _t37 = (jint)((((this)->n)[4] = (var1)[7])); return _t35[_t36] = _t37; }());
                ([&]{ auto _t38 = (this)->n; auto _t39 = 0; auto _t40 = (jint)((((this)->n)[1] = (var1)[9])); return _t38[_t39] = _t40; }());
@@ -1748,7 +1748,7 @@ void Actor::m_a_ASZII(Arr<jshort> var1, jboolean var2, jint var3, jint var4) {
             case 53:
                ((this)->al = 2);
                ((this)->av = (var1)[6]);
-               ((this)->az = ((this)->positionY + (this)->av));
+               ((this)->az = jadd32((this)->positionY, (this)->av));
                ((this)->aG = (var1)[7]);
                this->m_o_V();
                break;
@@ -1767,10 +1767,10 @@ void Actor::m_a_ASZII(Arr<jshort> var1, jboolean var2, jint var3, jint var4) {
             case 79:
                ((this)->al = 3);
                this->m_g_V();
-               ((this)->ay = (((this)->collisionBounds)[2] - ((this)->collisionBounds)[0]));
+               ((this)->ay = jsub32(((this)->collisionBounds)[2], ((this)->collisionBounds)[0]));
                ((this)->aw = ((this)->ay / 20));
-               ((this)->av = (((this)->collisionBounds)[3] - ((this)->collisionBounds)[1]));
-               ((this)->n = jnewarray<Arr<jint>>(((this)->aw * (((this)->av / 20)))));
+               ((this)->av = jsub32(((this)->collisionBounds)[3], ((this)->collisionBounds)[1]));
+               ((this)->n = jnewarray<Arr<jint>>(jmul32((this)->aw, (((this)->av / 20)))));
                if ((((this)->type == 61))) {
                   ((this)->aA = (var1)[8]);
                   ((this)->aG = (var1)[6]);
@@ -1790,12 +1790,12 @@ void Actor::m_a_ASZII(Arr<jshort> var1, jboolean var2, jint var3, jint var4) {
                ((this)->aA = (var1)[6]);
                ((this)->aB = (var1)[7]);
                this->m_n_V();
-               ((this)->ay = (((this)->m)[2] - ((this)->m)[0]));
-               ((this)->av = (((this)->m)[3] - ((this)->m)[1]));
+               ((this)->ay = jsub32(((this)->m)[2], ((this)->m)[0]));
+               ((this)->av = jsub32(((this)->m)[3], ((this)->m)[1]));
                if ((((this)->aB == 0))) {
-                  (((this)->m)[2] = (((this)->m)[2] + ((((this)->aA - 1)) * (this)->ay)));
+                  (((this)->m)[2] = jadd32(((this)->m)[2], jmul32((jsub32((this)->aA, 1)), (this)->ay)));
                } else if ((((this)->aB == 1))) {
-                  (((this)->m)[3] = (((this)->m)[3] + ((((this)->aA - 1)) * (this)->av)));
+                  (((this)->m)[3] = jadd32(((this)->m)[3], jmul32((jsub32((this)->aA, 1)), (this)->av)));
                }
                if (((((var1)[9] == 39) && ((this)->animationId >= 10)))) {
                   Game::m_b_Actor(this);
@@ -1824,7 +1824,7 @@ void Actor::m_a_ASZII(Arr<jshort> var1, jboolean var2, jint var3, jint var4) {
             case 70:
                ((this)->aH = (var1)[10]);
                ((this)->fx = ((var1)[11] == 1));
-               ((this)->fv = ((var1)[12] * 20));
+               ((this)->fv = jmul32((var1)[12], 20));
                if (((((this)->aH == 3) && ((this)->fv == 0)))) {
                   ((this)->fv = 80);
                }
@@ -1843,27 +1843,27 @@ void Actor::m_a_ASZII(Arr<jshort> var1, jboolean var2, jint var3, jint var4) {
                         goto brk_label466;
                      case 1:
                         this->m_b_I(0);
-                        ((this)->positionY = (((((this)->positionY + 10)) / 20) * 20));
+                        ((this)->positionY = jmul32(((jadd32((this)->positionY, 10)) / 20), 20));
                         goto brk_label466;
                      case 2:
                         ;
                      case 3:
                         this->m_b_I(9);
-                        ((this)->positionY = (((this)->positionY / 20) * 20));
+                        ((this)->positionY = jmul32(((this)->positionY / 20), 20));
                         while (((Game::m_g_II(((this)->positionX / 20), ((this)->positionY / 20)) >= 15))) {
-                           ((this)->positionY = (jint)(((this)->positionY + 20)));
+                           ((this)->positionY = (jint)(jadd32((this)->positionY, 20)));
                         }
                         while ((true)) {
-                           if (((Game::m_g_II(((this)->positionX / 20), (((this)->positionY / 20) - 1)) >= 15))) {
+                           if (((Game::m_g_II(((this)->positionX / 20), jsub32(((this)->positionY / 20), 1)) >= 15))) {
                               goto brk_label466;
                            }
-                           ((this)->positionY = (jint)(((this)->positionY - 20)));
+                           ((this)->positionY = (jint)(jsub32((this)->positionY, 20)));
                         }
                   }
                }
             case 71:
                ((this)->aG = (var1)[6]);
-               ((this)->aH = (-(this)->aG));
+               ((this)->aH = jneg32((this)->aG));
                ((this)->ap = 97);
                break;
             case 72:
@@ -1871,7 +1871,7 @@ void Actor::m_a_ASZII(Arr<jshort> var1, jboolean var2, jint var3, jint var4) {
                ((this)->N = true);
                this->m_g_V();
                ((this)->av = (this)->positionY);
-               ((this)->az = (((this)->positionY + ((this)->collisionBounds)[3]) - ((this)->collisionBounds)[1]));
+               ((this)->az = jsub32(jadd32((this)->positionY, ((this)->collisionBounds)[3]), ((this)->collisionBounds)[1]));
                break;
             case 73:
                ((this)->aH = (var1)[10]);
@@ -1910,7 +1910,7 @@ void Actor::m_a_ASZII(Arr<jshort> var1, jboolean var2, jint var3, jint var4) {
                (((this)->m)[0] = ((this)->collisionBounds)[0]);
                (((this)->m)[1] = ((this)->collisionBounds)[1]);
                (((this)->m)[2] = ((this)->collisionBounds)[2]);
-               (((this)->m)[3] = (((this)->collisionBounds)[3] + (this)->av));
+               (((this)->m)[3] = jadd32(((this)->collisionBounds)[3], (this)->av));
                ((this)->c = (jint)(((this)->c | 128)));
                break;
             case 81:
@@ -1930,10 +1930,10 @@ void Actor::m_a_ASZII(Arr<jshort> var1, jboolean var2, jint var3, jint var4) {
                   if ((((this)->m == nullptr))) {
                      ((this)->m = jnewarray<Arr<jint>>(4));
                   }
-                  (((this)->m)[0] = (((this)->collisionBounds)[0] + -40));
-                  (((this)->m)[1] = (((this)->collisionBounds)[1] + -40));
-                  (((this)->m)[2] = (((this)->collisionBounds)[2] + 40));
-                  (((this)->m)[3] = (((this)->collisionBounds)[3] + -10));
+                  (((this)->m)[0] = jadd32(((this)->collisionBounds)[0], -40));
+                  (((this)->m)[1] = jadd32(((this)->collisionBounds)[1], -40));
+                  (((this)->m)[2] = jadd32(((this)->collisionBounds)[2], 40));
+                  (((this)->m)[3] = jadd32(((this)->collisionBounds)[3], -10));
                   ((Actor::dU)[2] = this);
                } else if ((((this)->aA >= 7))) {
                   ((this)->c = (jint)(((this)->c | 128)));
@@ -2024,46 +2024,46 @@ void Actor::m_a_ASZII(Arr<jshort> var1, jboolean var2, jint var3, jint var4) {
                      switch (((this)->ax)) {
                         case 0:
                            ((this)->n = jnewarray<Arr<jint>>(6));
-                           ([&]{ auto _t66 = (this)->n; auto _t67 = 0; auto _t68 = (jint)(([&]{ auto _t64 = (this)->positionY; auto _t65 = Game::m_i_II(10, 20); return (_t64 + _t65); }())); return _t66[_t67] = _t68; }());
+                           ([&]{ auto _t66 = (this)->n; auto _t67 = 0; auto _t68 = (jint)(([&]{ auto _t64 = (this)->positionY; auto _t65 = Game::m_i_II(10, 20); return jadd32(_t64, _t65); }())); return _t66[_t67] = _t68; }());
                            (((this)->n)[1] = (this)->fv);
-                           ([&]{ auto _t71 = (this)->n; auto _t72 = 2; auto _t73 = (jint)(([&]{ auto _t69 = (((this)->n)[0] + 26); auto _t70 = Game::m_i_II(-5, 5); return (_t69 + _t70); }())); return _t71[_t72] = _t73; }());
+                           ([&]{ auto _t71 = (this)->n; auto _t72 = 2; auto _t73 = (jint)(([&]{ auto _t69 = jadd32(((this)->n)[0], 26); auto _t70 = Game::m_i_II(-5, 5); return jadd32(_t69, _t70); }())); return _t71[_t72] = _t73; }());
                            (((this)->n)[3] = (this)->fv);
-                           ([&]{ auto _t76 = (this)->n; auto _t77 = 4; auto _t78 = (jint)(([&]{ auto _t74 = (((this)->n)[2] + 26); auto _t75 = Game::m_i_II(-5, 5); return (_t74 + _t75); }())); return _t76[_t77] = _t78; }());
-                           if (((((this)->n)[4] > (((this)->positionY + 80) - 26)))) {
-                              (((this)->n)[4] = (((this)->positionY + 80) - 26));
+                           ([&]{ auto _t76 = (this)->n; auto _t77 = 4; auto _t78 = (jint)(([&]{ auto _t74 = jadd32(((this)->n)[2], 26); auto _t75 = Game::m_i_II(-5, 5); return jadd32(_t74, _t75); }())); return _t76[_t77] = _t78; }());
+                           if (((((this)->n)[4] > jsub32(jadd32((this)->positionY, 80), 26)))) {
+                              (((this)->n)[4] = jsub32(jadd32((this)->positionY, 80), 26));
                            }
                            (((this)->n)[5] = (this)->fv);
                            break;
                         case 1:
                            ((this)->n = jnewarray<Arr<jint>>(8));
-                           ([&]{ auto _t81 = (this)->n; auto _t82 = 0; auto _t83 = (jint)(([&]{ auto _t79 = (this)->positionY; auto _t80 = Game::m_i_II(10, 20); return (_t79 + _t80); }())); return _t81[_t82] = _t83; }());
+                           ([&]{ auto _t81 = (this)->n; auto _t82 = 0; auto _t83 = (jint)(([&]{ auto _t79 = (this)->positionY; auto _t80 = Game::m_i_II(10, 20); return jadd32(_t79, _t80); }())); return _t81[_t82] = _t83; }());
                            (((this)->n)[1] = (this)->fv);
-                           ([&]{ auto _t86 = (this)->n; auto _t87 = 2; auto _t88 = (jint)((([&]{ auto _t84 = (((this)->n)[0] + 26); auto _t85 = Game::m_i_II(5, 10); return (_t84 - _t85); }()) - 2)); return _t86[_t87] = _t88; }());
+                           ([&]{ auto _t86 = (this)->n; auto _t87 = 2; auto _t88 = (jint)(jsub32(([&]{ auto _t84 = jadd32(((this)->n)[0], 26); auto _t85 = Game::m_i_II(5, 10); return jsub32(_t84, _t85); }()), 2)); return _t86[_t87] = _t88; }());
                            (((this)->n)[3] = (this)->fu);
-                           ([&]{ auto _t91 = (this)->n; auto _t92 = 4; auto _t93 = (jint)((([&]{ auto _t89 = (((this)->n)[2] + 38); auto _t90 = Game::m_i_II(5, 10); return (_t89 - _t90); }()) - 2)); return _t91[_t92] = _t93; }());
+                           ([&]{ auto _t91 = (this)->n; auto _t92 = 4; auto _t93 = (jint)(jsub32(([&]{ auto _t89 = jadd32(((this)->n)[2], 38); auto _t90 = Game::m_i_II(5, 10); return jsub32(_t89, _t90); }()), 2)); return _t91[_t92] = _t93; }());
                            (((this)->n)[5] = (this)->fv);
-                           ([&]{ auto _t96 = (this)->n; auto _t97 = 6; auto _t98 = (jint)(([&]{ auto _t94 = (((this)->n)[4] + 26); auto _t95 = Game::m_i_II(5, 10); return (_t94 + _t95); }())); return _t96[_t97] = _t98; }());
-                           if (((((this)->n)[6] > (((this)->positionY + 120) - 26)))) {
-                              (((this)->n)[6] = (((this)->positionY + 120) - 26));
+                           ([&]{ auto _t96 = (this)->n; auto _t97 = 6; auto _t98 = (jint)(([&]{ auto _t94 = jadd32(((this)->n)[4], 26); auto _t95 = Game::m_i_II(5, 10); return jadd32(_t94, _t95); }())); return _t96[_t97] = _t98; }());
+                           if (((((this)->n)[6] > jsub32(jadd32((this)->positionY, 120), 26)))) {
+                              (((this)->n)[6] = jsub32(jadd32((this)->positionY, 120), 26));
                            }
                            (((this)->n)[7] = (this)->fv);
                            break;
                         case 2:
                            ((this)->n = jnewarray<Arr<jint>>(10));
-                           ([&]{ auto _t101 = (this)->n; auto _t102 = 0; auto _t103 = (jint)(([&]{ auto _t99 = (this)->positionY; auto _t100 = Game::m_i_II(10, 20); return (_t99 + _t100); }())); return _t101[_t102] = _t103; }());
+                           ([&]{ auto _t101 = (this)->n; auto _t102 = 0; auto _t103 = (jint)(([&]{ auto _t99 = (this)->positionY; auto _t100 = Game::m_i_II(10, 20); return jadd32(_t99, _t100); }())); return _t101[_t102] = _t103; }());
                            (((this)->n)[1] = (this)->fu);
-                           ([&]{ auto _t106 = (this)->n; auto _t107 = 2; auto _t108 = (jint)(([&]{ auto _t104 = (((this)->n)[0] + 38); auto _t105 = Game::m_i_II(5, 10); return (_t104 - _t105); }())); return _t106[_t107] = _t108; }());
+                           ([&]{ auto _t106 = (this)->n; auto _t107 = 2; auto _t108 = (jint)(([&]{ auto _t104 = jadd32(((this)->n)[0], 38); auto _t105 = Game::m_i_II(5, 10); return jsub32(_t104, _t105); }())); return _t106[_t107] = _t108; }());
                            (((this)->n)[3] = (this)->fu);
-                           ([&]{ auto _t111 = (this)->n; auto _t112 = 4; auto _t113 = (jint)(([&]{ auto _t109 = (((this)->n)[2] + 38); auto _t110 = Game::m_i_II(5, 10); return (_t109 + _t110); }())); return _t111[_t112] = _t113; }());
+                           ([&]{ auto _t111 = (this)->n; auto _t112 = 4; auto _t113 = (jint)(([&]{ auto _t109 = jadd32(((this)->n)[2], 38); auto _t110 = Game::m_i_II(5, 10); return jadd32(_t109, _t110); }())); return _t111[_t112] = _t113; }());
                            (((this)->n)[5] = (this)->fv);
-                           ([&]{ auto _t116 = (this)->n; auto _t117 = 6; auto _t118 = (jint)(([&]{ auto _t114 = (((this)->n)[4] + 26); auto _t115 = Game::m_i_II(5, 10); return (_t114 + _t115); }())); return _t116[_t117] = _t118; }());
-                           if (((((this)->n)[6] > (((((this)->positionY + 160) - 38) - 26) + 5)))) {
-                              (((this)->n)[6] = (((((this)->positionY + 160) - 38) - 26) + 5));
+                           ([&]{ auto _t116 = (this)->n; auto _t117 = 6; auto _t118 = (jint)(([&]{ auto _t114 = jadd32(((this)->n)[4], 26); auto _t115 = Game::m_i_II(5, 10); return jadd32(_t114, _t115); }())); return _t116[_t117] = _t118; }());
+                           if (((((this)->n)[6] > jadd32(jsub32(jsub32(jadd32((this)->positionY, 160), 38), 26), 5)))) {
+                              (((this)->n)[6] = jadd32(jsub32(jsub32(jadd32((this)->positionY, 160), 38), 26), 5));
                            }
                            (((this)->n)[7] = (this)->fu);
-                           ([&]{ auto _t121 = (this)->n; auto _t122 = 8; auto _t123 = (jint)(([&]{ auto _t119 = (((this)->n)[6] + 38); auto _t120 = Game::m_i_II(5, 10); return (_t119 - _t120); }())); return _t121[_t122] = _t123; }());
-                           if (((((this)->n)[8] > (((this)->positionY + 160) - 26)))) {
-                              (((this)->n)[8] = (((this)->positionY + 160) - 26));
+                           ([&]{ auto _t121 = (this)->n; auto _t122 = 8; auto _t123 = (jint)(([&]{ auto _t119 = jadd32(((this)->n)[6], 38); auto _t120 = Game::m_i_II(5, 10); return jsub32(_t119, _t120); }())); return _t121[_t122] = _t123; }());
+                           if (((((this)->n)[8] > jsub32(jadd32((this)->positionY, 160), 26)))) {
+                              (((this)->n)[8] = jsub32(jadd32((this)->positionY, 160), 26));
                            }
                            (((this)->n)[9] = (this)->fv);
                      }
@@ -2075,7 +2075,7 @@ void Actor::m_a_ASZII(Arr<jshort> var1, jboolean var2, jint var3, jint var4) {
                ((this)->facingLeft = ((((this)->c & 1)) != 0));
                ((this)->O = true);
                ((this)->P = true);
-               ((this)->G = ((this)->facingLeft ? (-(this)->av) : (this)->av));
+               ((this)->G = ((this)->facingLeft ? jneg32((this)->av) : (this)->av));
                break;
             case 95:
                this->m_b_I(0);
@@ -2121,10 +2121,10 @@ void Actor::m_n_V() {
       ((this)->m = jnewarray<Arr<jint>>(4));
    }
    ((this)->p)->m_a_AIIIIIII((this)->m, (this)->animationId, (this)->h, -1, (this)->c, 0, 0);
-   (((this)->m)[0] = (((this)->m)[0] + (this)->positionX));
-   (((this)->m)[1] = (((this)->m)[1] + (this)->positionY));
-   (((this)->m)[2] = (((this)->m)[2] + (this)->positionX));
-   (((this)->m)[3] = (((this)->m)[3] + (this)->positionY));
+   (((this)->m)[0] = jadd32(((this)->m)[0], (this)->positionX));
+   (((this)->m)[1] = jadd32(((this)->m)[1], (this)->positionY));
+   (((this)->m)[2] = jadd32(((this)->m)[2], (this)->positionX));
+   (((this)->m)[3] = jadd32(((this)->m)[3], (this)->positionY));
 }
 
 void Actor::m_o_V() {
@@ -2133,9 +2133,9 @@ void Actor::m_o_V() {
    if ((((this)->m == nullptr))) {
       ((this)->m = jnewarray<Arr<jint>>(4));
    }
-   (((this)->m)[0] = (((this)->collisionBounds)[0] - 120));
+   (((this)->m)[0] = jsub32(((this)->collisionBounds)[0], 120));
    (((this)->m)[1] = (this)->az);
-   (((this)->m)[2] = (((this)->collisionBounds)[2] + 120));
+   (((this)->m)[2] = jadd32(((this)->collisionBounds)[2], 120));
    (((this)->m)[3] = ((this)->collisionBounds)[3]);
 }
 
@@ -2148,7 +2148,7 @@ void Actor::m_aG_V() {
       if (((this)->bL)) {
          return;
       }
-      ((this)->positionY = (jint)(((this)->positionY + 20)));
+      ((this)->positionY = (jint)(jadd32((this)->positionY, 20)));
    }
 }
 
@@ -2165,7 +2165,7 @@ void Actor::m_c_II(jint var1, jint var2) {
       switch ((var1)) {
          case 0:
             if (((var2 != 0))) {
-               ((this)->ap = (jint)(((this)->ap + var2)));
+               ((this)->ap = (jint)(jadd32((this)->ap, var2)));
                return;
             }
             break;
@@ -2202,27 +2202,27 @@ void Actor::m_aH_V() {
    jint var6{};
    if (((this)->facingLeft)) {
       (var3 = 1);
-      (var6 = (((this)->positionX + 40) - Game::cameraX));
+      (var6 = jsub32(jadd32((this)->positionX, 40), Game::cameraX));
       (var4 = -20);
    } else {
-      (var6 = (((this)->positionX + 20) - Game::cameraX));
+      (var6 = jsub32(jadd32((this)->positionX, 20), Game::cameraX));
       (var4 = 20);
    }
    (((Game::b)[40])->z = 0);
    {
       jint var1 = 0;
       for (; (var1 < 2); (var1++)) {
-         jint var8 = jshl32((jint)(((((this)->positionY - Game::cameraY) + 10) - (var1 * 2))), (jint)(8));
-         jint var5 = jdiv32(20480, ((4 + var1)));
+         jint var8 = jshl32((jint)(jsub32(jadd32(jsub32((this)->positionY, Game::cameraY), 10), jmul32(var1, 2))), (jint)(8));
+         jint var5 = jdiv32(20480, (jadd32(4, var1)));
          {
             jint var2 = 0;
-            for (; (var2 < (4 + var1)); (var2++)) {
+            for (; (var2 < jadd32(4, var1)); (var2++)) {
                jint var7 = jshr32((jint)(var8), (jint)(8));
-               ([&]{ auto _t0 = (Game::b)[40]; auto _t1 = Actor::bt; auto _t2 = 1; auto _t3 = ((((var1 + var2) + (this)->av)) % 2); auto _t4 = (var6 + Game::m_i_II(-5, 5)); auto _t5 = var7; auto _t6 = var3; auto _t7 = 0; auto _t8 = 0; return _t0->m_a_GraphicsIIIIIII(_t1, _t2, _t3, _t4, _t5, _t6, _t7, _t8); }());
-               (var8 = (jint)((var8 + var5)));
+               ([&]{ auto _t0 = (Game::b)[40]; auto _t1 = Actor::bt; auto _t2 = 1; auto _t3 = ((jadd32(jadd32(var1, var2), (this)->av)) % 2); auto _t4 = jadd32(var6, Game::m_i_II(-5, 5)); auto _t5 = var7; auto _t6 = var3; auto _t7 = 0; auto _t8 = 0; return _t0->m_a_GraphicsIIIIIII(_t1, _t2, _t3, _t4, _t5, _t6, _t7, _t8); }());
+               (var8 = (jint)(jadd32(var8, var5)));
             }
          }
-         (var6 = (jint)((var6 + var4)));
+         (var6 = (jint)(jadd32(var6, var4)));
       }
    }
 }
@@ -2237,33 +2237,33 @@ void Actor::m_aI_V() {
             (var1 = (this)->positionX);
             (var2 = (this)->positionY);
             if ((((this)->aC <= 3))) {
-               (var2 = (jint)((var2 - 20)));
+               (var2 = (jint)(jsub32(var2, 20)));
             }
             break;
          case 1:
-            (var1 = ((this)->positionX + 10));
-            (var2 = ((this)->positionY - 4));
+            (var1 = jadd32((this)->positionX, 10));
+            (var2 = jsub32((this)->positionY, 4));
             if ((((this)->aC <= 3))) {
-               (var1 = (jint)((var1 + 20)));
+               (var1 = (jint)(jadd32(var1, 20)));
             }
             break;
          case 2:
             (var1 = (this)->positionX);
-            (var2 = ((this)->positionY + 20));
+            (var2 = jadd32((this)->positionY, 20));
             if ((((this)->aC <= 3))) {
-               (var2 = (jint)((var2 + 40)));
+               (var2 = (jint)(jadd32(var2, 40)));
             }
             break;
          case 3:
-            (var1 = ((this)->positionX - 10));
-            (var2 = ((this)->positionY - 4));
+            (var1 = jsub32((this)->positionX, 10));
+            (var2 = jsub32((this)->positionY, 4));
             if ((((this)->aC <= 3))) {
-               (var1 = (jint)((var1 - 20)));
+               (var1 = (jint)(jsub32(var1, 20)));
             }
       }
    }
-   (var1 = (jint)((var1 - Game::cameraX)));
-   (var2 = (jint)((var2 - Game::cameraY)));
+   (var1 = (jint)(jsub32(var1, Game::cameraX)));
+   (var2 = (jint)(jsub32(var2, Game::cameraY)));
    jbyte var4{};
    jbyte var5{};
    jbyte var6{};
@@ -2280,23 +2280,23 @@ void Actor::m_aI_V() {
       jint var3 = 1;
       for (; (var3 <= (this)->ax); (var3++)) {
          if (((var3 <= (this)->fv))) {
-            if (((((this)->n)[(var3 - 1)] <= 7))) {
-               ((Game::b)[46])->m_a_GraphicsIIIIIII(Actor::bt, var4, (((this)->n)[(var3 - 1)] - 1), var1, var2, 0, 0, 0);
-               (((this)->n)[(var3 - 1)]++);
+            if (((((this)->n)[jsub32(var3, 1)] <= 7))) {
+               ((Game::b)[46])->m_a_GraphicsIIIIIII(Actor::bt, var4, jsub32(((this)->n)[jsub32(var3, 1)], 1), var1, var2, 0, 0, 0);
+               (((this)->n)[jsub32(var3, 1)]++);
             }
          } else {
             if (((var3 > (this)->fu))) {
                break;
             }
-            if (((((this)->n)[(var3 - 1)] <= 4))) {
-               ((Game::b)[46])->m_a_GraphicsIIIIIII(Actor::bt, var5, (((this)->n)[(var3 - 1)] - 1), var1, var2, 0, 0, 0);
-               (((this)->n)[(var3 - 1)]++);
+            if (((((this)->n)[jsub32(var3, 1)] <= 4))) {
+               ((Game::b)[46])->m_a_GraphicsIIIIIII(Actor::bt, var5, jsub32(((this)->n)[jsub32(var3, 1)], 1), var1, var2, 0, 0, 0);
+               (((this)->n)[jsub32(var3, 1)]++);
             } else {
                ((Game::b)[46])->m_a_GraphicsIIIIII(Actor::bt, var6, var1, var2, 0, 0, 0);
             }
          }
-         (var1 = (jint)((var1 + (this)->aw)));
-         (var2 = (jint)((var2 + (this)->az)));
+         (var1 = (jint)(jadd32(var1, (this)->aw)));
+         (var2 = (jint)(jadd32(var2, (this)->az)));
       }
    }
    if ((((this)->v != nullptr))) {
@@ -2310,39 +2310,39 @@ void Actor::m_aI_V() {
 
 void Actor::m_a_IIII(jint var1, jint var2, jint var3, jint var4) {
    Ref<Actor> _self(this);
-   jint var5 = (var1 - Game::cameraX);
-   jint var6 = (var2 - Game::cameraY);
-   jint var7 = (var5 + var3);
-   jint var8 = (var6 + var4);
+   jint var5 = jsub32(var1, Game::cameraX);
+   jint var6 = jsub32(var2, Game::cameraY);
+   jint var7 = jadd32(var5, var3);
+   jint var8 = jadd32(var6, var4);
    jint var9 = Math::max(var5, PortConfig::worldLeft());
-   jint var10 = (Math::min(PortConfig::worldRight(), var7) - var9);
+   jint var10 = jsub32(Math::min(PortConfig::worldRight(), var7), var9);
    (var10 = Math::min(PortConfig::screenWidth, var10));
    jint var11 = Math::max(var6, 0);
-   jint var12 = (Math::min(320, var8) - var11);
+   jint var12 = jsub32(Math::min(320, var8), var11);
    (var12 = Math::min(320, var12));
    if ((((((var9 <= PortConfig::worldRight()) && (var11 <= 340)) && (var10 > 0)) && (var12 > 0)))) {
       jboolean var14 = false;
       jboolean var15 = false;
       if (((1 != var12))) {
-         Game::m_a_IIII(var9, (var11 + 1), var10, (var12 - 1));
+         Game::m_a_IIII(var9, jadd32(var11, 1), var10, jsub32(var12, 1));
          PortConfig::tileOverlay(Game::j);
          PortConfig::clipWorld(Game::graphics);
       }
       (Game::graphics)->setColor(-1140850689);
       jint var16 = 0;
-      while (((var16 < (var10 - 3)))) {
+      while (((var16 < jsub32(var10, 3)))) {
          jint var17 = Game::m_i_II(1, 10);
-         Game::m_d_IIII((var9 + var16), var11, ((var9 + var16) + var17), var11);
-         (var16 = (jint)((var16 + (var17 + 20))));
+         Game::m_d_IIII(jadd32(var9, var16), var11, jadd32(jadd32(var9, var16), var17), var11);
+         (var16 = (jint)(jadd32(var16, jadd32(var17, 20))));
       }
       {
-         jint var20 = Actor::m_g_II(var5, (var9 - (Actor::m_l_I(var5) % 20)));
-         for (; (var20 < (var9 + var10)); (var20 = (jint)((var20 + 20)))) {
-            if ((((var20 + 20) > (var9 + var10)))) {
-               Game::m_a_IIII(var20, 0, ((var9 + var10) - var20), 320);
+         jint var20 = Actor::m_g_II(var5, jsub32(var9, (Actor::m_l_I(var5) % 20)));
+         for (; (var20 < jadd32(var9, var10)); (var20 = (jint)(jadd32(var20, 20)))) {
+            if (((jadd32(var20, 20) > jadd32(var9, var10)))) {
+               Game::m_a_IIII(var20, 0, jsub32(jadd32(var9, var10), var20), 320);
             }
             ((Game::b)[50])->m_a_GraphicsIIIIIII(Actor::bt, 1, (Game::stateFrame % 3), var20, var2, (this)->c, 0, Game::cameraY);
-            if ((((var20 + 20) > (var9 + var10)))) {
+            if (((jadd32(var20, 20) > jadd32(var9, var10)))) {
                PortConfig::clipWorld(Game::graphics);
             }
          }
@@ -2352,34 +2352,34 @@ void Actor::m_a_IIII(jint var1, jint var2, jint var3, jint var4) {
 
 void Actor::m_b_IIII(jint var1, jint var2, jint var3, jint var4) {
    Ref<Actor> _self(this);
-   jint var5 = (var1 - Game::cameraX);
-   jint var6 = ((var2 - Game::cameraY) - 0);
-   jint var7 = (var5 + var3);
-   jint var8 = (var6 + var4);
+   jint var5 = jsub32(var1, Game::cameraX);
+   jint var6 = jsub32(jsub32(var2, Game::cameraY), 0);
+   jint var7 = jadd32(var5, var3);
+   jint var8 = jadd32(var6, var4);
    jint var9 = Math::max(var5, PortConfig::worldLeft());
-   jint var10 = (Math::min(PortConfig::worldRight(), var7) - var9);
+   jint var10 = jsub32(Math::min(PortConfig::worldRight(), var7), var9);
    (var10 = Math::min(PortConfig::screenWidth, var10));
    jint var11 = Math::max(var6, 0);
-   jint var12 = (Math::min(320, var8) - var11);
+   jint var12 = jsub32(Math::min(320, var8), var11);
    (var12 = Math::min(320, var12));
    if ((((((var9 <= PortConfig::worldRight()) && (var11 <= 340)) && (var10 > 0)) && (var12 > 0)))) {
       (Actor::bt)->setColor(16711680);
       PortConfig::clipWorld(Game::graphics);
-      (Actor::bt)->fillRect(var9, (var11 + 0), var10, var12);
+      (Actor::bt)->fillRect(var9, jadd32(var11, 0), var10, var12);
       (((Game::b)[44])->z = (this)->aL);
       if (((Game::state != 14))) {
          ((this)->ax++);
       }
-      jint var13 = Actor::m_g_II(var5, (var9 - (Actor::m_l_I(var5) % 40)));
+      jint var13 = Actor::m_g_II(var5, jsub32(var9, (Actor::m_l_I(var5) % 40)));
       jint var14 = ([&]{ auto _t0 = (jshr32((jint)((this)->ax), (jint)(1))); auto _t1 = ((Game::b)[44])->m_a_I(4); return jrem32(_t0, _t1); }());
       {
          jint var15 = var13;
-         for (; (var15 < (var9 + var10)); (var15 = (jint)((var15 + 40)))) {
-            if ((((var15 + 40) > (var9 + var10)))) {
-               Game::m_a_IIII(var15, 0, ((var9 + var10) - var15), 320);
+         for (; (var15 < jadd32(var9, var10)); (var15 = (jint)(jadd32(var15, 40)))) {
+            if (((jadd32(var15, 40) > jadd32(var9, var10)))) {
+               Game::m_a_IIII(var15, 0, jsub32(jadd32(var9, var10), var15), 320);
             }
-            ((Game::b)[44])->m_a_GraphicsIIIIIII(Actor::bt, 4, var14, (var15 + 20), var2, (this)->c, 0, Game::cameraY);
-            if ((((var15 + 40) > (var9 + var10)))) {
+            ((Game::b)[44])->m_a_GraphicsIIIIIII(Actor::bt, 4, var14, jadd32(var15, 20), var2, (this)->c, 0, Game::cameraY);
+            if (((jadd32(var15, 40) > jadd32(var9, var10)))) {
                PortConfig::clipWorld(Game::graphics);
             }
          }
@@ -2392,10 +2392,10 @@ void Actor::m_c_IIII(jint var1, jint var2, jint var3, jint var4) {
    Ref<Actor> _self(this);
    this->m_g_V();
    (Actor::bt)->setColor(8947848);
-   Game::m_d_IIII(((var1 - Game::cameraX) - 1), (var2 - Game::cameraY), ((var3 - Game::cameraX) - 1), (var4 - Game::cameraY));
-   Game::m_d_IIII(((var1 - Game::cameraX) + 1), (var2 - Game::cameraY), ((var3 - Game::cameraX) + 1), (var4 - Game::cameraY));
+   Game::m_d_IIII(jsub32(jsub32(var1, Game::cameraX), 1), jsub32(var2, Game::cameraY), jsub32(jsub32(var3, Game::cameraX), 1), jsub32(var4, Game::cameraY));
+   Game::m_d_IIII(jadd32(jsub32(var1, Game::cameraX), 1), jsub32(var2, Game::cameraY), jadd32(jsub32(var3, Game::cameraX), 1), jsub32(var4, Game::cameraY));
    (Actor::bt)->setColor(16777215);
-   Game::m_d_IIII((var1 - Game::cameraX), (var2 - Game::cameraY), (var3 - Game::cameraX), (var4 - Game::cameraY));
+   Game::m_d_IIII(jsub32(var1, Game::cameraX), jsub32(var2, Game::cameraY), jsub32(var3, Game::cameraX), jsub32(var4, Game::cameraY));
 }
 
 void Actor::m_a_IIIActor(jint var1, jint var2, jint var3, Ref<Actor> var4) {
@@ -2428,7 +2428,7 @@ void Actor::m_a_IIIActor(jint var1, jint var2, jint var3, Ref<Actor> var4) {
                         this->m_g_V();
                         ((this)->av = ((var4)->collisionBounds)[3]);
                         ((this)->az = 20);
-                        ((this)->positionY = (((this)->av + (this)->az) + (jshr32((jint)((((this)->collisionBounds)[3] - ((this)->collisionBounds)[1])), (jint)(1)))));
+                        ((this)->positionY = jadd32(jadd32((this)->av, (this)->az), (jshr32((jint)(jsub32(((this)->collisionBounds)[3], ((this)->collisionBounds)[1])), (jint)(1)))));
                         ((this)->ay = (this)->positionX);
                         (Actor::cF = 0);
                         (Actor::cG = 0);
@@ -2450,7 +2450,7 @@ void Actor::m_a_IIIActor(jint var1, jint var2, jint var3, Ref<Actor> var4) {
                   Actor::m_e_Actor(Game::cb);
                }
                if ((var5)) {
-                  ([&]{ auto _t0 = 39; auto _t1 = 17; auto _t2 = this->m_aF_V(); auto _t3 = 0; auto _t4 = (-Game::m_i_II(10, 50)); auto _t5 = 302; auto _t6 = (((Game::random)->nextInt() % 2) == 0); return this->m_a_IIIIIIZ(_t0, _t1, _t2, _t3, _t4, _t5, _t6); }());
+                  ([&]{ auto _t0 = 39; auto _t1 = 17; auto _t2 = this->m_aF_V(); auto _t3 = 0; auto _t4 = jneg32(Game::m_i_II(10, 50)); auto _t5 = 302; auto _t6 = (((Game::random)->nextInt() % 2) == 0); return this->m_a_IIIIIIZ(_t0, _t1, _t2, _t3, _t4, _t5, _t6); }());
                }
                jboolean var6 = false;
                if ((((var4)->type != 42))) {
@@ -2463,23 +2463,23 @@ void Actor::m_a_IIIActor(jint var1, jint var2, jint var3, Ref<Actor> var4) {
                   }
                   if ((((((var4)->type == 10) && ((var4)->m_ar_V() == 0)) && ((var4)->aK < 8)))) {
                      if ((((var4)->aK == 1))) {
-                        ((this)->facingLeft = (((var4)->positionX + 15) < (this)->positionX));
+                        ((this)->facingLeft = (jadd32((var4)->positionX, 15) < (this)->positionX));
                      } else {
-                        ((this)->facingLeft = (((var4)->positionX - 15) < (this)->positionX));
+                        ((this)->facingLeft = (jsub32((var4)->positionX, 15) < (this)->positionX));
                      }
                   }
                   if (((var3 == 0))) {
                      ((this)->G = ((this)->facingLeft ? 3072 : -3072));
                   } else {
-                     ((this)->G = ((this)->facingLeft ? (-var3) : var3));
+                     ((this)->G = ((this)->facingLeft ? jneg32(var3) : var3));
                   }
                   if ((this->m_aW_V())) {
                      ((this)->G = 0);
                   }
                }
-               ((this)->I = (1024 * ((((this)->G > 0) ? -1 : 1))));
+               ((this)->I = jmul32(1024, ((((this)->G > 0) ? -1 : 1))));
                if ((((var4)->type == 11))) {
-                  ((this)->I = (1024 * (((this)->facingLeft ? -1 : 1))));
+                  ((this)->I = jmul32(1024, (((this)->facingLeft ? -1 : 1))));
                }
                if ((((var4)->type == 99))) {
                   ((this)->G = 0);
@@ -2541,17 +2541,17 @@ void Actor::m_b_IIIIIIZ(jint var1, jint var2, jint var3, jint var4, jint var5, j
          ((Actor::aU)->aD = 500);
          ([&]{ auto _t2 = Actor::aU; auto _t3 = (jint)(jshl32((jint)(Game::m_i_II(2, 4)), (jint)(8))); return _t2->G = _t3; }());
          if (((Game::m_i_II(0, 2) == 0))) {
-            ((Actor::aU)->G = (-(Actor::aU)->G));
+            ((Actor::aU)->G = jneg32((Actor::aU)->G));
          }
          ([&]{ auto _t4 = Actor::aU; auto _t5 = (jint)(jshl32((jint)(Game::m_i_II(2, 4)), (jint)(8))); return _t4->H = _t5; }());
          if (((Game::m_i_II(0, 2) == 0))) {
-            ((Actor::aU)->H = (-(Actor::aU)->H));
+            ((Actor::aU)->H = jneg32((Actor::aU)->H));
          }
       }
    }
    ((Actor::aU)->ap = var6);
-   ((Actor::aU)->positionX = ((this)->positionX + var4));
-   ((Actor::aU)->positionY = ((this)->positionY + var5));
+   ((Actor::aU)->positionX = jadd32((this)->positionX, var4));
+   ((Actor::aU)->positionY = jadd32((this)->positionY, var5));
    ((Actor::aU)->facingLeft = (var7 ? (!(this)->facingLeft) : (this)->facingLeft));
    if (((Actor::aU)->facingLeft)) {
       ((Actor::aU)->c = (jint)(((Actor::aU)->c | 1)));
@@ -2571,10 +2571,10 @@ void Actor::m_q_V() {
    {
       jint var0 = 0;
       for (; (var0 < 2); (var0++)) {
-         Game::m_a_ABIS(Game::dt, (32 + (2 * var0)), ((jshort)((Actor::cj)[var0])));
-         Game::m_a_ABIS(Game::dt, (36 + (2 * var0)), ((jshort)((Actor::ck)[var0])));
-         Game::m_a_ABIS(Game::dt, (40 + (2 * var0)), ((jshort)((Actor::cl)[var0])));
-         Game::m_a_ABIS(Game::dt, (44 + (2 * var0)), ((jshort)((Actor::cm)[var0])));
+         Game::m_a_ABIS(Game::dt, jadd32(32, jmul32(2, var0)), ((jshort)((Actor::cj)[var0])));
+         Game::m_a_ABIS(Game::dt, jadd32(36, jmul32(2, var0)), ((jshort)((Actor::ck)[var0])));
+         Game::m_a_ABIS(Game::dt, jadd32(40, jmul32(2, var0)), ((jshort)((Actor::cl)[var0])));
+         Game::m_a_ABIS(Game::dt, jadd32(44, jmul32(2, var0)), ((jshort)((Actor::cm)[var0])));
       }
    }
    Game::m_a_ABIS(Game::dt, 64, ((jshort)(Game::maxHealth)));
@@ -2598,7 +2598,7 @@ void Actor::m_q_V() {
    {
       jint var1 = 0;
       for (; (var1 < 8); (var1++)) {
-         Game::m_a_ABIS(Game::dt, (48 + (var1 * 2)), ((jshort)((Game::aY)[var1])));
+         Game::m_a_ABIS(Game::dt, jadd32(48, jmul32(var1, 2)), ((jshort)((Game::aY)[var1])));
       }
    }
    Actor::m_r_V();
@@ -2609,7 +2609,7 @@ void Actor::m_r_V() {
    {
       jint var0 = 0;
       for (; (var0 < 11); (var0++)) {
-         Game::m_a_ABIS(Game::dt, (90 + (2 * var0)), (Game::cw)[var0]);
+         Game::m_a_ABIS(Game::dt, jadd32(90, jmul32(2, var0)), (Game::cw)[var0]);
       }
    }
    {
@@ -2618,7 +2618,7 @@ void Actor::m_r_V() {
          {
             jint var1 = 0;
             for (; (var1 < 30); (var1++)) {
-               Game::m_a_ABIS(Game::dt, ((112 + ((var2 * 30) * 2)) + (var1 * 2)), ((Game::ct)[var2])[var1]);
+               Game::m_a_ABIS(Game::dt, jadd32(jadd32(112, jmul32(jmul32(var2, 30), 2)), jmul32(var1, 2)), ((Game::ct)[var2])[var1]);
             }
          }
       }
@@ -2629,7 +2629,7 @@ void Actor::m_aJ_V() {
    Ref<Actor> _self(this);
    if ((Actor::m_b_AIAI((this)->collisionBounds, (Game::player)->collisionBounds))) {
       (Game::cx = false);
-      Game::m_a_ABIS(Game::dt, 16, ((jshort)((((this)->an + 1)))));
+      Game::m_a_ABIS(Game::dt, 16, ((jshort)((jadd32((this)->an, 1)))));
       Game::m_a_ABIS(Game::dt, 18, ((jshort)((Game::player)->positionX)));
       Game::m_a_ABIS(Game::dt, 20, ((jshort)((Game::player)->positionY)));
       Game::m_a_ABIS(Game::dt, 22, ((jshort)((((Game::player)->facingLeft ? 1 : 0)))));
@@ -2640,7 +2640,7 @@ void Actor::m_aJ_V() {
       {
          jint var1 = 0;
          for (; (var1 < Game::cc); (var1++)) {
-            Game::m_a_ABII(Game::dt, (1127 + var1), ((jint)((Game::cq)[var1])));
+            Game::m_a_ABII(Game::dt, jadd32(1127, var1), ((jint)((Game::cq)[var1])));
          }
       }
       if (((Game::levelIndex == 6))) {
@@ -2652,7 +2652,7 @@ void Actor::m_aJ_V() {
                } else {
                   ((Actor::bG)[var2] = -1);
                }
-               Game::m_a_ABIS(Game::dt, (792 + (var2 * 2)), (Actor::bG)[var2]);
+               Game::m_a_ABIS(Game::dt, jadd32(792, jmul32(var2, 2)), (Actor::bG)[var2]);
                if ((((Actor::bG)[var2] != -1))) {
                   Game::m_a_ActorI((Actor::dU)[var2], var2);
                }
@@ -2661,7 +2661,7 @@ void Actor::m_aJ_V() {
          {
             jint var3 = 0;
             for (; (var3 < 54); (var3++)) {
-               Game::m_a_ABII(Game::dt, (805 + var3), ((jint)((Actor::bH)[var3])));
+               Game::m_a_ABII(Game::dt, jadd32(805, var3), ((jint)((Actor::bH)[var3])));
             }
          }
          Game::m_a_ABIS(Game::dt, 859, ((jshort)(Game::aB)));
@@ -2699,14 +2699,14 @@ void Actor::m_aJ_V() {
             {
                jint var5 = 0;
                for (; (var5 < (Actor::dy).length()); (var5++)) {
-                  Game::m_a_ABII(Game::dt, (879 + var5), ((jint)((Actor::dy)[var5])));
+                  Game::m_a_ABII(Game::dt, jadd32(879, var5), ((jint)((Actor::dy)[var5])));
                }
             }
          }
          {
             jint var6 = 0;
             for (; (var6 < 220); (var6++)) {
-               Game::m_a_ABII(Game::dt, (907 + var6), ((jint)((Actor::dx)[var6])));
+               Game::m_a_ABII(Game::dt, jadd32(907, var6), ((jint)((Actor::dx)[var6])));
             }
          }
          Game::m_a_ABIS(Game::dt, 859, ((jshort)(Game::aB)));
@@ -2714,7 +2714,7 @@ void Actor::m_aJ_V() {
       {
          jint var7 = 0;
          for (; (var7 < 3); (var7++)) {
-            Game::m_a_ABII(Game::dt, (802 + var7), ((jint)((Actor::ej)[var7])));
+            Game::m_a_ABII(Game::dt, jadd32(802, var7), ((jint)((Actor::ej)[var7])));
          }
       }
       Game::accessSaveRecord(true);
@@ -2728,20 +2728,20 @@ void Actor::m_aK_V() {
       {
          switch (((this)->aC)) {
             case 59:
-               ((Game::player)->fu = (1 * var1));
-               ((Game::player)->I = (jint)(((Game::player)->I + (204 * var1))));
+               ((Game::player)->fu = jmul32(1, var1));
+               ((Game::player)->I = (jint)(jadd32((Game::player)->I, jmul32(204, var1))));
                break;
             case 60:
-               ((Game::player)->fu = (-1 * var1));
-               ((Game::player)->I = (jint)(((Game::player)->I + (-204 * var1))));
+               ((Game::player)->fu = jmul32(-1, var1));
+               ((Game::player)->I = (jint)(jadd32((Game::player)->I, jmul32(-204, var1))));
                break;
             case 61:
-               ((Game::player)->fv = (-1 * var1));
-               ((Game::player)->J = (jint)(((Game::player)->J + (1024 * var1))));
+               ((Game::player)->fv = jmul32(-1, var1));
+               ((Game::player)->J = (jint)(jadd32((Game::player)->J, jmul32(1024, var1))));
                break;
             case 62:
-               ((Game::player)->fv = (1 * var1));
-               ((Game::player)->J = (jint)(((Game::player)->J + (-1024 * var1))));
+               ((Game::player)->fv = jmul32(1, var1));
+               ((Game::player)->J = (jint)(jadd32((Game::player)->J, jmul32(-1024, var1))));
          }
       }
    }
@@ -2767,13 +2767,13 @@ void Actor::m_aK_V() {
             }
             if (((Actor::m_b_AIAI((Game::player)->collisionBounds, (this)->m) || Actor::m_a_AIAI((this)->m, (Game::player)->collisionBounds)))) {
                if (((Actor::m_l_I((Game::player)->G) > 1024))) {
-                  ((Game::player)->G = (((((Game::player)->G > 0) ? 1 : -1)) * 1024));
+                  ((Game::player)->G = jmul32(((((Game::player)->G > 0) ? 1 : -1)), 1024));
                   if ((((((Game::player)->I ^ (Game::player)->G)) < 0))) {
                      ((Game::player)->I = 0);
                   }
                }
                if (((Actor::m_l_I((Game::player)->H) > 768))) {
-                  ((Game::player)->H = (((((Game::player)->H > 0) ? 1 : -1)) * 768));
+                  ((Game::player)->H = jmul32(((((Game::player)->H > 0) ? 1 : -1)), 768));
                }
             }
       }
@@ -2793,26 +2793,26 @@ void Actor::m_q_Actor(Ref<Actor> var1) {
       ((Actor::aU)->r = this);
    }
    {
-      switch ((((((this)->aC - 27)) % 4))) {
+      switch ((((jsub32((this)->aC, 27)) % 4))) {
          case 0:
             ((Actor::aU)->G = 0);
             ((Actor::aU)->H = -1280);
-            ((Actor::aU)->positionY = (jint)(((Actor::aU)->positionY - 20)));
+            ((Actor::aU)->positionY = (jint)(jsub32((Actor::aU)->positionY, 20)));
             break;
          case 1:
             ((Actor::aU)->G = 1280);
             ((Actor::aU)->H = 0);
-            ((Actor::aU)->positionX = (jint)(((Actor::aU)->positionX + 20)));
+            ((Actor::aU)->positionX = (jint)(jadd32((Actor::aU)->positionX, 20)));
             break;
          case 2:
             ((Actor::aU)->G = 0);
             ((Actor::aU)->H = 1280);
-            ((Actor::aU)->positionY = (jint)(((Actor::aU)->positionY + 20)));
+            ((Actor::aU)->positionY = (jint)(jadd32((Actor::aU)->positionY, 20)));
             break;
          case 3:
             ((Actor::aU)->G = -1280);
             ((Actor::aU)->H = 0);
-            ((Actor::aU)->positionX = (jint)(((Actor::aU)->positionX - 20)));
+            ((Actor::aU)->positionX = (jint)(jsub32((Actor::aU)->positionX, 20)));
       }
    }
    ((Actor::aU)->aC = 88);
@@ -2839,7 +2839,7 @@ void Actor::m_aL_V() {
                }
             }
             if (((((Actor::m_b_AIAI((this)->collisionBounds, (Game::player)->k) && ((this)->aC >= 27)) && ((this)->aC <= 30)) && (Actor::ch == 0)))) {
-               this->m_a_I(((this)->aC + 9));
+               this->m_a_I(jadd32((this)->aC, 9));
                this->m_q_Actor(nullptr);
                return;
             }
@@ -2847,12 +2847,12 @@ void Actor::m_aL_V() {
          case 101:
             this->m_cV_V();
             if ((((((this)->animationId >= 36) && ((this)->animationId <= 39)) && this->m_e_V()))) {
-               this->m_a_I(((this)->aC + 13));
+               this->m_a_I(jadd32((this)->aC, 13));
             }
             if ((((this)->aA <= 0))) {
                ((this)->aq = 0);
                if ((((this)->animationId > 35))) {
-                  this->m_a_I(((this)->aC + 17));
+                  this->m_a_I(jadd32((this)->aC, 17));
                }
             }
       }
@@ -2867,45 +2867,45 @@ void Actor::m_aM_V() {
    {
       switch ((((this)->aC % 4))) {
          case 0:
-            ((Actor::ey)[1] = ((this)->positionY - 40));
-            ((Actor::ey)[3] = ((this)->positionY - 20));
-            ((Actor::ey)[0] = ((this)->positionX - 10));
-            ((Actor::ey)[2] = ((this)->positionX + 10));
+            ((Actor::ey)[1] = jsub32((this)->positionY, 40));
+            ((Actor::ey)[3] = jsub32((this)->positionY, 20));
+            ((Actor::ey)[0] = jsub32((this)->positionX, 10));
+            ((Actor::ey)[2] = jadd32((this)->positionX, 10));
             if ((((this)->aC > 3))) {
-               ((Actor::ey)[1] = ((Actor::ey)[1] + 20));
+               ((Actor::ey)[1] = jadd32((Actor::ey)[1], 20));
                ((Actor::ey)[3] = (this)->positionY);
                return;
             }
             break;
          case 1:
             ((Actor::ey)[1] = (this)->positionY);
-            ((Actor::ey)[3] = ((this)->positionY + 10));
-            ((Actor::ey)[0] = ((this)->positionX + 20));
-            ((Actor::ey)[2] = ((this)->positionX + 40));
+            ((Actor::ey)[3] = jadd32((this)->positionY, 10));
+            ((Actor::ey)[0] = jadd32((this)->positionX, 20));
+            ((Actor::ey)[2] = jadd32((this)->positionX, 40));
             if ((((this)->aC > 3))) {
-               ((Actor::ey)[0] = ((Actor::ey)[0] - 20));
-               ((Actor::ey)[2] = ((Actor::ey)[2] - 20));
+               ((Actor::ey)[0] = jsub32((Actor::ey)[0], 20));
+               ((Actor::ey)[2] = jsub32((Actor::ey)[2], 20));
                return;
             }
             break;
          case 2:
-            ((Actor::ey)[1] = ((this)->positionY + 20));
-            ((Actor::ey)[3] = ((this)->positionY + 40));
-            ((Actor::ey)[0] = ((this)->positionX - 10));
-            ((Actor::ey)[2] = ((this)->positionX + 10));
+            ((Actor::ey)[1] = jadd32((this)->positionY, 20));
+            ((Actor::ey)[3] = jadd32((this)->positionY, 40));
+            ((Actor::ey)[0] = jsub32((this)->positionX, 10));
+            ((Actor::ey)[2] = jadd32((this)->positionX, 10));
             if ((((this)->aC > 3))) {
                ((Actor::ey)[1] = (this)->positionY);
-               ((Actor::ey)[3] = ((Actor::ey)[3] - 20));
+               ((Actor::ey)[3] = jsub32((Actor::ey)[3], 20));
                return;
             }
             break;
          case 3:
             ((Actor::ey)[1] = (this)->positionY);
-            ((Actor::ey)[3] = ((this)->positionY + 10));
-            ((Actor::ey)[0] = ((this)->positionX - 40));
-            ((Actor::ey)[2] = ((this)->positionX - 20));
+            ((Actor::ey)[3] = jadd32((this)->positionY, 10));
+            ((Actor::ey)[0] = jsub32((this)->positionX, 40));
+            ((Actor::ey)[2] = jsub32((this)->positionX, 20));
             if ((((this)->aC > 3))) {
-               ((Actor::ey)[0] = ((Actor::ey)[0] + 20));
+               ((Actor::ey)[0] = jadd32((Actor::ey)[0], 20));
                ((Actor::ey)[2] = (this)->positionX);
             }
       }
@@ -2919,15 +2919,15 @@ void Actor::m_f_Z(jboolean var1) {
          ((this)->aq = 102);
       }
       {
-         jint var2 = ((this)->fv - 1);
+         jint var2 = jsub32((this)->fv, 1);
          for (; (var2 < (this)->fu); (var2++)) {
             if ((((var2 < (this)->ax) && (var2 >= 0)))) {
                (((this)->n)[var2] = 1);
                this->m_aM_V();
-               ((Actor::ey)[1] = ((Actor::ey)[1] + (var2 * (this)->az)));
-               ((Actor::ey)[3] = ((Actor::ey)[3] + (var2 * (this)->az)));
-               ((Actor::ey)[0] = ((Actor::ey)[0] + (var2 * (this)->aw)));
-               ((Actor::ey)[2] = ((Actor::ey)[2] + (var2 * (this)->aw)));
+               ((Actor::ey)[1] = jadd32((Actor::ey)[1], jmul32(var2, (this)->az)));
+               ((Actor::ey)[3] = jadd32((Actor::ey)[3], jmul32(var2, (this)->az)));
+               ((Actor::ey)[0] = jadd32((Actor::ey)[0], jmul32(var2, (this)->aw)));
+               ((Actor::ey)[2] = jadd32((Actor::ey)[2], jmul32(var2, (this)->aw)));
                this->m_a_AIZ(Actor::ey, true);
             }
          }
@@ -2944,7 +2944,7 @@ void Actor::m_aN_V() {
    Ref<Actor> _self(this);
    if ((((((this)->aC >= 0) && ((this)->aC <= 3)) && ((((this)->aq == 0) || ((this)->aq == 102)))))) {
       ((this)->aq = 101);
-      this->m_a_I(((this)->aC + 9));
+      this->m_a_I(jadd32((this)->aC, 9));
       ((this)->aA = 0);
       ((this)->aB = (this)->ay);
       ((this)->as = 0);
@@ -2967,7 +2967,7 @@ void Actor::m_aO_V() {
                case 0:
                   ((this)->aw = 0);
                   ((this)->az = -20);
-                  ((this)->ax = ((((this)->positionY - ((this)->v)->positionY)) / 20));
+                  ((this)->ax = ((jsub32((this)->positionY, ((this)->v)->positionY)) / 20));
                   if ((((this)->aC <= 3))) {
                      ((this)->ax--);
                   }
@@ -2975,19 +2975,19 @@ void Actor::m_aO_V() {
                case 1:
                   ((this)->aw = 20);
                   ((this)->az = 0);
-                  ((this)->ax = (((((this)->v)->positionX - (this)->positionX)) / 20));
+                  ((this)->ax = ((jsub32(((this)->v)->positionX, (this)->positionX)) / 20));
                   if ((((this)->aC <= 3))) {
                      ((this)->ax--);
                   }
-                  ((this)->positionY = (jint)(((this)->positionY + 4)));
+                  ((this)->positionY = (jint)(jadd32((this)->positionY, 4)));
                   if (((((this)->v != nullptr) && (((this)->v)->aC == 8)))) {
-                     (((this)->v)->positionY = (jint)((((this)->v)->positionY + 4)));
+                     (((this)->v)->positionY = (jint)(jadd32(((this)->v)->positionY, 4)));
                   }
                   break;
                case 2:
                   ((this)->aw = 0);
                   ((this)->az = 20);
-                  ((this)->ax = (((((this)->v)->positionY - (this)->positionY)) / 20));
+                  ((this)->ax = ((jsub32(((this)->v)->positionY, (this)->positionY)) / 20));
                   if ((((this)->aC <= 3))) {
                      ((this)->ax--);
                   }
@@ -2995,13 +2995,13 @@ void Actor::m_aO_V() {
                case 3:
                   ((this)->aw = -20);
                   ((this)->az = 0);
-                  ((this)->ax = ((((this)->positionX - ((this)->v)->positionX)) / 20));
+                  ((this)->ax = ((jsub32((this)->positionX, ((this)->v)->positionX)) / 20));
                   if ((((this)->aC <= 3))) {
                      ((this)->ax--);
                   }
-                  ((this)->positionY = (jint)(((this)->positionY + 4)));
+                  ((this)->positionY = (jint)(jadd32((this)->positionY, 4)));
                   if (((((this)->v != nullptr) && (((this)->v)->aC == 8)))) {
-                     (((this)->v)->positionY = (jint)((((this)->v)->positionY + 4)));
+                     (((this)->v)->positionY = (jint)(jadd32(((this)->v)->positionY, 4)));
                   }
             }
          }
@@ -3026,7 +3026,7 @@ void Actor::m_aO_V() {
             if ((((((this)->animationId >= 17) && ((this)->animationId <= 20)) && this->m_e_V()))) {
                this->m_a_I((this)->aC);
             }
-            if (((((this)->n != nullptr) && (((this)->n)[((this)->ax - 1)] == 6)))) {
+            if (((((this)->n != nullptr) && (((this)->n)[jsub32((this)->ax, 1)] == 6)))) {
                ((this)->fu = 0);
                ((this)->fv = 0);
             }
@@ -3037,17 +3037,17 @@ void Actor::m_aO_V() {
             break;
          case 101:
             if ((((((this)->animationId >= 9) && ((this)->animationId <= 12)) && this->m_e_V()))) {
-               this->m_a_I(((this)->aC + 13));
+               this->m_a_I(jadd32((this)->aC, 13));
             }
             if ((((this)->aA <= 0))) {
                ((this)->aA = (this)->av);
                if ((((this)->fu < (this)->ax))) {
                   (((this)->n)[(this)->fu] = 1);
                   this->m_aM_V();
-                  ((Actor::ey)[1] = ((Actor::ey)[1] + ((this)->fu * (this)->az)));
-                  ((Actor::ey)[3] = ((Actor::ey)[3] + ((this)->fu * (this)->az)));
-                  ((Actor::ey)[0] = ((Actor::ey)[0] + ((this)->fu * (this)->aw)));
-                  ((Actor::ey)[2] = ((Actor::ey)[2] + ((this)->fu * (this)->aw)));
+                  ((Actor::ey)[1] = jadd32((Actor::ey)[1], jmul32((this)->fu, (this)->az)));
+                  ((Actor::ey)[3] = jadd32((Actor::ey)[3], jmul32((this)->fu, (this)->az)));
+                  ((Actor::ey)[0] = jadd32((Actor::ey)[0], jmul32((this)->fu, (this)->aw)));
+                  ((Actor::ey)[2] = jadd32((Actor::ey)[2], jmul32((this)->fu, (this)->aw)));
                   {
                      switch ((((this)->aC % 2))) {
                         case 0:
@@ -3076,17 +3076,17 @@ void Actor::m_aO_V() {
                   if ((((this)->fv < (this)->ax))) {
                      (((this)->n)[(this)->fv] = 1);
                      this->m_aM_V();
-                     ((Actor::ey)[1] = ((Actor::ey)[1] + ((this)->fv * (this)->az)));
-                     ((Actor::ey)[3] = ((Actor::ey)[3] + ((this)->fv * (this)->az)));
-                     ((Actor::ey)[0] = ((Actor::ey)[0] + ((this)->fv * (this)->aw)));
-                     ((Actor::ey)[2] = ((Actor::ey)[2] + ((this)->fv * (this)->aw)));
+                     ((Actor::ey)[1] = jadd32((Actor::ey)[1], jmul32((this)->fv, (this)->az)));
+                     ((Actor::ey)[3] = jadd32((Actor::ey)[3], jmul32((this)->fv, (this)->az)));
+                     ((Actor::ey)[0] = jadd32((Actor::ey)[0], jmul32((this)->fv, (this)->aw)));
+                     ((Actor::ey)[2] = jadd32((Actor::ey)[2], jmul32((this)->fv, (this)->aw)));
                      this->m_a_AIZ(Actor::ey, true);
                      ((this)->fv++);
                   } else if ((((this)->fv == (this)->ax))) {
                      ((this)->fv++);
                      ((this)->aq = 102);
                      if ((((this)->animationId > 8))) {
-                        this->m_a_I(((this)->aC + 17));
+                        this->m_a_I(jadd32((this)->aC, 17));
                      }
                   }
                }
@@ -3162,43 +3162,43 @@ void Actor::m_t_V() {
    Ref<Actor> _self(this);
    if (((!this->m_s_V()))) {
       if (((Actor::aT == this))) {
-         ((Game::player)->positionX = ((Game::player)->positionX + (jshr32((jint)((this)->G), (jint)(8)))));
-         ((Game::player)->positionY = ((Game::player)->positionY + (jshr32((jint)((this)->H), (jint)(8)))));
+         ((Game::player)->positionX = jadd32((Game::player)->positionX, (jshr32((jint)((this)->G), (jint)(8)))));
+         ((Game::player)->positionY = jadd32((Game::player)->positionY, (jshr32((jint)((this)->H), (jint)(8)))));
       }
       if (((((((Game::player)->aq == 1) && (Actor::ar == 2)) && (Actor::cv == 70)) && ((Game::player)->q == this)))) {
-         ((Game::player)->ay = ((Game::player)->ay + (jshr32((jint)((this)->G), (jint)(8)))));
-         ((Game::player)->av = ((Game::player)->av + (jshr32((jint)((this)->H), (jint)(8)))));
-         ((Game::player)->positionX = ((Game::player)->positionX + (jshr32((jint)((this)->G), (jint)(8)))));
-         ((Game::player)->positionY = ((Game::player)->positionY + (jshr32((jint)((this)->H), (jint)(8)))));
+         ((Game::player)->ay = jadd32((Game::player)->ay, (jshr32((jint)((this)->G), (jint)(8)))));
+         ((Game::player)->av = jadd32((Game::player)->av, (jshr32((jint)((this)->H), (jint)(8)))));
+         ((Game::player)->positionX = jadd32((Game::player)->positionX, (jshr32((jint)((this)->G), (jint)(8)))));
+         ((Game::player)->positionY = jadd32((Game::player)->positionY, (jshr32((jint)((this)->H), (jint)(8)))));
       }
       if (((((((this)->c & 1024)) == 0) && ((((this)->c & 16384)) == 0)))) {
          ((this)->at = true);
          if ((Actor::aQ)) {
-            ((this)->a = ((this)->a + (jshl32((jint)(((this)->positionX - (jshr32((jint)((this)->a), (jint)(8))))), (jint)(8)))));
-            ((this)->b = ((this)->b + (jshl32((jint)(((this)->positionY - (jshr32((jint)((this)->b), (jint)(8))))), (jint)(8)))));
+            ((this)->a = jadd32((this)->a, (jshl32((jint)(jsub32((this)->positionX, (jshr32((jint)((this)->a), (jint)(8))))), (jint)(8)))));
+            ((this)->b = jadd32((this)->b, (jshl32((jint)(jsub32((this)->positionY, (jshr32((jint)((this)->b), (jint)(8))))), (jint)(8)))));
             if (((this)->M)) {
-               (Actor::bJ = ((this)->G + (jshl32((jint)(Actor::fs), (jint)(8)))));
+               (Actor::bJ = jadd32((this)->G, (jshl32((jint)(Actor::fs), (jint)(8)))));
             } else {
                (Actor::bJ = (this)->G);
             }
             if (((Actor::aR == 0))) {
-               ((this)->a = ((this)->a + Actor::bJ));
-               ((this)->b = ((this)->b + (this)->H));
+               ((this)->a = jadd32((this)->a, Actor::bJ));
+               ((this)->b = jadd32((this)->b, (this)->H));
             } else {
-               ((this)->a = ((this)->a + jdiv32(Actor::bJ, Actor::aS)));
-               ((this)->b = ((this)->b + jdiv32((this)->H, Actor::aS)));
+               ((this)->a = jadd32((this)->a, jdiv32(Actor::bJ, Actor::aS)));
+               ((this)->b = jadd32((this)->b, jdiv32((this)->H, Actor::aS)));
             }
-            if ((((Actor::bI >= 0) && (jrem32(Actor::bI, Actor::aS) == (Actor::aS - 1))))) {
-               ((this)->G = ((this)->G + (this)->I));
-               ((this)->H = ((this)->H + (this)->J));
+            if ((((Actor::bI >= 0) && (jrem32(Actor::bI, Actor::aS) == jsub32(Actor::aS, 1))))) {
+               ((this)->G = jadd32((this)->G, (this)->I));
+               ((this)->H = jadd32((this)->H, (this)->J));
             }
             ((this)->I = 0);
             ((this)->J = 0);
             ((this)->positionX = jshr32((jint)((this)->a), (jint)(8)));
             ((this)->positionY = jshr32((jint)((this)->b), (jint)(8)));
          } else {
-            ((this)->a = ((this)->a + (jshl32((jint)(((this)->positionX - (jshr32((jint)((this)->a), (jint)(8))))), (jint)(8)))));
-            ((this)->b = ((this)->b + (jshl32((jint)(((this)->positionY - (jshr32((jint)((this)->b), (jint)(8))))), (jint)(8)))));
+            ((this)->a = jadd32((this)->a, (jshl32((jint)(jsub32((this)->positionX, (jshr32((jint)((this)->a), (jint)(8))))), (jint)(8)))));
+            ((this)->b = jadd32((this)->b, (jshl32((jint)(jsub32((this)->positionY, (jshr32((jint)((this)->b), (jint)(8))))), (jint)(8)))));
             jint var1 = 0;
             jint var2 = 0;
             jboolean var3 = true;
@@ -3217,27 +3217,27 @@ void Actor::m_t_V() {
                (var1 = Game::m_p_II((this)->G, Game::g));
                (var2 = Game::m_p_II((this)->H, Game::g));
                if (((this)->M)) {
-                  (Actor::bJ = (var1 + (jshl32((jint)(Actor::fs), (jint)(8)))));
+                  (Actor::bJ = jadd32(var1, (jshl32((jint)(Actor::fs), (jint)(8)))));
                } else {
                   (Actor::bJ = var1);
                }
-               ((this)->a = ((this)->a + Actor::bJ));
-               ((this)->b = (jint)(((this)->b + var2)));
+               ((this)->a = jadd32((this)->a, Actor::bJ));
+               ((this)->b = (jint)(jadd32((this)->b, var2)));
             } else {
                if (((this)->M)) {
-                  (Actor::bJ = ((this)->G + (jshl32((jint)(Actor::fs), (jint)(8)))));
+                  (Actor::bJ = jadd32((this)->G, (jshl32((jint)(Actor::fs), (jint)(8)))));
                } else {
                   (Actor::bJ = (this)->G);
                }
-               ((this)->a = ((this)->a + Actor::bJ));
-               ((this)->b = ((this)->b + (this)->H));
+               ((this)->a = jadd32((this)->a, Actor::bJ));
+               ((this)->b = jadd32((this)->b, (this)->H));
             }
             if ((var3)) {
                ([&]{ auto _t2 = this; auto _t3 = (jint)(([&]{ auto _t0 = Game::m_p_II((this)->J, Game::g); auto _t1 = Game::g; return Game::m_p_II(_t0, _t1); }())); return _t2->J = _t3; }());
                ([&]{ auto _t6 = this; auto _t7 = (jint)(([&]{ auto _t4 = Game::m_p_II((this)->I, Game::g); auto _t5 = Game::g; return Game::m_p_II(_t4, _t5); }())); return _t6->I = _t7; }());
             }
-            ((this)->G = ((this)->G + (this)->I));
-            ((this)->H = ((this)->H + (this)->J));
+            ((this)->G = jadd32((this)->G, (this)->I));
+            ((this)->H = jadd32((this)->H, (this)->J));
             ((this)->I = 0);
             ((this)->J = 0);
             ((this)->positionX = jshr32((jint)((this)->a), (jint)(8)));
@@ -3245,9 +3245,9 @@ void Actor::m_t_V() {
          }
          if ((((this)->aD >= 0))) {
             if ((Actor::aQ)) {
-               ((this)->aD = ((this)->aD - jdiv32(Game::h, Actor::aS)));
+               ((this)->aD = jsub32((this)->aD, jdiv32(Game::h, Actor::aS)));
             } else {
-               ((this)->aD = ((this)->aD - Game::h));
+               ((this)->aD = jsub32((this)->aD, Game::h));
             }
          }
          {
@@ -3771,21 +3771,21 @@ void Actor::m_t_V() {
 
 void Actor::m_aP_V() {
    Ref<Actor> _self(this);
-   jint var5 = ((((Game::player)->positionX - Game::cameraX) < 120) ? 1 : -1);
-   jint var1 = ((Game::player)->positionX - 100);
-   jint var2 = ((Game::player)->positionX + 100);
-   jint var3 = ((Game::player)->positionY + 60);
-   jint var4 = (((Game::player)->positionY - 60) - 60);
-   ((this)->fv = (((Game::aJ)->collisionBounds)[0] + 20));
-   ((this)->fu = (((Game::aJ)->collisionBounds)[2] - 20));
+   jint var5 = ((jsub32((Game::player)->positionX, Game::cameraX) < 120) ? 1 : -1);
+   jint var1 = jsub32((Game::player)->positionX, 100);
+   jint var2 = jadd32((Game::player)->positionX, 100);
+   jint var3 = jadd32((Game::player)->positionY, 60);
+   jint var4 = jsub32(jsub32((Game::player)->positionY, 60), 60);
+   ((this)->fv = jadd32(((Game::aJ)->collisionBounds)[0], 20));
+   ((this)->fu = jsub32(((Game::aJ)->collisionBounds)[2], 20));
    if (((var1 <= (this)->fv))) {
       (var1 = (this)->fv);
    }
    if (((var2 >= (this)->fu))) {
       (var2 = (this)->fu);
    }
-   ((this)->fv = ((this)->ay - 200));
-   ((this)->fu = ((this)->ay + 200));
+   ((this)->fv = jsub32((this)->ay, 200));
+   ((this)->fu = jadd32((this)->ay, 200));
    if (((var1 <= (this)->fv))) {
       (var1 = (this)->fv);
    }
@@ -3802,9 +3802,9 @@ void Actor::m_aP_V() {
    }
    jint var6 = (Game::player)->positionX;
    jint var7 = (Game::player)->positionY;
-   if ((((var6 - var1) > (var2 - var6)))) {
+   if (((jsub32(var6, var1) > jsub32(var2, var6)))) {
       (var5 = -1);
-   } else if ((((var2 - var6) > (var6 - var1)))) {
+   } else if (((jsub32(var2, var6) > jsub32(var6, var1)))) {
       (var5 = 1);
    }
    (var1 = (jint)((var1 / 20)));
@@ -3839,7 +3839,7 @@ void Actor::m_aP_V() {
          (var11 = 0);
          {
             (var9 = var3);
-            for (; (var9 >= (var7 + 1)); (var9--)) {
+            for (; (var9 >= jadd32(var7, 1)); (var9--)) {
                if (((Game::m_g_II(var8, var9) < 15))) {
                   (var11++);
                } else {
@@ -3857,8 +3857,8 @@ void Actor::m_aP_V() {
       }
    }
    if (((var11 >= 3))) {
-      ((this)->positionX = ((var8 * 20) + 10));
-      ((this)->positionY = ((var9 * 20) + 20));
+      ((this)->positionX = jadd32(jmul32(var8, 20), 10));
+      ((this)->positionY = jadd32(jmul32(var9, 20), 20));
       this->m_aG_V();
    } else {
       jint var13 = -1;
@@ -3866,10 +3866,10 @@ void Actor::m_aP_V() {
       (var11 = 0);
       {
          jint var21 = -1;
-         for (; (var21 < 2); (var21 = (jint)((var21 + 2)))) {
+         for (; (var21 < 2); (var21 = (jint)(jadd32(var21, 2)))) {
             {
                jint var12 = ((((var8 = ((var5 == var21) ? var1 : var2))) == var1) ? 1 : -1);
-               for (; (var8 != var6); (var8 = (jint)((var8 + var12)))) {
+               for (; (var8 != var6); (var8 = (jint)(jadd32(var8, var12)))) {
                   (var11 = 0);
                   {
                      (var9 = var7);
@@ -3890,7 +3890,7 @@ void Actor::m_aP_V() {
                   (var11 = 0);
                   {
                      (var9 = var3);
-                     for (; (var9 >= (var7 + 1)); (var9--)) {
+                     for (; (var9 >= jadd32(var7, 1)); (var9--)) {
                         if (((Game::m_g_II(var8, var9) < 15))) {
                            (var11++);
                         } else {
@@ -3913,12 +3913,12 @@ void Actor::m_aP_V() {
          }
       }
       if (((var11 >= 3))) {
-         if ((([&]{ auto _t0 = Actor::m_l_I((var8 - var6)); auto _t1 = Actor::m_l_I((var13 - var6)); return (_t0 < _t1); }()))) {
+         if ((([&]{ auto _t0 = Actor::m_l_I(jsub32(var8, var6)); auto _t1 = Actor::m_l_I(jsub32(var13, var6)); return (_t0 < _t1); }()))) {
             (var8 = var13);
             (var9 = var14);
          }
-         ((this)->positionX = ((var8 * 20) + 10));
-         ((this)->positionY = ((var9 * 20) + 20));
+         ((this)->positionX = jadd32(jmul32(var8, 20), 10));
+         ((this)->positionY = jadd32(jmul32(var9, 20), 20));
          this->m_aG_V();
       }
    }
@@ -3929,7 +3929,7 @@ void Actor::m_aQ_V() {
    {
       switch (((this)->aq)) {
          case 0:
-            if ((((Actor::m_l_I(((this)->positionX - (Game::player)->positionX)) <= 140) && (Actor::m_l_I(((this)->positionY - (Game::player)->positionY)) <= 100)))) {
+            if ((((Actor::m_l_I(jsub32((this)->positionX, (Game::player)->positionX)) <= 140) && (Actor::m_l_I(jsub32((this)->positionY, (Game::player)->positionY)) <= 100)))) {
                this->m_p_I(101);
             }
             break;
@@ -3962,9 +3962,9 @@ void Actor::m_aQ_V() {
                   ((this)->positionY = (Game::player)->positionY);
                   ((this)->positionX = (Game::player)->positionX);
                   ((this)->facingLeft = (Game::player)->facingLeft);
-                  ((this)->positionX = ((this)->positionX + ((((Game::player)->facingLeft ? 1 : -1)) * 10)));
-                  ((this)->fv = ((this)->ay - 200));
-                  ((this)->fu = ((this)->ay + 200));
+                  ((this)->positionX = jadd32((this)->positionX, jmul32((((Game::player)->facingLeft ? 1 : -1)), 10)));
+                  ((this)->fv = jsub32((this)->ay, 200));
+                  ((this)->fu = jadd32((this)->ay, 200));
                   if (((((this)->positionX >= (this)->fv) && ((this)->positionX <= (this)->fu)))) {
                      this->m_aG_V();
                   } else {
@@ -3993,7 +3993,7 @@ void Actor::m_aQ_V() {
          case 104:
             (Game::player)->m_a_IIIActor(4, (this)->av, 0, this);
             ((Game::player)->positionY = (this)->positionY);
-            ((Game::player)->positionX = ((this)->positionX + ((((this)->facingLeft ? -1 : 1)) * 10)));
+            ((Game::player)->positionX = jadd32((this)->positionX, jmul32((((this)->facingLeft ? -1 : 1)), 10)));
             ((Game::player)->facingLeft = (!(this)->facingLeft));
             if ((Game::m_G_I(65568))) {
                ((this)->aB++);
@@ -4062,7 +4062,7 @@ void Actor::m_u_V() {
             }
             break;
          case 102:
-            ((this)->aw = (jint)(((this)->aw + 2048)));
+            ((this)->aw = (jint)(jadd32((this)->aw, 2048)));
             if ((((this)->aw >= jshl32((jint)((this)->ay), (jint)(8))))) {
                {
                   switch (((this)->av)) {
@@ -4149,10 +4149,10 @@ void Actor::m_aR_V() {
             return;
          case 101:
             if (((this)->facingLeft)) {
-               if ((([&]{ auto _t2 = ((this)->collisionBounds)[2]; auto _t3 = ([&]{ auto _t0 = Game::cameraX; auto _t1 = PortConfig::worldLeft(); return (_t0 + _t1); }()); return (_t2 < _t3); }()))) {
+               if ((([&]{ auto _t2 = ((this)->collisionBounds)[2]; auto _t3 = ([&]{ auto _t0 = Game::cameraX; auto _t1 = PortConfig::worldLeft(); return jadd32(_t0, _t1); }()); return (_t2 < _t3); }()))) {
                   ((this)->aq = 3);
                }
-            } else if ((([&]{ auto _t6 = ((this)->collisionBounds)[0]; auto _t7 = ([&]{ auto _t4 = Game::cameraX; auto _t5 = PortConfig::worldRight(); return (_t4 + _t5); }()); return (_t6 > _t7); }()))) {
+            } else if ((([&]{ auto _t6 = ((this)->collisionBounds)[0]; auto _t7 = ([&]{ auto _t4 = Game::cameraX; auto _t5 = PortConfig::worldRight(); return jadd32(_t4, _t5); }()); return (_t6 > _t7); }()))) {
                ((this)->aq = 3);
             }
       }
@@ -4171,8 +4171,8 @@ jboolean Actor::m_v_V() {
    if (((((Game::player)->aq == 1) && (Game::bY == this)))) {
       return true;
    }
-   (Game::cameraX = (jint)((Game::cameraX - 0)));
-   (Game::cameraY = (jint)((Game::cameraY - 0)));
+   (Game::cameraX = (jint)(jsub32(Game::cameraX, 0)));
+   (Game::cameraY = (jint)(jsub32(Game::cameraY, 0)));
    if ((((((this)->type == -2) && ((this)->p == (Game::b)[17])) && ((((((this)->animationId == 4) || ((this)->animationId == 5)) || ((this)->animationId == 6)) || ((this)->animationId == 7)))))) {
       (((this)->p)->z = (Game::N ? 1 : 0));
    }
@@ -4192,8 +4192,8 @@ jboolean Actor::m_v_V() {
       {
          jint var2 = 1;
          for (; (var2 < (this)->aA); (var2++)) {
-            ((this)->positionX = (var1 + (var2 * (this)->ay)));
-            if (((([&]{ auto _t2 = ((this)->positionX + 80); auto _t3 = ([&]{ auto _t0 = Game::cameraX; auto _t1 = PortConfig::worldLeft(); return (_t0 + _t1); }()); return (_t2 >= _t3); }()) && ([&]{ auto _t6 = (this)->positionX; auto _t7 = ([&]{ auto _t4 = Game::cameraX; auto _t5 = PortConfig::worldRight(); return (_t4 + _t5); }()); return (_t6 <= _t7); }())))) {
+            ((this)->positionX = jadd32(var1, jmul32(var2, (this)->ay)));
+            if (((([&]{ auto _t2 = jadd32((this)->positionX, 80); auto _t3 = ([&]{ auto _t0 = Game::cameraX; auto _t1 = PortConfig::worldLeft(); return jadd32(_t0, _t1); }()); return (_t2 >= _t3); }()) && ([&]{ auto _t6 = (this)->positionX; auto _t7 = ([&]{ auto _t4 = Game::cameraX; auto _t5 = PortConfig::worldRight(); return jadd32(_t4, _t5); }()); return (_t6 <= _t7); }())))) {
                this->m_b_II(Game::cameraX, Game::cameraY);
             }
          }
@@ -4208,15 +4208,15 @@ jboolean Actor::m_v_V() {
       this->m_aI_V();
    }
    if (((((this)->type == 80) && ((((this)->c & 128)) == 0)))) {
-      Game::m_c_III(((this)->positionY - Game::cameraY), (this)->av, ((this)->positionX - Game::cameraX));
-      ((this)->positionY = ((this)->positionY + (this)->av));
+      Game::m_c_III(jsub32((this)->positionY, Game::cameraY), (this)->av, jsub32((this)->positionX, Game::cameraX));
+      ((this)->positionY = jadd32((this)->positionY, (this)->av));
       this->m_b_II(Game::cameraX, Game::cameraY);
-      ((this)->positionY = ((this)->positionY - (this)->av));
+      ((this)->positionY = jsub32((this)->positionY, (this)->av));
    } else if (((((this)->type == 0) && ((this)->aq != 1)))) {
       (((this)->p)->L = false);
    }
    if (((((this)->type == 0) && (Actor::bO > 0)))) {
-      (Actor::bO = (Actor::bO - Game::h));
+      (Actor::bO = jsub32(Actor::bO, Game::h));
       if (((((Game::stateFrame & 3)) >= 2))) {
          (((this)->p)->L = true);
          (((this)->p)->K = 79);
@@ -4228,65 +4228,65 @@ jboolean Actor::m_v_V() {
       (((this)->p)->z = 1);
    } else if ((((this)->type == 54))) {
       (Actor::bt)->setColor(0);
-      Game::m_b_IIII(((this)->positionX - Game::cameraX), ((this)->positionY - Game::cameraY), 100, 80);
+      Game::m_b_IIII(jsub32((this)->positionX, Game::cameraX), jsub32((this)->positionY, Game::cameraY), 100, 80);
    } else if ((((this)->p == (Game::b)[14]))) {
       if ((((this)->animationId == 1))) {
          this->m_g_V();
          if ((((this)->k != nullptr))) {
             (Game::graphics)->setColor(16777215);
-            Game::m_b_IIII((((this)->k)[0] - Game::cameraX), (((this)->k)[1] - Game::cameraY), (((this)->k)[2] - ((this)->k)[0]), (((this)->k)[3] - ((this)->k)[1]));
+            Game::m_b_IIII(jsub32(((this)->k)[0], Game::cameraX), jsub32(((this)->k)[1], Game::cameraY), jsub32(((this)->k)[2], ((this)->k)[0]), jsub32(((this)->k)[3], ((this)->k)[1]));
          }
       }
    } else if ((((this)->type == 39))) {
       if (((((this)->animationId >= 24) && ((this)->animationId <= 26)))) {
-         (((this)->p)->z = ((this)->animationId - 24));
+         (((this)->p)->z = jsub32((this)->animationId, 24));
          if (((((this)->aB > 0) && ((this)->animationId == 26)))) {
             jint var9 = (this)->av;
             if ((((Game::stateFrame % 2) == 0))) {
-               ((this)->av = (jint)(((this)->av + 4)));
+               ((this)->av = (jint)(jadd32((this)->av, 4)));
             }
             if ((((this)->aB == 10))) {
-               ((Game::b)[33])->m_a_GraphicsIIIIII(Actor::bt, 1, (((this)->ax - 10) - 51), (((this)->az - var9) - 29), 0, 0, 0);
-               ((Game::b)[33])->m_a_GraphicsIIIIII(Actor::bt, 12, (this)->ax, ((this)->az - var9), 0, 0, 0);
-               ((Game::b)[33])->m_a_GraphicsIIIIII(Actor::bt, 3, (((this)->ax + 6) + 1), ((this)->az - var9), 0, 0, 0);
-               ((Game::b)[33])->m_a_GraphicsIIIIII(Actor::bt, 2, (((this)->ax + 12) + 1), ((this)->az - var9), 0, 0, 0);
+               ((Game::b)[33])->m_a_GraphicsIIIIII(Actor::bt, 1, jsub32(jsub32((this)->ax, 10), 51), jsub32(jsub32((this)->az, var9), 29), 0, 0, 0);
+               ((Game::b)[33])->m_a_GraphicsIIIIII(Actor::bt, 12, (this)->ax, jsub32((this)->az, var9), 0, 0, 0);
+               ((Game::b)[33])->m_a_GraphicsIIIIII(Actor::bt, 3, jadd32(jadd32((this)->ax, 6), 1), jsub32((this)->az, var9), 0, 0, 0);
+               ((Game::b)[33])->m_a_GraphicsIIIIII(Actor::bt, 2, jadd32(jadd32((this)->ax, 12), 1), jsub32((this)->az, var9), 0, 0, 0);
             } else {
-               ((Game::b)[33])->m_a_GraphicsIIIIII(Actor::bt, 1, (((this)->ax - 10) - 51), (((this)->az - var9) - 29), 0, 0, 0);
-               ((Game::b)[33])->m_a_GraphicsIIIIII(Actor::bt, 12, (this)->ax, ((this)->az - var9), 0, 0, 0);
-               ((Game::b)[33])->m_a_GraphicsIIIIII(Actor::bt, 7, (((this)->ax + 6) + 1), ((this)->az - var9), 0, 0, 0);
+               ((Game::b)[33])->m_a_GraphicsIIIIII(Actor::bt, 1, jsub32(jsub32((this)->ax, 10), 51), jsub32(jsub32((this)->az, var9), 29), 0, 0, 0);
+               ((Game::b)[33])->m_a_GraphicsIIIIII(Actor::bt, 12, (this)->ax, jsub32((this)->az, var9), 0, 0, 0);
+               ((Game::b)[33])->m_a_GraphicsIIIIII(Actor::bt, 7, jadd32(jadd32((this)->ax, 6), 1), jsub32((this)->az, var9), 0, 0, 0);
             }
          }
       } else if ((((this)->animationId == 10))) {
          this->m_u_II(8, (this)->aF);
       } else if ((((this)->animationId == 58))) {
          if ((((this)->ay >= 100))) {
-            (Game::cameraX = (jint)((Game::cameraX + 0)));
-            (Game::cameraY = (jint)((Game::cameraY + 0)));
+            (Game::cameraX = (jint)(jadd32(Game::cameraX, 0)));
+            (Game::cameraY = (jint)(jadd32(Game::cameraY, 0)));
             return true;
          }
-         jint var8 = ((this)->positionX - Game::cameraX);
-         ((Game::b)[33])->m_a_GraphicsIIIIII(Actor::bt, 13, var8, ((this)->positionY - Game::cameraY), 0, 0, 0);
+         jint var8 = jsub32((this)->positionX, Game::cameraX);
+         ((Game::b)[33])->m_a_GraphicsIIIIII(Actor::bt, 13, var8, jsub32((this)->positionY, Game::cameraY), 0, 0, 0);
          if (((((this)->ay / 10) != 0))) {
-            (var8 = (jint)((var8 + 5)));
-            ((Game::b)[33])->m_a_GraphicsIIIIII(Actor::bt, (2 + ((this)->ay / 10)), var8, ((this)->positionY - Game::cameraY), 0, 0, 0);
+            (var8 = (jint)(jadd32(var8, 5)));
+            ((Game::b)[33])->m_a_GraphicsIIIIII(Actor::bt, jadd32(2, ((this)->ay / 10)), var8, jsub32((this)->positionY, Game::cameraY), 0, 0, 0);
          }
-         ((Game::b)[33])->m_a_GraphicsIIIIII(Actor::bt, (2 + ((this)->ay % 10)), (var8 + 5), ((this)->positionY - Game::cameraY), 0, 0, 0);
+         ((Game::b)[33])->m_a_GraphicsIIIIII(Actor::bt, jadd32(2, ((this)->ay % 10)), jadd32(var8, 5), jsub32((this)->positionY, Game::cameraY), 0, 0, 0);
       } else if ((((this)->animationId == 16))) {
-         ((Game::b)[50])->m_a_GraphicsIIIIIII(Actor::bt, 0, 0, ((this)->positionX - Game::cameraX), ((this)->positionY - Game::cameraY), (this)->c, 0, 0);
+         ((Game::b)[50])->m_a_GraphicsIIIIIII(Actor::bt, 0, 0, jsub32((this)->positionX, Game::cameraX), jsub32((this)->positionY, Game::cameraY), (this)->c, 0, 0);
       } else if ((((this)->animationId == 4))) {
          (((this)->p)->z = (Game::N ? 1 : 0));
       } else if (((((((this)->animationId == 4) || ((this)->animationId == 5)) || ((this)->animationId == 6)) || ((this)->animationId == 7)))) {
          (((this)->p)->z = (Game::N ? 1 : 0));
       }
    } else if ((((this)->type == 71))) {
-      jint var10 = (((12 - (this)->ay)) % 6);
-      if (((((12 - (this)->ay) >= 6) && ((12 - (this)->ay) < 12)))) {
-         (var10 = (6 - var10));
+      jint var10 = ((jsub32(12, (this)->ay)) % 6);
+      if ((((jsub32(12, (this)->ay) >= 6) && (jsub32(12, (this)->ay) < 12)))) {
+         (var10 = jsub32(6, var10));
       }
-      ([&]{ auto _t10 = (Game::ez)[(var10 + 4)]; auto _t11 = ([&]{ auto _t8 = ((this)->positionX - Game::cameraX); auto _t9 = (((Game::ez)[(var10 + 4)])->getWidth() / 2); return (_t8 - _t9); }()); auto _t12 = (((this)->positionY - Game::cameraY) + -95); auto _t13 = 0; return Game::m_a_ImageIII(_t10, _t11, _t12, _t13); }());
+      ([&]{ auto _t10 = (Game::ez)[jadd32(var10, 4)]; auto _t11 = ([&]{ auto _t8 = jsub32((this)->positionX, Game::cameraX); auto _t9 = (((Game::ez)[jadd32(var10, 4)])->getWidth() / 2); return jsub32(_t8, _t9); }()); auto _t12 = jadd32(jsub32((this)->positionY, Game::cameraY), -95); auto _t13 = 0; return Game::m_a_ImageIII(_t10, _t11, _t12, _t13); }());
    } else if (((((this)->type == 38) && ((this)->r == nullptr)))) {
       if ((((this)->aq != 0))) {
-         ((Game::b)[20])->m_a_GraphicsIIIIII(Actor::bt, 0, ((this)->positionX - Game::cameraX), ((this)->positionY - Game::cameraY), 0, 0, 0);
+         ((Game::b)[20])->m_a_GraphicsIIIIII(Actor::bt, 0, jsub32((this)->positionX, Game::cameraX), jsub32((this)->positionY, Game::cameraY), 0, 0, 0);
       }
    } else if ((((this)->type == 88))) {
       (((this)->p)->z = 1);
@@ -4296,95 +4296,95 @@ jboolean Actor::m_v_V() {
       (((this)->p)->z = (((this)->aB / 3) % 3));
    } else if ((((this)->type == 35))) {
       if (((((((this)->aq == 100) || ((this)->aq == 101))) && ((this)->animationId < 6)))) {
-         (Game::cameraX = (jint)((Game::cameraX + 0)));
-         (Game::cameraY = (jint)((Game::cameraY + 0)));
+         (Game::cameraX = (jint)(jadd32(Game::cameraX, 0)));
+         (Game::cameraY = (jint)(jadd32(Game::cameraY, 0)));
          return true;
       }
    } else if (((((this)->type == 48) && ((this)->animationId == 4)))) {
-      (Game::cameraX = (jint)((Game::cameraX + 0)));
-      (Game::cameraY = (jint)((Game::cameraY + 0)));
+      (Game::cameraX = (jint)(jadd32(Game::cameraX, 0)));
+      (Game::cameraY = (jint)(jadd32(Game::cameraY, 0)));
       return true;
    }
    if ((((this)->type == 42))) {
-      this->m_a_IIII(((this)->collisionBounds)[0], ((this)->collisionBounds)[1], (((this)->collisionBounds)[2] - ((this)->collisionBounds)[0]), (((this)->collisionBounds)[3] - ((this)->collisionBounds)[1]));
-      (Game::cameraX = (jint)((Game::cameraX + 0)));
-      (Game::cameraY = (jint)((Game::cameraY + 0)));
+      this->m_a_IIII(((this)->collisionBounds)[0], ((this)->collisionBounds)[1], jsub32(((this)->collisionBounds)[2], ((this)->collisionBounds)[0]), jsub32(((this)->collisionBounds)[3], ((this)->collisionBounds)[1]));
+      (Game::cameraX = (jint)(jadd32(Game::cameraX, 0)));
+      (Game::cameraY = (jint)(jadd32(Game::cameraY, 0)));
       return true;
    }
    if ((((this)->type == 78))) {
-      this->m_b_IIII(((this)->collisionBounds)[0], ((this)->collisionBounds)[1], (((this)->collisionBounds)[2] - ((this)->collisionBounds)[0]), (((this)->collisionBounds)[3] - ((this)->collisionBounds)[1]));
-      (Game::cameraX = (jint)((Game::cameraX + 0)));
-      (Game::cameraY = (jint)((Game::cameraY + 0)));
+      this->m_b_IIII(((this)->collisionBounds)[0], ((this)->collisionBounds)[1], jsub32(((this)->collisionBounds)[2], ((this)->collisionBounds)[0]), jsub32(((this)->collisionBounds)[3], ((this)->collisionBounds)[1]));
+      (Game::cameraX = (jint)(jadd32(Game::cameraX, 0)));
+      (Game::cameraY = (jint)(jadd32(Game::cameraY, 0)));
       return true;
    }
    if ((((this)->type == 45))) {
       if (((101 == (this)->aq))) {
-         (Game::cameraX = (jint)((Game::cameraX + 0)));
-         (Game::cameraY = (jint)((Game::cameraY + 0)));
+         (Game::cameraX = (jint)(jadd32(Game::cameraX, 0)));
+         (Game::cameraY = (jint)(jadd32(Game::cameraY, 0)));
          return true;
       }
       jint var17 = ((this)->collisionBounds)[0];
-      jint var23 = (((this)->collisionBounds)[2] - ((this)->collisionBounds)[0]);
+      jint var23 = jsub32(((this)->collisionBounds)[2], ((this)->collisionBounds)[0]);
       {
          jint var25 = 0;
          for (; (var25 < (var23 / 40)); (var25++)) {
             if ((((this)->aq == 0))) {
-               ((Game::b)[34])->m_a_GraphicsIIIIIII(Actor::bt, (this)->animationId, 0, (((this)->positionX - Game::cameraX) + (var25 * 40)), ((this)->positionY - Game::cameraY), (this)->c, 0, 0);
+               ((Game::b)[34])->m_a_GraphicsIIIIIII(Actor::bt, (this)->animationId, 0, jadd32(jsub32((this)->positionX, Game::cameraX), jmul32(var25, 40)), jsub32((this)->positionY, Game::cameraY), (this)->c, 0, 0);
             } else {
-               jint var27 = (var17 + (40 * var25));
-               jint var29 = (Math::abs(((this)->ay - var27)) / 40);
+               jint var27 = jadd32(var17, jmul32(40, var25));
+               jint var29 = (Math::abs(jsub32((this)->ay, var27)) / 40);
                jint var31{};
-               if ((((((var31 = jshr32((jint)(((this)->aA / 50)), (jint)(1)))) - var29) < 0))) {
-                  ((Game::b)[34])->m_a_GraphicsIIIIIII(Actor::bt, (this)->animationId, 0, (((this)->positionX - Game::cameraX) + (var25 * 40)), ((this)->positionY - Game::cameraY), (this)->c, 0, 0);
+               if (((jsub32(((var31 = jshr32((jint)(((this)->aA / 50)), (jint)(1)))), var29) < 0))) {
+                  ((Game::b)[34])->m_a_GraphicsIIIIIII(Actor::bt, (this)->animationId, 0, jadd32(jsub32((this)->positionX, Game::cameraX), jmul32(var25, 40)), jsub32((this)->positionY, Game::cameraY), (this)->c, 0, 0);
                } else {
-                  (var31 = (jint)((var31 - var29)));
+                  (var31 = (jint)(jsub32(var31, var29)));
                }
                jint var32 = 0;
                if (((var31 >= 4))) {
-                  (var32 = ((0 + (((var31 - 4)) * 20)) + 100));
-                  (var31 = ((((var31 - 4)) % 3) + 2));
+                  (var32 = jadd32(jadd32(0, jmul32((jsub32(var31, 4)), 20)), 100));
+                  (var31 = jadd32(((jsub32(var31, 4)) % 3), 2));
                }
-               ((Game::b)[34])->m_a_GraphicsIIIIIII(Actor::bt, (((this)->animationId != 7) ? 2 : 8), var31, (((this)->positionX - Game::cameraX) + (var25 * 40)), (((this)->positionY - Game::cameraY) + var32), 0, 0, 0);
+               ((Game::b)[34])->m_a_GraphicsIIIIIII(Actor::bt, (((this)->animationId != 7) ? 2 : 8), var31, jadd32(jsub32((this)->positionX, Game::cameraX), jmul32(var25, 40)), jadd32(jsub32((this)->positionY, Game::cameraY), var32), 0, 0, 0);
             }
          }
       }
-      (Game::cameraX = (jint)((Game::cameraX + 0)));
-      (Game::cameraY = (jint)((Game::cameraY + 0)));
+      (Game::cameraX = (jint)(jadd32(Game::cameraX, 0)));
+      (Game::cameraY = (jint)(jadd32(Game::cameraY, 0)));
       return true;
    } else {
       if ((((this)->type == 50))) {
-         jint var11 = ((this)->aw - Game::cameraX);
-         jint var18 = ((this)->positionX - Game::cameraX);
-         jint var3 = ((((this)->positionY - Game::cameraY) - 1) + 0);
-         jint var4 = ((this)->az - Game::cameraY);
+         jint var11 = jsub32((this)->aw, Game::cameraX);
+         jint var18 = jsub32((this)->positionX, Game::cameraX);
+         jint var3 = jadd32(jsub32(jsub32((this)->positionY, Game::cameraY), 1), 0);
+         jint var4 = jsub32((this)->az, Game::cameraY);
          jint var5 = jshr32((jint)((this)->aA), (jint)(16));
-         jint var6 = (var4 + Math::abs(jshr32((jint)((this)->av), (jint)(1))));
-         jint var7 = ((jshl32((jint)(var4), (jint)(8))) + ([&]{ auto _t14 = Math::abs(jshr32((jint)((this)->av), (jint)(1))); auto _t15 = Game::m_l_I(var5); return (_t14 * _t15); }()));
+         jint var6 = jadd32(var4, Math::abs(jshr32((jint)((this)->av), (jint)(1))));
+         jint var7 = jadd32((jshl32((jint)(var4), (jint)(8))), ([&]{ auto _t14 = Math::abs(jshr32((jint)((this)->av), (jint)(1))); auto _t15 = Game::m_l_I(var5); return jmul32(_t14, _t15); }()));
          if ((((this)->aq >= 102))) {
             (var3 = var6);
             (var18 = var11);
          }
          Game::m_a_IIIIIII(var11, var4, var18, var3, var5, (this)->aC, var7);
          if ((((this)->aq == 104))) {
-            (Game::cameraX = (jint)((Game::cameraX + 0)));
-            (Game::cameraY = (jint)((Game::cameraY + 0)));
+            (Game::cameraX = (jint)(jadd32(Game::cameraX, 0)));
+            (Game::cameraY = (jint)(jadd32(Game::cameraY, 0)));
             return true;
          }
       } else if ((((this)->type == 53))) {
-         jint var12 = (((this)->positionX - Game::cameraX) + 1);
-         jint var19 = (((this)->positionX - Game::cameraX) + 1);
-         jint var24 = ((this)->positionY - Game::cameraY);
+         jint var12 = jadd32(jsub32((this)->positionX, Game::cameraX), 1);
+         jint var19 = jadd32(jsub32((this)->positionX, Game::cameraX), 1);
+         jint var24 = jsub32((this)->positionY, Game::cameraY);
          jint var26{};
          jint var28{};
-         jint var30 = jshl32((jint)(((var28 = (((var26 = ((this)->az - Game::cameraY))) + Math::abs(jshr32((jint)((this)->av), (jint)(1))))))), (jint)(8));
+         jint var30 = jshl32((jint)(((var28 = jadd32(((var26 = jsub32((this)->az, Game::cameraY))), Math::abs(jshr32((jint)((this)->av), (jint)(1))))))), (jint)(8));
          if ((((this)->aq >= 101))) {
             (var24 = var28);
             (var19 = var12);
          }
          Game::m_a_IIIIIII(var12, var26, var19, var24, 0, 0, var30);
          if (((((this)->aq == 102) || ((this)->aG == -2)))) {
-            (Game::cameraX = (jint)((Game::cameraX + 0)));
-            (Game::cameraY = (jint)((Game::cameraY + 0)));
+            (Game::cameraX = (jint)(jadd32(Game::cameraX, 0)));
+            (Game::cameraY = (jint)(jadd32(Game::cameraY, 0)));
             return true;
          }
       } else if ((((this)->type == 31))) {
@@ -4394,9 +4394,9 @@ jboolean Actor::m_v_V() {
          }
          jint var20 = ((var13 <= 2) ? (this)->aw : (this)->az);
          if (((var13 == 8))) {
-            (var20 = (jint)((var20 + (20 * (this)->aH))));
+            (var20 = (jint)(jadd32(var20, jmul32(20, (this)->aH))));
          } else if (((var13 == 2))) {
-            (var20 = (jint)((var20 + (20 * (this)->aH))));
+            (var20 = (jint)(jadd32(var20, jmul32(20, (this)->aH))));
          }
          this->m_u_II(var13, var20);
       } else if ((((this)->type == 61))) {
@@ -4430,7 +4430,7 @@ jboolean Actor::m_v_V() {
                this->m_u_II(((this)->facingLeft ? 2 : 1), (this)->aB);
             }
          } else if ((((this)->type == 37))) {
-            this->m_u_II(8, (((this)->positionY + (this)->fw) - ((((this)->an == -1) ? 115 : 98))));
+            this->m_u_II(8, jsub32(jadd32((this)->positionY, (this)->fw), ((((this)->an == -1) ? 115 : 98))));
          } else if (((((this)->type == 46) && ((this)->aq == 103)))) {
             this->m_u_II(4, (this)->az);
          } else if ((((this)->type == 72))) {
@@ -4443,11 +4443,11 @@ jboolean Actor::m_v_V() {
                (((this)->p)->z = 0);
             }
          } else {
-            this->m_c_IIII((this)->aw, (this)->az, (this)->positionX, jshr32((jint)((((this)->collisionBounds)[3] + ((this)->collisionBounds)[1])), (jint)(1)));
+            this->m_c_IIII((this)->aw, (this)->az, (this)->positionX, jshr32((jint)(jadd32(((this)->collisionBounds)[3], ((this)->collisionBounds)[1])), (jint)(1)));
          }
          if ((((this)->p == nullptr))) {
-            (Game::cameraX = (jint)((Game::cameraX + 0)));
-            (Game::cameraY = (jint)((Game::cameraY + 0)));
+            (Game::cameraX = (jint)(jadd32(Game::cameraX, 0)));
+            (Game::cameraY = (jint)(jadd32(Game::cameraY, 0)));
             return false;
          }
          if ((([&]{ auto _t16 = (this)->h; auto _t17 = ((this)->p)->m_a_I((this)->animationId); return (_t16 > _t17); }()))) {
@@ -4460,7 +4460,7 @@ jboolean Actor::m_v_V() {
                Game::m_a_ZI(false, 2);
             } else if (((((this)->aq == 1) && (Actor::cv == 70)))) {
                if ((((Actor::ar == 2) || (Actor::ar == 4)))) {
-                  this->m_c_IIII((this)->ay, (this)->av, (this)->positionX, jshr32((jint)((((this)->collisionBounds)[3] + ((this)->collisionBounds)[1])), (jint)(1)));
+                  this->m_c_IIII((this)->ay, (this)->av, (this)->positionX, jshr32((jint)(jadd32(((this)->collisionBounds)[3], ((this)->collisionBounds)[1])), (jint)(1)));
                }
                (((this)->p)->z = 0);
             }
@@ -4490,8 +4490,8 @@ jboolean Actor::m_v_V() {
          }
       }
       if ((((this)->p == nullptr))) {
-         (Game::cameraX = (jint)((Game::cameraX + 0)));
-         (Game::cameraY = (jint)((Game::cameraY + 0)));
+         (Game::cameraX = (jint)(jadd32(Game::cameraX, 0)));
+         (Game::cameraY = (jint)(jadd32(Game::cameraY, 0)));
          return false;
       }
       (((this)->p)->p = -1);
@@ -4522,9 +4522,9 @@ jboolean Actor::m_v_V() {
             {
                jint var21 = 0;
                for (; (var21 < jshl32((jint)((Actor::eY).length()), (jint)(1))); (var21++)) {
-                  jint var15 = (((var21 - (Actor::eY).length())) / 2);
+                  jint var15 = ((jsub32(var21, (Actor::eY).length())) / 2);
                   (Actor::bt)->setColor((Actor::eY)[(var21 / 2)]);
-                  Game::m_c_IIIIII(((((Actor::E)->positionX - ((Actor::aY)[0])->ax) - var15) - Game::cameraX), (((((Actor::E)->positionY - ((Actor::aY)[0])->ax) - var15) - 40) - Game::cameraY), jshl32((jint)((((Actor::aY)[0])->ax + var15)), (jint)(1)), jshl32((jint)((((Actor::aY)[0])->ax + var15)), (jint)(1)), 0, 360);
+                  Game::m_c_IIIIII(jsub32(jsub32(jsub32((Actor::E)->positionX, ((Actor::aY)[0])->ax), var15), Game::cameraX), jsub32(jsub32(jsub32(jsub32((Actor::E)->positionY, ((Actor::aY)[0])->ax), var15), 40), Game::cameraY), jshl32((jint)(jadd32(((Actor::aY)[0])->ax, var15)), (jint)(1)), jshl32((jint)(jadd32(((Actor::aY)[0])->ax, var15)), (jint)(1)), 0, 360);
                }
             }
          }
@@ -4535,22 +4535,22 @@ jboolean Actor::m_v_V() {
       } else if ((((this)->type == 16))) {
          if ((((this)->aq == 103))) {
             ((Game::a)->z = 2);
-            (Game::a)->m_a_GraphicsStringIII(Actor::bt, jcat(jstr((((this)->aA / 1000) + 1)), jstr(jlit(u""))), ((this)->positionX - Game::cameraX), (((this)->positionY - Game::cameraY) + -28), 3);
+            (Game::a)->m_a_GraphicsStringIII(Actor::bt, jcat(jstr(jadd32(((this)->aA / 1000), 1)), jstr(jlit(u""))), jsub32((this)->positionX, Game::cameraX), jadd32(jsub32((this)->positionY, Game::cameraY), -28), 3);
          }
       } else if (((((this)->type == 0) && Actor::ea))) {
          if (((Actor::ed <= 10))) {
-            ((Game::b)[33])->m_a_GraphicsIIIIII(Actor::bt, 1, (((Actor::eb - Game::cameraX) - 10) - 51), ((Actor::ec - 29) - Game::cameraY), 0, 0, 0);
-            ((Game::b)[33])->m_a_GraphicsIIIIII(Actor::bt, 12, (Actor::eb - Game::cameraX), (Actor::ec - Game::cameraY), 0, 0, 0);
+            ((Game::b)[33])->m_a_GraphicsIIIIII(Actor::bt, 1, jsub32(jsub32(jsub32(Actor::eb, Game::cameraX), 10), 51), jsub32(jsub32(Actor::ec, 29), Game::cameraY), 0, 0, 0);
+            ((Game::b)[33])->m_a_GraphicsIIIIII(Actor::bt, 12, jsub32(Actor::eb, Game::cameraX), jsub32(Actor::ec, Game::cameraY), 0, 0, 0);
             {
                jint var16 = 0;
                for (; (var16 < (Actor::dX)->length()); (var16++)) {
-                  jint var22 = ((Actor::dX)->charAt(var16) - ((jchar)48));
-                  ((Game::b)[33])->m_a_GraphicsIIIIII(Actor::bt, (2 + var22), (((Actor::eb + (6 * ((var16 + 1)))) + 1) - Game::cameraX), (Actor::ec - Game::cameraY), 0, 0, 0);
+                  jint var22 = jsub32((Actor::dX)->charAt(var16), ((jchar)48));
+                  ((Game::b)[33])->m_a_GraphicsIIIIII(Actor::bt, jadd32(2, var22), jsub32(jadd32(jadd32(Actor::eb, jmul32(6, (jadd32(var16, 1)))), 1), Game::cameraX), jsub32(Actor::ec, Game::cameraY), 0, 0, 0);
                }
             }
             if (((!Game::bi))) {
                (Actor::ed++);
-               (Actor::ec = (jint)((Actor::ec - 3)));
+               (Actor::ec = (jint)(jsub32(Actor::ec, 3)));
             }
          } else {
             (Actor::ed = 0);
@@ -4566,8 +4566,8 @@ jboolean Actor::m_v_V() {
             this->m_c_I(Game::f);
          }
       }
-      (Game::cameraX = (jint)((Game::cameraX + 0)));
-      (Game::cameraY = (jint)((Game::cameraY + 0)));
+      (Game::cameraX = (jint)(jadd32(Game::cameraX, 0)));
+      (Game::cameraY = (jint)(jadd32(Game::cameraY, 0)));
       return true;
    }
 }
@@ -4577,7 +4577,7 @@ jint Actor::m_aS_V() {
    this->m_g_V();
    jint var2 = ((this)->collisionBounds)[1];
    jint var1{};
-   return Game::m_g_II((((var1 = ((this)->positionX / 20))) - 1), (((var2 - 4)) / 20));
+   return Game::m_g_II(jsub32(((var1 = ((this)->positionX / 20))), 1), ((jsub32(var2, 4)) / 20));
 }
 
 jint Actor::m_aT_V() {
@@ -4585,7 +4585,7 @@ jint Actor::m_aT_V() {
    this->m_g_V();
    jint var2 = ((this)->collisionBounds)[1];
    jint var1{};
-   return Game::m_g_II((((var1 = ((this)->positionX / 20))) + 1), (((var2 - 4)) / 20));
+   return Game::m_g_II(jadd32(((var1 = ((this)->positionX / 20))), 1), ((jsub32(var2, 4)) / 20));
 }
 
 jint Actor::m_aU_V() {
@@ -4593,7 +4593,7 @@ jint Actor::m_aU_V() {
    this->m_g_V();
    jint var2 = ((this)->collisionBounds)[1];
    jint var1{};
-   return Game::m_g_II((var1 = ((this)->positionX / 20)), (((var2 - 4)) / 20));
+   return Game::m_g_II((var1 = ((this)->positionX / 20)), ((jsub32(var2, 4)) / 20));
 }
 
 jint Actor::m_aV_V() {
@@ -4601,25 +4601,25 @@ jint Actor::m_aV_V() {
    this->m_g_V();
    jint var2 = 0;
    jint var3 = ((this)->collisionBounds)[1];
-   jint var4 = (((this)->collisionBounds)[3] + 1);
+   jint var4 = jadd32(((this)->collisionBounds)[3], 1);
    ((this)->bL = false);
    ((this)->eN = ((this)->H != 0));
    jint var1 = ((this)->positionX / 20);
    ([&]{ auto _t0 = this; auto _t1 = (jint)(Game::m_g_II(var1, (var3 / 20))); return _t0->eC = _t1; }());
-   ([&]{ auto _t2 = this; auto _t3 = (jint)(Game::m_g_II(var1, ((var3 / 20) + 1))); return _t2->eG = _t3; }());
+   ([&]{ auto _t2 = this; auto _t3 = (jint)(Game::m_g_II(var1, jadd32((var3 / 20), 1))); return _t2->eG = _t3; }());
    ([&]{ auto _t4 = this; auto _t5 = (jint)(Game::m_g_II(var1, (var4 / 20))); return _t4->eD = _t5; }());
-   ([&]{ auto _t6 = this; auto _t7 = (jint)(Game::m_g_II(var1, ((var4 / 20) - 1))); return _t6->eH = _t7; }());
-   ([&]{ auto _t8 = this; auto _t9 = (jint)(Game::m_g_II(var1, ((var4 / 20) + 1))); return _t8->eI = _t9; }());
-   ([&]{ auto _t10 = this; auto _t11 = (jint)(Game::m_g_II((var1 - 1), (var4 / 20))); return _t10->eJ = _t11; }());
-   ([&]{ auto _t12 = this; auto _t13 = (jint)(Game::m_g_II((var1 + 1), (var4 / 20))); return _t12->eK = _t13; }());
+   ([&]{ auto _t6 = this; auto _t7 = (jint)(Game::m_g_II(var1, jsub32((var4 / 20), 1))); return _t6->eH = _t7; }());
+   ([&]{ auto _t8 = this; auto _t9 = (jint)(Game::m_g_II(var1, jadd32((var4 / 20), 1))); return _t8->eI = _t9; }());
+   ([&]{ auto _t10 = this; auto _t11 = (jint)(Game::m_g_II(jsub32(var1, 1), (var4 / 20))); return _t10->eJ = _t11; }());
+   ([&]{ auto _t12 = this; auto _t13 = (jint)(Game::m_g_II(jadd32(var1, 1), (var4 / 20))); return _t12->eK = _t13; }());
    if ((((this)->type == 82))) {
       jint var5 = 0;
       jint var6 = 0;
       jint var7 = 0;
       if ((((this)->eC <= 15))) {
-         (var5 = Game::m_g_II((var1 - 1), (var3 / 20)));
-         (var6 = Game::m_g_II((var1 + 1), (var3 / 20)));
-         (var7 = Game::m_g_II((var1 - 2), (var3 / 20)));
+         (var5 = Game::m_g_II(jsub32(var1, 1), (var3 / 20)));
+         (var6 = Game::m_g_II(jadd32(var1, 1), (var3 / 20)));
+         (var7 = Game::m_g_II(jsub32(var1, 2), (var3 / 20)));
          if (((var5 > 15))) {
             ((this)->eC = var5);
          } else if (((var6 > 15))) {
@@ -4635,10 +4635,10 @@ jint Actor::m_aV_V() {
    if ((((this)->eC >= 15))) {
       ((this)->eN = true);
    }
-   if (((((((this)->eD >= 15) || ((this)->eD == 15)) || ((((this)->eD == 0) && ((this)->eH >= 24)) && ((var4 - var3) >= 20))) || ((((((this)->collisionBounds)[2] - ((this)->collisionBounds)[0]) > 20) && ((this)->eJ >= 15)) && ((this)->eK >= 15))))) {
+   if (((((((this)->eD >= 15) || ((this)->eD == 15)) || ((((this)->eD == 0) && ((this)->eH >= 24)) && (jsub32(var4, var3) >= 20))) || (((jsub32(((this)->collisionBounds)[2], ((this)->collisionBounds)[0]) > 20) && ((this)->eJ >= 15)) && ((this)->eK >= 15))))) {
       (var2 = (var4 % 20));
       if ((((this)->eH >= 15))) {
-         (var2 = (jint)((var2 + 20)));
+         (var2 = (jint)(jadd32(var2, 20)));
          ((this)->eI = (this)->eD);
          ((this)->eD = (this)->eH);
       }
@@ -4655,20 +4655,20 @@ jint Actor::m_aV_V() {
       if (((((this)->eD >= 18) && ((this)->eD <= 21)))) {
          jint var9 = jshr32((jint)(((this)->positionX % 20)), (jint)(1));
          if ((((this)->eD == 18))) {
-            (var2 = (jint)((var2 - var9)));
+            (var2 = (jint)(jsub32(var2, var9)));
          } else if ((((this)->eD == 19))) {
-            (var2 = (jint)((var2 - (var9 + 10))));
+            (var2 = (jint)(jsub32(var2, jadd32(var9, 10))));
          } else if ((((this)->eD == 20))) {
-            (var2 = (jint)((var2 - ((10 - var9) + 10))));
+            (var2 = (jint)(jsub32(var2, jadd32(jsub32(10, var9), 10))));
          } else if ((((this)->eD == 21))) {
-            (var2 = (jint)((var2 - (10 - var9))));
+            (var2 = (jint)(jsub32(var2, jsub32(10, var9))));
          }
          ((this)->eN = true);
       } else if ((((this)->eD == 16))) {
-         (var2 = (jint)((var2 - ((this)->positionX % 20))));
+         (var2 = (jint)(jsub32(var2, ((this)->positionX % 20))));
          ((this)->eN = true);
       } else if ((((this)->eD == 17))) {
-         (var2 = (jint)((var2 - (20 - ((this)->positionX % 20)))));
+         (var2 = (jint)(jsub32(var2, jsub32(20, ((this)->positionX % 20)))));
          ((this)->eN = true);
       }
    }
@@ -4679,11 +4679,11 @@ void Actor::m_b_ZZ(jboolean var1, jboolean var2) {
    Ref<Actor> _self(this);
    jint var3 = this->m_aV_V();
    (Actor::bK = (this)->eC);
-   jint var6 = (((this)->collisionBounds)[0] - 1);
-   jint var7 = (((this)->collisionBounds)[2] + 1);
+   jint var6 = jsub32(((this)->collisionBounds)[0], 1);
+   jint var7 = jadd32(((this)->collisionBounds)[2], 1);
    jint var8 = ((this)->collisionBounds)[1];
    jint var9{};
-   if (((((var9 = (((this)->collisionBounds)[3] - 10))) < var8))) {
+   if (((((var9 = jsub32(((this)->collisionBounds)[3], 10))) < var8))) {
       (var9 = var8);
    }
    ((this)->eL = false);
@@ -4694,21 +4694,21 @@ void Actor::m_b_ZZ(jboolean var1, jboolean var2) {
    if ((var2)) {
       if (((this)->eN)) {
          if (((((this)->H >= 0) && ((this)->eD >= 15)))) {
-            ((this)->positionY = (jint)(((this)->positionY - var3)));
+            ((this)->positionY = (jint)(jsub32((this)->positionY, var3)));
          } else if ((((this)->eC >= 24))) {
             ((this)->bN = true);
-            ((this)->positionY = (jint)(((this)->positionY + ((20 - (var8 % 20)) + 1))));
+            ((this)->positionY = (jint)(jadd32((this)->positionY, jadd32(jsub32(20, (var8 % 20)), 1))));
          }
       }
       this->m_g_V();
-      (var6 = (((this)->collisionBounds)[0] - 1));
-      (var7 = (((this)->collisionBounds)[2] + 1));
+      (var6 = jsub32(((this)->collisionBounds)[0], 1));
+      (var7 = jadd32(((this)->collisionBounds)[2], 1));
       (var8 = ((this)->collisionBounds)[1]);
-      (var9 = (((this)->collisionBounds)[3] - 10));
+      (var9 = jsub32(((this)->collisionBounds)[3], 10));
    }
    if ((var1)) {
-      jint var10 = Game::m_g_II(((var6 / 20) + 1), (var9 / 20));
-      jint var11 = Game::m_g_II(((var7 / 20) - 1), (var9 / 20));
+      jint var10 = Game::m_g_II(jadd32((var6 / 20), 1), (var9 / 20));
+      jint var11 = Game::m_g_II(jsub32((var7 / 20), 1), (var9 / 20));
       {
          jint var4 = (var8 / 20);
          for (; (var4 <= (var9 / 20)); (var4++)) {
@@ -4746,31 +4746,31 @@ void Actor::m_b_ZZ(jboolean var1, jboolean var2) {
          if ((((this)->eL == (this)->eM))) {
             if (((((this)->eL && ((this)->type == 39)) && ((this)->animationId == 13)))) {
                if (((this)->facingLeft)) {
-                  ((this)->positionX = (jint)(((this)->positionX + 20)));
+                  ((this)->positionX = (jint)(jadd32((this)->positionX, 20)));
                } else {
-                  ((this)->positionX = (jint)(((this)->positionX - 20)));
+                  ((this)->positionX = (jint)(jsub32((this)->positionX, 20)));
                }
             }
             ([&]{ auto _t4 = this; auto _t5 = (jboolean)(((this)->eM = false)); return _t4->eL = _t5; }());
          } else if ((((this)->G <= 0))) {
             if (((this)->eL)) {
-               ((this)->positionX = (jint)(((this)->positionX + ((20 - (((var6 + 20)) % 20)) - 1))));
+               ((this)->positionX = (jint)(jadd32((this)->positionX, jsub32(jsub32(20, ((jadd32(var6, 20)) % 20)), 1))));
                this->m_aV_V();
             } else {
-               ((this)->positionX = (jint)(((this)->positionX - (var7 % 20))));
+               ((this)->positionX = (jint)(jsub32((this)->positionX, (var7 % 20))));
                this->m_aV_V();
             }
          } else if (((this)->eM)) {
-            ((this)->positionX = (jint)(((this)->positionX - (var7 % 20))));
+            ((this)->positionX = (jint)(jsub32((this)->positionX, (var7 % 20))));
             this->m_aV_V();
          } else {
-            ((this)->positionX = (jint)(((this)->positionX + ((20 - (((var6 + 20)) % 20)) - 1))));
+            ((this)->positionX = (jint)(jadd32((this)->positionX, jsub32(jsub32(20, ((jadd32(var6, 20)) % 20)), 1))));
             this->m_aV_V();
          }
       }
       this->m_g_V();
-      ((this)->eA = jshr32((jint)((((this)->collisionBounds)[0] + ((this)->collisionBounds)[2])), (jint)(1)));
-      ((this)->eB = jshr32((jint)((((this)->collisionBounds)[1] + ((this)->collisionBounds)[3])), (jint)(1)));
+      ((this)->eA = jshr32((jint)(jadd32(((this)->collisionBounds)[0], ((this)->collisionBounds)[2])), (jint)(1)));
+      ((this)->eB = jshr32((jint)(jadd32(((this)->collisionBounds)[1], ((this)->collisionBounds)[3])), (jint)(1)));
    }
 }
 
@@ -4872,7 +4872,7 @@ void Actor::m_aZ_V() {
             } else {
                (Game::ca = this);
             }
-            if (((Actor::m_b_AIAI((Game::player)->collisionBounds, (this)->collisionBounds) && (Actor::m_l_I(((this)->positionX - (Game::player)->positionX)) <= 40)))) {
+            if (((Actor::m_b_AIAI((Game::player)->collisionBounds, (this)->collisionBounds) && (Actor::m_l_I(jsub32((this)->positionX, (Game::player)->positionX)) <= 40)))) {
                (Game::player)->m_h_I(2);
                (Game::player)->m_a_I(1);
                (Actor::bM = true);
@@ -4892,14 +4892,14 @@ void Actor::m_aZ_V() {
 
 jboolean Actor::m_w_V() {
    Ref<Actor> _self(this);
-   jint var1 = (((this)->collisionBounds)[0] + 1);
-   jint var2 = (((this)->collisionBounds)[2] - 1);
+   jint var1 = jadd32(((this)->collisionBounds)[0], 1);
+   jint var2 = jsub32(((this)->collisionBounds)[2], 1);
    jint var3 = 0;
    {
       jint var4 = (var1 / 20);
       for (; (var4 <= (var2 / 20)); (var4++)) {
          jint var5{};
-         if (((((var5 = Game::m_g_II(var4, ((((this)->collisionBounds)[1] / 20) - 1)))) > var3))) {
+         if (((((var5 = Game::m_g_II(var4, jsub32((((this)->collisionBounds)[1] / 20), 1)))) > var3))) {
             (var3 = var5);
          }
       }
@@ -4941,7 +4941,7 @@ void Actor::m_ba_V() {
       }
    }
    if (((Actor::dZ && (Actor::dY >= 0)))) {
-      (Actor::dY = (Actor::dY - Game::h));
+      (Actor::dY = jsub32(Actor::dY, Game::h));
    }
    if (((Actor::dZ && (Actor::dY < 0)))) {
       (Actor::ea = true);
@@ -4949,11 +4949,11 @@ void Actor::m_ba_V() {
       (Actor::dW = 0);
       (Actor::dZ = false);
       (Actor::eb = (this)->positionX);
-      (Actor::ec = ((this)->positionY - 60));
+      (Actor::ec = jsub32((this)->positionY, 60));
       (Actor::dY = 0);
    }
    if (((Actor::bb > 0))) {
-      (Actor::bb = (Actor::bb - Game::h));
+      (Actor::bb = jsub32(Actor::bb, Game::h));
    }
    if (((((this)->cI && ((this)->cJ != nullptr)) && (((this)->cJ)->animationId == 1)))) {
       this->m_a_IIIActor(4, 1, 0, (this)->cJ);
@@ -5084,7 +5084,7 @@ void Actor::m_ba_V() {
                      this->m_a_I(6);
                   }
                   if ((this->m_e_V())) {
-                     if (((((this)->H + (this)->J) > 0))) {
+                     if (((jadd32((this)->H, (this)->J) > 0))) {
                         this->m_k_II(7, 36);
                         this->m_b_ZZ(true, true);
                      } else {
@@ -5095,7 +5095,7 @@ void Actor::m_ba_V() {
                case 7:
                   (Actor::eU = true);
                   if (((Actor::d == 11))) {
-                     ((this)->I = (1024 * ((((this)->G > 0) ? -1 : 1))));
+                     ((this)->I = jmul32(1024, ((((this)->G > 0) ? -1 : 1))));
                   }
                   if ((((((this)->eD < 15) && (Actor::aT == nullptr)) && (!Actor::bM)))) {
                      ((this)->J = 320);
@@ -5135,7 +5135,7 @@ void Actor::m_ba_V() {
                   ;
                case 51:
                   if ((((this)->G != 0))) {
-                     ((this)->I = (1024 * ((((this)->G > 0) ? -1 : 1))));
+                     ((this)->I = jmul32(1024, ((((this)->G > 0) ? -1 : 1))));
                   }
                   ((this)->H = 0);
                   ((this)->J = 0);
@@ -5151,11 +5151,11 @@ void Actor::m_ba_V() {
                   if ((((this)->G > 0))) {
                      if (((((this)->collisionBounds)[2] >= (Game::viewBounds)[2]))) {
                         ((this)->G = 0);
-                        ((this)->positionX = ((this)->positionX - ((((this)->collisionBounds)[2] - (Game::viewBounds)[2]))));
+                        ((this)->positionX = jsub32((this)->positionX, (jsub32(((this)->collisionBounds)[2], (Game::viewBounds)[2]))));
                      }
                   } else if (((((this)->G < 0) && (((this)->collisionBounds)[0] <= (Game::viewBounds)[0])))) {
                      ((this)->G = 0);
-                     ((this)->positionX = ((this)->positionX + (((Game::viewBounds)[0] - ((this)->collisionBounds)[0]))));
+                     ((this)->positionX = jadd32((this)->positionX, (jsub32((Game::viewBounds)[0], ((this)->collisionBounds)[0]))));
                   }
                   break;
                case 12:
@@ -5211,7 +5211,7 @@ void Actor::m_ba_V() {
                      Actor::m_aB_V();
                   }
                   if (((29 == (this)->animationId))) {
-                     if (((([&]{ auto _t2 = (this)->h; auto _t3 = (((this)->p)->m_a_I((this)->animationId) - 1); return (_t2 == _t3); }()) && ((this)->i <= 0)))) {
+                     if (((([&]{ auto _t2 = (this)->h; auto _t3 = jsub32(((this)->p)->m_a_I((this)->animationId), 1); return (_t2 == _t3); }()) && ((this)->i <= 0)))) {
                         if (((Actor::er != nullptr))) {
                            {
                               jint var3 = 0;
@@ -5240,7 +5240,7 @@ void Actor::m_ba_V() {
                   }
                   if ((((((this)->bL || (Actor::aT != nullptr))) && (!Actor::bM)))) {
                      if (((Actor::e != -1))) {
-                        if ((([&]{ auto _t7 = (this)->h; auto _t8 = (((this)->p)->m_a_I((this)->animationId) - 1); return (_t7 >= _t8); }()))) {
+                        if ((([&]{ auto _t7 = (this)->h; auto _t8 = jsub32(((this)->p)->m_a_I((this)->animationId), 1); return (_t7 >= _t8); }()))) {
                            (Actor::eV = -1);
                            this->m_a_I(Actor::e);
                            (Actor::e = -1);
@@ -5249,7 +5249,7 @@ void Actor::m_ba_V() {
                         (Actor::eV = 0);
                         this->m_bd_V();
                      }
-                  } else if ((([&]{ auto _t9 = (this)->h; auto _t10 = (((this)->p)->m_a_I((this)->animationId) - 1); return (_t9 >= _t10); }()))) {
+                  } else if ((([&]{ auto _t9 = (this)->h; auto _t10 = jsub32(((this)->p)->m_a_I((this)->animationId), 1); return (_t9 >= _t10); }()))) {
                      (Actor::eV = 0);
                      if (((Actor::e != -1))) {
                         (Actor::eV = -1);
@@ -5324,7 +5324,7 @@ void Actor::m_ba_V() {
                case 40:
                   if ((this->m_e_V())) {
                      this->m_a_I(41);
-                     (Game::player)->m_c_III(25, (this)->positionX, ((this)->positionY + -100));
+                     (Game::player)->m_c_III(25, (this)->positionX, jadd32((this)->positionY, -100));
                      (Actor::br = true);
                   }
                   break;
@@ -5342,8 +5342,8 @@ void Actor::m_ba_V() {
                         }
                      }
                      if ((((this)->k != nullptr))) {
-                        ((this)->positionX = ((this)->positionX + (((this)->facingLeft ? (((this)->k)[0] - ((this)->k)[2]) : (((this)->k)[2] - ((this)->k)[0])))));
-                        ((this)->positionY = ((this)->positionY + (-((((this)->k)[3] - ((this)->k)[1])))));
+                        ((this)->positionX = jadd32((this)->positionX, (((this)->facingLeft ? jsub32(((this)->k)[0], ((this)->k)[2]) : jsub32(((this)->k)[2], ((this)->k)[0])))));
+                        ((this)->positionY = jadd32((this)->positionY, jneg32((jsub32(((this)->k)[3], ((this)->k)[1])))));
                      }
                      (Actor::eV = 0);
                      this->m_au_V();
@@ -5400,9 +5400,9 @@ void Actor::m_ba_V() {
                }
             }
             if (((this)->facingLeft)) {
-               ((Actor::dV)[0] = ((Actor::dV)[0] - 40));
+               ((Actor::dV)[0] = jsub32((Actor::dV)[0], 40));
             } else {
-               ((Actor::dV)[2] = ((Actor::dV)[2] + 40));
+               ((Actor::dV)[2] = jadd32((Actor::dV)[2], 40));
             }
             {
                jint var5 = 0;
@@ -5551,10 +5551,10 @@ void Actor::m_ba_V() {
          }
          if (((((this)->G == 0) && Actor::V))) {
             (Actor::aa = (Game::player)->positionX);
-            (Actor::ab = Math::abs((Actor::aa - Actor::Z)));
+            (Actor::ab = Math::abs(jsub32(Actor::aa, Actor::Z)));
             (Actor::V = false);
-            jint var6 = ((Game::player)->facingLeft ? ((Game::player)->positionX - 160) : ((Game::player)->positionX - 80));
-            if ((((Actor::ab > 20) && (Math::abs((Game::cameraX - var6)) <= 2)))) {
+            jint var6 = ((Game::player)->facingLeft ? jsub32((Game::player)->positionX, 160) : jsub32((Game::player)->positionX, 80));
+            if ((((Actor::ab > 20) && (Math::abs(jsub32(Game::cameraX, var6)) <= 2)))) {
                (Actor::X = 0);
                (Actor::W = false);
             } else {
@@ -5589,17 +5589,17 @@ void Actor::m_d_II(jint var1, jint var2) {
    } else {
       ((this)->G = 0);
       if ((((var1 >= 16) && (var1 <= 19)))) {
-         ((this)->G = jshl32((jint)(((Actor::cg)[(var1 - 16)])[var2]), (jint)(8)));
+         ((this)->G = jshl32((jint)(((Actor::cg)[jsub32(var1, 16)])[var2]), (jint)(8)));
       } else if (((var1 == 39))) {
          ((this)->G = jshl32((jint)(((Actor::cg)[10])[var2]), (jint)(8)));
       } else if (((var1 == 20))) {
-         ((this)->G = jshl32((jint)(((Actor::cg)[(var1 - 16)])[var2]), (jint)(8)));
+         ((this)->G = jshl32((jint)(((Actor::cg)[jsub32(var1, 16)])[var2]), (jint)(8)));
          ((this)->H = jshl32((jint)(((Actor::cg)[11])[var2]), (jint)(8)));
          ((this)->H = (jint)(((this)->H / 2)));
       }
       ((this)->G = (jint)(((this)->G / 2)));
       if (((this)->facingLeft)) {
-         ((this)->G = (-(this)->G));
+         ((this)->G = jneg32((this)->G));
       }
       this->m_an_V();
    }
@@ -5608,9 +5608,9 @@ void Actor::m_d_II(jint var1, jint var2) {
 jint Actor::m_x_V() {
    jint var0 = Game::m_i_II(9, 12);
    if (((Actor::ch == 0))) {
-      return (((Actor::cq)[(Actor::cj)[Actor::ch]] * var0) / 10);
+      return (jmul32((Actor::cq)[(Actor::cj)[Actor::ch]], var0) / 10);
    } else {
-      return ((Actor::ch == 1) ? (((Actor::cr)[(Actor::cj)[Actor::ch]] * var0) / 10) : ((10 * var0) / 10));
+      return ((Actor::ch == 1) ? (jmul32((Actor::cr)[(Actor::cj)[Actor::ch]], var0) / 10) : (jmul32(10, var0) / 10));
    }
 }
 
@@ -5626,7 +5626,7 @@ jint Actor::m_e_II(jint var0, jint var1) {
    } else if (((((var0 == 1) && (var1 == 85)) && (Actor::dN == 1)))) {
       (var2 = 80);
    }
-   return (100 - var2);
+   return jsub32(100, var2);
 }
 
 jint Actor::m_y_V() {
@@ -5698,11 +5698,11 @@ void Actor::m_a_III(jint var1, jint var2, jint var3) {
                } else if (((var1 == 42))) {
                   ((Game::cb)->animationId = 9);
                } else {
-                  ((Game::cb)->animationId = (var1 - 16));
+                  ((Game::cb)->animationId = jsub32(var1, 16));
                }
             } else {
                ((Game::cb)->p = (Game::b)[17]);
-               ((Game::cb)->animationId = ((var1 - 26) + 10));
+               ((Game::cb)->animationId = jadd32(jsub32(var1, 26), 10));
             }
             Actor::m_d_Actor(Game::cb);
          } else if (((Game::cb)->m_e_V())) {
@@ -5782,8 +5782,8 @@ jboolean Actor::m_z_V() {
          ((this)->aA = 2000);
          Game::m_h_I(1);
          (Game::U = 0);
-         (Game::S = ((Game::player)->eA - Game::cameraX));
-         (Game::T = ((Game::player)->eB - Game::cameraY));
+         (Game::S = jsub32((Game::player)->eA, Game::cameraX));
+         (Game::T = jsub32((Game::player)->eB, Game::cameraY));
          ((Game::player)->c = (jint)(((Game::player)->c | 4096)));
          return true;
       } else {
@@ -5848,7 +5848,7 @@ void Actor::m_bb_V() {
             break;
          }
       }
-   } else if (((Game::m_G_I(327712) && (((Actor::cy == (Actor::cD * Actor::cz)) || (Actor::cA <= 1)))))) {
+   } else if (((Game::m_G_I(327712) && (((Actor::cy == jmul32(Actor::cD, Actor::cz)) || (Actor::cA <= 1)))))) {
       if ((Actor::m_u_I((Actor::ek)[Actor::cx]))) {
          (Actor::cv = (Actor::ek)[Actor::cx]);
          Game::m_s_V();
@@ -5908,34 +5908,34 @@ void Actor::m_B_V() {
    Actor::m_a_IIIIIIIZ(120, 110, 120, 110, 60, 50, 0, false);
    if (((Actor::cA > 1))) {
       jint var0 = jshr32((jint)(Actor::cD), (jint)(2));
-      (Actor::cy = (Actor::cy + (var0 * Actor::cz)));
-      if (((((Actor::cy >= Actor::cD) && (Actor::cz == 1)) || ((Actor::cz == -1) && (Actor::cy <= (-Actor::cD)))))) {
-         (Actor::cy = (Actor::cD * Actor::cz));
+      (Actor::cy = jadd32(Actor::cy, jmul32(var0, Actor::cz)));
+      if (((((Actor::cy >= Actor::cD) && (Actor::cz == 1)) || ((Actor::cz == -1) && (Actor::cy <= jneg32(Actor::cD)))))) {
+         (Actor::cy = jmul32(Actor::cD, Actor::cz));
       }
    }
-   jint var6 = ((((Actor::cC - 1)) * Actor::cD) + Actor::cy);
+   jint var6 = jadd32(jmul32((jsub32(Actor::cC, 1)), Actor::cD), Actor::cy);
    {
       jint var1 = 0;
       for (; (var1 < 3); (var1++)) {
          if ((((Actor::ej)[var1] != 0))) {
-            jint var2 = (120 + (jshr32((jint)((60 * Game::m_m_I(var6))), (jint)(8))));
-            jint var3 = (110 + (jshr32((jint)((60 * Game::m_l_I(var6))), (jint)(8))));
+            jint var2 = jadd32(120, (jshr32((jint)(jmul32(60, Game::m_m_I(var6))), (jint)(8))));
+            jint var3 = jadd32(110, (jshr32((jint)(jmul32(60, Game::m_l_I(var6))), (jint)(8))));
             jbyte var4 = (Actor::el)[var1];
             jint var5 = ((Game::b)[23])->m_a_I(var4);
             ((Game::b)[23])->m_a_GraphicsIIIIIII(Actor::bt, var4, jrem32((jshr32((jint)(Game::stateFrame), (jint)(1))), var5), var2, var3, 0, 0, 0);
-            (var6 = (jint)((var6 - (Actor::cD * Actor::cz))));
+            (var6 = (jint)(jsub32(var6, jmul32(Actor::cD, Actor::cz))));
          }
       }
    }
-   jint var7 = (120 + (jshr32((jint)((60 * Game::m_m_I(0))), (jint)(8))));
-   jint var8 = (110 + (jshr32((jint)((60 * Game::m_l_I(0))), (jint)(8))));
+   jint var7 = jadd32(120, (jshr32((jint)(jmul32(60, Game::m_m_I(0))), (jint)(8))));
+   jint var8 = jadd32(110, (jshr32((jint)(jmul32(60, Game::m_l_I(0))), (jint)(8))));
    jint var9{};
    if (((((var9 = (Game::stateFrame % 22))) >= 11))) {
-      (var9 = (22 - var9));
+      (var9 = jsub32(22, var9));
    }
-   if (((Actor::cy == ((Actor::cD * Actor::cz) % 360)))) {
+   if (((Actor::cy == (jmul32(Actor::cD, Actor::cz) % 360)))) {
       if ((Actor::m_u_I((Actor::ek)[Actor::cx]))) {
-         Game::m_a_IIIII((var9 - 1), (var7 - 22), (var8 - 22), 44, 44);
+         Game::m_a_IIIII(jsub32(var9, 1), jsub32(var7, 22), jsub32(var8, 22), 44, 44);
       } else {
          (Game::graphics)->setColor(2004318071);
          if ((((Game::stateFrame % 8) <= 4))) {
@@ -5955,23 +5955,23 @@ void Actor::m_B_V() {
 
 void Actor::m_C_V() {
    Ref<Actor> _self(this);
-   jint var1 = jdiv32((Game::health * 36), Game::maxHealth);
+   jint var1 = jdiv32(jmul32(Game::health, 36), Game::maxHealth);
    (Actor::bt)->setColor(15773760);
-   Game::m_b_IIII((((this)->positionX - 20) - Game::cameraX), (((this)->positionY - Actor::cw) - Game::cameraY), 40, 9);
+   Game::m_b_IIII(jsub32(jsub32((this)->positionX, 20), Game::cameraX), jsub32(jsub32((this)->positionY, Actor::cw), Game::cameraY), 40, 9);
    (Actor::bt)->setColor(0);
-   Game::m_b_IIII(((((this)->positionX - 20) - Game::cameraX) + 1), ((((this)->positionY - Actor::cw) - Game::cameraY) + 1), 38, 7);
+   Game::m_b_IIII(jadd32(jsub32(jsub32((this)->positionX, 20), Game::cameraX), 1), jadd32(jsub32(jsub32((this)->positionY, Actor::cw), Game::cameraY), 1), 38, 7);
    (Actor::bt)->setColor(1611800);
-   Game::m_b_IIII(((((this)->positionX - 20) - Game::cameraX) + 2), ((((this)->positionY - Actor::cw) - Game::cameraY) + 2), var1, 5);
+   Game::m_b_IIII(jadd32(jsub32(jsub32((this)->positionX, 20), Game::cameraX), 2), jadd32(jsub32(jsub32((this)->positionY, Actor::cw), Game::cameraY), 2), var1, 5);
    (Actor::bt)->setColor(63488);
-   Game::m_b_IIII(((((this)->positionX - 20) - Game::cameraX) + 3), ((((this)->positionY - Actor::cw) - Game::cameraY) + 3), (var1 - 2), 3);
+   Game::m_b_IIII(jadd32(jsub32(jsub32((this)->positionX, 20), Game::cameraX), 3), jadd32(jsub32(jsub32((this)->positionY, Actor::cw), Game::cameraY), 3), jsub32(var1, 2), 3);
 }
 
 void Actor::m_bc_V() {
    Ref<Actor> _self(this);
-   ((this)->positionY = ((((((this)->collisionBounds)[3] + 1)) / 20) * 20));
+   ((this)->positionY = jmul32(((jadd32(((this)->collisionBounds)[3], 1)) / 20), 20));
    ((this)->positionY--);
    ((this)->H = 256);
-   this->m_a_I(((((Game::player)->positionY - Actor::eP) > 85) ? 10 : 9));
+   this->m_a_I(((jsub32((Game::player)->positionY, Actor::eP) > 85) ? 10 : 9));
    this->m_a_IIIIIIZ(39, 17, 23, 0, 0, 302, false);
    (Actor::eT = false);
    (Actor::bQ = false);
@@ -6045,7 +6045,7 @@ jboolean Actor::m_be_V() {
          if (((((Game::m_G_I(33024) || Game::m_F_I(33024))) && ((((this)->eD == 15) || (Actor::aT != nullptr)))))) {
             if ((((Actor::aT == nullptr) || ((((((((((Actor::aT)->type != 50) && ((Actor::aT)->type != 33)) && ((Actor::aT)->type != 82)) && ((Actor::aT)->type != 14)) && ((Actor::aT)->type != 72)) && ((Actor::aT)->type != 73)) && ((Actor::aT)->type != 83)) && ((Actor::aT)->type != 84)) && ((Actor::aT)->type != 85))))) {
                this->m_q_I(0);
-               ((this)->positionY = (jint)(((this)->positionY + 20)));
+               ((this)->positionY = (jint)(jadd32((this)->positionY, 20)));
                (Actor::aT = nullptr);
             }
          } else if ((Game::m_F_I(4112))) {
@@ -6101,13 +6101,13 @@ jboolean Actor::m_bf_V() {
    if (((((var1 = Math::abs((this)->G))) < 448))) {
       (var1 = 448);
    } else if (((var1 < 1792))) {
-      (var1 = (jint)((var1 + 224)));
+      (var1 = (jint)(jadd32(var1, 224)));
    }
    if (((var1 > 1792))) {
       (var1 = 1792);
    }
    if (((this)->facingLeft)) {
-      ((this)->G = (-var1));
+      ((this)->G = jneg32(var1));
    } else {
       ((this)->G = var1);
    }
@@ -6158,7 +6158,7 @@ jint Actor::m_D_V() {
    jint var1 = 0;
    (var1 = (0 | this->m_aA_V()));
    {
-      jint var3 = (Game::ci - 1);
+      jint var3 = jsub32(Game::ci, 1);
       for (; (var3 >= 0); (var3--)) {
          Ref<Actor> var2{};
          if (((((((((var2 = (Game::ch)[var3])) != nullptr) && (var2 != this)) && (var2)->m_bO_V()) && Actor::m_b_AIAI((var2)->collisionBounds, (this)->collisionBounds)) && ((var2)->T != this)))) {
@@ -6180,12 +6180,12 @@ void Actor::m_f_Actor(Ref<Actor> var1) {
       if ((((this)->positionX < (var1)->positionX))) {
          if ((((this)->G >= 0))) {
             if ((((var1)->eM || (((var2 & 2)) != 0)))) {
-               ((this)->positionX = ((this)->positionX - ((((this)->collisionBounds)[2] - ((var1)->collisionBounds)[0]))));
+               ((this)->positionX = jsub32((this)->positionX, (jsub32(((this)->collisionBounds)[2], ((var1)->collisionBounds)[0]))));
                return;
             }
-            ((var1)->positionX = ((var1)->positionX + ((((this)->collisionBounds)[2] - ((var1)->collisionBounds)[0]))));
+            ((var1)->positionX = jadd32((var1)->positionX, (jsub32(((this)->collisionBounds)[2], ((var1)->collisionBounds)[0]))));
             if ((((var1)->U != nullptr))) {
-               (((var1)->U)->positionX = (((var1)->U)->positionX + ((((this)->collisionBounds)[2] - ((var1)->collisionBounds)[0]))));
+               (((var1)->U)->positionX = jadd32(((var1)->U)->positionX, (jsub32(((this)->collisionBounds)[2], ((var1)->collisionBounds)[0]))));
             }
             if (((!(this)->cI))) {
                (Actor::bT = true);
@@ -6194,16 +6194,16 @@ void Actor::m_f_Actor(Ref<Actor> var1) {
          }
       } else if (((((this)->positionX >= (var1)->positionX) && ((this)->G <= 0)))) {
          if ((((!(var1)->eL) && (((var2 & 1)) == 0)))) {
-            ((var1)->positionX = ((var1)->positionX - ((((var1)->collisionBounds)[2] - ((this)->collisionBounds)[0]))));
+            ((var1)->positionX = jsub32((var1)->positionX, (jsub32(((var1)->collisionBounds)[2], ((this)->collisionBounds)[0]))));
             if ((((var1)->U != nullptr))) {
-               (((var1)->U)->positionX = (((var1)->U)->positionX - ((((var1)->collisionBounds)[2] - ((this)->collisionBounds)[0]))));
+               (((var1)->U)->positionX = jsub32(((var1)->U)->positionX, (jsub32(((var1)->collisionBounds)[2], ((this)->collisionBounds)[0]))));
             }
             if (((!(this)->cI))) {
                (Actor::bT = true);
                return;
             }
          } else if (((!(this)->R))) {
-            ((this)->positionX = ((this)->positionX + ((((var1)->collisionBounds)[2] - ((this)->collisionBounds)[0]))));
+            ((this)->positionX = jadd32((this)->positionX, (jsub32(((var1)->collisionBounds)[2], ((this)->collisionBounds)[0]))));
          }
       }
    }
@@ -6215,7 +6215,7 @@ void Actor::m_E_V() {
    (Actor::bT = false);
    jint var2 = Actor::m_h_II(9, 1792);
    {
-      jint var3 = (Game::ck - 1);
+      jint var3 = jsub32(Game::ck, 1);
       for (; (var3 >= 0); (var3--)) {
          Ref<Actor> var1{};
          if ((((((((var1 = (Game::cj)[var3])) != nullptr) && ((((var1)->type == 37) || ((var1)->type == 80)))) && ((((var1)->c & 1024)) == 0)) && (var1)->O))) {
@@ -6224,7 +6224,7 @@ void Actor::m_E_V() {
       }
    }
    {
-      jint var5 = (Game::ck - 1);
+      jint var5 = jsub32(Game::ck, 1);
       for (; (var5 >= 0); (var5--)) {
          Ref<Actor> var4{};
          if (((((((((((((var4 = (Game::cj)[var5])) != nullptr) && (var4 != this)) && ((var4)->type != 37)) && ((var4)->type != 80)) && ((((var4)->c & 1024)) == 0)) && (var4)->O) && ((var4)->aq != 5)) && ((var4)->aq != 6)) && ((var4)->aq != 7)))) {
@@ -6246,48 +6246,48 @@ void Actor::m_a_ActorI(Ref<Actor> var1, jint var2) {
          if ((((((this)->G <= 0) && (this)->bL) && (!(var1)->P)))) {
             if (((!(var1)->eM))) {
                if (((!(var1)->P))) {
-                  ((var1)->positionX = ([&]{ auto _t0 = (var1)->positionX; auto _t1 = Actor::m_h_II(var2, (((this)->collisionBounds)[2] - ((var1)->collisionBounds)[0])); return (_t0 + _t1); }()));
+                  ((var1)->positionX = ([&]{ auto _t0 = (var1)->positionX; auto _t1 = Actor::m_h_II(var2, jsub32(((this)->collisionBounds)[2], ((var1)->collisionBounds)[0])); return jadd32(_t0, _t1); }()));
                } else if (((this)->eL)) {
-                  ([&]{ auto _t4 = this; auto _t5 = (jint)(([&]{ auto _t2 = (this)->positionX; auto _t3 = Actor::m_h_II(var2, (((var1)->collisionBounds)[2] - ((this)->collisionBounds)[0])); return (_t2 + _t3); }())); return _t4->positionX = _t5; }());
+                  ([&]{ auto _t4 = this; auto _t5 = (jint)(([&]{ auto _t2 = (this)->positionX; auto _t3 = Actor::m_h_II(var2, jsub32(((var1)->collisionBounds)[2], ((this)->collisionBounds)[0])); return jadd32(_t2, _t3); }())); return _t4->positionX = _t5; }());
                }
             } else if (((!(this)->S))) {
-               ((this)->positionX = ((this)->positionX - ((((this)->collisionBounds)[2] - ((var1)->collisionBounds)[0]))));
+               ((this)->positionX = jsub32((this)->positionX, (jsub32(((this)->collisionBounds)[2], ((var1)->collisionBounds)[0]))));
             }
          } else if ((((!(this)->eL) && (!(this)->R)))) {
             if ((((((this)->G > 0) && ((var1)->G < 0)) && (!(var1)->P)))) {
-               ((this)->positionX = ((this)->positionX - (jshr32((jint)((this)->G), (jint)(8)))));
-               ((var1)->positionX = ((var1)->positionX - (jshr32((jint)((var1)->G), (jint)(8)))));
+               ((this)->positionX = jsub32((this)->positionX, (jshr32((jint)((this)->G), (jint)(8)))));
+               ((var1)->positionX = jsub32((var1)->positionX, (jshr32((jint)((var1)->G), (jint)(8)))));
             } else {
-               ([&]{ auto _t8 = this; auto _t9 = (jint)(([&]{ auto _t6 = (this)->positionX; auto _t7 = Actor::m_h_II(var2, (((this)->collisionBounds)[2] - ((var1)->collisionBounds)[0])); return (_t6 - _t7); }())); return _t8->positionX = _t9; }());
+               ([&]{ auto _t8 = this; auto _t9 = (jint)(([&]{ auto _t6 = (this)->positionX; auto _t7 = Actor::m_h_II(var2, jsub32(((this)->collisionBounds)[2], ((var1)->collisionBounds)[0])); return jsub32(_t6, _t7); }())); return _t8->positionX = _t9; }());
             }
          } else if (((!(var1)->P))) {
-            ((var1)->positionX = ([&]{ auto _t10 = (var1)->positionX; auto _t11 = Actor::m_h_II(var2, (((this)->collisionBounds)[2] - ((var1)->collisionBounds)[0])); return (_t10 + _t11); }()));
+            ((var1)->positionX = ([&]{ auto _t10 = (var1)->positionX; auto _t11 = Actor::m_h_II(var2, jsub32(((this)->collisionBounds)[2], ((var1)->collisionBounds)[0])); return jadd32(_t10, _t11); }()));
          } else if (((this)->eL)) {
-            ([&]{ auto _t14 = this; auto _t15 = (jint)(([&]{ auto _t12 = (this)->positionX; auto _t13 = Actor::m_h_II(var2, (((var1)->collisionBounds)[2] - ((this)->collisionBounds)[0])); return (_t12 + _t13); }())); return _t14->positionX = _t15; }());
+            ([&]{ auto _t14 = this; auto _t15 = (jint)(([&]{ auto _t12 = (this)->positionX; auto _t13 = Actor::m_h_II(var2, jsub32(((var1)->collisionBounds)[2], ((this)->collisionBounds)[0])); return jadd32(_t12, _t13); }())); return _t14->positionX = _t15; }());
          }
          ((this)->S = true);
       } else if ((((this)->positionX >= (var1)->positionX))) {
          if ((((((this)->G >= 0) && (this)->bL) && (!(var1)->P)))) {
             if (((!(var1)->eL))) {
                if (((!(var1)->P))) {
-                  ((var1)->positionX = ([&]{ auto _t16 = (var1)->positionX; auto _t17 = Actor::m_h_II(var2, (((var1)->collisionBounds)[2] - ((this)->collisionBounds)[0])); return (_t16 - _t17); }()));
+                  ((var1)->positionX = ([&]{ auto _t16 = (var1)->positionX; auto _t17 = Actor::m_h_II(var2, jsub32(((var1)->collisionBounds)[2], ((this)->collisionBounds)[0])); return jsub32(_t16, _t17); }()));
                } else if (((this)->eM)) {
-                  ([&]{ auto _t20 = this; auto _t21 = (jint)(([&]{ auto _t18 = (this)->positionX; auto _t19 = Actor::m_h_II(var2, (((this)->collisionBounds)[2] - ((var1)->collisionBounds)[0])); return (_t18 - _t19); }())); return _t20->positionX = _t21; }());
+                  ([&]{ auto _t20 = this; auto _t21 = (jint)(([&]{ auto _t18 = (this)->positionX; auto _t19 = Actor::m_h_II(var2, jsub32(((this)->collisionBounds)[2], ((var1)->collisionBounds)[0])); return jsub32(_t18, _t19); }())); return _t20->positionX = _t21; }());
                }
             } else if (((!(this)->R))) {
-               ((this)->positionX = ((this)->positionX + ((((var1)->collisionBounds)[2] - ((this)->collisionBounds)[0]))));
+               ((this)->positionX = jadd32((this)->positionX, (jsub32(((var1)->collisionBounds)[2], ((this)->collisionBounds)[0]))));
             }
          } else if ((((!(this)->eM) && (!(this)->S)))) {
             if ((((((this)->G > 0) && ((var1)->G < 0)) && (!(var1)->P)))) {
-               ((this)->positionX = ((this)->positionX - (jshr32((jint)((this)->G), (jint)(8)))));
-               ((var1)->positionX = ((var1)->positionX - (jshr32((jint)((var1)->G), (jint)(8)))));
+               ((this)->positionX = jsub32((this)->positionX, (jshr32((jint)((this)->G), (jint)(8)))));
+               ((var1)->positionX = jsub32((var1)->positionX, (jshr32((jint)((var1)->G), (jint)(8)))));
             } else {
-               ([&]{ auto _t24 = this; auto _t25 = (jint)(([&]{ auto _t22 = (this)->positionX; auto _t23 = Actor::m_h_II(var2, (((var1)->collisionBounds)[2] - ((this)->collisionBounds)[0])); return (_t22 + _t23); }())); return _t24->positionX = _t25; }());
+               ([&]{ auto _t24 = this; auto _t25 = (jint)(([&]{ auto _t22 = (this)->positionX; auto _t23 = Actor::m_h_II(var2, jsub32(((var1)->collisionBounds)[2], ((this)->collisionBounds)[0])); return jadd32(_t22, _t23); }())); return _t24->positionX = _t25; }());
             }
          } else if (((!(var1)->P))) {
-            ((var1)->positionX = ([&]{ auto _t26 = (var1)->positionX; auto _t27 = Actor::m_h_II(var2, (((var1)->collisionBounds)[2] - ((this)->collisionBounds)[0])); return (_t26 - _t27); }()));
+            ((var1)->positionX = ([&]{ auto _t26 = (var1)->positionX; auto _t27 = Actor::m_h_II(var2, jsub32(((var1)->collisionBounds)[2], ((this)->collisionBounds)[0])); return jsub32(_t26, _t27); }()));
          } else if (((this)->eM)) {
-            ([&]{ auto _t30 = this; auto _t31 = (jint)(([&]{ auto _t28 = (this)->positionX; auto _t29 = Actor::m_h_II(var2, (((this)->collisionBounds)[2] - ((var1)->collisionBounds)[0])); return (_t28 - _t29); }())); return _t30->positionX = _t31; }());
+            ([&]{ auto _t30 = this; auto _t31 = (jint)(([&]{ auto _t28 = (this)->positionX; auto _t29 = Actor::m_h_II(var2, jsub32(((this)->collisionBounds)[2], ((var1)->collisionBounds)[0])); return jsub32(_t28, _t29); }())); return _t30->positionX = _t31; }());
          }
          ((this)->R = true);
       }
@@ -6302,21 +6302,21 @@ void Actor::m_bg_V() {
       ([&]{ auto _t0 = this; auto _t1 = (Ref<Actor>)(Game::m_i_I((this)->y)); return _t0->s = _t1; }());
       ((this)->s)->m_g_V();
       if (((((this)->s)->type == 46))) {
-         (((this)->s)->av = (((this)->collisionBounds)[1] - ((this)->s)->positionY));
+         (((this)->s)->av = jsub32(((this)->collisionBounds)[1], ((this)->s)->positionY));
       }
    }
    if (((((this)->z > 0) && ((this)->t == nullptr)))) {
       ([&]{ auto _t2 = this; auto _t3 = (Ref<Actor>)(Game::m_i_I((this)->z)); return _t2->t = _t3; }());
       ((this)->t)->m_g_V();
       if (((((this)->t)->type == 46))) {
-         (((this)->t)->av = (((this)->collisionBounds)[1] - ((this)->t)->positionY));
+         (((this)->t)->av = jsub32(((this)->collisionBounds)[1], ((this)->t)->positionY));
       }
    }
    if (((((this)->A > 0) && ((this)->u == nullptr)))) {
       ([&]{ auto _t4 = this; auto _t5 = (Ref<Actor>)(Game::m_i_I((this)->A)); return _t4->u = _t5; }());
       ((this)->u)->m_g_V();
       if (((((this)->u)->type == 46))) {
-         (((this)->u)->av = (((this)->collisionBounds)[1] - ((this)->u)->positionY));
+         (((this)->u)->av = jsub32(((this)->collisionBounds)[1], ((this)->u)->positionY));
       }
    }
    if (((((this)->B > 0) && ((this)->v == nullptr)))) {
@@ -6390,28 +6390,28 @@ void Actor::m_bg_V() {
    }
    if (((var1 != (this)->av))) {
       if ((((this)->s != nullptr))) {
-         (((this)->s)->av = (((this)->s)->av - (((this)->av - var1))));
+         (((this)->s)->av = jsub32(((this)->s)->av, (jsub32((this)->av, var1))));
          if (((((this)->s)->q != nullptr))) {
-            ((((this)->s)->q)->positionY = ((((this)->s)->q)->positionY - (((this)->av - var1))));
+            ((((this)->s)->q)->positionY = jsub32((((this)->s)->q)->positionY, (jsub32((this)->av, var1))));
          }
       }
       if ((((this)->t != nullptr))) {
-         (((this)->t)->av = (((this)->t)->av - (((this)->av - var1))));
+         (((this)->t)->av = jsub32(((this)->t)->av, (jsub32((this)->av, var1))));
          if (((((this)->t)->q != nullptr))) {
-            ((((this)->t)->q)->positionY = ((((this)->t)->q)->positionY - (((this)->av - var1))));
+            ((((this)->t)->q)->positionY = jsub32((((this)->t)->q)->positionY, (jsub32((this)->av, var1))));
          }
       }
       if ((((this)->u != nullptr))) {
-         (((this)->u)->av = (((this)->u)->av - (((this)->av - var1))));
+         (((this)->u)->av = jsub32(((this)->u)->av, (jsub32((this)->av, var1))));
          if (((((this)->u)->q != nullptr))) {
-            ((((this)->u)->q)->positionY = ((((this)->u)->q)->positionY - (((this)->av - var1))));
+            ((((this)->u)->q)->positionY = jsub32((((this)->u)->q)->positionY, (jsub32((this)->av, var1))));
          }
       }
    }
    if (((((this)->v != nullptr) && (((this)->v)->type == 65)))) {
-      (((this)->v)->positionY = (((this)->collisionBounds)[1] + 2));
+      (((this)->v)->positionY = jadd32(((this)->collisionBounds)[1], 2));
       if (((((this)->v)->aC == 1))) {
-         (((this)->v)->positionY = (((this)->v)->positionY + ((this)->v)->av));
+         (((this)->v)->positionY = jadd32(((this)->v)->positionY, ((this)->v)->av));
       }
       if (((Actor::aT == (this)->v))) {
          if ((((Game::player)->cJ != this))) {
@@ -6426,9 +6426,9 @@ void Actor::m_bg_V() {
       }
    }
    if (((((this)->w != nullptr) && (((this)->w)->type == 65)))) {
-      (((this)->w)->positionY = (((this)->collisionBounds)[1] + 2));
+      (((this)->w)->positionY = jadd32(((this)->collisionBounds)[1], 2));
       if (((((this)->w)->aC == 1))) {
-         (((this)->w)->positionY = (((this)->w)->positionY + ((this)->w)->av));
+         (((this)->w)->positionY = jadd32(((this)->w)->positionY, ((this)->w)->av));
       }
       if (((Actor::aT == (this)->w))) {
          if ((((Game::player)->cJ != this))) {
@@ -6442,12 +6442,12 @@ void Actor::m_bg_V() {
          }
       }
    }
-   if ((((Actor::m_b_AIAI((Game::player)->collisionBounds, (this)->collisionBounds) && ((Game::player)->H >= 0)) && (((((Game::player)->aq == 0) && (((Game::player)->positionY - ((this)->collisionBounds)[1]) >= 35)) || ((Game::player)->aq == 1)))))) {
+   if ((((Actor::m_b_AIAI((Game::player)->collisionBounds, (this)->collisionBounds) && ((Game::player)->H >= 0)) && (((((Game::player)->aq == 0) && (jsub32((Game::player)->positionY, ((this)->collisionBounds)[1]) >= 35)) || ((Game::player)->aq == 1)))))) {
       if (((((((Game::player)->aq == 0) && ((Game::player)->animationId != 35)) && ((Game::player)->animationId != 21)) && ((Game::player)->animationId != 30)))) {
          (Game::player)->m_a_I(35);
       }
       if (((!(Game::player)->cI))) {
-         (Game::player)->m_a_IIIIIIZ(39, 18, 0, 0, (((this)->collisionBounds)[1] - (Game::player)->positionY), 203, false);
+         (Game::player)->m_a_IIIIIIZ(39, 18, 0, 0, jsub32(((this)->collisionBounds)[1], (Game::player)->positionY), 203, false);
       }
       ((Game::player)->cI = true);
       ((Game::player)->cJ = this);
@@ -6530,7 +6530,7 @@ void Actor::m_bg_V() {
                } else if ((((((this)->t)->animationId == 7) && ((this)->t)->m_e_V()))) {
                   ((this)->t)->m_a_I(8);
                }
-               (((this)->t)->av = (((this)->collisionBounds)[1] - ((this)->t)->positionY));
+               (((this)->t)->av = jsub32(((this)->collisionBounds)[1], ((this)->t)->positionY));
             }
             if ((((this)->u != nullptr))) {
                if (((((this)->collisionBounds)[1] > ((this)->u)->positionY))) {
@@ -6539,7 +6539,7 @@ void Actor::m_bg_V() {
                } else if ((((((this)->u)->animationId == 7) && ((this)->u)->m_e_V()))) {
                   ((this)->u)->m_a_I(8);
                }
-               (((this)->u)->av = (((this)->collisionBounds)[1] - ((this)->u)->positionY));
+               (((this)->u)->av = jsub32(((this)->collisionBounds)[1], ((this)->u)->positionY));
             }
             if ((((this)->s != nullptr))) {
                if (((((this)->collisionBounds)[1] > ((this)->s)->positionY))) {
@@ -6548,9 +6548,9 @@ void Actor::m_bg_V() {
                } else if ((((((this)->s)->animationId == 7) && ((this)->s)->m_e_V()))) {
                   ((this)->s)->m_a_I(8);
                }
-               (((this)->s)->av = (((this)->collisionBounds)[1] - ((this)->s)->positionY));
+               (((this)->s)->av = jsub32(((this)->collisionBounds)[1], ((this)->s)->positionY));
             }
-            if ((((((this)->collisionBounds)[3] - ((this)->collisionBounds)[1]) <= (this)->az))) {
+            if (((jsub32(((this)->collisionBounds)[3], ((this)->collisionBounds)[1]) <= (this)->az))) {
                ((this)->aq = 0);
                return;
             }
@@ -6598,14 +6598,14 @@ void Actor::m_bi_V() {
    if (((((this)->eD == 18) || ((this)->eD == 19)))) {
       ((this)->H = jshr32((jint)((this)->G), (jint)(1)));
    } else if (((((this)->eD == 21) || ((this)->eD == 20)))) {
-      ((this)->H = jshr32((jint)((-(this)->G)), (jint)(1)));
+      ((this)->H = jshr32((jint)(jneg32((this)->G)), (jint)(1)));
    } else if ((((this)->eD == 16))) {
       ((this)->H = (this)->G);
    } else {
       if ((((this)->eD != 17))) {
          return;
       }
-      ((this)->H = (-(this)->G));
+      ((this)->H = jneg32((this)->G));
    }
    if (((((this)->H < 0) && ((this)->type != 70)))) {
       ((this)->H = 0);
@@ -6625,17 +6625,17 @@ jint Actor::m_bj_V() {
          Ref<Actor> var6{};
          if (((((((var6 = (Game::ch)[var7])) != nullptr) && (var6 != this)) && ((var6)->type == 33)))) {
             (var6)->m_g_V();
-            if (((((((this)->positionX >= ((var6)->collisionBounds)[0]) && ((this)->positionX <= ((var6)->collisionBounds)[2])) && (((this)->collisionBounds)[1] > ((var6)->collisionBounds)[3])) && ((((this)->collisionBounds)[1] - ((var6)->collisionBounds)[3]) < var3)))) {
-               (var3 = (((this)->collisionBounds)[1] - ((var6)->collisionBounds)[3]));
+            if (((((((this)->positionX >= ((var6)->collisionBounds)[0]) && ((this)->positionX <= ((var6)->collisionBounds)[2])) && (((this)->collisionBounds)[1] > ((var6)->collisionBounds)[3])) && (jsub32(((this)->collisionBounds)[1], ((var6)->collisionBounds)[3]) < var3)))) {
+               (var3 = jsub32(((this)->collisionBounds)[1], ((var6)->collisionBounds)[3]));
                ((this)->q = var6);
             }
          }
       }
    }
    {
-      jint var8 = ((var1 / 20) - 1);
+      jint var8 = jsub32((var1 / 20), 1);
       for (; (((var8 >= 0) && (var5 < 5)) && (((var4 = Game::m_g_II(((this)->positionX / 20), var8))) < 15)); (var5++)) {
-         (var2 = (jint)((var2 + 20)));
+         (var2 = (jint)(jadd32(var2, 20)));
          (var8--);
       }
    }
@@ -6743,7 +6743,7 @@ void Actor::m_bk_V() {
             }
             break;
          case 4:
-            ((this)->aB = ((this)->aB - Game::h));
+            ((this)->aB = jsub32((this)->aB, Game::h));
             if ((((this)->aB <= 0))) {
                if ((((this)->facingLeft && ((this)->G < 0)))) {
                   ((this)->I = 256);
@@ -6763,7 +6763,7 @@ void Actor::m_bk_V() {
             break;
          case 5:
             if ((((this)->G != 0))) {
-               ((this)->I = (1024 * ((((this)->G > 0) ? -1 : 1))));
+               ((this)->I = jmul32(1024, ((((this)->G > 0) ? -1 : 1))));
             }
             if ((this->m_e_V())) {
                this->m_b_I(3);
@@ -6899,7 +6899,7 @@ void Actor::m_bn_V() {
                ((this)->J = 320);
             }
             if ((((this)->G != 0))) {
-               ((this)->I = (1024 * ((((this)->G > 0) ? -1 : 1))));
+               ((this)->I = jmul32(1024, ((((this)->G > 0) ? -1 : 1))));
             }
             if ((this->m_e_V())) {
                this->m_b_I(0);
@@ -6956,10 +6956,10 @@ void Actor::m_bn_V() {
          if ((((!((this)->u)->fx) && ((Game::player)->eD > 0)))) {
             ((Game::player)->H = 0);
             (((this)->u)->cI = false);
-            ((Game::player)->b = (jint)(((Game::player)->b - 256)));
+            ((Game::player)->b = (jint)(jsub32((Game::player)->b, 256)));
          }
          if (((!((this)->u)->cI))) {
-            jint var2 = jshr32((jint)(((Game::player)->b + (Game::player)->H)), (jint)(8));
+            jint var2 = jshr32((jint)(jadd32((Game::player)->b, (Game::player)->H)), (jint)(8));
             if ((((((((Game::player)->H >= 0) && ((Game::player)->positionY <= (((this)->u)->collisionBounds)[1])) && (((Game::player)->collisionBounds)[2] > (((this)->u)->collisionBounds)[0])) && (((Game::player)->collisionBounds)[0] < (((this)->u)->collisionBounds)[2])) && (var2 >= (((this)->u)->collisionBounds)[1])))) {
                (((this)->u)->cI = true);
             }
@@ -7054,20 +7054,20 @@ void Actor::m_bo_V() {
                if ((Game::m_G_I(16388))) {
                   jint var3 = (this)->animationId;
                   this->m_b_I(6);
-                  ((this)->positionY = (jint)(((this)->positionY - 3)));
+                  ((this)->positionY = (jint)(jsub32((this)->positionY, 3)));
                   this->m_g_V();
                   ((this)->q = nullptr);
-                  ([&]{ auto _t2 = this; auto _t3 = (jint)(([&]{ auto _t0 = ((this)->collisionBounds)[1]; auto _t1 = this->m_bj_V(); return (_t0 - _t1); }())); return _t2->av = _t3; }());
+                  ([&]{ auto _t2 = this; auto _t3 = (jint)(([&]{ auto _t0 = ((this)->collisionBounds)[1]; auto _t1 = this->m_bj_V(); return jsub32(_t0, _t1); }())); return _t2->av = _t3; }());
                   if ((((this)->av != ((this)->collisionBounds)[1]))) {
                      ((this)->ay = (this)->positionX);
                      (Actor::cF = 0);
                      (Actor::cH = 0);
-                     ((this)->az = ((jshr32((jint)((((this)->collisionBounds)[1] + ((this)->collisionBounds)[3])), (jint)(1))) - (this)->av));
+                     ((this)->az = jsub32((jshr32((jint)(jadd32(((this)->collisionBounds)[1], ((this)->collisionBounds)[3])), (jint)(1))), (this)->av));
                      (Actor::ar = 2);
                      ((this)->H = 0);
                      return;
                   }
-                  ((this)->positionY = (jint)(((this)->positionY + 3)));
+                  ((this)->positionY = (jint)(jadd32((this)->positionY, 3)));
                   this->m_b_I(var3);
                   return;
                }
@@ -7081,24 +7081,24 @@ void Actor::m_bo_V() {
                      if ((((Actor::cF >= 0) && (Actor::cF <= 1280)))) {
                         (Actor::cF = 1280);
                      } else {
-                        (Actor::cF = (jint)((Actor::cF - 256)));
+                        (Actor::cF = (jint)(jsub32(Actor::cF, 256)));
                      }
-                     (Actor::cG = (Actor::cG - (((15360 - Actor::cF)) / 90)));
+                     (Actor::cG = jsub32(Actor::cG, ((jsub32(15360, Actor::cF)) / 90)));
                   }
                } else if (((Game::m_F_I(8256) && ((this)->az > 40)))) {
                   if ((((Actor::cF <= 0) && (Actor::cG >= 0)))) {
                      if ((((Actor::cF <= 0) && (Actor::cF >= -1280)))) {
                         (Actor::cF = -1280);
                      } else {
-                        (Actor::cF = (jint)((Actor::cF + 256)));
+                        (Actor::cF = (jint)(jadd32(Actor::cF, 256)));
                      }
-                     (Actor::cG = (Actor::cG + (((15360 + Actor::cF)) / 90)));
+                     (Actor::cG = jadd32(Actor::cG, ((jadd32(15360, Actor::cF)) / 90)));
                   }
                } else if ((Game::m_F_I(16388))) {
                   if ((((this)->az > 0))) {
-                     ((this)->az = (jint)(((this)->az - 5)));
+                     ((this)->az = (jint)(jsub32((this)->az, 5)));
                      if (((Actor::cH == 0))) {
-                        ((this)->positionY = (jint)(((this)->positionY - 5)));
+                        ((this)->positionY = (jint)(jsub32((this)->positionY, 5)));
                      }
                      if ((((this)->az < 0))) {
                         ((this)->az = 0);
@@ -7112,9 +7112,9 @@ void Actor::m_bo_V() {
                   }
                   ((this)->ax = 1);
                } else if ((Game::m_F_I(33024))) {
-                  ((this)->az = (jint)(((this)->az + 5)));
+                  ((this)->az = (jint)(jadd32((this)->az, 5)));
                   if (((Actor::cH == 0))) {
-                     ((this)->positionY = (jint)(((this)->positionY + 5)));
+                     ((this)->positionY = (jint)(jadd32((this)->positionY, 5)));
                   }
                   this->m_a_I(11);
                   ((this)->ax = 2);
@@ -7125,23 +7125,23 @@ void Actor::m_bo_V() {
                if (((((Actor::cF != 0) || (Actor::cG != 0)) || ((this)->ay != (this)->positionX)))) {
                   if ((((((this)->eL || (this)->eM) || (Actor::cF != 0)) || (Actor::cG != 0)))) {
                      if ((((this)->eL && (Actor::cF < 0)))) {
-                        (Actor::cG = jshr32((jint)((-Actor::cF)), (jint)(3)));
-                        (Actor::cF = (Actor::cF + Actor::cG));
+                        (Actor::cG = jshr32((jint)(jneg32(Actor::cF)), (jint)(3)));
+                        (Actor::cF = jadd32(Actor::cF, Actor::cG));
                      } else if ((((this)->eM && (Actor::cF > 0)))) {
-                        (Actor::cG = jshr32((jint)((-Actor::cF)), (jint)(3)));
-                        (Actor::cF = (Actor::cF + Actor::cG));
+                        (Actor::cG = jshr32((jint)(jneg32(Actor::cF)), (jint)(3)));
+                        (Actor::cF = jadd32(Actor::cF, Actor::cG));
                      } else {
-                        (Actor::cF = (Actor::cF + Actor::cG));
-                        (Actor::cG = ([&]{ auto _t4 = Actor::cG; auto _t5 = Game::m_m_I(jshr32((jint)(Actor::cF), (jint)(8))); return (_t4 - _t5); }()));
+                        (Actor::cF = jadd32(Actor::cF, Actor::cG));
+                        (Actor::cG = ([&]{ auto _t4 = Actor::cG; auto _t5 = Game::m_m_I(jshr32((jint)(Actor::cF), (jint)(8))); return jsub32(_t4, _t5); }()));
                      }
                   }
                   jint var2 = Actor::cH;
                   (Actor::cH = ((Actor::cF > 0) ? 1 : -1));
                   if (((var2 != Actor::cH))) {
-                     (Actor::cG = (Actor::cG - (jshr32((jint)(Actor::cG), (jint)(3)))));
+                     (Actor::cG = jsub32(Actor::cG, (jshr32((jint)(Actor::cG), (jint)(3)))));
                   }
-                  ([&]{ auto _t10 = this; auto _t11 = (jint)(([&]{ auto _t8 = (this)->ay; auto _t9 = (jshr32((jint)(([&]{ auto _t6 = (this)->az; auto _t7 = Game::m_m_I(jshr32((jint)(Actor::cF), (jint)(8))); return (_t6 * _t7); }())), (jint)(8))); return (_t8 + _t9); }())); return _t10->positionX = _t11; }());
-                  ([&]{ auto _t18 = this; auto _t19 = (jint)(([&]{ auto _t16 = ([&]{ auto _t14 = (this)->av; auto _t15 = (jshr32((jint)(([&]{ auto _t12 = (this)->az; auto _t13 = Game::m_l_I(jshr32((jint)(Actor::cF), (jint)(8))); return (_t12 * _t13); }())), (jint)(8))); return (_t14 + _t15); }()); auto _t17 = (jshr32((jint)((((this)->collisionBounds)[3] - ((this)->collisionBounds)[1])), (jint)(1))); return (_t16 + _t17); }())); return _t18->positionY = _t19; }());
+                  ([&]{ auto _t10 = this; auto _t11 = (jint)(([&]{ auto _t8 = (this)->ay; auto _t9 = (jshr32((jint)(([&]{ auto _t6 = (this)->az; auto _t7 = Game::m_m_I(jshr32((jint)(Actor::cF), (jint)(8))); return jmul32(_t6, _t7); }())), (jint)(8))); return jadd32(_t8, _t9); }())); return _t10->positionX = _t11; }());
+                  ([&]{ auto _t18 = this; auto _t19 = (jint)(([&]{ auto _t16 = ([&]{ auto _t14 = (this)->av; auto _t15 = (jshr32((jint)(([&]{ auto _t12 = (this)->az; auto _t13 = Game::m_l_I(jshr32((jint)(Actor::cF), (jint)(8))); return jmul32(_t12, _t13); }())), (jint)(8))); return jadd32(_t14, _t15); }()); auto _t17 = (jshr32((jint)(jsub32(((this)->collisionBounds)[3], ((this)->collisionBounds)[1])), (jint)(1))); return jadd32(_t16, _t17); }())); return _t18->positionY = _t19; }());
                   if (((Actor::cF < -15360))) {
                      (Actor::cF = -15360);
                      (Actor::cG = 0);
@@ -7158,11 +7158,11 @@ void Actor::m_bo_V() {
                }
                if ((Game::m_G_I(65568))) {
                   if (((Actor::cH != 0))) {
-                     ([&]{ auto _t20 = this; auto _t21 = (jint)(jshr32((jint)((2048 * Game::m_l_I(jshr32((jint)(Actor::cF), (jint)(8))))), (jint)(8))); return _t20->G = _t21; }());
-                     ([&]{ auto _t22 = this; auto _t23 = (jint)((-Math::abs(jshr32((jint)((2048 * Game::m_m_I(jshr32((jint)(Actor::cF), (jint)(8))))), (jint)(8))))); return _t22->H = _t23; }());
+                     ([&]{ auto _t20 = this; auto _t21 = (jint)(jshr32((jint)(jmul32(2048, Game::m_l_I(jshr32((jint)(Actor::cF), (jint)(8))))), (jint)(8))); return _t20->G = _t21; }());
+                     ([&]{ auto _t22 = this; auto _t23 = (jint)(jneg32(Math::abs(jshr32((jint)(jmul32(2048, Game::m_m_I(jshr32((jint)(Actor::cF), (jint)(8))))), (jint)(8))))); return _t22->H = _t23; }());
                   }
                   if (((Actor::cF < 0))) {
-                     ((this)->G = (-(this)->G));
+                     ((this)->G = jneg32((this)->G));
                   }
                   (Actor::ar = 1);
                   this->m_a_I(5);
@@ -7199,7 +7199,7 @@ void Actor::m_bo_V() {
                   this->m_b_I(6);
                   this->m_g_V();
                   ((this)->az = 20);
-                  ((this)->positionY = (((this)->av + (this)->az) + (jshr32((jint)((((this)->collisionBounds)[3] - ((this)->collisionBounds)[1])), (jint)(1)))));
+                  ((this)->positionY = jadd32(jadd32((this)->av, (this)->az), (jshr32((jint)(jsub32(((this)->collisionBounds)[3], ((this)->collisionBounds)[1])), (jint)(1)))));
                   (Actor::cF = 0);
                   (Actor::cG = 0);
                   (Actor::ar = 2);
@@ -7240,12 +7240,12 @@ void Actor::m_bo_V() {
                if (((((this)->animationId == 1) && this->m_e_V()))) {
                   this->m_a_I(6);
                }
-               ((this)->az = (jint)(((this)->az + 20)));
+               ((this)->az = (jint)(jadd32((this)->az, 20)));
                if (((((var1 = this->m_bj_V())) > 0))) {
                   if ((((this)->az >= var1))) {
-                     ((this)->av = (((this)->collisionBounds)[1] - var1));
-                     ((this)->az = ((var1 - 20) + (jshr32((jint)((((this)->collisionBounds)[3] - ((this)->collisionBounds)[1])), (jint)(1)))));
-                     ((this)->positionY = (jint)(((this)->positionY - 20)));
+                     ((this)->av = jsub32(((this)->collisionBounds)[1], var1));
+                     ((this)->az = jadd32(jsub32(var1, 20), (jshr32((jint)(jsub32(((this)->collisionBounds)[3], ((this)->collisionBounds)[1])), (jint)(1)))));
+                     ((this)->positionY = (jint)(jsub32((this)->positionY, 20)));
                      this->m_g_V();
                      (Actor::ar = 2);
                      (Actor::cF = 0);
@@ -7253,10 +7253,10 @@ void Actor::m_bo_V() {
                      (Actor::cG = 0);
                      return;
                   }
-                  ((this)->av = (((jshr32((jint)((((this)->collisionBounds)[3] + ((this)->collisionBounds)[1])), (jint)(1))) - 1) - (this)->az));
+                  ((this)->av = jsub32(jsub32((jshr32((jint)(jadd32(((this)->collisionBounds)[3], ((this)->collisionBounds)[1])), (jint)(1))), 1), (this)->az));
                   return;
                }
-               ((this)->av = ((jshr32((jint)((((this)->collisionBounds)[3] + ((this)->collisionBounds)[1])), (jint)(1))) - (this)->az));
+               ((this)->av = jsub32((jshr32((jint)(jadd32(((this)->collisionBounds)[3], ((this)->collisionBounds)[1])), (jint)(1))), (this)->az));
                if ((((this)->az >= 100))) {
                   (Actor::ar = 0);
                   this->m_b_I(0);
@@ -7294,12 +7294,12 @@ void Actor::m_g_Z(jboolean var1) {
       ((this)->facingLeft = false);
       if ((Game::m_F_I(61780))) {
          if ((Game::m_F_I(4112))) {
-            ((this)->G = (var2 - 2048));
+            ((this)->G = jsub32(var2, 2048));
             ((this)->H = 0);
             return;
          }
          if ((Game::m_F_I(8256))) {
-            ((this)->G = (var2 + 2048));
+            ((this)->G = jadd32(var2, 2048));
             ((this)->H = 0);
             return;
          }
@@ -7407,10 +7407,10 @@ jboolean Actor::m_bq_V() {
    (Actor::eU = true);
    if ((((this)->cI && ((this)->cJ != nullptr)))) {
       this->m_a_I(35);
-      if (((((this)->collisionBounds)[1] >= ((((this)->cJ)->collisionBounds)[1] + 10)))) {
+      if (((((this)->collisionBounds)[1] >= jadd32((((this)->cJ)->collisionBounds)[1], 10)))) {
          (Actor::cK = true);
       } else if (((!Actor::cK))) {
-         ((this)->positionY = ((((this)->cJ)->collisionBounds)[1] + 35));
+         ((this)->positionY = jadd32((((this)->cJ)->collisionBounds)[1], 35));
       }
       if ((((!Game::m_G_I(4112)) && (!Game::m_F_I(4112))))) {
          if ((((!Game::m_G_I(8256)) && (!Game::m_F_I(8256))))) {
@@ -7431,7 +7431,7 @@ jboolean Actor::m_bq_V() {
       if ((Actor::cK)) {
          if (((((this)->collisionBounds)[1] < (((this)->cJ)->collisionBounds)[1]))) {
             (Actor::cK = false);
-            ((this)->positionY = ((((this)->cJ)->collisionBounds)[1] + 30));
+            ((this)->positionY = jadd32((((this)->cJ)->collisionBounds)[1], 30));
          } else if (((Game::m_G_I(16388) || Game::m_F_I(16388)))) {
             ((this)->H = -1280);
          } else if ((((!Game::m_G_I(33024)) && (!Game::m_F_I(33024))))) {
@@ -7452,7 +7452,7 @@ jboolean Actor::m_bq_V() {
 jboolean Actor::m_v_I(jint var1) {
    Ref<Actor> _self(this);
    if ((Game::m_G_I(var1))) {
-      (Actor::cL = (jint)((Actor::cL + 8)));
+      (Actor::cL = (jint)(jadd32(Actor::cL, 8)));
    } else {
       (Actor::cL--);
    }
@@ -7465,14 +7465,14 @@ jboolean Actor::m_v_I(jint var1) {
 void Actor::m_br_V() {
    Ref<Actor> _self(this);
    if ((((Game::aJ == this) && ((Game::be)[Game::levelIndex] == 3)))) {
-      if (((((Game::player)->positionY - 55) <= (Game::viewBounds)[1]))) {
-         ((Game::player)->positionY = ((Game::viewBounds)[1] + 55));
+      if (((jsub32((Game::player)->positionY, 55) <= (Game::viewBounds)[1]))) {
+         ((Game::player)->positionY = jadd32((Game::viewBounds)[1], 55));
       } else if (((((Game::player)->collisionBounds)[3] > ((this)->collisionBounds)[3]))) {
          ((Game::player)->positionY = (Game::viewBounds)[3]);
       }
       if (((Game::levelIndex == 4))) {
-         if (((((Game::player)->collisionBounds)[3] > (((this)->collisionBounds)[3] - 30)))) {
-            ((Game::player)->positionY = ((Game::viewBounds)[3] - 30));
+         if (((((Game::player)->collisionBounds)[3] > jsub32(((this)->collisionBounds)[3], 30)))) {
+            ((Game::player)->positionY = jsub32((Game::viewBounds)[3], 30));
          }
          if ((((Game::player)->positionY > 320))) {
             (Game::ad = -1);
@@ -7926,9 +7926,9 @@ void Actor::m_bs_V() {
             return;
          case 101:
             this->m_da_V();
-            ([&]{ auto _t0 = this; auto _t1 = (jint)(Game::m_h_II(((Game::player)->a - (this)->a), (((Game::player)->b - 6400) - (this)->b))); return _t0->eX = _t1; }());
-            ((this)->G = (((this)->eX == 0) ? 0 : jdiv32(((((Game::player)->a - (this)->a)) * 384), (this)->eX)));
-            ((this)->H = (((this)->eX == 0) ? 0 : jdiv32((((((Game::player)->b - 6400) - (this)->b)) * 384), (this)->eX)));
+            ([&]{ auto _t0 = this; auto _t1 = (jint)(Game::m_h_II(jsub32((Game::player)->a, (this)->a), jsub32(jsub32((Game::player)->b, 6400), (this)->b))); return _t0->eX = _t1; }());
+            ((this)->G = (((this)->eX == 0) ? 0 : jdiv32(jmul32((jsub32((Game::player)->a, (this)->a)), 384), (this)->eX)));
+            ((this)->H = (((this)->eX == 0) ? 0 : jdiv32(jmul32((jsub32(jsub32((Game::player)->b, 6400), (this)->b)), 384), (this)->eX)));
             this->m_g_AI(Actor::cN);
             if ((Actor::m_b_AIAI((Game::player)->collisionBounds, (this)->aJ))) {
                this->m_p_I(200);
@@ -7947,7 +7947,7 @@ void Actor::m_bs_V() {
             break;
          case 104:
             this->m_cV_V();
-            if ((((!(Game::player)->bL) || ((((Game::player)->b - (this)->b) >= 20480) && (((Game::player)->b - (this)->b) <= 25600))))) {
+            if ((((!(Game::player)->bL) || ((jsub32((Game::player)->b, (this)->b) >= 20480) && (jsub32((Game::player)->b, (this)->b) <= 25600))))) {
                if ((((this)->aA <= 0))) {
                   if (((this->m_cY_V() < 20480))) {
                      this->m_p_I(106);
@@ -7961,12 +7961,12 @@ void Actor::m_bs_V() {
             break;
          case 105:
             this->m_dc_V();
-            if (((((Game::player)->b - (this)->b) < 20480))) {
+            if (((jsub32((Game::player)->b, (this)->b) < 20480))) {
                ((this)->H = -2048);
-            } else if (((((Game::player)->b - (this)->b) > 25600))) {
+            } else if (((jsub32((Game::player)->b, (this)->b) > 25600))) {
                ((this)->H = 2048);
             }
-            if (((((this)->H == 0) || (Actor::m_l_I((((Game::player)->b - (this)->b) - 23040)) < 2048)))) {
+            if (((((this)->H == 0) || (Actor::m_l_I(jsub32(jsub32((Game::player)->b, (this)->b), 23040)) < 2048)))) {
                this->m_p_I(104);
             }
             break;
@@ -7991,7 +7991,7 @@ void Actor::m_bs_V() {
             } else if ((((this)->G < 0))) {
                ((this)->G = 0);
             }
-            ((this)->H = ((this)->H + (this)->ag));
+            ((this)->H = jadd32((this)->H, (this)->ag));
             if ((((this)->positionY < (this)->ad))) {
                this->m_p_I(109);
             }
@@ -8011,10 +8011,10 @@ void Actor::m_bs_V() {
             }
             break;
          case 111:
-            ([&]{ auto _t4 = this; auto _t5 = (jint)(Game::m_h_II(((Game::player)->a - (this)->a), (((Game::player)->b - 23040) - (this)->b))); return _t4->eX = _t5; }());
+            ([&]{ auto _t4 = this; auto _t5 = (jint)(Game::m_h_II(jsub32((Game::player)->a, (this)->a), jsub32(jsub32((Game::player)->b, 23040), (this)->b))); return _t4->eX = _t5; }());
             if ((((this)->eX > 768))) {
-               ((this)->G = jdiv32(((((Game::player)->a - (this)->a)) * 768), (this)->eX));
-               ((this)->H = jdiv32((((((Game::player)->b - 23040) - (this)->b)) * 768), (this)->eX));
+               ((this)->G = jdiv32(jmul32((jsub32((Game::player)->a, (this)->a)), 768), (this)->eX));
+               ((this)->H = jdiv32(jmul32((jsub32(jsub32((Game::player)->b, 23040), (this)->b)), 768), (this)->eX));
                this->m_F_I((this)->G);
             } else {
                this->m_db_V();
@@ -8025,7 +8025,7 @@ void Actor::m_bs_V() {
             }
             break;
          case 112:
-            ([&]{ auto _t6 = this; auto _t7 = (jint)(Game::m_h_II(((Game::player)->a - (this)->a), (((Game::player)->b - 23040) - (this)->b))); return _t6->eX = _t7; }());
+            ([&]{ auto _t6 = this; auto _t7 = (jint)(Game::m_h_II(jsub32((Game::player)->a, (this)->a), jsub32(jsub32((Game::player)->b, 23040), (this)->b))); return _t6->eX = _t7; }());
             if ((((this)->eX <= 768))) {
                this->m_db_V();
             } else {
@@ -8033,8 +8033,8 @@ void Actor::m_bs_V() {
                   ([&]{ auto _t8 = this; auto _t9 = (jint)(this->m_D_I(768)); return _t8->G = _t9; }());
                   ((this)->H = 0);
                } else {
-                  ((this)->G = jdiv32(((((Game::player)->a - (this)->a)) * 768), (this)->eX));
-                  ((this)->H = jdiv32((((((Game::player)->b - 23040) - (this)->b)) * 768), (this)->eX));
+                  ((this)->G = jdiv32(jmul32((jsub32((Game::player)->a, (this)->a)), 768), (this)->eX));
+                  ((this)->H = jdiv32(jmul32((jsub32(jsub32((Game::player)->b, 23040), (this)->b)), 768), (this)->eX));
                }
                this->m_F_I((this)->G);
             }
@@ -8068,7 +8068,7 @@ void Actor::m_bs_V() {
             ((this)->H = -512);
             break;
          case 117:
-            ([&]{ auto _t10 = this; auto _t11 = (jint)(Game::m_h_II(((this)->a - (Game::player)->a), ((this)->b - (Game::player)->b))); return _t10->eX = _t11; }());
+            ([&]{ auto _t10 = this; auto _t11 = (jint)(Game::m_h_II(jsub32((this)->a, (Game::player)->a), jsub32((this)->b, (Game::player)->b))); return _t10->eX = _t11; }());
             if ((((this)->eX < 35840))) {
                this->m_p_I(118);
             }
@@ -8081,33 +8081,33 @@ void Actor::m_bs_V() {
                jboolean var2 = false;
                jboolean var3 = false;
                if ((((((((this)->G > 0) || (((this)->collisionBounds)[0] > ((this)->m)[0])) || ((this)->aw >= 0))) && (((((this)->G < 0) || (((this)->collisionBounds)[2] < ((this)->m)[2])) || ((this)->aw <= 0)))))) {
-                  ((this)->G = ((jdiv32(((this)->aw * 1536), (this)->ax) * (this)->aA) / 1700));
+                  ((this)->G = (jmul32(jdiv32(jmul32((this)->aw, 1536), (this)->ax), (this)->aA) / 1700));
                } else {
                   ((this)->G = 0);
                   (var2 = true);
                }
                if ((((((((this)->H > 0) || (((this)->collisionBounds)[1] > ((this)->m)[1])) || ((this)->az >= 0))) && (((((this)->H < 0) || (((this)->collisionBounds)[3] <= ((this)->m)[3])) || ((this)->az <= 0)))))) {
-                  ((this)->H = ((jdiv32(((this)->az * 1536), (this)->ax) * (this)->aA) / 1700));
+                  ((this)->H = (jmul32(jdiv32(jmul32((this)->az, 1536), (this)->ax), (this)->aA) / 1700));
                } else {
                   ((this)->H = 0);
                   (var3 = true);
                }
                if (((var2 && var3))) {
                   if ((([&]{ auto _t12 = Actor::m_l_I((this)->aw); auto _t13 = Actor::m_l_I((this)->az); return (_t12 > _t13); }()))) {
-                     ((this)->az = (-(this)->az));
+                     ((this)->az = jneg32((this)->az));
                   } else {
-                     ((this)->aw = (-(this)->aw));
+                     ((this)->aw = jneg32((this)->aw));
                   }
                   ((this)->aA = 1700);
                } else if ((((this)->G == 0))) {
-                  ((this)->H = ((1536 * (this)->aA) / 1700));
+                  ((this)->H = (jmul32(1536, (this)->aA) / 1700));
                   if ((((this)->az < 0))) {
-                     ((this)->H = (-(this)->H));
+                     ((this)->H = jneg32((this)->H));
                   }
                } else if ((((this)->H == 0))) {
-                  ((this)->G = ((1536 * (this)->aA) / 1700));
+                  ((this)->G = (jmul32(1536, (this)->aA) / 1700));
                   if ((((this)->aw < 0))) {
-                     ((this)->G = (-(this)->G));
+                     ((this)->G = jneg32((this)->G));
                   }
                }
             }
@@ -8185,7 +8185,7 @@ void Actor::m_bs_V() {
             }
             break;
          case 131:
-            if ((((((!Actor::m_b_AIAI(Game::viewBounds, (this)->collisionBounds)) || ((this)->positionX < -20)) || ((this)->positionY < -20)) || ((this)->positionY > (Game::cB + 20))))) {
+            if ((((((!Actor::m_b_AIAI(Game::viewBounds, (this)->collisionBounds)) || ((this)->positionX < -20)) || ((this)->positionY < -20)) || ((this)->positionY > jadd32(Game::cB, 20))))) {
                Game::m_e_Actor(this);
                return;
             }
@@ -8216,7 +8216,7 @@ void Actor::m_bs_V() {
          case 135:
             this->m_cV_V();
             ((this)->G = (((this)->aK == 1) ? 1280 : -1280));
-            ([&]{ auto _t16 = this; auto _t17 = (jint)(([&]{ auto _t14 = (jshr32((jint)((30 * Game::m_m_I((2 * (((Game::viewBounds)[(((this)->aK == 1) ? 0 : 2)] - (this)->positionX)))))), (jint)(8))); auto _t15 = (this)->ad; return (_t14 + _t15); }())); return _t16->positionY = _t17; }());
+            ([&]{ auto _t16 = this; auto _t17 = (jint)(([&]{ auto _t14 = (jshr32((jint)(jmul32(30, Game::m_m_I(jmul32(2, (jsub32((Game::viewBounds)[(((this)->aK == 1) ? 0 : 2)], (this)->positionX)))))), (jint)(8))); auto _t15 = (this)->ad; return jadd32(_t14, _t15); }())); return _t16->positionY = _t17; }());
             if (((((this)->aA <= 0) && (!Actor::m_b_AIAI(Game::viewBounds, (this)->collisionBounds))))) {
                Game::m_e_Actor(this);
                return;
@@ -8235,7 +8235,7 @@ void Actor::m_bs_V() {
                this->m_p_I(136);
             }
             ((this)->G = (((this)->aK == 1) ? 1024 : -1024));
-            ([&]{ auto _t20 = this; auto _t21 = (jint)(([&]{ auto _t18 = (jshr32((jint)((5 * Game::m_m_I((4 * (((this)->ac - (this)->positionX)))))), (jint)(8))); auto _t19 = (this)->ad; return (_t18 + _t19); }())); return _t20->positionY = _t21; }());
+            ([&]{ auto _t20 = this; auto _t21 = (jint)(([&]{ auto _t18 = (jshr32((jint)(jmul32(5, Game::m_m_I(jmul32(4, (jsub32((this)->ac, (this)->positionX)))))), (jint)(8))); auto _t19 = (this)->ad; return jadd32(_t18, _t19); }())); return _t20->positionY = _t21; }());
             if (((!Actor::m_b_AIAI((Game::aJ)->collisionBounds, (this)->collisionBounds)))) {
                ((this)->c = (jint)(((this)->c & -17)));
                this->m_b_Z(false);
@@ -8255,7 +8255,7 @@ void Actor::m_bs_V() {
                this->m_p_I(138);
             }
             ((this)->G = (((this)->aK == 1) ? 768 : -768));
-            ([&]{ auto _t24 = this; auto _t25 = (jint)(([&]{ auto _t22 = (jshr32((jint)((30 * Game::m_m_I((2 * (((this)->ac - (this)->positionX)))))), (jint)(8))); auto _t23 = (this)->ad; return (_t22 + _t23); }())); return _t24->positionY = _t25; }());
+            ([&]{ auto _t24 = this; auto _t25 = (jint)(([&]{ auto _t22 = (jshr32((jint)(jmul32(30, Game::m_m_I(jmul32(2, (jsub32((this)->ac, (this)->positionX)))))), (jint)(8))); auto _t23 = (this)->ad; return jadd32(_t22, _t23); }())); return _t24->positionY = _t25; }());
             if (((!Actor::m_b_AIAI((Game::aJ)->collisionBounds, (this)->collisionBounds)))) {
                ((this)->c = (jint)(((this)->c & -17)));
                this->m_b_Z(false);
@@ -8446,13 +8446,13 @@ void Actor::m_bu_V() {
                   this->m_v_II(this->m_C_I(5), -31);
                }
                this->m_dc_V();
-               var1 = ([&]{ auto _t4 = ([&]{ auto _t2 = (this)->a; auto _t3 = (jshl32((jint)(this->m_D_I(5)), (jint)(8))); return (_t2 + _t3); }()); auto _t5 = ((-(this)->b) - -7936); auto _t6 = (Game::player)->a; auto _t7 = (-(Game::player)->b); auto _t8 = 3584; auto _t9 = -512; return this->m_a_IIIIII(_t4, _t5, _t6, _t7, _t8, _t9); }());
+               var1 = ([&]{ auto _t4 = ([&]{ auto _t2 = (this)->a; auto _t3 = (jshl32((jint)(this->m_D_I(5)), (jint)(8))); return jadd32(_t2, _t3); }()); auto _t5 = jsub32(jneg32((this)->b), -7936); auto _t6 = (Game::player)->a; auto _t7 = jneg32((Game::player)->b); auto _t8 = 3584; auto _t9 = -512; return this->m_a_IIIIII(_t4, _t5, _t6, _t7, _t8, _t9); }());
                if (((((((this)->r != nullptr) && (((this)->r)->type == 16)) && (((this)->r)->aq == 101)) && (var1 != 0)))) {
                   if (((Actor::m_l_I(var1) > 2304))) {
                      ([&]{ auto _t10 = this; auto _t11 = (jint)(this->m_C_I(512)); return _t10->G = _t11; }());
                      this->m_a_I(10);
                   } else if (((Actor::m_l_I(var1) < 1024))) {
-                     ([&]{ auto _t12 = this; auto _t13 = (jint)((-this->m_C_I(512))); return _t12->G = _t13; }());
+                     ([&]{ auto _t12 = this; auto _t13 = (jint)(jneg32(this->m_C_I(512))); return _t12->G = _t13; }());
                      this->m_a_I(11);
                      this->m_cV_V();
                      if ((((this)->aA <= 0))) {
@@ -8527,12 +8527,12 @@ void Actor::m_w_I(jint var1) {
          ((this)->r = nullptr);
          return;
       }
-      if ((((((Game::player)->positionY - (this)->positionY) <= var1) && ((Game::player)->positionY > (this)->positionY)))) {
-         jint var2 = (((Game::viewBounds)[1] - (this)->positionY) + 18);
+      if ((((jsub32((Game::player)->positionY, (this)->positionY) <= var1) && ((Game::player)->positionY > (this)->positionY)))) {
+         jint var2 = jadd32(jsub32((Game::viewBounds)[1], (this)->positionY), 18);
          if ((((this)->r == nullptr))) {
             Ref<Actor> var3{};
             ((((var3 = this->m_a_IIIIIIZ(21, 16, 14, 0, var2, 100, false))))->aC = 2);
-            ((var3)->av = ((var3)->positionY - Game::cameraY));
+            ((var3)->av = jsub32((var3)->positionY, Game::cameraY));
             this->m_b_Actor(var3);
          }
       }
@@ -8673,7 +8673,7 @@ void Actor::m_bv_V() {
       }
       if (((((this)->aC >= 4) || (!this->m_c_V())))) {
          if (((((this)->aq != 0) && ((this)->aq != 4)))) {
-            ((this)->aB = ((this)->aB - Game::h));
+            ((this)->aB = jsub32((this)->aB, Game::h));
             if (((((this)->r != nullptr) && ((this)->aB < 0)))) {
                ([&]{ auto _t8 = this; auto _t9 = (jint)(((this->m_ar_V() == 0) ? 0 : 1)); return _t8->aL = _t9; }());
             }
@@ -8827,13 +8827,13 @@ void Actor::m_by_V() {
                   this->m_cV_V();
                   if ((((this)->aA <= 0))) {
                      if ((((++(this)->ay) > 1))) {
-                        ((this)->H = jshr32((jint)((((((this)->H >= 0) ? -1 : 1)) * 3400)), (jint)(1)));
+                        ((this)->H = jshr32((jint)(jmul32(((((this)->H >= 0) ? -1 : 1)), 3400)), (jint)(1)));
                         ((this)->G = 0);
                         if ((((this)->ay > 2))) {
                            ((this)->ay = 0);
                         }
                      } else {
-                        ((this)->H = (((((this)->H >= 0) ? -1 : 1)) * 3400));
+                        ((this)->H = jmul32(((((this)->H >= 0) ? -1 : 1)), 3400));
                         this->m_F_I(1200);
                         ([&]{ auto _t0 = this; auto _t1 = (jint)(this->m_C_I(1200)); return _t0->G = _t1; }());
                      }
@@ -8915,7 +8915,7 @@ void Actor::m_by_V() {
                ([&]{ auto _t2 = this; auto _t3 = (jint)(this->m_D_I(400)); return _t2->G = _t3; }());
                this->m_b_ZZ(true, false);
                if ((((this)->eD <= 1))) {
-                  if (((Game::m_g_II(((this)->positionX / 20), ((((this)->positionY + 30)) / 20)) <= 1))) {
+                  if (((Game::m_g_II(((this)->positionX / 20), ((jadd32((this)->positionY, 30)) / 20)) <= 1))) {
                      ((this)->J = 320);
                   } else {
                      ((this)->H = 2048);
@@ -8923,7 +8923,7 @@ void Actor::m_by_V() {
                } else {
                   ((this)->H = 0);
                }
-               ([&]{ auto _t4 = this; auto _t5 = (jint)(jshr32((jint)(Game::m_h_II(((Game::player)->a - (this)->a), ((Game::player)->b - (this)->b))), (jint)(8))); return _t4->eX = _t5; }());
+               ([&]{ auto _t4 = this; auto _t5 = (jint)(jshr32((jint)(Game::m_h_II(jsub32((Game::player)->a, (this)->a), jsub32((Game::player)->b, (this)->b))), (jint)(8))); return _t4->eX = _t5; }());
                if ((((this)->eX < 65))) {
                   this->m_cV_V();
                   if (((((this)->aA <= 0) && (this)->bL))) {
@@ -8964,7 +8964,7 @@ void Actor::m_by_V() {
                this->m_b_ZZ(true, true);
                if ((this->m_e_V())) {
                   ((this)->aA = 2048);
-                  this->m_a_IIIIIIZ(-37, 17, 77, ((((this)->facingLeft ? -1 : 1)) * 20), 0, 302, false);
+                  this->m_a_IIIIIIZ(-37, 17, 77, jmul32((((this)->facingLeft ? -1 : 1)), 20), 0, 302, false);
                   this->m_p_I(105);
                }
                break;
@@ -8975,7 +8975,7 @@ void Actor::m_by_V() {
                if ((((((((this)->G < 0) && ((this)->eE > 1)) || (((this)->G > 0) && ((this)->eF > 1))) || (((this)->G < 0) && (this->m_aS_V() <= 1))) || (((this)->G > 0) && (this->m_aT_V() <= 1))))) {
                   ((this)->G = 0);
                }
-               ([&]{ auto _t10 = this; auto _t11 = (jint)(jshr32((jint)(Actor::m_l_I(((Game::player)->a - (this)->a))), (jint)(8))); return _t10->eX = _t11; }());
+               ([&]{ auto _t10 = this; auto _t11 = (jint)(jshr32((jint)(Actor::m_l_I(jsub32((Game::player)->a, (this)->a))), (jint)(8))); return _t10->eX = _t11; }());
                if ((((this)->aH == 3))) {
                   if ((((this)->eX < 195))) {
                      this->m_p_I(115);
@@ -9016,14 +9016,14 @@ void Actor::m_by_V() {
                this->m_aj_V();
                this->m_g_V();
                var1 = Math::abs((this)->av);
-               var2 = ([&]{ auto _t14 = (jshr32((jint)(([&]{ auto _t12 = (jshl32((jint)((this)->az), (jint)(8))); auto _t13 = (var1 * Game::m_l_I(jshr32((jint)((this)->aA), (jint)(16)))); return (_t12 + _t13); }())), (jint)(8))); auto _t15 = (jshr32((jint)((((this)->collisionBounds)[3] - ((this)->collisionBounds)[1])), (jint)(1))); return (_t14 + _t15); }());
-               var3 = jshr32((jint)(([&]{ auto _t16 = (jshl32((jint)((this)->aw), (jint)(8))); auto _t17 = (var1 * Game::m_m_I(jshr32((jint)((this)->aA), (jint)(16)))); return (_t16 + _t17); }())), (jint)(8));
-               ((this)->H = jshl32((jint)((var2 - (this)->positionY)), (jint)(8)));
-               ((this)->G = jshl32((jint)((var3 - (this)->positionX)), (jint)(8)));
+               var2 = ([&]{ auto _t14 = (jshr32((jint)(([&]{ auto _t12 = (jshl32((jint)((this)->az), (jint)(8))); auto _t13 = jmul32(var1, Game::m_l_I(jshr32((jint)((this)->aA), (jint)(16)))); return jadd32(_t12, _t13); }())), (jint)(8))); auto _t15 = (jshr32((jint)(jsub32(((this)->collisionBounds)[3], ((this)->collisionBounds)[1])), (jint)(1))); return jadd32(_t14, _t15); }());
+               var3 = jshr32((jint)(([&]{ auto _t16 = (jshl32((jint)((this)->aw), (jint)(8))); auto _t17 = jmul32(var1, Game::m_m_I(jshr32((jint)((this)->aA), (jint)(16)))); return jadd32(_t16, _t17); }())), (jint)(8));
+               ((this)->H = jshl32((jint)(jsub32(var2, (this)->positionY)), (jint)(8)));
+               ((this)->G = jshl32((jint)(jsub32(var3, (this)->positionX)), (jint)(8)));
                (((this)->aJ)[3] = ((this)->collisionBounds)[3]);
-               (((this)->aJ)[1] = (((this)->collisionBounds)[1] - (this)->fv));
-               (((this)->aJ)[0] = (((this)->collisionBounds)[0] - 240));
-               (((this)->aJ)[2] = (((this)->collisionBounds)[2] + 240));
+               (((this)->aJ)[1] = jsub32(((this)->collisionBounds)[1], (this)->fv));
+               (((this)->aJ)[0] = jsub32(((this)->collisionBounds)[0], 240));
+               (((this)->aJ)[2] = jadd32(((this)->collisionBounds)[2], 240));
                break;
             case 115:
                if (((((this)->ax == 0) && this->m_e_V()))) {
@@ -9031,17 +9031,17 @@ void Actor::m_by_V() {
                   this->m_a_I(11);
                }
                this->m_g_V();
-               if (((((jshr32((jint)((((this)->collisionBounds)[3] + ((this)->collisionBounds)[1])), (jint)(1))) - (this)->az) > (this)->fv))) {
+               if (((jsub32((jshr32((jint)(jadd32(((this)->collisionBounds)[3], ((this)->collisionBounds)[1])), (jint)(1))), (this)->az) > (this)->fv))) {
                   ((this)->av = (this)->fv);
-                  ((this)->positionY = ((this)->positionY - ((((jshr32((jint)((((this)->collisionBounds)[3] + ((this)->collisionBounds)[1])), (jint)(1))) - (this)->az) - (this)->fv))));
+                  ((this)->positionY = jsub32((this)->positionY, (jsub32(jsub32((jshr32((jint)(jadd32(((this)->collisionBounds)[3], ((this)->collisionBounds)[1])), (jint)(1))), (this)->az), (this)->fv))));
                   ((this)->H = 0);
                   if ((((this)->aJ == nullptr))) {
                      ((this)->aJ = jnewarray<Arr<jint>>(4));
                      this->m_g_V();
                      (((this)->aJ)[3] = ((this)->collisionBounds)[3]);
-                     (((this)->aJ)[1] = (((this)->collisionBounds)[1] - (this)->fv));
-                     (((this)->aJ)[0] = (((this)->collisionBounds)[0] - 240));
-                     (((this)->aJ)[2] = (((this)->collisionBounds)[2] + 240));
+                     (((this)->aJ)[1] = jsub32(((this)->collisionBounds)[1], (this)->fv));
+                     (((this)->aJ)[0] = jsub32(((this)->collisionBounds)[0], 240));
+                     (((this)->aJ)[2] = jadd32(((this)->collisionBounds)[2], 240));
                   }
                   this->m_p_I(114);
                }
@@ -9055,7 +9055,7 @@ void Actor::m_by_V() {
    if (((!this->m_c_V()))) {
       this->m_aA_V();
       if ((((this)->aH == 3))) {
-         if (((((((this)->aq == 114) || ((this)->aq == 115))) && ((Actor::m_b_AIAI((this)->collisionBounds, (Game::player)->k) || Actor::m_b_IIIIAI((this)->aw, (this)->az, (this)->positionX, jshr32((jint)((((this)->collisionBounds)[3] + ((this)->collisionBounds)[1])), (jint)(1)), (Game::player)->k)))))) {
+         if (((((((this)->aq == 114) || ((this)->aq == 115))) && ((Actor::m_b_AIAI((this)->collisionBounds, (Game::player)->k) || Actor::m_b_IIIIAI((this)->aw, (this)->az, (this)->positionX, jshr32((jint)(jadd32(((this)->collisionBounds)[3], ((this)->collisionBounds)[1])), (jint)(1)), (Game::player)->k)))))) {
             ((this)->n = nullptr);
             ((this)->aJ = nullptr);
             ((this)->O = true);
@@ -9071,13 +9071,13 @@ void Actor::m_by_V() {
                this->m_p_I(2);
             }
          } else if (((!(this)->fx))) {
-            ((this)->positionX = ((this)->positionX + ((((((this)->a - (Game::player)->a) > 0) ? 1 : -1)) * 1)));
+            ((this)->positionX = jadd32((this)->positionX, jmul32((((jsub32((this)->a, (Game::player)->a) > 0) ? 1 : -1)), 1)));
             this->m_b_ZZ(true, true);
             this->m_bi_V();
             this->m_e_Z(false);
          } else {
             ((this)->aB = 400);
-            ([&]{ auto _t18 = this; auto _t19 = (jint)((-this->m_C_I(1000))); return _t18->G = _t19; }());
+            ([&]{ auto _t18 = this; auto _t19 = (jint)(jneg32(this->m_C_I(1000))); return _t18->G = _t19; }());
          }
       }
       if (((((((this)->aq != 3) && ((this)->aq != 103)) && ((this)->aq != 102)) && Actor::m_b_AIAI((this)->collisionBounds, (Game::player)->collisionBounds)))) {
@@ -9095,21 +9095,21 @@ void Actor::m_bz_V() {
       jint var1 = 0;
       for (; (var1 < (this)->av); (var1++)) {
          jint var2{};
-         if (((((((var2 = ((this)->positionX + (var1 * (this)->az)))) - Game::cameraX) >= -80) && ((var2 - Game::cameraX) <= 320)))) {
+         if ((((jsub32(((var2 = jadd32((this)->positionX, jmul32(var1, (this)->az)))), Game::cameraX) >= -80) && (jsub32(var2, Game::cameraX) <= 320)))) {
             if ((((this)->aC != 18))) {
                {
                   jint var3 = 0;
-                  for (; (var3 < ((this)->n).length()); (var3 = (jint)((var3 + 2)))) {
+                  for (; (var3 < ((this)->n).length()); (var3 = (jint)(jadd32(var3, 2)))) {
                      if ((((this)->aw < 2))) {
-                        ([&]{ auto _t2 = (Game::ez)[((this)->n)[(var3 + 1)]]; auto _t3 = ((this)->positionX - Game::cameraX); auto _t4 = ([&]{ auto _t0 = (((this)->n)[var3] - Game::cameraY); auto _t1 = Game::m_i_II(-1, 2); return (_t0 + _t1); }()); auto _t5 = 0; return Game::m_a_ImageIII(_t2, _t3, _t4, _t5); }());
+                        ([&]{ auto _t2 = (Game::ez)[((this)->n)[jadd32(var3, 1)]]; auto _t3 = jsub32((this)->positionX, Game::cameraX); auto _t4 = ([&]{ auto _t0 = jsub32(((this)->n)[var3], Game::cameraY); auto _t1 = Game::m_i_II(-1, 2); return jadd32(_t0, _t1); }()); auto _t5 = 0; return Game::m_a_ImageIII(_t2, _t3, _t4, _t5); }());
                      }
                      if ((((this)->aw != 1))) {
-                        ([&]{ auto _t8 = (Game::ez)[((this)->n)[(var3 + 1)]]; auto _t9 = (((this)->positionX + (this)->ay) - Game::cameraX); auto _t10 = ([&]{ auto _t6 = (((this)->n)[var3] - Game::cameraY); auto _t7 = Game::m_i_II(-1, 2); return (_t6 + _t7); }()); auto _t11 = 0; return Game::m_a_ImageIII(_t8, _t9, _t10, _t11); }());
+                        ([&]{ auto _t8 = (Game::ez)[((this)->n)[jadd32(var3, 1)]]; auto _t9 = jsub32(jadd32((this)->positionX, (this)->ay), Game::cameraX); auto _t10 = ([&]{ auto _t6 = jsub32(((this)->n)[var3], Game::cameraY); auto _t7 = Game::m_i_II(-1, 2); return jadd32(_t6, _t7); }()); auto _t11 = 0; return Game::m_a_ImageIII(_t8, _t9, _t10, _t11); }());
                      }
                   }
                }
             } else {
-               ((Game::b)[20])->m_a_GraphicsIIIIIII(Actor::bt, 0, (Game::stateFrame % 2), (var2 - Game::cameraX), ((this)->positionY - Game::cameraY), 0, 0, 0);
+               ((Game::b)[20])->m_a_GraphicsIIIIIII(Actor::bt, 0, (Game::stateFrame % 2), jsub32(var2, Game::cameraX), jsub32((this)->positionY, Game::cameraY), 0, 0, 0);
             }
          }
       }
@@ -9132,14 +9132,14 @@ void Actor::m_bA_V() {
             break;
          case 101:
             if ((this->m_e_V())) {
-               ((this)->H = (-(this)->az));
+               ((this)->H = jneg32((this)->az));
                this->m_a_I(79);
                ((this)->aq = 102);
                return;
             }
             break;
          case 102:
-            if (((((this)->aw - (this)->positionY) >= (this)->av))) {
+            if (((jsub32((this)->aw, (this)->positionY) >= (this)->av))) {
                this->m_a_I(80);
                ((this)->H = 0);
                ((this)->aq = 103);
@@ -9181,10 +9181,10 @@ void Actor::m_bB_V() {
             return;
          case 101:
             this->m_da_V();
-            ([&]{ auto _t0 = this; auto _t1 = (jint)(Game::m_h_II(((Game::player)->a - (this)->a), (((Game::player)->b - 7680) - (this)->b))); return _t0->eX = _t1; }());
+            ([&]{ auto _t0 = this; auto _t1 = (jint)(Game::m_h_II(jsub32((Game::player)->a, (this)->a), jsub32(jsub32((Game::player)->b, 7680), (this)->b))); return _t0->eX = _t1; }());
             if ((((this)->eX < 40960))) {
-               ((this)->G = (((this)->eX == 0) ? 0 : jdiv32(((((Game::player)->a - (this)->a)) * 256), (this)->eX)));
-               ((this)->H = (((this)->eX == 0) ? 0 : jdiv32((((((Game::player)->b - 7680) - (this)->b)) * 256), (this)->eX)));
+               ((this)->G = (((this)->eX == 0) ? 0 : jdiv32(jmul32((jsub32((Game::player)->a, (this)->a)), 256), (this)->eX)));
+               ((this)->H = (((this)->eX == 0) ? 0 : jdiv32(jmul32((jsub32(jsub32((Game::player)->b, 7680), (this)->b)), 256), (this)->eX)));
                this->m_g_AI(Actor::cQ);
                if ((Actor::m_b_AIAI((Game::player)->collisionBounds, (this)->aJ))) {
                   this->m_p_I(103);
@@ -9194,7 +9194,7 @@ void Actor::m_bB_V() {
             }
             break;
          case 102:
-            ([&]{ auto _t2 = this; auto _t3 = (jint)(Game::m_h_II(((Game::player)->a - (this)->a), (((Game::player)->b - 7680) - (this)->b))); return _t2->eX = _t3; }());
+            ([&]{ auto _t2 = this; auto _t3 = (jint)(Game::m_h_II(jsub32((Game::player)->a, (this)->a), jsub32(jsub32((Game::player)->b, 7680), (this)->b))); return _t2->eX = _t3; }());
             if ((((this)->eX < 25600))) {
                this->m_p_I(101);
             }
@@ -9439,7 +9439,7 @@ void Actor::m_bD_V() {
          ((this)->t)->m_p_I(106);
          (Actor::cV = ((this)->s)->positionX);
          (Actor::cX = ((this)->t)->positionX);
-         (Actor::cW = jshr32((jint)((Actor::cX + Actor::cV)), (jint)(1)));
+         (Actor::cW = jshr32((jint)(jadd32(Actor::cX, Actor::cV)), (jint)(1)));
          ([&]{ auto _t4 = this; auto _t5 = (Ref<Actor>)(Game::m_i_I((this)->D)); return _t4->x = _t5; }());
       }
       {
@@ -9476,7 +9476,7 @@ void Actor::m_bD_V() {
             case 102:
                this->m_cV_V();
                if ((((this)->aA <= 0))) {
-                  if ((((this)->as >= ((Actor::F * 2) / 3)))) {
+                  if ((((this)->as >= (jmul32(Actor::F, 2) / 3)))) {
                      this->m_p_I(106);
                   } else {
                      this->m_p_I(103);
@@ -9493,7 +9493,7 @@ void Actor::m_bD_V() {
                break;
             case 104:
                if (((((this)->aA <= 1300) && ((this)->aA >= 300)))) {
-                  ((this)->ay = ((this)->ay + (this)->ax));
+                  ((this)->ay = jadd32((this)->ay, (this)->ax));
                }
                Actor::m_a_IIIIAI(((this)->q)->positionX, ((this)->q)->positionY, (this)->ay, (this)->av, Actor::cU);
                ((this)->ay = (Actor::cU)[0]);
@@ -9522,21 +9522,21 @@ void Actor::m_bD_V() {
                this->m_b_ZZ(false, false);
                this->m_cV_V();
                this->m_cW_V();
-               if (((((this)->aA <= 0) && ((((((this)->G == 0) || (this)->eL) || (this)->eM) || (([&]{ auto _t13 = Actor::m_l_I(((this)->positionX - (Game::player)->positionX)); auto _t14 = jshr32((jint)((((this)->collisionBounds)[2] - ((this)->collisionBounds)[0])), (jint)(1)); return (_t13 < _t14); }()) && (!Actor::m_i_II((this)->G, (Game::player)->G)))))))) {
+               if (((((this)->aA <= 0) && ((((((this)->G == 0) || (this)->eL) || (this)->eM) || (([&]{ auto _t13 = Actor::m_l_I(jsub32((this)->positionX, (Game::player)->positionX)); auto _t14 = jshr32((jint)(jsub32(((this)->collisionBounds)[2], ((this)->collisionBounds)[0])), (jint)(1)); return (_t13 < _t14); }()) && (!Actor::m_i_II((this)->G, (Game::player)->G)))))))) {
                   this->m_p_I(107);
                }
                if ((((this)->aB <= 0))) {
-                  ((this)->aB = (jint)(((this)->aB + 2000)));
+                  ((this)->aB = (jint)(jadd32((this)->aB, 2000)));
                }
-               ([&]{ auto _t17 = this; auto _t18 = (jint)(([&]{ auto _t15 = (this)->av; auto _t16 = (jshr32((jint)((Game::m_m_I((((this)->aB * 360) / 2000)) * 10)), (jint)(8))); return (_t15 + _t16); }())); return _t17->positionY = _t18; }());
+               ([&]{ auto _t17 = this; auto _t18 = (jint)(([&]{ auto _t15 = (this)->av; auto _t16 = (jshr32((jint)(jmul32(Game::m_m_I((jmul32((this)->aB, 360) / 2000)), 10)), (jint)(8))); return jadd32(_t15, _t16); }())); return _t17->positionY = _t18; }());
                break;
             case 107:
                this->m_cV_V();
                if ((((this)->aA <= 0))) {
                   this->m_p_I(108);
                } else {
-                  ([&]{ auto _t21 = this; auto _t22 = (jint)(([&]{ auto _t19 = (this)->ay; auto _t20 = Game::m_i_II(-2, 3); return (_t19 + _t20); }())); return _t21->positionX = _t22; }());
-                  ([&]{ auto _t25 = this; auto _t26 = (jint)(([&]{ auto _t23 = (this)->av; auto _t24 = Game::m_i_II(-1, 2); return (_t23 + _t24); }())); return _t25->positionY = _t26; }());
+                  ([&]{ auto _t21 = this; auto _t22 = (jint)(([&]{ auto _t19 = (this)->ay; auto _t20 = Game::m_i_II(-2, 3); return jadd32(_t19, _t20); }())); return _t21->positionX = _t22; }());
+                  ([&]{ auto _t25 = this; auto _t26 = (jint)(([&]{ auto _t23 = (this)->av; auto _t24 = Game::m_i_II(-1, 2); return jadd32(_t23, _t24); }())); return _t25->positionY = _t26; }());
                }
                break;
             case 108:
@@ -9552,8 +9552,8 @@ void Actor::m_bD_V() {
                   } else {
                      this->m_p_I(110);
                   }
-                  this->m_a_IIIIIIZ(39, 17, 22, jshr32((jint)((((this)->collisionBounds)[0] - ((this)->collisionBounds)[2])), (jint)(1)), jshr32((jint)((((this)->collisionBounds)[3] - ((this)->collisionBounds)[1])), (jint)(1)), 302, false);
-                  this->m_a_IIIIIIZ(39, 17, 22, jshr32((jint)((((this)->collisionBounds)[2] - ((this)->collisionBounds)[0])), (jint)(1)), jshr32((jint)((((this)->collisionBounds)[3] - ((this)->collisionBounds)[1])), (jint)(1)), 302, true);
+                  this->m_a_IIIIIIZ(39, 17, 22, jshr32((jint)(jsub32(((this)->collisionBounds)[0], ((this)->collisionBounds)[2])), (jint)(1)), jshr32((jint)(jsub32(((this)->collisionBounds)[3], ((this)->collisionBounds)[1])), (jint)(1)), 302, false);
+                  this->m_a_IIIIIIZ(39, 17, 22, jshr32((jint)(jsub32(((this)->collisionBounds)[2], ((this)->collisionBounds)[0])), (jint)(1)), jshr32((jint)(jsub32(((this)->collisionBounds)[3], ((this)->collisionBounds)[1])), (jint)(1)), 302, true);
                }
                break;
             case 109:
@@ -9568,7 +9568,7 @@ void Actor::m_bD_V() {
                if ((this->m_e_V())) {
                   this->m_a_I(1);
                }
-               if ((((this)->as < ((Actor::F * 2) / 3)))) {
+               if ((((this)->as < (jmul32(Actor::F, 2) / 3)))) {
                   if ((((this)->fu >= 84))) {
                      ((this)->p)->m_f_II(0, 10);
                      ((this)->H = -768);
@@ -9579,15 +9579,15 @@ void Actor::m_bD_V() {
                   } else if ((((this)->fu >= 21))) {
                      ((this)->p)->m_f_II(3, 10);
                   }
-                  jint var1 = (((this)->n)[0] - (this)->ay);
-                  jint var2 = (((this)->n)[1] - (this)->av);
-                  jint var3 = Game::m_l_I(((this)->fu * (-(this)->aw)));
-                  jint var4 = Game::m_m_I(((this)->fu * (-(this)->aw)));
-                  jint var5 = jshr32((jint)(((var1 * var3) - (var2 * var4))), (jint)(8));
-                  jint var6 = jshr32((jint)(((var1 * var4) + (var2 * var3))), (jint)(8));
-                  ((this)->positionX = ((this)->ay + var5));
-                  ((this)->positionY = ((this)->av + var6));
-                  ((this)->fu = ((this)->fu + (jshr32((jint)((this)->aB), (jint)(1)))));
+                  jint var1 = jsub32(((this)->n)[0], (this)->ay);
+                  jint var2 = jsub32(((this)->n)[1], (this)->av);
+                  jint var3 = Game::m_l_I(jmul32((this)->fu, jneg32((this)->aw)));
+                  jint var4 = Game::m_m_I(jmul32((this)->fu, jneg32((this)->aw)));
+                  jint var5 = jshr32((jint)(jsub32(jmul32(var1, var3), jmul32(var2, var4))), (jint)(8));
+                  jint var6 = jshr32((jint)(jadd32(jmul32(var1, var4), jmul32(var2, var3))), (jint)(8));
+                  ((this)->positionX = jadd32((this)->ay, var5));
+                  ((this)->positionY = jadd32((this)->av, var6));
+                  ((this)->fu = jadd32((this)->fu, (jshr32((jint)((this)->aB), (jint)(1)))));
                   if (((jshr32((jint)((this)->aB), (jint)(1)) > 2))) {
                      ((this)->aB--);
                   }
@@ -9634,18 +9634,18 @@ void Actor::m_bD_V() {
                   ((this)->ay = ((this)->n)[0]);
                   ((this)->fv = ((this)->n)[1]);
                }
-               ([&]{ auto _t38 = this; auto _t39 = (jint)(([&]{ auto _t36 = (this)->ay; auto _t37 = (jshr32((jint)(([&]{ auto _t34 = ([&]{ auto _t32 = Game::m_l_I((this)->fu); auto _t33 = (this)->aw; return (_t32 * _t33); }()); auto _t35 = (this)->fv; return (_t34 * _t35); }())), (jint)(8))); return (_t36 - _t37); }())); return _t38->positionX = _t39; }());
-               ([&]{ auto _t44 = this; auto _t45 = (jint)(([&]{ auto _t42 = (this)->av; auto _t43 = (jshr32((jint)(([&]{ auto _t40 = Game::m_m_I((this)->fu); auto _t41 = (this)->fv; return (_t40 * _t41); }())), (jint)(8))); return (_t42 - _t43); }())); return _t44->positionY = _t45; }());
+               ([&]{ auto _t38 = this; auto _t39 = (jint)(([&]{ auto _t36 = (this)->ay; auto _t37 = (jshr32((jint)(([&]{ auto _t34 = ([&]{ auto _t32 = Game::m_l_I((this)->fu); auto _t33 = (this)->aw; return jmul32(_t32, _t33); }()); auto _t35 = (this)->fv; return jmul32(_t34, _t35); }())), (jint)(8))); return jsub32(_t36, _t37); }())); return _t38->positionX = _t39; }());
+               ([&]{ auto _t44 = this; auto _t45 = (jint)(([&]{ auto _t42 = (this)->av; auto _t43 = (jshr32((jint)(([&]{ auto _t40 = Game::m_m_I((this)->fu); auto _t41 = (this)->fv; return jmul32(_t40, _t41); }())), (jint)(8))); return jsub32(_t42, _t43); }())); return _t44->positionY = _t45; }());
                if ((((this)->fu >= 360))) {
                   ((this)->n = nullptr);
                   this->m_p_I(106);
                }
-               ((this)->fu = ((this)->fu + (jshr32((jint)((this)->aB), (jint)(1)))));
+               ((this)->fu = jadd32((this)->fu, (jshr32((jint)((this)->aB), (jint)(1)))));
          }
       }
       if ((((this)->q != nullptr))) {
-         (((this)->q)->ac = ((this)->positionX + 0));
-         (((this)->q)->ad = ((this)->positionY + 0));
+         (((this)->q)->ac = jadd32((this)->positionX, 0));
+         (((this)->q)->ad = jadd32((this)->positionY, 0));
          (((this)->q)->positionX = (this)->positionX);
          (((this)->q)->positionY = (this)->positionY);
       }
@@ -9659,8 +9659,8 @@ void Actor::m_o_II(jint var1, jint var2) {
    if ((((this)->q == nullptr))) {
       this->m_a_Actor(Actor::aU);
       ((this)->q)->m_a_I(0);
-      (((this)->q)->ac = ((this)->positionX + var1));
-      (((this)->q)->ad = ((this)->positionY + var2));
+      (((this)->q)->ac = jadd32((this)->positionX, var1));
+      (((this)->q)->ad = jadd32((this)->positionY, var2));
       (((this)->q)->ap = 100);
    }
 }
@@ -9668,14 +9668,14 @@ void Actor::m_o_II(jint var1, jint var2) {
 void Actor::m_a_ActorActor(Ref<Actor> var1, Ref<Actor> var2) {
    Ref<Actor> _self(this);
    if (((var1 != nullptr))) {
-      ([&]{ auto _t0 = this; auto _t1 = (jint)(Game::m_h_II(((var2)->positionX - (var1)->ac), ((var2)->positionY - (var1)->ad))); return _t0->eX = _t1; }());
-      jint var3 = (([&]{ auto _t2 = ((((this)->eX == 0) ? 0 : jdiv32(((((var2)->positionX - (var1)->ac)) * 7), (this)->eX))); auto _t3 = Actor::m_h_II((this)->eX, 110); return (_t2 * _t3); }()) / 110);
-      jint var4 = (([&]{ auto _t4 = ((((this)->eX == 0) ? 0 : jdiv32(((((var2)->positionY - (var1)->ad)) * 7), (this)->eX))); auto _t5 = Actor::m_h_II((this)->eX, 110); return (_t4 * _t5); }()) / 110);
-      ((var1)->positionX = ((var1)->ac + var3));
-      ((var1)->positionY = ((var1)->ad + var4));
+      ([&]{ auto _t0 = this; auto _t1 = (jint)(Game::m_h_II(jsub32((var2)->positionX, (var1)->ac), jsub32((var2)->positionY, (var1)->ad))); return _t0->eX = _t1; }());
+      jint var3 = (([&]{ auto _t2 = ((((this)->eX == 0) ? 0 : jdiv32(jmul32((jsub32((var2)->positionX, (var1)->ac)), 7), (this)->eX))); auto _t3 = Actor::m_h_II((this)->eX, 110); return jmul32(_t2, _t3); }()) / 110);
+      jint var4 = (([&]{ auto _t4 = ((((this)->eX == 0) ? 0 : jdiv32(jmul32((jsub32((var2)->positionY, (var1)->ad)), 7), (this)->eX))); auto _t5 = Actor::m_h_II((this)->eX, 110); return jmul32(_t4, _t5); }()) / 110);
+      ((var1)->positionX = jadd32((var1)->ac, var3));
+      ((var1)->positionY = jadd32((var1)->ad, var4));
       if ((((this)->aq == 2))) {
-         ((var1)->positionX = ([&]{ auto _t6 = (var1)->positionX; auto _t7 = Game::m_i_II(-3, 4); return (_t6 + _t7); }()));
-         ((var1)->positionY = ([&]{ auto _t8 = (var1)->positionY; auto _t9 = Game::m_i_II(-2, 3); return (_t8 + _t9); }()));
+         ((var1)->positionX = ([&]{ auto _t6 = (var1)->positionX; auto _t7 = Game::m_i_II(-3, 4); return jadd32(_t6, _t7); }()));
+         ((var1)->positionY = ([&]{ auto _t8 = (var1)->positionY; auto _t9 = Game::m_i_II(-2, 3); return jadd32(_t8, _t9); }()));
       }
    }
 }
@@ -9691,8 +9691,8 @@ void Actor::m_G_V() {
    } else if ((((this)->type == 100))) {
       (var1 = -50);
    } else if ((((((this)->type == 83) && (Actor::dp != nullptr)) && ((Actor::dp)[10] != nullptr)))) {
-      (var1 = (((Actor::dp)[10])->positionY - (this)->positionY));
-      (var2 = (((Actor::dp)[10])->positionX - (this)->positionX));
+      (var1 = jsub32(((Actor::dp)[10])->positionY, (this)->positionY));
+      (var2 = jsub32(((Actor::dp)[10])->positionX, (this)->positionX));
    }
    this->m_cV_V();
    if (((Game::P == -2))) {
@@ -9721,7 +9721,7 @@ void Actor::m_G_V() {
       {
          jint var3 = 0;
          for (; (var3 < Actor::db); (var3++)) {
-            ([&]{ auto _t0 = 35; auto _t1 = 31; auto _t2 = 5; auto _t3 = (Game::m_i_II(-20, 20) + var2); auto _t4 = ((-Game::m_i_II(-40, 10)) + var1); auto _t5 = 308; auto _t6 = false; return this->m_a_IIIIIIZ(_t0, _t1, _t2, _t3, _t4, _t5, _t6); }());
+            ([&]{ auto _t0 = 35; auto _t1 = 31; auto _t2 = 5; auto _t3 = jadd32(Game::m_i_II(-20, 20), var2); auto _t4 = jadd32(jneg32(Game::m_i_II(-40, 10)), var1); auto _t5 = 308; auto _t6 = false; return this->m_a_IIIIIIZ(_t0, _t1, _t2, _t3, _t4, _t5, _t6); }());
             if ((((this)->type == 8))) {
                ((Actor::aU)->aC = Actor::ee);
             } else if ((((this)->type == 11))) {
@@ -9737,52 +9737,52 @@ void Actor::m_G_V() {
       }
       Game::m_s_V();
    } else if (((Game::P < Actor::cY))) {
-      jint var7 = jdiv32((Game::P * 320), Actor::cY);
+      jint var7 = jdiv32(jmul32(Game::P, 320), Actor::cY);
       {
          jint var4 = 0;
          for (; (var4 < Actor::db); (var4++)) {
             (Game::graphics)->setColor(16777215);
-            Game::m_b_IIIIII(((((this)->positionX - Game::cameraX) - var7) + var2), ((((this)->positionY - Game::cameraY) - var7) + var1), jshl32((jint)(var7), (jint)(1)), jshl32((jint)(var7), (jint)(1)), (Actor::dc)[var4], (Actor::dd)[var4]);
+            Game::m_b_IIIIII(jadd32(jsub32(jsub32((this)->positionX, Game::cameraX), var7), var2), jadd32(jsub32(jsub32((this)->positionY, Game::cameraY), var7), var1), jshl32((jint)(var7), (jint)(1)), jshl32((jint)(var7), (jint)(1)), (Actor::dc)[var4], (Actor::dd)[var4]);
          }
       }
       (Game::graphics)->setColor(0);
-      Game::m_b_IIIIII(((((this)->positionX - Game::cameraX) - 320) + var2), ((((this)->positionY - Game::cameraY) - 320) + var1), 640, 640, 0, 360);
-   } else if (((Game::P < ((Actor::cY + Actor::cZ) + Actor::da)))) {
+      Game::m_b_IIIIII(jadd32(jsub32(jsub32((this)->positionX, Game::cameraX), 320), var2), jadd32(jsub32(jsub32((this)->positionY, Game::cameraY), 320), var1), 640, 640, 0, 360);
+   } else if (((Game::P < jadd32(jadd32(Actor::cY, Actor::cZ), Actor::da)))) {
       if (((Game::aN <= 0))) {
          Game::m_e_I(8);
       }
       jboolean var8 = false;
-      jint var9 = (((Game::P - Actor::cY)) * Actor::cZ);
+      jint var9 = jmul32((jsub32(Game::P, Actor::cY)), Actor::cZ);
       {
          jint var5 = 0;
          for (; (var5 < Actor::db); (var5++)) {
             (Game::graphics)->setColor(16777215);
-            Game::m_b_IIIIII(((((this)->positionX - Game::cameraX) - 320) + var2), ((((this)->positionY - Game::cameraY) - 320) + var1), 640, 640, (var9 + (Actor::dc)[var5]), (Actor::dd)[var5]);
+            Game::m_b_IIIIII(jadd32(jsub32(jsub32((this)->positionX, Game::cameraX), 320), var2), jadd32(jsub32(jsub32((this)->positionY, Game::cameraY), 320), var1), 640, 640, jadd32(var9, (Actor::dc)[var5]), (Actor::dd)[var5]);
          }
       }
       jint var6 = 0;
       jint var10{};
-      if (((Game::P < (Actor::cY + Actor::cZ)))) {
-         (var10 = jdiv32((((Game::P - Actor::cY)) * 320), Actor::cZ));
-         (var6 = ([&]{ auto _t7 = ((jshl32((jint)(((var6 = jdiv32((((((Game::P - Actor::cY)) * 128) + 128)), Actor::cZ)))), (jint)(16)) | 16776960)); auto _t8 = ((jshl32((jint)(var6), (jint)(8)) | 16776960)); return (_t7 + _t8); }()));
+      if (((Game::P < jadd32(Actor::cY, Actor::cZ)))) {
+         (var10 = jdiv32(jmul32((jsub32(Game::P, Actor::cY)), 320), Actor::cZ));
+         (var6 = ([&]{ auto _t7 = ((jshl32((jint)(((var6 = jdiv32((jadd32(jmul32((jsub32(Game::P, Actor::cY)), 128), 128)), Actor::cZ)))), (jint)(16)) | 16776960)); auto _t8 = ((jshl32((jint)(var6), (jint)(8)) | 16776960)); return jadd32(_t7, _t8); }()));
       } else {
-         (var10 = jdiv32(((((Game::P - Actor::cY) - Actor::cZ)) * 320), Actor::da));
-         (var6 = (jshl32((jint)(jdiv32((((((((Actor::cY + Actor::cZ) + Actor::da) - Game::P)) * 128) + 128)), Actor::da)), (jint)(16)) | 16711680));
+         (var10 = jdiv32(jmul32((jsub32(jsub32(Game::P, Actor::cY), Actor::cZ)), 320), Actor::da));
+         (var6 = (jshl32((jint)(jdiv32((jadd32(jmul32((jsub32(jadd32(jadd32(Actor::cY, Actor::cZ), Actor::da), Game::P)), 128), 128)), Actor::da)), (jint)(16)) | 16711680));
       }
       (Game::graphics)->setColor(var6);
-      Game::m_b_IIIIII(((((this)->positionX - Game::cameraX) - var10) + var2), ((((this)->positionY - Game::cameraY) - var10) + var1), jshl32((jint)(var10), (jint)(1)), jshl32((jint)(var10), (jint)(1)), 0, 360);
+      Game::m_b_IIIIII(jadd32(jsub32(jsub32((this)->positionX, Game::cameraX), var10), var2), jadd32(jsub32(jsub32((this)->positionY, Game::cameraY), var10), var1), jshl32((jint)(var10), (jint)(1)), jshl32((jint)(var10), (jint)(1)), 0, 360);
       if (((!Game::dc))) {
          if (((Game::m_i_II(0, 5) == 0))) {
             this->m_c_IAI(7, (this)->collisionBounds);
             if ((((((this)->type == 83) && (Actor::dp != nullptr)) && ((Actor::dp)[10] != nullptr)))) {
-               ((Actor::aU)->positionX = (jint)(((Actor::aU)->positionX + var2)));
-               ((Actor::aU)->positionY = (jint)(((Actor::aU)->positionY + var1)));
+               ((Actor::aU)->positionX = (jint)(jadd32((Actor::aU)->positionX, var2)));
+               ((Actor::aU)->positionY = (jint)(jadd32((Actor::aU)->positionY, var1)));
             }
          }
-         ([&]{ auto _t9 = 39; auto _t10 = 17; auto _t11 = this->m_aF_V(); auto _t12 = (-Game::m_i_II(-20, 20)); auto _t13 = (-Game::m_i_II(10, 50)); auto _t14 = 302; auto _t15 = (((Game::random)->nextInt() % 2) == 0); return this->m_a_IIIIIIZ(_t9, _t10, _t11, _t12, _t13, _t14, _t15); }());
+         ([&]{ auto _t9 = 39; auto _t10 = 17; auto _t11 = this->m_aF_V(); auto _t12 = jneg32(Game::m_i_II(-20, 20)); auto _t13 = jneg32(Game::m_i_II(10, 50)); auto _t14 = 302; auto _t15 = (((Game::random)->nextInt() % 2) == 0); return this->m_a_IIIIIIZ(_t9, _t10, _t11, _t12, _t13, _t14, _t15); }());
          if ((((((this)->type == 83) && (Actor::dp != nullptr)) && ((Actor::dp)[10] != nullptr)))) {
-            ((Actor::aU)->positionX = (jint)(((Actor::aU)->positionX + var2)));
-            ((Actor::aU)->positionY = (jint)(((Actor::aU)->positionY + var1)));
+            ((Actor::aU)->positionX = (jint)(jadd32((Actor::aU)->positionX, var2)));
+            ((Actor::aU)->positionY = (jint)(jadd32((Actor::aU)->positionY, var1)));
          }
          ((Actor::aU)->c = (jint)(((Actor::aU)->c | 4096)));
       }
@@ -9809,10 +9809,10 @@ void Actor::m_a_IIIIIAIZ(jint var1, jint var2, jint var3, jint var4, jint var5, 
    jint var8{};
    jint var9{};
    if (((!var7))) {
-      (var8 = (-(jshr32((jint)((var6).length()), (jint)(1)))));
+      (var8 = jneg32((jshr32((jint)((var6).length()), (jint)(1)))));
       (var9 = (var6).length());
    } else {
-      (var8 = (-(var6).length()));
+      (var8 = jneg32((var6).length()));
       (var9 = jshl32((jint)((var6).length()), (jint)(1)));
    }
    {
@@ -9823,10 +9823,10 @@ void Actor::m_a_IIIIIAIZ(jint var1, jint var2, jint var3, jint var4, jint var5, 
          } else {
             (Actor::bt)->setColor((var6)[jshr32((jint)(var10), (jint)(1))]);
          }
-         if ((([&]{ auto _t0 = Actor::m_l_I((var1 - var3)); auto _t1 = Actor::m_l_I((var2 - var4)); return (_t0 > _t1); }()))) {
-            Game::m_d_IIII((var1 - Game::cameraX), ((var2 - Game::cameraY) + (((var5 == 1) ? 0 : var8))), (var3 - Game::cameraX), ((var4 - Game::cameraY) + var8));
+         if ((([&]{ auto _t0 = Actor::m_l_I(jsub32(var1, var3)); auto _t1 = Actor::m_l_I(jsub32(var2, var4)); return (_t0 > _t1); }()))) {
+            Game::m_d_IIII(jsub32(var1, Game::cameraX), jadd32(jsub32(var2, Game::cameraY), (((var5 == 1) ? 0 : var8))), jsub32(var3, Game::cameraX), jadd32(jsub32(var4, Game::cameraY), var8));
          } else {
-            Game::m_d_IIII(((var1 - Game::cameraX) + (((var5 == 1) ? 0 : var8))), (var2 - Game::cameraY), ((var3 - Game::cameraX) + var8), (var4 - Game::cameraY));
+            Game::m_d_IIII(jadd32(jsub32(var1, Game::cameraX), (((var5 == 1) ? 0 : var8))), jsub32(var2, Game::cameraY), jadd32(jsub32(var3, Game::cameraX), var8), jsub32(var4, Game::cameraY));
          }
          (var8++);
       }
@@ -9835,9 +9835,9 @@ void Actor::m_a_IIIIIAIZ(jint var1, jint var2, jint var3, jint var4, jint var5, 
 
 void Actor::m_H_V() {
    (Actor::bt)->setColor(16777215);
-   Game::m_c_IIII((((Game::player)->collisionBounds)[0] - Game::cameraX), (((((Game::player)->collisionBounds)[1] - Game::cameraY) - 20) + 0), 42, 5);
+   Game::m_c_IIII(jsub32(((Game::player)->collisionBounds)[0], Game::cameraX), jadd32(jsub32(jsub32(((Game::player)->collisionBounds)[1], Game::cameraY), 20), 0), 42, 5);
    (Actor::bt)->setColor(16711680);
-   Game::m_b_IIII(((((Game::player)->collisionBounds)[0] - Game::cameraX) + 1), (((((Game::player)->collisionBounds)[1] - Game::cameraY) - 19) + 0), ((Actor::cL * 40) / 40), 4);
+   Game::m_b_IIII(jadd32(jsub32(((Game::player)->collisionBounds)[0], Game::cameraX), 1), jadd32(jsub32(jsub32(((Game::player)->collisionBounds)[1], Game::cameraY), 19), 0), (jmul32(Actor::cL, 40) / 40), 4);
 }
 
 void Actor::m_bE_V() {
@@ -9851,7 +9851,7 @@ void Actor::m_bE_V() {
             if ((Actor::m_b_AIAI((Game::player)->collisionBounds, (this)->m))) {
                if (((this->m_ar_V() == 0))) {
                   if (((((this)->r != nullptr) && (((this)->r)->type == 51)))) {
-                     ((this)->aB = (((this)->r)->positionX + (jshr32((jint)((((this)->facingLeft ? ((((this)->r)->collisionBounds)[2] - (((this)->r)->collisionBounds)[0]) : ((((this)->r)->collisionBounds)[0] - (((this)->r)->collisionBounds)[2])))), (jint)(1)))));
+                     ((this)->aB = jadd32(((this)->r)->positionX, (jshr32((jint)((((this)->facingLeft ? jsub32((((this)->r)->collisionBounds)[2], (((this)->r)->collisionBounds)[0]) : jsub32((((this)->r)->collisionBounds)[0], (((this)->r)->collisionBounds)[2])))), (jint)(1)))));
                   }
                   this->m_p_I(101);
                } else if (((this->m_ar_V() == 1))) {
@@ -10041,9 +10041,9 @@ void Actor::m_bG_V() {
                ((this)->aA = 0);
             }
             if ((((this)->aq == 107))) {
-               (var1 = ([&]{ auto _t4 = ([&]{ auto _t2 = this->m_B_I(3); auto _t3 = (([&]{ auto _t0 = this->m_B_I(1); auto _t1 = (this)->aA; return (_t0 - _t1); }())); return (_t2 * _t3); }()); auto _t5 = this->m_B_I(1); return jdiv32(_t4, _t5); }()));
+               (var1 = ([&]{ auto _t4 = ([&]{ auto _t2 = this->m_B_I(3); auto _t3 = (([&]{ auto _t0 = this->m_B_I(1); auto _t1 = (this)->aA; return jsub32(_t0, _t1); }())); return jmul32(_t2, _t3); }()); auto _t5 = this->m_B_I(1); return jdiv32(_t4, _t5); }()));
             } else {
-               (var1 = ([&]{ auto _t8 = ([&]{ auto _t6 = this->m_B_I(3); auto _t7 = (this)->aA; return (_t6 * _t7); }()); auto _t9 = this->m_B_I(1); return jdiv32(_t8, _t9); }()));
+               (var1 = ([&]{ auto _t8 = ([&]{ auto _t6 = this->m_B_I(3); auto _t7 = (this)->aA; return jmul32(_t6, _t7); }()); auto _t9 = this->m_B_I(1); return jdiv32(_t8, _t9); }()));
             }
             Actor::m_a_IIIIIAI((this)->positionX, (this)->positionY, (this)->ay, (this)->av, var1, Actor::cU);
             ((this)->ac = (Actor::cU)[0]);
@@ -10404,13 +10404,13 @@ void Actor::m_bH_V() {
             if (((!(this)->bL))) {
                this->m_p_I(1);
             }
-            if (((((this)->as <= ((Actor::F * ((3 - Actor::dg))) / 3)) && (this->m_ar_V() == 1)))) {
+            if (((((this)->as <= (jmul32(Actor::F, (jsub32(3, Actor::dg))) / 3)) && (this->m_ar_V() == 1)))) {
                (Actor::de = true);
                (Actor::dg++);
                (Actor::df = false);
                this->m_p_I(118);
             } else if (((Actor::dn == 110))) {
-               if (((((!(this)->facingLeft) && (Game::m_g_II(((((this)->collisionBounds)[0] / 20) - 1), ((this)->positionY / 20)) == 24)) || ((this)->facingLeft && (Game::m_g_II(((((this)->collisionBounds)[2] / 20) + 1), ((this)->positionY / 20)) == 24))))) {
+               if (((((!(this)->facingLeft) && (Game::m_g_II(jsub32((((this)->collisionBounds)[0] / 20), 1), ((this)->positionY / 20)) == 24)) || ((this)->facingLeft && (Game::m_g_II(jadd32((((this)->collisionBounds)[2] / 20), 1), ((this)->positionY / 20)) == 24))))) {
                   if ((((Actor::dg > 1) && (!Actor::dm)))) {
                      (Actor::dm = true);
                      this->m_p_I(115);
@@ -10421,7 +10421,7 @@ void Actor::m_bH_V() {
                   this->m_p_I(118);
                }
             } else if (((Actor::dn == 103))) {
-               if (((Actor::m_l_I(((this)->positionX - (Game::player)->positionX)) <= 140))) {
+               if (((Actor::m_l_I(jsub32((this)->positionX, (Game::player)->positionX)) <= 140))) {
                   this->m_p_I(102);
                } else {
                   (Actor::dn = 110);
@@ -10481,13 +10481,13 @@ void Actor::m_bH_V() {
                   (Actor::aM = false);
                   this->m_b_Actor(jcast<Ref<Actor>>(nullptr));
                   ((this)->ae = false);
-               } else if ((((4500 - (this)->aA) > ((this)->ax * 1500)))) {
+               } else if (((jsub32(4500, (this)->aA) > jmul32((this)->ax, 1500)))) {
                   ((this)->ax++);
                   ([&]{ auto _t7 = Game::player; auto _t8 = 4; auto _t9 = this->m_B_I(1); auto _t10 = 0; auto _t11 = this; return _t7->m_a_IIIActor(_t8, _t9, _t10, _t11); }());
                   (Actor::di = true);
                }
                if ((this->m_e_V())) {
-                  ([&]{ auto _t12 = 39; auto _t13 = 17; auto _t14 = this->m_aF_V(); auto _t15 = 0; auto _t16 = (-Game::m_i_II(10, 50)); auto _t17 = 302; auto _t18 = (((Game::random)->nextInt() % 2) == 0); return this->m_a_IIIIIIZ(_t12, _t13, _t14, _t15, _t16, _t17, _t18); }());
+                  ([&]{ auto _t12 = 39; auto _t13 = 17; auto _t14 = this->m_aF_V(); auto _t15 = 0; auto _t16 = jneg32(Game::m_i_II(10, 50)); auto _t17 = 302; auto _t18 = (((Game::random)->nextInt() % 2) == 0); return this->m_a_IIIIIIZ(_t12, _t13, _t14, _t15, _t16, _t17, _t18); }());
                }
             }
             break;
@@ -10530,7 +10530,7 @@ void Actor::m_bH_V() {
          case 113:
             this->m_cV_V();
             this->m_cW_V();
-            (Actor::dl = (Actor::dl - Game::h));
+            (Actor::dl = jsub32(Actor::dl, Game::h));
             if ((((this)->aA <= 0))) {
                this->m_p_I(114);
             }
@@ -10641,7 +10641,7 @@ void Actor::m_bH_V() {
                }
                if ((this->m_e_V())) {
                   this->m_p_I(124);
-                  (Game::player)->m_c_III(25, ((this)->ac + 0), ((this)->ad + -75));
+                  (Game::player)->m_c_III(25, jadd32((this)->ac, 0), jadd32((this)->ad, -75));
                }
             }
             break;
@@ -10650,7 +10650,7 @@ void Actor::m_bH_V() {
             if ((((this)->aA <= 0))) {
                this->m_p_I(125);
                (Game::player)->m_au_V();
-               (Game::player)->m_c_III(14, ((this)->ac + 0), ((this)->ad + -75));
+               (Game::player)->m_c_III(14, jadd32((this)->ac, 0), jadd32((this)->ad, -75));
             }
             break;
          case 125:
@@ -10792,7 +10792,7 @@ void Actor::m_bH_V() {
    } else {
       this->m_h_Z(false);
    }
-   (Actor::dj = (Actor::dj - Game::h));
+   (Actor::dj = jsub32(Actor::dj, Game::h));
    if (((this->m_ar_V() != 1))) {
       this->m_cW_V();
    }
@@ -10809,7 +10809,7 @@ void Actor::m_bH_V() {
    }
    if (((this->m_ar_V() == 1))) {
       if ((((Actor::dg == 1) && ((this)->as <= (Actor::F / 3))))) {
-         ((this)->as = ((Actor::F / 3) + 1));
+         ((this)->as = jadd32((Actor::F / 3), 1));
          (Actor::df = true);
       } else if ((((Actor::dg == 2) && ((this)->as <= 0)))) {
          ((this)->as = 10);
@@ -10937,7 +10937,7 @@ void Actor::m_e_III(jint var1, jint var2, jint var3) {
    Ref<Actor> _self(this);
    if (((this)->ae)) {
       if ((((this)->q == nullptr))) {
-         this->m_a_IIIIIIZ(21, 16, var1, ((this)->facingLeft ? var2 : (-var2)), var3, 302, (this)->facingLeft);
+         this->m_a_IIIIIIZ(21, 16, var1, ((this)->facingLeft ? var2 : jneg32(var2)), var3, 302, (this)->facingLeft);
          this->m_a_Actor(Actor::aU);
          return;
       }
@@ -10999,25 +10999,25 @@ void Actor::m_bJ_V() {
                   {
                      jint var2 = 0;
                      for (; (var2 < jshl32((jint)((this)->ay), (jint)(1))); (var2++)) {
-                        ([&]{ auto _t0 = 35; auto _t1 = 31; auto _t2 = 0; auto _t3 = Game::m_i_II(-20, 20); auto _t4 = (-Game::m_i_II(-40, 10)); auto _t5 = 308; auto _t6 = false; return this->m_a_IIIIIIZ(_t0, _t1, _t2, _t3, _t4, _t5, _t6); }());
+                        ([&]{ auto _t0 = 35; auto _t1 = 31; auto _t2 = 0; auto _t3 = Game::m_i_II(-20, 20); auto _t4 = jneg32(Game::m_i_II(-40, 10)); auto _t5 = 308; auto _t6 = false; return this->m_a_IIIIIIZ(_t0, _t1, _t2, _t3, _t4, _t5, _t6); }());
                      }
                   }
                   {
                      jint var3 = 0;
                      for (; (var3 < jshl32((jint)((this)->aw), (jint)(1))); (var3++)) {
-                        ([&]{ auto _t7 = 35; auto _t8 = 31; auto _t9 = 2; auto _t10 = Game::m_i_II(-20, 20); auto _t11 = (-Game::m_i_II(-40, 10)); auto _t12 = 308; auto _t13 = false; return this->m_a_IIIIIIZ(_t7, _t8, _t9, _t10, _t11, _t12, _t13); }());
+                        ([&]{ auto _t7 = 35; auto _t8 = 31; auto _t9 = 2; auto _t10 = Game::m_i_II(-20, 20); auto _t11 = jneg32(Game::m_i_II(-40, 10)); auto _t12 = 308; auto _t13 = false; return this->m_a_IIIIIIZ(_t7, _t8, _t9, _t10, _t11, _t12, _t13); }());
                      }
                   }
                   {
                      jint var4 = 0;
                      for (; (var4 < jshl32((jint)((this)->ax), (jint)(1))); (var4++)) {
-                        ([&]{ auto _t14 = 35; auto _t15 = 31; auto _t16 = 4; auto _t17 = Game::m_i_II(-20, 20); auto _t18 = (-Game::m_i_II(-40, 10)); auto _t19 = 308; auto _t20 = false; return this->m_a_IIIIIIZ(_t14, _t15, _t16, _t17, _t18, _t19, _t20); }());
+                        ([&]{ auto _t14 = 35; auto _t15 = 31; auto _t16 = 4; auto _t17 = Game::m_i_II(-20, 20); auto _t18 = jneg32(Game::m_i_II(-40, 10)); auto _t19 = 308; auto _t20 = false; return this->m_a_IIIIIIZ(_t14, _t15, _t16, _t17, _t18, _t19, _t20); }());
                      }
                   }
                   {
                      jint var5 = 0;
                      for (; (var5 < jshl32((jint)((this)->az), (jint)(1))); (var5++)) {
-                        ([&]{ auto _t21 = 35; auto _t22 = 31; auto _t23 = 5; auto _t24 = Game::m_i_II(-20, 20); auto _t25 = (-Game::m_i_II(-40, 10)); auto _t26 = 308; auto _t27 = false; return this->m_a_IIIIIIZ(_t21, _t22, _t23, _t24, _t25, _t26, _t27); }());
+                        ([&]{ auto _t21 = 35; auto _t22 = 31; auto _t23 = 5; auto _t24 = Game::m_i_II(-20, 20); auto _t25 = jneg32(Game::m_i_II(-40, 10)); auto _t26 = 308; auto _t27 = false; return this->m_a_IIIIIIZ(_t21, _t22, _t23, _t24, _t25, _t26, _t27); }());
                      }
                   }
                   this->m_b_Z(true);
@@ -11043,9 +11043,9 @@ void Actor::m_bJ_V() {
                }
                break;
             case 103:
-               ([&]{ auto _t28 = this; auto _t29 = (jint)(Game::m_h_II(((Game::player)->eA - (this)->positionX), ((Game::player)->eB - (this)->positionY))); return _t28->eX = _t29; }());
-               ((this)->G = (((this)->eX == 0) ? 0 : jdiv32(((((Game::player)->eA - (this)->positionX)) * 256), (this)->eX)));
-               ((this)->H = (((this)->eX == 0) ? 0 : jdiv32(((((Game::player)->eB - (this)->positionY)) * 256), (this)->eX)));
+               ([&]{ auto _t28 = this; auto _t29 = (jint)(Game::m_h_II(jsub32((Game::player)->eA, (this)->positionX), jsub32((Game::player)->eB, (this)->positionY))); return _t28->eX = _t29; }());
+               ((this)->G = (((this)->eX == 0) ? 0 : jdiv32(jmul32((jsub32((Game::player)->eA, (this)->positionX)), 256), (this)->eX)));
+               ((this)->H = (((this)->eX == 0) ? 0 : jdiv32(jmul32((jsub32((Game::player)->eB, (this)->positionY)), 256), (this)->eX)));
                break;
             case 104:
                this->m_cV_V();
@@ -11065,7 +11065,7 @@ void Actor::m_bJ_V() {
             case 106:
                this->m_cV_V();
                ((this)->G = (((this)->aK == 1) ? -512 : 512));
-               ([&]{ auto _t32 = this; auto _t33 = (jint)(([&]{ auto _t30 = (jshr32((jint)((30 * Game::m_m_I((2 * (((this)->ac - (this)->positionX)))))), (jint)(8))); auto _t31 = (this)->ad; return (_t30 + _t31); }())); return _t32->positionY = _t33; }());
+               ([&]{ auto _t32 = this; auto _t33 = (jint)(([&]{ auto _t30 = (jshr32((jint)(jmul32(30, Game::m_m_I(jmul32(2, (jsub32((this)->ac, (this)->positionX)))))), (jint)(8))); auto _t31 = (this)->ad; return jadd32(_t30, _t31); }())); return _t32->positionY = _t33; }());
                if (((!Actor::m_b_AIAI((Game::aJ)->collisionBounds, (this)->collisionBounds)))) {
                   ((this)->c = (jint)(((this)->c & -17)));
                   this->m_b_Z(false);
@@ -11114,12 +11114,12 @@ void Actor::m_p_II(jint var1, jint var2) {
       jint var3 = 0;
       for (; (var3 < 4); (var3++)) {
          this->m_a_IIIIIIZ(-100, 11, 0, 0, 0, 302, (this)->facingLeft);
-         ((Actor::aU)->positionX = ((jshr32((jint)((((this)->collisionBounds)[0] + ((this)->collisionBounds)[2])), (jint)(1))) + ((((var3 / 2) == 1) ? 0 : ((((jshl32((jint)((var3 % 2)), (jint)(1))) - 1)) * (jshr32((jint)((((this)->collisionBounds)[0] - ((this)->collisionBounds)[2])), (jint)(1))))))));
-         ((Actor::aU)->positionY = ((jshr32((jint)((((this)->collisionBounds)[1] + ((this)->collisionBounds)[3])), (jint)(1))) + ((((var3 / 2) == 0) ? 0 : ((((jshl32((jint)((var3 % 2)), (jint)(1))) - 1)) * (jshr32((jint)((((this)->collisionBounds)[1] - ((this)->collisionBounds)[3])), (jint)(1))))))));
-         ((Actor::aU)->G = (((((var3 / 2) == 1) ? 0 : ((jshl32((jint)((var3 % 2)), (jint)(1))) - 1))) * (-var1)));
-         ((Actor::aU)->H = (((((var3 / 2) == 0) ? 0 : ((jshl32((jint)((var3 % 2)), (jint)(1))) - 1))) * (-var1)));
-         ((Actor::aU)->ay = (((((var3 / 2) == 1) ? 0 : ((jshl32((jint)((var3 % 2)), (jint)(1))) - 1))) * (-var2)));
-         ((Actor::aU)->av = (((((var3 / 2) == 0) ? 0 : ((jshl32((jint)((var3 % 2)), (jint)(1))) - 1))) * (-var2)));
+         ((Actor::aU)->positionX = jadd32((jshr32((jint)(jadd32(((this)->collisionBounds)[0], ((this)->collisionBounds)[2])), (jint)(1))), ((((var3 / 2) == 1) ? 0 : jmul32((jsub32((jshl32((jint)((var3 % 2)), (jint)(1))), 1)), (jshr32((jint)(jsub32(((this)->collisionBounds)[0], ((this)->collisionBounds)[2])), (jint)(1))))))));
+         ((Actor::aU)->positionY = jadd32((jshr32((jint)(jadd32(((this)->collisionBounds)[1], ((this)->collisionBounds)[3])), (jint)(1))), ((((var3 / 2) == 0) ? 0 : jmul32((jsub32((jshl32((jint)((var3 % 2)), (jint)(1))), 1)), (jshr32((jint)(jsub32(((this)->collisionBounds)[1], ((this)->collisionBounds)[3])), (jint)(1))))))));
+         ((Actor::aU)->G = jmul32(((((var3 / 2) == 1) ? 0 : jsub32((jshl32((jint)((var3 % 2)), (jint)(1))), 1))), jneg32(var1)));
+         ((Actor::aU)->H = jmul32(((((var3 / 2) == 0) ? 0 : jsub32((jshl32((jint)((var3 % 2)), (jint)(1))), 1))), jneg32(var1)));
+         ((Actor::aU)->ay = jmul32(((((var3 / 2) == 1) ? 0 : jsub32((jshl32((jint)((var3 % 2)), (jint)(1))), 1))), jneg32(var2)));
+         ((Actor::aU)->av = jmul32(((((var3 / 2) == 0) ? 0 : jsub32((jshl32((jint)((var3 % 2)), (jint)(1))), 1))), jneg32(var2)));
          ([&]{ auto _t0 = Actor::aU; auto _t1 = (jint)(this->m_B_I(2)); return _t0->aB = _t1; }());
       }
    }
@@ -11137,7 +11137,7 @@ void Actor::m_bL_V() {
             if ((((((var1 = (Game::cj)[var2])) != nullptr) && ((var1)->type == 42)))) {
                ((Actor::ey)[0] = ((var1)->collisionBounds)[0]);
                ((Actor::ey)[2] = ((var1)->collisionBounds)[2]);
-               ((Actor::ey)[1] = (((var1)->collisionBounds)[1] - 2));
+               ((Actor::ey)[1] = jsub32(((var1)->collisionBounds)[1], 2));
                ((Actor::ey)[3] = ((var1)->collisionBounds)[3]);
                if ((Actor::m_b_AIAI((this)->collisionBounds, Actor::ey))) {
                   ((this)->cI = true);
@@ -11237,8 +11237,8 @@ void Actor::m_bL_V() {
             }
             break;
          case 105:
-            if (((((this)->cJ != nullptr) && ((this)->positionY >= ((((this)->cJ)->collisionBounds)[1] + 46))))) {
-               ((this)->positionY = ((((this)->cJ)->collisionBounds)[1] + 46));
+            if (((((this)->cJ != nullptr) && ((this)->positionY >= jadd32((((this)->cJ)->collisionBounds)[1], 46))))) {
+               ((this)->positionY = jadd32((((this)->cJ)->collisionBounds)[1], 46));
                this->m_p_I(106);
             }
             break;
@@ -11254,7 +11254,7 @@ void Actor::m_bL_V() {
                ((this)->I = (this)->ay);
             }
             if ((((this)->cJ != nullptr))) {
-               ((this)->positionY = ((((this)->cJ)->collisionBounds)[1] + 46));
+               ((this)->positionY = jadd32((((this)->cJ)->collisionBounds)[1], 46));
             }
             break;
          case 107:
@@ -11304,8 +11304,8 @@ void Actor::m_I_V() {
    if (((this)->cI)) {
       if ((((this)->aq == 106))) {
          jint var1{};
-         (var1 = ((((var1 = (((-(this)->aA) / 500) % 4))) < 2) ? var1 : (4 - var1)));
-         ((this)->positionY = (((((this)->cJ)->collisionBounds)[1] + 46) + (--var1)));
+         (var1 = ((((var1 = ((jneg32((this)->aA) / 500) % 4))) < 2) ? var1 : jsub32(4, var1)));
+         ((this)->positionY = jadd32(jadd32((((this)->cJ)->collisionBounds)[1], 46), (--var1)));
       } else if ((((((this)->aq != 105) && ((this)->aq != 2)) && ((this)->aq != 107)))) {
          ((this)->positionY = (((this)->cJ)->collisionBounds)[1]);
       }
@@ -11323,11 +11323,11 @@ void Actor::m_J_V() {
          if ((((((var1 = (Game::cj)[var2])) != nullptr) && (var1 != this)))) {
             (var1)->m_g_V();
             if ((((var1)->T == this))) {
-               ((var1)->positionY = (((this)->collisionBounds)[1] - 1));
+               ((var1)->positionY = jsub32(((this)->collisionBounds)[1], 1));
                ((var1)->bL = true);
                ((Actor::dV)[1] = ((var1)->collisionBounds)[1]);
                ((Actor::dV)[0] = ((var1)->collisionBounds)[0]);
-               ((Actor::dV)[3] = (((var1)->collisionBounds)[3] + 1));
+               ((Actor::dV)[3] = jadd32(((var1)->collisionBounds)[3], 1));
                if (((((this)->type == 14) && ((this)->aq == 106)))) {
                   ((Actor::dV)[3]++);
                }
@@ -11357,7 +11357,7 @@ void Actor::m_bM_V() {
          case 101:
             ((this)->G = jshl32((jint)(Actor::fs), (jint)(8)));
             var1 = this->m_ar_V();
-            ((this)->aA = ((this)->aA - Game::h));
+            ((this)->aA = jsub32((this)->aA, Game::h));
             if ((((this)->aA < 0))) {
                {
                   switch ((var1)) {
@@ -11485,11 +11485,11 @@ Ref<Actor> Actor::m_q_II(jint var1, jint var2) {
       switch ((var2)) {
          case 1:
             ((Actor::aU)->facingLeft = false);
-            ((Actor::aU)->positionX = (((Game::viewBounds)[0] + ((Actor::aU)->collisionBounds)[0]) - ((Actor::aU)->collisionBounds)[2]));
+            ((Actor::aU)->positionX = jsub32(jadd32((Game::viewBounds)[0], ((Actor::aU)->collisionBounds)[0]), ((Actor::aU)->collisionBounds)[2]));
             break;
          case 2:
             ((Actor::aU)->facingLeft = true);
-            ((Actor::aU)->positionX = (((Game::viewBounds)[2] + ((Actor::aU)->collisionBounds)[2]) - ((Actor::aU)->collisionBounds)[0]));
+            ((Actor::aU)->positionX = jsub32(jadd32((Game::viewBounds)[2], ((Actor::aU)->collisionBounds)[2]), ((Actor::aU)->collisionBounds)[0]));
          case 3:
             ;
          case 5:
@@ -11502,11 +11502,11 @@ Ref<Actor> Actor::m_q_II(jint var1, jint var2) {
             break;
          case 4:
             ((Actor::aU)->facingLeft = (this)->facingLeft);
-            ((Actor::aU)->positionY = ((Game::viewBounds)[1] + 4));
+            ((Actor::aU)->positionY = jadd32((Game::viewBounds)[1], 4));
             break;
          case 8:
             ((Actor::aU)->facingLeft = (this)->facingLeft);
-            ((Actor::aU)->positionY = ((((Game::viewBounds)[3] + ((Actor::aU)->collisionBounds)[3]) - ((Actor::aU)->collisionBounds)[1]) - 4));
+            ((Actor::aU)->positionY = jsub32(jsub32(jadd32((Game::viewBounds)[3], ((Actor::aU)->collisionBounds)[3]), ((Actor::aU)->collisionBounds)[1]), 4));
       }
    }
    ((Actor::aU)->ap = 81);
@@ -11558,10 +11558,10 @@ void Actor::m_h_Z(jboolean var1) {
 
 void Actor::m_bN_V() {
    Ref<Actor> _self(this);
-   ((this)->positionY = ((((((this)->collisionBounds)[3] + 1)) / 20) * 20));
+   ((this)->positionY = jmul32(((jadd32(((this)->collisionBounds)[3], 1)) / 20), 20));
    ((this)->positionY--);
    if ((((((this)->eD < 24) && ((this)->eD != 15)) && ((this)->eI >= 24)))) {
-      ((this)->positionY = (jint)(((this)->positionY + 20)));
+      ((this)->positionY = (jint)(jadd32((this)->positionY, 20)));
    }
    ((this)->H = 0);
    ((this)->G = 0);
@@ -11661,10 +11661,10 @@ void Actor::m_bP_V() {
          }
          return;
       }
-      ((Actor::dV)[0] = (((Game::aJ)->collisionBounds)[0] + 12));
-      ((Actor::dV)[2] = (((Game::aJ)->collisionBounds)[2] - 12));
-      ((Actor::dV)[1] = (((Game::aJ)->collisionBounds)[1] + 12));
-      ((Actor::dV)[3] = (((Game::aJ)->collisionBounds)[3] - 12));
+      ((Actor::dV)[0] = jadd32(((Game::aJ)->collisionBounds)[0], 12));
+      ((Actor::dV)[2] = jsub32(((Game::aJ)->collisionBounds)[2], 12));
+      ((Actor::dV)[1] = jadd32(((Game::aJ)->collisionBounds)[1], 12));
+      ((Actor::dV)[3] = jsub32(((Game::aJ)->collisionBounds)[3], 12));
       if (((((Actor::dV)[0] > ((this)->collisionBounds)[0]) && ((this)->G <= 0)))) {
          ((this)->G = 0);
       }
@@ -11683,10 +11683,10 @@ void Actor::m_bP_V() {
 void Actor::m_N_V() {
    Ref<Actor> _self(this);
    if ((Actor::bm)) {
-      this->m_a_IIIIIIZ(61, 38, (13 + (this)->ax), 0, 0, 101, false);
+      this->m_a_IIIIIIZ(61, 38, jadd32(13, (this)->ax), 0, 0, 101, false);
       this->m_g_V();
-      ((Actor::aU)->positionX = ((this)->positionX + 0));
-      ((Actor::aU)->positionY = ((this)->positionY + -4));
+      ((Actor::aU)->positionX = jadd32((this)->positionX, 0));
+      ((Actor::aU)->positionY = jadd32((this)->positionY, -4));
       ((Actor::aU)->n = jnewarray<Arr<jint>>(10));
       ((Actor::aU)->ap = 319);
       ((this)->ax++);
@@ -11714,7 +11714,7 @@ void Actor::m_bQ_V() {
                      case 1:
                         this->m_p_I(105);
                         ((this)->az = 0);
-                        ((this)->ac = ((this)->positionX - (Game::viewBounds)[0]));
+                        ((this)->ac = jsub32((this)->positionX, (Game::viewBounds)[0]));
                         ((this)->ad = (this)->positionY);
                         (Actor::E = this);
                         (Actor::F = (this)->as);
@@ -11937,7 +11937,7 @@ void Actor::m_bQ_V() {
             this->m_cV_V();
             if ((((this)->aA <= 0))) {
                ((this)->az = (((this)->av == 0) ? (this)->ay : ((((this)->av == 1) ? (this)->aw : (this)->ax))));
-               this->m_d_IIII((9 + (((this)->av % 2) * 2)), ((Game::viewBounds)[0] + 160), (this)->az, 6);
+               this->m_d_IIII(jadd32(9, jmul32(((this)->av % 2), 2)), jadd32((Game::viewBounds)[0], 160), (this)->az, 6);
                if ((((++(this)->av) >= 3))) {
                   this->m_p_I(103);
                } else {
@@ -11989,12 +11989,12 @@ void Actor::m_bQ_V() {
             break;
          case 108:
             ([&]{ auto _t8 = this; auto _t9 = (jint)(this->m_E_I(2560)); return _t8->H = _t9; }());
-            if (((((this)->H < 0) && (((this)->collisionBounds)[1] < (((Game::aJ)->collisionBounds)[1] + 20))))) {
+            if (((((this)->H < 0) && (((this)->collisionBounds)[1] < jadd32(((Game::aJ)->collisionBounds)[1], 20))))) {
                ((this)->H = 0);
-               ((this)->positionY = ((((Game::aJ)->collisionBounds)[1] + ((((this)->collisionBounds)[3] - ((this)->collisionBounds)[1]))) + 20));
-            } else if (((((this)->H > 0) && ((this)->positionY > (((Game::aJ)->collisionBounds)[3] - 10))))) {
+               ((this)->positionY = jadd32(jadd32(((Game::aJ)->collisionBounds)[1], (jsub32(((this)->collisionBounds)[3], ((this)->collisionBounds)[1]))), 20));
+            } else if (((((this)->H > 0) && ((this)->positionY > jsub32(((Game::aJ)->collisionBounds)[3], 10))))) {
                ((this)->H = 0);
-               ((this)->positionY = (((Game::aJ)->collisionBounds)[3] - 10));
+               ((this)->positionY = jsub32(((Game::aJ)->collisionBounds)[3], 10));
             }
             if ((((this)->H == 0))) {
                this->m_a_IIIIIIZ(-101, 14, 0, 0, 0, 302, false);
@@ -12013,12 +12013,12 @@ void Actor::m_bQ_V() {
             break;
          case 110:
             ([&]{ auto _t10 = this; auto _t11 = (jint)(this->m_E_I(1280)); return _t10->H = _t11; }());
-            if (((((this)->H < 0) && (((this)->collisionBounds)[1] < (((Game::aJ)->collisionBounds)[1] + 20))))) {
+            if (((((this)->H < 0) && (((this)->collisionBounds)[1] < jadd32(((Game::aJ)->collisionBounds)[1], 20))))) {
                ((this)->H = 0);
-               ((this)->positionY = (((((Game::aJ)->collisionBounds)[1] + ((this)->collisionBounds)[3]) - ((this)->collisionBounds)[1]) + 20));
-            } else if (((((this)->H > 0) && ((this)->positionY > (((Game::aJ)->collisionBounds)[3] - 10))))) {
+               ((this)->positionY = jadd32(jsub32(jadd32(((Game::aJ)->collisionBounds)[1], ((this)->collisionBounds)[3]), ((this)->collisionBounds)[1]), 20));
+            } else if (((((this)->H > 0) && ((this)->positionY > jsub32(((Game::aJ)->collisionBounds)[3], 10))))) {
                ((this)->H = 0);
-               ((this)->positionY = (((Game::aJ)->collisionBounds)[3] - 10));
+               ((this)->positionY = jsub32(((Game::aJ)->collisionBounds)[3], 10));
             }
             this->m_a_ActorII((this)->v, 0, 0);
             if (((((this)->r != nullptr) && ((this)->r)->m_e_V()))) {
@@ -12063,11 +12063,11 @@ void Actor::m_bQ_V() {
             }
             break;
          case 114:
-            ((this)->aw = ((this)->ay + (Game::viewBounds)[0]));
-            ([&]{ auto _t17 = this; auto _t18 = (jint)(Game::m_h_II(((this)->aw - (this)->positionX), ((this)->av - (this)->positionY))); return _t17->eX = _t18; }());
+            ((this)->aw = jadd32((this)->ay, (Game::viewBounds)[0]));
+            ([&]{ auto _t17 = this; auto _t18 = (jint)(Game::m_h_II(jsub32((this)->aw, (this)->positionX), jsub32((this)->av, (this)->positionY))); return _t17->eX = _t18; }());
             if ((((this)->eX > 4))) {
-               ((this)->G = (((this)->eX == 0) ? 0 : jdiv32(((((this)->aw - (this)->positionX)) * 1024), (this)->eX)));
-               ((this)->H = (((this)->eX == 0) ? 0 : jdiv32(((((this)->av - (this)->positionY)) * 1024), (this)->eX)));
+               ((this)->G = (((this)->eX == 0) ? 0 : jdiv32(jmul32((jsub32((this)->aw, (this)->positionX)), 1024), (this)->eX)));
+               ((this)->H = (((this)->eX == 0) ? 0 : jdiv32(jmul32((jsub32((this)->av, (this)->positionY)), 1024), (this)->eX)));
             } else {
                this->m_p_I(115);
             }
@@ -12110,11 +12110,11 @@ void Actor::m_bQ_V() {
             }
             break;
          case 119:
-            ((this)->aw = ((this)->ac + (Game::viewBounds)[0]));
-            ([&]{ auto _t19 = this; auto _t20 = (jint)(Game::m_h_II(((this)->aw - (this)->positionX), ((this)->ad - (this)->positionY))); return _t19->eX = _t20; }());
+            ((this)->aw = jadd32((this)->ac, (Game::viewBounds)[0]));
+            ([&]{ auto _t19 = this; auto _t20 = (jint)(Game::m_h_II(jsub32((this)->aw, (this)->positionX), jsub32((this)->ad, (this)->positionY))); return _t19->eX = _t20; }());
             if ((((this)->eX > 10))) {
-               ((this)->G = (((this)->eX == 0) ? 0 : jdiv32(((((this)->aw - (this)->positionX)) * 2560), (this)->eX)));
-               ((this)->H = (((this)->eX == 0) ? 0 : jdiv32(((((this)->ad - (this)->positionY)) * 2560), (this)->eX)));
+               ((this)->G = (((this)->eX == 0) ? 0 : jdiv32(jmul32((jsub32((this)->aw, (this)->positionX)), 2560), (this)->eX)));
+               ((this)->H = (((this)->eX == 0) ? 0 : jdiv32(jmul32((jsub32((this)->ad, (this)->positionY)), 2560), (this)->eX)));
             } else {
                this->m_db_V();
                this->m_p_I(120);
@@ -12141,7 +12141,7 @@ void Actor::m_bQ_V() {
                this->m_au_V();
                Game::m_e_Actor((this)->x);
                ((this)->x = nullptr);
-               this->m_c_III(27, ((this)->positionX + -35), ((this)->positionY + -90));
+               this->m_c_III(27, jadd32((this)->positionX, -35), jadd32((this)->positionY, -90));
             } else {
                this->m_g_AI(Actor::cT);
                if (((Actor::m_a_AIAI((this)->aJ, (Game::player)->collisionBounds) && Game::m_G_I(65568)))) {
@@ -12149,7 +12149,7 @@ void Actor::m_bQ_V() {
                   this->m_au_V();
                   Game::m_e_Actor((this)->x);
                   ((this)->x = nullptr);
-                  this->m_c_III(26, ((this)->positionX + -35), ((this)->positionY + -90));
+                  this->m_c_III(26, jadd32((this)->positionX, -35), jadd32((this)->positionY, -90));
                   this->m_p_I(124);
                   Actor::m_f_I(0);
                }
@@ -12162,11 +12162,11 @@ void Actor::m_bQ_V() {
             }
             break;
          case 123:
-            ((this)->aw = ((this)->ac + (Game::viewBounds)[0]));
-            ([&]{ auto _t21 = this; auto _t22 = (jint)(Game::m_h_II(((this)->aw - (this)->positionX), ((this)->ad - (this)->positionY))); return _t21->eX = _t22; }());
+            ((this)->aw = jadd32((this)->ac, (Game::viewBounds)[0]));
+            ([&]{ auto _t21 = this; auto _t22 = (jint)(Game::m_h_II(jsub32((this)->aw, (this)->positionX), jsub32((this)->ad, (this)->positionY))); return _t21->eX = _t22; }());
             if ((((this)->eX > 10))) {
-               ((this)->G = (((this)->eX == 0) ? 0 : jdiv32(((((this)->aw - (this)->positionX)) * 2560), (this)->eX)));
-               ((this)->H = (((this)->eX == 0) ? 0 : jdiv32(((((this)->ad - (this)->positionY)) * 2560), (this)->eX)));
+               ((this)->G = (((this)->eX == 0) ? 0 : jdiv32(jmul32((jsub32((this)->aw, (this)->positionX)), 2560), (this)->eX)));
+               ((this)->H = (((this)->eX == 0) ? 0 : jdiv32(jmul32((jsub32((this)->ad, (this)->positionY)), 2560), (this)->eX)));
             } else {
                this->m_db_V();
                this->m_p_I(105);
@@ -12229,8 +12229,8 @@ void Actor::m_bQ_V() {
    }
    if ((((this)->q != nullptr))) {
       if ((((this)->aq == 126))) {
-         (((this)->q)->positionX = ((Game::player)->positionX + 35));
-         (((this)->q)->positionY = ((Game::player)->positionY + -100));
+         (((this)->q)->positionX = jadd32((Game::player)->positionX, 35));
+         (((this)->q)->positionY = jadd32((Game::player)->positionY, -100));
       } else {
          this->m_a_ActorII((this)->q, -35, -90);
          if ((((((((this)->q)->animationId == 26) || (((this)->q)->animationId == 27))) && ((this)->q)->m_e_V()))) {
@@ -12273,23 +12273,23 @@ void Actor::m_O_V() {
    jint var1 = 0;
    if ((((this)->aq == 101))) {
       if ((((this)->aA >= 0))) {
-         (var1 = ((((500 - (this)->aA)) * 45) / 500));
-         jint var2 = ((this)->aB * 60);
-         ([&]{ auto _t2 = this; auto _t3 = (jint)(([&]{ auto _t0 = (Actor::E)->positionX; auto _t1 = (jshr32((jint)((var1 * Game::m_l_I(var2))), (jint)(8))); return (_t0 + _t1); }())); return _t2->positionX = _t3; }());
-         ([&]{ auto _t6 = this; auto _t7 = (jint)((([&]{ auto _t4 = (Actor::E)->positionY; auto _t5 = (jshr32((jint)((var1 * Game::m_m_I(var2))), (jint)(8))); return (_t4 + _t5); }()) - 37)); return _t6->positionY = _t7; }());
+         (var1 = (jmul32((jsub32(500, (this)->aA)), 45) / 500));
+         jint var2 = jmul32((this)->aB, 60);
+         ([&]{ auto _t2 = this; auto _t3 = (jint)(([&]{ auto _t0 = (Actor::E)->positionX; auto _t1 = (jshr32((jint)(jmul32(var1, Game::m_l_I(var2))), (jint)(8))); return jadd32(_t0, _t1); }())); return _t2->positionX = _t3; }());
+         ([&]{ auto _t6 = this; auto _t7 = (jint)(jsub32(([&]{ auto _t4 = (Actor::E)->positionY; auto _t5 = (jshr32((jint)(jmul32(var1, Game::m_m_I(var2))), (jint)(8))); return jadd32(_t4, _t5); }()), 37)); return _t6->positionY = _t7; }());
       } else {
-         ([&]{ auto _t10 = this; auto _t11 = (jint)(([&]{ auto _t8 = (Actor::E)->positionX; auto _t9 = (jshr32((jint)((45 * Game::m_l_I((((this)->aB * 60) + (this)->ay)))), (jint)(8))); return (_t8 + _t9); }())); return _t10->positionX = _t11; }());
-         ([&]{ auto _t14 = this; auto _t15 = (jint)((([&]{ auto _t12 = (Actor::E)->positionY; auto _t13 = (jshr32((jint)((45 * Game::m_m_I((((this)->aB * 60) + (this)->ay)))), (jint)(8))); return (_t12 + _t13); }()) - 37)); return _t14->positionY = _t15; }());
-         ((this)->ay = (jint)(((this)->ay + 10)));
+         ([&]{ auto _t10 = this; auto _t11 = (jint)(([&]{ auto _t8 = (Actor::E)->positionX; auto _t9 = (jshr32((jint)(jmul32(45, Game::m_l_I(jadd32(jmul32((this)->aB, 60), (this)->ay)))), (jint)(8))); return jadd32(_t8, _t9); }())); return _t10->positionX = _t11; }());
+         ([&]{ auto _t14 = this; auto _t15 = (jint)(jsub32(([&]{ auto _t12 = (Actor::E)->positionY; auto _t13 = (jshr32((jint)(jmul32(45, Game::m_m_I(jadd32(jmul32((this)->aB, 60), (this)->ay)))), (jint)(8))); return jadd32(_t12, _t13); }()), 37)); return _t14->positionY = _t15; }());
+         ((this)->ay = (jint)(jadd32((this)->ay, 10)));
       }
    } else if ((((this)->aq == 103))) {
-      ([&]{ auto _t16 = this; auto _t17 = (jint)(jshr32((jint)((2048 * Game::m_l_I((((this)->aB * 60) + (this)->ay)))), (jint)(8))); return _t16->G = _t17; }());
-      ([&]{ auto _t18 = this; auto _t19 = (jint)(jshr32((jint)((2048 * Game::m_m_I((((this)->aB * 60) + (this)->ay)))), (jint)(8))); return _t18->H = _t19; }());
+      ([&]{ auto _t16 = this; auto _t17 = (jint)(jshr32((jint)(jmul32(2048, Game::m_l_I(jadd32(jmul32((this)->aB, 60), (this)->ay)))), (jint)(8))); return _t16->G = _t17; }());
+      ([&]{ auto _t18 = this; auto _t19 = (jint)(jshr32((jint)(jmul32(2048, Game::m_m_I(jadd32(jmul32((this)->aB, 60), (this)->ay)))), (jint)(8))); return _t18->H = _t19; }());
       ((this)->c = (jint)(((this)->c & -17)));
    } else if ((((((this)->aq == 110) || ((this)->aq == 111)) || ((this)->aq == 112)))) {
       if ((((this)->aq == 110))) {
          if ((((this)->aA >= 0))) {
-            (var1 = ((50 * ((1000 - (this)->aA))) / 1000));
+            (var1 = (jmul32(50, (jsub32(1000, (this)->aA))) / 1000));
          } else {
             ((this)->aq = 111);
             (var1 = 50);
@@ -12298,8 +12298,8 @@ void Actor::m_O_V() {
          }
       } else if ((((this)->aq == 111))) {
          (var1 = 50);
-         ((this)->ay = (jint)(((this)->ay + 5)));
-         ((this)->aw = (jint)(((this)->aw + 5)));
+         ((this)->ay = (jint)(jadd32((this)->ay, 5)));
+         ((this)->aw = (jint)(jadd32((this)->aw, 5)));
          if ((((this)->aw >= 180))) {
             ((this)->aq = 112);
             ((this)->aA = 2000);
@@ -12321,14 +12321,14 @@ void Actor::m_O_V() {
          ((Actor::E)->v)->m_a_I(4);
          Game::m_e_Actor(((Actor::E)->v)->w);
          (((Actor::E)->v)->w = nullptr);
-         (var1 = (50 - ((this)->aA / 5)));
+         (var1 = jsub32(50, ((this)->aA / 5)));
       }
       if ((((this)->aB < 6))) {
-         ([&]{ auto _t26 = this; auto _t27 = (jint)(([&]{ auto _t24 = (Actor::E)->positionX; auto _t25 = (jshr32((jint)((var1 * Game::m_l_I((((this)->aB * 60) + (this)->ay)))), (jint)(8))); return (_t24 + _t25); }())); return _t26->positionX = _t27; }());
-         ([&]{ auto _t30 = this; auto _t31 = (jint)((([&]{ auto _t28 = (Actor::E)->positionY; auto _t29 = (jshr32((jint)((var1 * Game::m_m_I((((this)->aB * 60) + (this)->ay)))), (jint)(8))); return (_t28 + _t29); }()) - 40)); return _t30->positionY = _t31; }());
+         ([&]{ auto _t26 = this; auto _t27 = (jint)(([&]{ auto _t24 = (Actor::E)->positionX; auto _t25 = (jshr32((jint)(jmul32(var1, Game::m_l_I(jadd32(jmul32((this)->aB, 60), (this)->ay)))), (jint)(8))); return jadd32(_t24, _t25); }())); return _t26->positionX = _t27; }());
+         ([&]{ auto _t30 = this; auto _t31 = (jint)(jsub32(([&]{ auto _t28 = (Actor::E)->positionY; auto _t29 = (jshr32((jint)(jmul32(var1, Game::m_m_I(jadd32(jmul32((this)->aB, 60), (this)->ay)))), (jint)(8))); return jadd32(_t28, _t29); }()), 40)); return _t30->positionY = _t31; }());
       } else {
-         ([&]{ auto _t34 = this; auto _t35 = (jint)(([&]{ auto _t32 = ((Actor::E)->v)->positionX; auto _t33 = (jshr32((jint)((var1 * Game::m_l_I((((this)->aB * 60) + (this)->ay)))), (jint)(8))); return (_t32 + _t33); }())); return _t34->positionX = _t35; }());
-         ([&]{ auto _t38 = this; auto _t39 = (jint)((([&]{ auto _t36 = ((Actor::E)->v)->positionY; auto _t37 = (jshr32((jint)((var1 * Game::m_m_I((((this)->aB * 60) + (this)->ay)))), (jint)(8))); return (_t36 + _t37); }()) - 40)); return _t38->positionY = _t39; }());
+         ([&]{ auto _t34 = this; auto _t35 = (jint)(([&]{ auto _t32 = ((Actor::E)->v)->positionX; auto _t33 = (jshr32((jint)(jmul32(var1, Game::m_l_I(jadd32(jmul32((this)->aB, 60), (this)->ay)))), (jint)(8))); return jadd32(_t32, _t33); }())); return _t34->positionX = _t35; }());
+         ([&]{ auto _t38 = this; auto _t39 = (jint)(jsub32(([&]{ auto _t36 = ((Actor::E)->v)->positionY; auto _t37 = (jshr32((jint)(jmul32(var1, Game::m_m_I(jadd32(jmul32((this)->aB, 60), (this)->ay)))), (jint)(8))); return jadd32(_t36, _t37); }()), 40)); return _t38->positionY = _t39; }());
       }
    }
    if ((Actor::m_b_AIAI((Game::player)->collisionBounds, (this)->collisionBounds))) {
@@ -12342,17 +12342,17 @@ void Actor::m_d_IIII(jint var1, jint var2, jint var3, jint var4) {
    ((Actor::aU)->positionX = var2);
    ((Actor::aU)->positionY = var3);
    this->m_g_V();
-   ((Actor::aU)->ay = (((Actor::aU)->collisionBounds)[2] - ((Actor::aU)->collisionBounds)[0]));
+   ((Actor::aU)->ay = jsub32(((Actor::aU)->collisionBounds)[2], ((Actor::aU)->collisionBounds)[0]));
    ((Actor::aU)->aw = ((Actor::aU)->ay / 20));
-   ((Actor::aU)->av = (((Actor::aU)->collisionBounds)[3] - ((Actor::aU)->collisionBounds)[1]));
+   ((Actor::aU)->av = jsub32(((Actor::aU)->collisionBounds)[3], ((Actor::aU)->collisionBounds)[1]));
    ((Actor::aU)->n = jnewarray<Arr<jint>>(var4));
    ((Actor::aU)->ap = 319);
 }
 
 void Actor::m_bR_V() {
    Ref<Actor> _self(this);
-   jint var1 = (((this)->collisionBounds)[0] + 25);
-   jint var2 = (((this)->collisionBounds)[1] - 25);
+   jint var1 = jadd32(((this)->collisionBounds)[0], 25);
+   jint var2 = jsub32(((this)->collisionBounds)[1], 25);
    jint var3 = Game::m_i_II(1, 6);
    jint var4 = Game::m_i_II(1, 6);
    jint var5 = Game::m_i_II(1, 6);
@@ -12366,15 +12366,15 @@ void Actor::m_bR_V() {
       jint var6 = 0;
       for (; (var6 < 7); (var6++)) {
          this->m_a_IIIIIIZ(73, 44, 2, 0, var2, 100, false);
-         ((Actor::aU)->positionX = (var1 + (51 * var6)));
+         ((Actor::aU)->positionX = jadd32(var1, jmul32(51, var6)));
          if (((var6 == var3))) {
             ((Actor::aU)->positionY = var2);
          } else if (((var6 == var4))) {
-            ((Actor::aU)->positionY = (var2 - 100));
+            ((Actor::aU)->positionY = jsub32(var2, 100));
          } else if (((var6 == var5))) {
-            ((Actor::aU)->positionY = (var2 - 300));
+            ((Actor::aU)->positionY = jsub32(var2, 300));
          } else {
-            ((Actor::aU)->positionY = (var2 - 200));
+            ((Actor::aU)->positionY = jsub32(var2, 200));
          }
          ((Actor::aU)->c = (jint)(((Actor::aU)->c | 16)));
          ((Actor::aU)->az = 1);
@@ -12403,8 +12403,8 @@ void Actor::m_bS_V() {
             break;
          case 100:
             if ((this->m_e_V())) {
-               ((this)->positionX = jshr32((jint)((((Game::aJ)->collisionBounds)[2] + ((Game::aJ)->collisionBounds)[0])), (jint)(1)));
-               ((this)->positionY = ((jshr32((jint)((((Game::aJ)->collisionBounds)[3] + ((Game::aJ)->collisionBounds)[1])), (jint)(1))) + 20));
+               ((this)->positionX = jshr32((jint)(jadd32(((Game::aJ)->collisionBounds)[2], ((Game::aJ)->collisionBounds)[0])), (jint)(1)));
+               ((this)->positionY = jadd32((jshr32((jint)(jadd32(((Game::aJ)->collisionBounds)[3], ((Game::aJ)->collisionBounds)[1])), (jint)(1))), 20));
                this->m_p_I(101);
             }
             break;
@@ -12421,7 +12421,7 @@ void Actor::m_bS_V() {
                      (((Actor::aY)[var6])->aB = var6);
                      (((Actor::aY)[var6])->aA = 1000);
                      (((Actor::aY)[var6])->ay = 0);
-                     (((Actor::aY)[var6])->av = (((Game::player)->positionX <= jshr32((jint)((((Game::aJ)->collisionBounds)[2] + ((Game::aJ)->collisionBounds)[0])), (jint)(1))) ? 1 : -1));
+                     (((Actor::aY)[var6])->av = (((Game::player)->positionX <= jshr32((jint)(jadd32(((Game::aJ)->collisionBounds)[2], ((Game::aJ)->collisionBounds)[0])), (jint)(1))) ? 1 : -1));
                      (((Actor::aY)[var6])->aw = 0);
                      (((Actor::aY)[var6])->aq = 101);
                   }
@@ -12462,8 +12462,8 @@ void Actor::m_bS_V() {
             break;
          case 105:
             if ((this->m_e_V())) {
-               ((this)->positionX = jshr32((jint)((((Game::aJ)->collisionBounds)[2] + ((Game::aJ)->collisionBounds)[0])), (jint)(1)));
-               ((this)->positionY = ((jshr32((jint)((((Game::aJ)->collisionBounds)[3] + ((Game::aJ)->collisionBounds)[1])), (jint)(1))) + 0));
+               ((this)->positionX = jshr32((jint)(jadd32(((Game::aJ)->collisionBounds)[2], ((Game::aJ)->collisionBounds)[0])), (jint)(1)));
+               ((this)->positionY = jadd32((jshr32((jint)(jadd32(((Game::aJ)->collisionBounds)[3], ((Game::aJ)->collisionBounds)[1])), (jint)(1))), 0));
                this->m_p_I(106);
             }
             break;
@@ -12543,13 +12543,13 @@ void Actor::m_bS_V() {
             }
             break;
          case 109:
-            ((this)->ay = (jint)(((this)->ay + 5)));
-            ([&]{ auto _t16 = this; auto _t17 = (jint)((((this)->v)->positionX = jshr32((jint)((((Game::aJ)->collisionBounds)[2] + ((Game::aJ)->collisionBounds)[0])), (jint)(1)))); return _t16->positionX = _t17; }());
-            ([&]{ auto _t18 = this; auto _t19 = (jint)((((this)->v)->positionY = jshr32((jint)((((Game::aJ)->collisionBounds)[3] + ((Game::aJ)->collisionBounds)[1])), (jint)(1)))); return _t18->positionY = _t19; }());
-            ([&]{ auto _t22 = this; auto _t23 = (jint)(([&]{ auto _t20 = (this)->positionX; auto _t21 = (jshr32((jint)((60 * Game::m_l_I((this)->ay))), (jint)(8))); return (_t20 + _t21); }())); return _t22->positionX = _t23; }());
-            ([&]{ auto _t26 = this; auto _t27 = (jint)(([&]{ auto _t24 = (this)->positionY; auto _t25 = (jshr32((jint)((60 * Game::m_m_I((this)->ay))), (jint)(8))); return (_t24 - _t25); }())); return _t26->positionY = _t27; }());
-            ([&]{ auto _t30 = (this)->v; auto _t31 = (jint)(([&]{ auto _t28 = ((this)->v)->positionX; auto _t29 = (jshr32((jint)((60 * Game::m_l_I((this)->ay))), (jint)(8))); return (_t28 - _t29); }())); return _t30->positionX = _t31; }());
-            ([&]{ auto _t34 = (this)->v; auto _t35 = (jint)(([&]{ auto _t32 = ((this)->v)->positionY; auto _t33 = (jshr32((jint)((60 * Game::m_m_I((this)->ay))), (jint)(8))); return (_t32 + _t33); }())); return _t34->positionY = _t35; }());
+            ((this)->ay = (jint)(jadd32((this)->ay, 5)));
+            ([&]{ auto _t16 = this; auto _t17 = (jint)((((this)->v)->positionX = jshr32((jint)(jadd32(((Game::aJ)->collisionBounds)[2], ((Game::aJ)->collisionBounds)[0])), (jint)(1)))); return _t16->positionX = _t17; }());
+            ([&]{ auto _t18 = this; auto _t19 = (jint)((((this)->v)->positionY = jshr32((jint)(jadd32(((Game::aJ)->collisionBounds)[3], ((Game::aJ)->collisionBounds)[1])), (jint)(1)))); return _t18->positionY = _t19; }());
+            ([&]{ auto _t22 = this; auto _t23 = (jint)(([&]{ auto _t20 = (this)->positionX; auto _t21 = (jshr32((jint)(jmul32(60, Game::m_l_I((this)->ay))), (jint)(8))); return jadd32(_t20, _t21); }())); return _t22->positionX = _t23; }());
+            ([&]{ auto _t26 = this; auto _t27 = (jint)(([&]{ auto _t24 = (this)->positionY; auto _t25 = (jshr32((jint)(jmul32(60, Game::m_m_I((this)->ay))), (jint)(8))); return jsub32(_t24, _t25); }())); return _t26->positionY = _t27; }());
+            ([&]{ auto _t30 = (this)->v; auto _t31 = (jint)(([&]{ auto _t28 = ((this)->v)->positionX; auto _t29 = (jshr32((jint)(jmul32(60, Game::m_l_I((this)->ay))), (jint)(8))); return jsub32(_t28, _t29); }())); return _t30->positionX = _t31; }());
+            ([&]{ auto _t34 = (this)->v; auto _t35 = (jint)(([&]{ auto _t32 = ((this)->v)->positionY; auto _t33 = (jshr32((jint)(jmul32(60, Game::m_m_I((this)->ay))), (jint)(8))); return jadd32(_t32, _t33); }())); return _t34->positionY = _t35; }());
             if ((((this)->ay >= 90))) {
                this->m_p_I(107);
             }
@@ -12557,8 +12557,8 @@ void Actor::m_bS_V() {
          case 110:
             if ((this->m_e_V())) {
                this->m_a_I(10);
-               ((this)->positionX = jshr32((jint)((((Game::aJ)->collisionBounds)[2] + ((Game::aJ)->collisionBounds)[0])), (jint)(1)));
-               ((this)->positionY = (((Game::aJ)->collisionBounds)[1] + 60));
+               ((this)->positionX = jshr32((jint)(jadd32(((Game::aJ)->collisionBounds)[2], ((Game::aJ)->collisionBounds)[0])), (jint)(1)));
+               ((this)->positionY = jadd32(((Game::aJ)->collisionBounds)[1], 60));
                this->m_p_I(111);
             }
             break;
@@ -12600,7 +12600,7 @@ void Actor::m_bS_V() {
                {
                   jint var1 = 0;
                   for (; (var1 < 10); (var1++)) {
-                     ([&]{ auto _t36 = Actor::dc; auto _t37 = var1; auto _t38 = (jint)(Game::m_i_II((var1 * 36), ((var1 * 36) + 18))); return _t36[_t37] = _t38; }());
+                     ([&]{ auto _t36 = Actor::dc; auto _t37 = var1; auto _t38 = (jint)(Game::m_i_II(jmul32(var1, 36), jadd32(jmul32(var1, 36), 18))); return _t36[_t37] = _t38; }());
                      ([&]{ auto _t39 = Actor::dd; auto _t40 = var1; auto _t41 = (jint)(Game::m_i_II(5, 15)); return _t39[_t40] = _t41; }());
                   }
                }
@@ -12614,7 +12614,7 @@ void Actor::m_bS_V() {
       this->m_a_I(8);
    }
    if ((((this)->aq != 0))) {
-      ((this)->aC = jdiv32(((this)->as * 100), Actor::F));
+      ((this)->aC = jdiv32(jmul32((this)->as, 100), Actor::F));
    }
 }
 
@@ -12668,23 +12668,23 @@ void Actor::m_bT_V() {
                   (Actor::dJ = ((Game::aJ)->collisionBounds)[0]);
                   (Actor::dK = ((Game::aJ)->collisionBounds)[2]);
                   this->m_p_I(101);
-                  ((this)->ay = jshr32((jint)((Actor::dJ + Actor::dK)), (jint)(1)));
-                  ((this)->aw = ((this)->ay - 60));
-                  ((this)->ax = ((this)->ay + 60));
-                  ((this)->av = (Actor::dI + 40));
+                  ((this)->ay = jshr32((jint)(jadd32(Actor::dJ, Actor::dK)), (jint)(1)));
+                  ((this)->aw = jsub32((this)->ay, 60));
+                  ((this)->ax = jadd32((this)->ay, 60));
+                  ((this)->av = jadd32(Actor::dI, 40));
                   if (((((this)->C != -1) && ((this)->w == nullptr)))) {
                      ([&]{ auto _t4 = this; auto _t5 = (Ref<Actor>)(Game::m_i_I((this)->C)); return _t4->w = _t5; }());
-                     (Actor::dO = (((this)->w)->positionX - Actor::dJ));
-                     (Actor::dP = (((this)->w)->positionY - Actor::dH));
+                     (Actor::dO = jsub32(((this)->w)->positionX, Actor::dJ));
+                     (Actor::dP = jsub32(((this)->w)->positionY, Actor::dH));
                      (Actor::dL = Game::aJ);
                      (Actor::dM = (this)->w);
                   }
-                  (Actor::fh = (Actor::dH + Actor::dP));
-                  (Actor::fi = (Actor::dI + Actor::dP));
-                  (Actor::fj = (Actor::dJ + Actor::dO));
-                  (Actor::fk = (Actor::dK + Actor::dO));
-                  (Actor::fm = (Actor::dH + 120));
-                  (Actor::fn = (Actor::fh + 120));
+                  (Actor::fh = jadd32(Actor::dH, Actor::dP));
+                  (Actor::fi = jadd32(Actor::dI, Actor::dP));
+                  (Actor::fj = jadd32(Actor::dJ, Actor::dO));
+                  (Actor::fk = jadd32(Actor::dK, Actor::dO));
+                  (Actor::fm = jadd32(Actor::dH, 120));
+                  (Actor::fn = jadd32(Actor::fh, 120));
                   (Actor::fl = (this)->positionY);
                   (Actor::dN = 0);
                   (Actor::fo = (this)->as);
@@ -12931,8 +12931,8 @@ void Actor::m_bT_V() {
                ((Actor::aU)->aL = 2);
                ((this)->fx = true);
             }
-            if ((((((this)->aK == 1) && ((this)->positionX <= (Actor::dK - 30))) || (((this)->aK == 2) && ((this)->positionX >= (Actor::dJ + 30)))))) {
-               ((this)->positionX = ((this)->facingLeft ? (Actor::dK - 30) : (Actor::dJ + 30)));
+            if ((((((this)->aK == 1) && ((this)->positionX <= jsub32(Actor::dK, 30))) || (((this)->aK == 2) && ((this)->positionX >= jadd32(Actor::dJ, 30)))))) {
+               ((this)->positionX = ((this)->facingLeft ? jsub32(Actor::dK, 30) : jadd32(Actor::dJ, 30)));
                this->m_p_I(103);
             }
             break;
@@ -12943,31 +12943,31 @@ void Actor::m_bT_V() {
             }
             break;
          case 104:
-            ([&]{ auto _t6 = this; auto _t7 = (jint)((((this)->aK == 1) ? (-this->m_y_I(1280)) : this->m_y_I(1280))); return _t6->G = _t7; }());
-            ([&]{ auto _t10 = this; auto _t11 = (jint)(([&]{ auto _t8 = (jshr32((jint)((7 * Game::m_m_I((2 * (((this)->ac - (this)->positionX)))))), (jint)(8))); auto _t9 = (this)->ad; return (_t8 + _t9); }())); return _t10->positionY = _t11; }());
+            ([&]{ auto _t6 = this; auto _t7 = (jint)((((this)->aK == 1) ? jneg32(this->m_y_I(1280)) : this->m_y_I(1280))); return _t6->G = _t7; }());
+            ([&]{ auto _t10 = this; auto _t11 = (jint)(([&]{ auto _t8 = (jshr32((jint)(jmul32(7, Game::m_m_I(jmul32(2, (jsub32((this)->ac, (this)->positionX)))))), (jint)(8))); auto _t9 = (this)->ad; return jadd32(_t8, _t9); }())); return _t10->positionY = _t11; }());
             if ((((this)->aB > 0))) {
-               if ((((((this)->aK == 1) && ((this)->positionX <= (Actor::dJ - 0))) || (((this)->aK == 2) && ((this)->positionX >= (Actor::dK + 0)))))) {
+               if ((((((this)->aK == 1) && ((this)->positionX <= jsub32(Actor::dJ, 0))) || (((this)->aK == 2) && ((this)->positionX >= jadd32(Actor::dK, 0)))))) {
                   this->m_p_I(105);
                }
-            } else if ((((((this)->aK == 1) && ((this)->positionX <= (Actor::dK - 20))) || (((this)->aK == 2) && ((this)->positionX >= (Actor::dJ + 20)))))) {
-               ((this)->positionX = (((this)->aK == 1) ? (Actor::dK - 20) : (Actor::dJ + 20)));
+            } else if ((((((this)->aK == 1) && ((this)->positionX <= jsub32(Actor::dK, 20))) || (((this)->aK == 2) && ((this)->positionX >= jadd32(Actor::dJ, 20)))))) {
+               ((this)->positionX = (((this)->aK == 1) ? jsub32(Actor::dK, 20) : jadd32(Actor::dJ, 20)));
                this->m_p_I(106);
             }
             break;
          case 105:
-            (Actor::dD = (Actor::dD + ((Actor::dE ? Actor::dC : (-Actor::dC)))));
-            (Actor::dG = (Actor::dG + Actor::dC));
+            (Actor::dD = jadd32(Actor::dD, ((Actor::dE ? Actor::dC : jneg32(Actor::dC)))));
+            (Actor::dG = jadd32(Actor::dG, Actor::dC));
             if (((Actor::dG >= 180))) {
-               (Actor::dD = (Actor::dD + ((Actor::dE ? (-((Actor::dG - 180))) : (Actor::dG - 180)))));
+               (Actor::dD = jadd32(Actor::dD, ((Actor::dE ? jneg32((jsub32(Actor::dG, 180))) : jsub32(Actor::dG, 180)))));
             }
-            ([&]{ auto _t16 = this; auto _t17 = (jint)(([&]{ auto _t14 = Actor::dz; auto _t15 = (jshr32((jint)(([&]{ auto _t12 = Actor::dB; auto _t13 = Game::m_l_I(Actor::dD); return (_t12 * _t13); }())), (jint)(8))); return (_t14 + _t15); }())); return _t16->positionX = _t17; }());
-            ([&]{ auto _t22 = this; auto _t23 = (jint)(([&]{ auto _t20 = Actor::dA; auto _t21 = (jshr32((jint)(([&]{ auto _t18 = Actor::dB; auto _t19 = Game::m_m_I(Actor::dD); return (_t18 * _t19); }())), (jint)(8))); return (_t20 + _t21); }())); return _t22->positionY = _t23; }());
+            ([&]{ auto _t16 = this; auto _t17 = (jint)(([&]{ auto _t14 = Actor::dz; auto _t15 = (jshr32((jint)(([&]{ auto _t12 = Actor::dB; auto _t13 = Game::m_l_I(Actor::dD); return jmul32(_t12, _t13); }())), (jint)(8))); return jadd32(_t14, _t15); }())); return _t16->positionX = _t17; }());
+            ([&]{ auto _t22 = this; auto _t23 = (jint)(([&]{ auto _t20 = Actor::dA; auto _t21 = (jshr32((jint)(([&]{ auto _t18 = Actor::dB; auto _t19 = Game::m_m_I(Actor::dD); return jmul32(_t18, _t19); }())), (jint)(8))); return jadd32(_t20, _t21); }())); return _t22->positionY = _t23; }());
             if (((Actor::dG >= 180))) {
                this->m_p_I(104);
             }
             (Actor::fr = (Actor::dD % 360));
             if (((Actor::fr < 0))) {
-               (Actor::fr = (jint)((Actor::fr + 360)));
+               (Actor::fr = (jint)(jadd32(Actor::fr, 360)));
             }
             if (((Actor::fr >= 180))) {
                ((this)->aK = (Actor::dE ? 2 : 1));
@@ -12984,18 +12984,18 @@ void Actor::m_bT_V() {
          case 107:
             this->m_cV_V();
             if (((((this)->v != nullptr) && (((this)->v)->type == 78)))) {
-               if (((((this)->v)->positionY > (Actor::fd - 70)))) {
+               if (((((this)->v)->positionY > jsub32(Actor::fd, 70)))) {
                   (((this)->v)->positionY--);
                   (((this)->v)->av++);
                } else {
                   this->m_p_I(108);
                }
-               this->m_c_IIZ(((((this)->v)->collisionBounds)[0] + 30), ((((this)->v)->collisionBounds)[2] - 30), true);
+               this->m_c_IIZ(jadd32((((this)->v)->collisionBounds)[0], 30), jsub32((((this)->v)->collisionBounds)[2], 30), true);
             }
             break;
          case 108:
             this->m_cV_V();
-            this->m_c_IIZ(((((this)->v)->collisionBounds)[0] + 30), ((((this)->v)->collisionBounds)[2] - 30), false);
+            this->m_c_IIZ(jadd32((((this)->v)->collisionBounds)[0], 30), jsub32((((this)->v)->collisionBounds)[2], 30), false);
             if ((((this)->aA <= 0))) {
                this->m_p_I(109);
             }
@@ -13017,9 +13017,9 @@ void Actor::m_bT_V() {
             }
             break;
          case 111:
-            ([&]{ auto _t24 = this; auto _t25 = (jint)((((this)->aK == 1) ? (-this->m_y_I(1536)) : this->m_y_I(1536))); return _t24->G = _t25; }());
-            ([&]{ auto _t28 = this; auto _t29 = (jint)(([&]{ auto _t26 = (jshr32((jint)((7 * Game::m_m_I((2 * (((this)->ac - (this)->positionX)))))), (jint)(8))); auto _t27 = (this)->ad; return (_t26 + _t27); }())); return _t28->positionY = _t29; }());
-            if ((((((this)->aK == 1) && ((this)->positionX <= (Actor::dJ - 40))) || (((this)->aK == 2) && ((this)->positionX >= (Actor::dK + 40)))))) {
+            ([&]{ auto _t24 = this; auto _t25 = (jint)((((this)->aK == 1) ? jneg32(this->m_y_I(1536)) : this->m_y_I(1536))); return _t24->G = _t25; }());
+            ([&]{ auto _t28 = this; auto _t29 = (jint)(([&]{ auto _t26 = (jshr32((jint)(jmul32(7, Game::m_m_I(jmul32(2, (jsub32((this)->ac, (this)->positionX)))))), (jint)(8))); auto _t27 = (this)->ad; return jadd32(_t26, _t27); }())); return _t28->positionY = _t29; }());
+            if ((((((this)->aK == 1) && ((this)->positionX <= jsub32(Actor::dJ, 40))) || (((this)->aK == 2) && ((this)->positionX >= jadd32(Actor::dK, 40)))))) {
                this->m_p_I(112);
             }
             break;
@@ -13054,7 +13054,7 @@ void Actor::m_bT_V() {
             break;
          case 114:
             this->m_cV_V();
-            this->m_c_IIZ((Actor::fe - 30), (Actor::fe + 30), false);
+            this->m_c_IIZ(jsub32(Actor::fe, 30), jadd32(Actor::fe, 30), false);
             if ((((this)->aA <= 0))) {
                this->m_p_I(115);
             }
@@ -13062,7 +13062,7 @@ void Actor::m_bT_V() {
          case 115:
             if ((((this)->aB <= 0))) {
                if ((((this)->aB == 0))) {
-                  if ((((this)->positionY <= (Actor::dH - 150)))) {
+                  if ((((this)->positionY <= jsub32(Actor::dH, 150)))) {
                      this->m_p_I(116);
                      {
                         jint var2 = 0;
@@ -13077,25 +13077,25 @@ void Actor::m_bT_V() {
                   ((this)->positionY = Actor::fm);
                   this->m_p_I(117);
                }
-            } else if ((((((this)->aK == 4) && ((this)->positionY <= (Actor::dH - -40))) || (((this)->aK == 8) && ((this)->positionY >= (Actor::dI + -75)))))) {
+            } else if ((((((this)->aK == 4) && ((this)->positionY <= jsub32(Actor::dH, -40))) || (((this)->aK == 8) && ((this)->positionY >= jadd32(Actor::dI, -75)))))) {
                this->m_p_I(116);
             }
             this->m_bY_V();
             break;
          case 116:
-            (Actor::dD = (Actor::dD + ((Actor::dE ? Actor::dC : (-Actor::dC)))));
-            (Actor::dG = (Actor::dG + Actor::dC));
+            (Actor::dD = jadd32(Actor::dD, ((Actor::dE ? Actor::dC : jneg32(Actor::dC)))));
+            (Actor::dG = jadd32(Actor::dG, Actor::dC));
             if (((Actor::dG >= 180))) {
-               (Actor::dD = (Actor::dD + ((Actor::dE ? (-((Actor::dG - 180))) : (Actor::dG - 180)))));
+               (Actor::dD = jadd32(Actor::dD, ((Actor::dE ? jneg32((jsub32(Actor::dG, 180))) : jsub32(Actor::dG, 180)))));
             }
-            ([&]{ auto _t34 = this; auto _t35 = (jint)(([&]{ auto _t32 = Actor::dz; auto _t33 = (jshr32((jint)(([&]{ auto _t30 = Actor::dB; auto _t31 = Game::m_l_I(Actor::dD); return (_t30 * _t31); }())), (jint)(8))); return (_t32 + _t33); }())); return _t34->positionX = _t35; }());
-            ([&]{ auto _t40 = this; auto _t41 = (jint)(([&]{ auto _t38 = Actor::dA; auto _t39 = (jshr32((jint)(([&]{ auto _t36 = Actor::dB; auto _t37 = Game::m_m_I(Actor::dD); return (_t36 * _t37); }())), (jint)(8))); return (_t38 + _t39); }())); return _t40->positionY = _t41; }());
+            ([&]{ auto _t34 = this; auto _t35 = (jint)(([&]{ auto _t32 = Actor::dz; auto _t33 = (jshr32((jint)(([&]{ auto _t30 = Actor::dB; auto _t31 = Game::m_l_I(Actor::dD); return jmul32(_t30, _t31); }())), (jint)(8))); return jadd32(_t32, _t33); }())); return _t34->positionX = _t35; }());
+            ([&]{ auto _t40 = this; auto _t41 = (jint)(([&]{ auto _t38 = Actor::dA; auto _t39 = (jshr32((jint)(([&]{ auto _t36 = Actor::dB; auto _t37 = Game::m_m_I(Actor::dD); return jmul32(_t36, _t37); }())), (jint)(8))); return jadd32(_t38, _t39); }())); return _t40->positionY = _t41; }());
             if (((Actor::dG >= 180))) {
                this->m_p_I(115);
             }
             (Actor::fr = (Actor::dD % 360));
             if (((Actor::fr < 0))) {
-               (Actor::fr = (jint)((Actor::fr + 360)));
+               (Actor::fr = (jint)(jadd32(Actor::fr, 360)));
             }
             if ((((Actor::fr >= 90) && (Actor::fr < 270)))) {
                ((this)->aK = (Actor::dE ? 4 : 8));
@@ -13105,17 +13105,17 @@ void Actor::m_bT_V() {
             this->m_bY_V();
             break;
          case 117:
-            ([&]{ auto _t46 = this; auto _t47 = (jint)(([&]{ auto _t44 = Actor::dz; auto _t45 = (jshr32((jint)(([&]{ auto _t42 = Actor::dB; auto _t43 = Game::m_l_I(Actor::dD); return (_t42 * _t43); }())), (jint)(8))); return (_t44 + _t45); }())); return _t46->positionX = _t47; }());
-            ([&]{ auto _t52 = this; auto _t53 = (jint)(([&]{ auto _t50 = Actor::dA; auto _t51 = (jshr32((jint)(([&]{ auto _t48 = Actor::dB; auto _t49 = Game::m_m_I(Actor::dD); return (_t48 * _t49); }())), (jint)(8))); return (_t50 + _t51); }())); return _t52->positionY = _t53; }());
-            (Actor::dD = (Actor::dD + ((Actor::dE ? Actor::dC : (-Actor::dC)))));
-            (Actor::dG = (Actor::dG + Actor::dC));
-            (Actor::dC = (5 + ((Actor::dG * 45) / 1080)));
+            ([&]{ auto _t46 = this; auto _t47 = (jint)(([&]{ auto _t44 = Actor::dz; auto _t45 = (jshr32((jint)(([&]{ auto _t42 = Actor::dB; auto _t43 = Game::m_l_I(Actor::dD); return jmul32(_t42, _t43); }())), (jint)(8))); return jadd32(_t44, _t45); }())); return _t46->positionX = _t47; }());
+            ([&]{ auto _t52 = this; auto _t53 = (jint)(([&]{ auto _t50 = Actor::dA; auto _t51 = (jshr32((jint)(([&]{ auto _t48 = Actor::dB; auto _t49 = Game::m_m_I(Actor::dD); return jmul32(_t48, _t49); }())), (jint)(8))); return jadd32(_t50, _t51); }())); return _t52->positionY = _t53; }());
+            (Actor::dD = jadd32(Actor::dD, ((Actor::dE ? Actor::dC : jneg32(Actor::dC)))));
+            (Actor::dG = jadd32(Actor::dG, Actor::dC));
+            (Actor::dC = jadd32(5, (jmul32(Actor::dG, 45) / 1080)));
             if (((Actor::dG >= 1080))) {
                this->m_p_I(118);
             }
             (Actor::fr = (Actor::dD % 360));
             if (((Actor::fr < 0))) {
-               (Actor::fr = (jint)((Actor::fr + 360)));
+               (Actor::fr = (jint)(jadd32(Actor::fr, 360)));
             }
             if (((Actor::fr >= 180))) {
                ((this)->aK = (Actor::dE ? 2 : 1));
@@ -13125,7 +13125,7 @@ void Actor::m_bT_V() {
             break;
          case 118:
             if (((Game::P >= 24))) {
-               (Actor::dN = (1 - Actor::dN));
+               (Actor::dN = jsub32(1, Actor::dN));
                this->m_p_I(119);
             }
             break;
@@ -13142,44 +13142,44 @@ void Actor::m_bT_V() {
             }
             break;
          case 121:
-            if ((((((this)->aK == 1) && ((this)->positionX <= (Actor::fj - 120))) || (((this)->aK == 2) && ((this)->positionX >= (Actor::fk + 120)))))) {
-               ([&]{ auto _t54 = this; auto _t55 = (jint)((-this->m_y_I(1536))); return _t54->H = _t55; }());
-               if ((((this)->positionY <= (Actor::fh + 30)))) {
-                  ((this)->positionY = (Actor::fh + 30));
+            if ((((((this)->aK == 1) && ((this)->positionX <= jsub32(Actor::fj, 120))) || (((this)->aK == 2) && ((this)->positionX >= jadd32(Actor::fk, 120)))))) {
+               ([&]{ auto _t54 = this; auto _t55 = (jint)(jneg32(this->m_y_I(1536))); return _t54->H = _t55; }());
+               if ((((this)->positionY <= jadd32(Actor::fh, 30)))) {
+                  ((this)->positionY = jadd32(Actor::fh, 30));
                   this->m_p_I(122);
                   this->m_cb_V();
                }
             }
             break;
          case 122:
-            if ((((((this)->aK == 1) && ((this)->positionX <= (Actor::fj - 40))) || (((this)->aK == 2) && ((this)->positionX >= (Actor::fk + 40)))))) {
+            if ((((((this)->aK == 1) && ((this)->positionX <= jsub32(Actor::fj, 40))) || (((this)->aK == 2) && ((this)->positionX >= jadd32(Actor::fk, 40)))))) {
                this->m_p_I(123);
             }
             break;
          case 123:
             ((this)->H = -3072);
-            if ((((this)->positionY <= (Actor::fh + -40)))) {
-               ((this)->positionY = (Actor::fh + -40));
-               ([&]{ auto _t56 = this; auto _t57 = (jint)((((this)->aK == 1) ? (-this->m_y_I(1536)) : this->m_y_I(1536))); return _t56->G = _t57; }());
-               if ((((((this)->aK == 1) && ((this)->positionX <= jshr32((jint)((Actor::fj + Actor::fk)), (jint)(1)))) || (((this)->aK == 2) && ((this)->positionX >= jshr32((jint)((Actor::fj + Actor::fk)), (jint)(1))))))) {
-                  ((this)->positionX = jshr32((jint)((Actor::fj + Actor::fk)), (jint)(1)));
+            if ((((this)->positionY <= jadd32(Actor::fh, -40)))) {
+               ((this)->positionY = jadd32(Actor::fh, -40));
+               ([&]{ auto _t56 = this; auto _t57 = (jint)((((this)->aK == 1) ? jneg32(this->m_y_I(1536)) : this->m_y_I(1536))); return _t56->G = _t57; }());
+               if ((((((this)->aK == 1) && ((this)->positionX <= jshr32((jint)(jadd32(Actor::fj, Actor::fk)), (jint)(1)))) || (((this)->aK == 2) && ((this)->positionX >= jshr32((jint)(jadd32(Actor::fj, Actor::fk)), (jint)(1))))))) {
+                  ((this)->positionX = jshr32((jint)(jadd32(Actor::fj, Actor::fk)), (jint)(1)));
                   this->m_p_I(124);
                }
             }
             break;
          case 124:
-            if ((((((this)->aK == 1) && ((this)->positionX <= (Actor::fj - 40))) || (((this)->aK == 2) && ((this)->positionX >= (Actor::fk + 40)))))) {
+            if ((((((this)->aK == 1) && ((this)->positionX <= jsub32(Actor::fj, 40))) || (((this)->aK == 2) && ((this)->positionX >= jadd32(Actor::fk, 40)))))) {
                this->m_db_V();
                ((this)->H = 3072);
-               if ((((this)->positionY >= (Actor::fh + 155)))) {
-                  ((this)->positionY = (Actor::fh + 155));
+               if ((((this)->positionY >= jadd32(Actor::fh, 155)))) {
+                  ((this)->positionY = jadd32(Actor::fh, 155));
                   this->m_p_I(125);
                }
             }
             break;
          case 125:
-            if ((((((this)->aK == 1) && ((this)->positionX <= (Actor::fk - 30))) || (((this)->aK == 2) && ((this)->positionX >= (Actor::fj + 30)))))) {
-               ((this)->positionX = (((this)->aK == 1) ? (Actor::fk - 30) : (Actor::fj + 30)));
+            if ((((((this)->aK == 1) && ((this)->positionX <= jsub32(Actor::fk, 30))) || (((this)->aK == 2) && ((this)->positionX >= jadd32(Actor::fj, 30)))))) {
+               ((this)->positionX = (((this)->aK == 1) ? jsub32(Actor::fk, 30) : jadd32(Actor::fj, 30)));
                this->m_p_I(126);
             }
             break;
@@ -13191,27 +13191,27 @@ void Actor::m_bT_V() {
             break;
          case 127:
             if ((((this)->aB > 0))) {
-               if ((((((this)->aK == 1) && ((this)->positionX <= (Actor::fj - -50))) || (((this)->aK == 2) && ((this)->positionX >= (Actor::fk + -50)))))) {
+               if ((((((this)->aK == 1) && ((this)->positionX <= jsub32(Actor::fj, -50))) || (((this)->aK == 2) && ((this)->positionX >= jadd32(Actor::fk, -50)))))) {
                   this->m_p_I(128);
                }
-            } else if ((((((this)->aK == 1) && ((this)->positionX <= (Actor::fk - 20))) || (((this)->aK == 2) && ((this)->positionX >= (Actor::fj + 20)))))) {
+            } else if ((((((this)->aK == 1) && ((this)->positionX <= jsub32(Actor::fk, 20))) || (((this)->aK == 2) && ((this)->positionX >= jadd32(Actor::fj, 20)))))) {
                this->m_p_I(129);
             }
             break;
          case 128:
-            (Actor::dD = (Actor::dD + ((Actor::dE ? Actor::dC : (-Actor::dC)))));
-            (Actor::dG = (Actor::dG + Actor::dC));
+            (Actor::dD = jadd32(Actor::dD, ((Actor::dE ? Actor::dC : jneg32(Actor::dC)))));
+            (Actor::dG = jadd32(Actor::dG, Actor::dC));
             if (((Actor::dG >= 180))) {
-               (Actor::dD = (Actor::dD + ((Actor::dE ? (-((Actor::dG - 180))) : (Actor::dG - 180)))));
+               (Actor::dD = jadd32(Actor::dD, ((Actor::dE ? jneg32((jsub32(Actor::dG, 180))) : jsub32(Actor::dG, 180)))));
             }
-            ([&]{ auto _t62 = this; auto _t63 = (jint)(([&]{ auto _t60 = Actor::dz; auto _t61 = (jshr32((jint)(([&]{ auto _t58 = Actor::dB; auto _t59 = Game::m_l_I(Actor::dD); return (_t58 * _t59); }())), (jint)(8))); return (_t60 + _t61); }())); return _t62->positionX = _t63; }());
-            ([&]{ auto _t68 = this; auto _t69 = (jint)(([&]{ auto _t66 = Actor::dA; auto _t67 = (jshr32((jint)(([&]{ auto _t64 = Actor::dB; auto _t65 = Game::m_m_I(Actor::dD); return (_t64 * _t65); }())), (jint)(8))); return (_t66 + _t67); }())); return _t68->positionY = _t69; }());
+            ([&]{ auto _t62 = this; auto _t63 = (jint)(([&]{ auto _t60 = Actor::dz; auto _t61 = (jshr32((jint)(([&]{ auto _t58 = Actor::dB; auto _t59 = Game::m_l_I(Actor::dD); return jmul32(_t58, _t59); }())), (jint)(8))); return jadd32(_t60, _t61); }())); return _t62->positionX = _t63; }());
+            ([&]{ auto _t68 = this; auto _t69 = (jint)(([&]{ auto _t66 = Actor::dA; auto _t67 = (jshr32((jint)(([&]{ auto _t64 = Actor::dB; auto _t65 = Game::m_m_I(Actor::dD); return jmul32(_t64, _t65); }())), (jint)(8))); return jadd32(_t66, _t67); }())); return _t68->positionY = _t69; }());
             if (((Actor::dG >= 180))) {
                this->m_p_I(127);
             }
             (Actor::fr = (Actor::dD % 360));
             if (((Actor::fr < 0))) {
-               (Actor::fr = (jint)((Actor::fr + 360)));
+               (Actor::fr = (jint)(jadd32(Actor::fr, 360)));
             }
             if (((Actor::fr >= 180))) {
                ((this)->aK = (Actor::dE ? 2 : 1));
@@ -13227,7 +13227,7 @@ void Actor::m_bT_V() {
             break;
          case 130:
             this->m_cV_V();
-            if ((((this)->aA <= (428 * (this)->aB)))) {
+            if ((((this)->aA <= jmul32(428, (this)->aB)))) {
                ((this)->aB--);
                if ((((this)->aB >= 0))) {
                   (((Actor::fb)[(this)->aB])->aq = 109);
@@ -13238,7 +13238,7 @@ void Actor::m_bT_V() {
                this->m_p_I(131);
             }
             if (((Game::aN <= 0))) {
-               (Actor::fq = (Actor::fq - Game::h));
+               (Actor::fq = jsub32(Actor::fq, Game::h));
                if (((Actor::fq <= 0))) {
                   Game::m_e_I(Game::m_i_II(2, 5));
                   (Actor::fq = Game::m_i_II(80, 600));
@@ -13252,22 +13252,22 @@ void Actor::m_bT_V() {
             }
             break;
          case 132:
-            if ((((((this)->aK == 1) && ((this)->positionX <= jshr32((jint)((Actor::fj + Actor::fk)), (jint)(1)))) || (((this)->aK == 2) && ((this)->positionX >= jshr32((jint)((Actor::fj + Actor::fk)), (jint)(1))))))) {
-               ((this)->positionX = jshr32((jint)((Actor::fj + Actor::fk)), (jint)(1)));
+            if ((((((this)->aK == 1) && ((this)->positionX <= jshr32((jint)(jadd32(Actor::fj, Actor::fk)), (jint)(1)))) || (((this)->aK == 2) && ((this)->positionX >= jshr32((jint)(jadd32(Actor::fj, Actor::fk)), (jint)(1))))))) {
+               ((this)->positionX = jshr32((jint)(jadd32(Actor::fj, Actor::fk)), (jint)(1)));
                this->m_p_I(133);
             }
             break;
          case 133:
-            (Actor::dD = (Actor::dD + ((Actor::dE ? Actor::dC : (-Actor::dC)))));
-            (Actor::dG = (Actor::dG + Actor::dC));
+            (Actor::dD = jadd32(Actor::dD, ((Actor::dE ? Actor::dC : jneg32(Actor::dC)))));
+            (Actor::dG = jadd32(Actor::dG, Actor::dC));
             if (((Actor::dG >= 360))) {
-               (Actor::dD = (Actor::dD + ((Actor::dE ? (-((Actor::dG - 360))) : (Actor::dG - 360)))));
+               (Actor::dD = jadd32(Actor::dD, ((Actor::dE ? jneg32((jsub32(Actor::dG, 360))) : jsub32(Actor::dG, 360)))));
             }
-            ([&]{ auto _t74 = this; auto _t75 = (jint)(([&]{ auto _t72 = Actor::dz; auto _t73 = (jshr32((jint)(([&]{ auto _t70 = Actor::dB; auto _t71 = Game::m_l_I(Actor::dD); return (_t70 * _t71); }())), (jint)(8))); return (_t72 + _t73); }())); return _t74->positionX = _t75; }());
-            ([&]{ auto _t80 = this; auto _t81 = (jint)(([&]{ auto _t78 = Actor::dA; auto _t79 = (jshr32((jint)(([&]{ auto _t76 = Actor::dB; auto _t77 = Game::m_m_I(Actor::dD); return (_t76 * _t77); }())), (jint)(8))); return (_t78 + _t79); }())); return _t80->positionY = _t81; }());
+            ([&]{ auto _t74 = this; auto _t75 = (jint)(([&]{ auto _t72 = Actor::dz; auto _t73 = (jshr32((jint)(([&]{ auto _t70 = Actor::dB; auto _t71 = Game::m_l_I(Actor::dD); return jmul32(_t70, _t71); }())), (jint)(8))); return jadd32(_t72, _t73); }())); return _t74->positionX = _t75; }());
+            ([&]{ auto _t80 = this; auto _t81 = (jint)(([&]{ auto _t78 = Actor::dA; auto _t79 = (jshr32((jint)(([&]{ auto _t76 = Actor::dB; auto _t77 = Game::m_m_I(Actor::dD); return jmul32(_t76, _t77); }())), (jint)(8))); return jadd32(_t78, _t79); }())); return _t80->positionY = _t81; }());
             (Actor::fr = (Actor::dD % 360));
             if (((Actor::fr < 0))) {
-               (Actor::fr = (jint)((Actor::fr + 360)));
+               (Actor::fr = (jint)(jadd32(Actor::fr, 360)));
             }
             if (((Actor::fr >= 180))) {
                ((this)->aK = (Actor::dE ? 2 : 1));
@@ -13276,7 +13276,7 @@ void Actor::m_bT_V() {
             }
             if (((Actor::dG >= 360))) {
                ((this)->positionX = Actor::dz);
-               ((this)->positionY = (Actor::dA + Actor::dB));
+               ((this)->positionY = jadd32(Actor::dA, Actor::dB));
                this->m_p_I(134);
             }
             break;
@@ -13300,22 +13300,22 @@ void Actor::m_bT_V() {
             break;
          case 137:
             ((this)->H = 2048);
-            if ((((this)->positionY >= (Actor::fi + 40)))) {
-               ((this)->positionY = (Actor::fi + 40));
+            if ((((this)->positionY >= jadd32(Actor::fi, 40)))) {
+               ((this)->positionY = jadd32(Actor::fi, 40));
                ((this)->G = 2048);
-               if ((((this)->positionX >= (Actor::fk + 40)))) {
-                  ((this)->positionX = (Actor::fk + 40));
+               if ((((this)->positionX >= jadd32(Actor::fk, 40)))) {
+                  ((this)->positionX = jadd32(Actor::fk, 40));
                   this->m_p_I(138);
                }
             }
             break;
          case 138:
             ((this)->H = -3072);
-            if ((((this)->positionY <= (Actor::fh - 40)))) {
-               ((this)->positionY = (Actor::fh - 40));
+            if ((((this)->positionY <= jsub32(Actor::fh, 40)))) {
+               ((this)->positionY = jsub32(Actor::fh, 40));
                ((this)->G = -3072);
-               if ((((this)->positionX <= ((jshr32((jint)((Actor::fj + Actor::fk)), (jint)(1))) - 60)))) {
-                  ((this)->positionX = ((jshr32((jint)((Actor::fj + Actor::fk)), (jint)(1))) - 60));
+               if ((((this)->positionX <= jsub32((jshr32((jint)(jadd32(Actor::fj, Actor::fk)), (jint)(1))), 60)))) {
+                  ((this)->positionX = jsub32((jshr32((jint)(jadd32(Actor::fj, Actor::fk)), (jint)(1))), 60));
                   this->m_p_I(139);
                }
             }
@@ -13328,14 +13328,14 @@ void Actor::m_bT_V() {
             }
             break;
          case 140:
-            ([&]{ auto _t84 = this; auto _t85 = (jint)((-this->m_y_I(2560))); return _t84->H = _t85; }());
-            if ((((this)->positionY <= (Actor::dH - 40)))) {
-               ((this)->positionY = (Actor::dH - 40));
+            ([&]{ auto _t84 = this; auto _t85 = (jint)(jneg32(this->m_y_I(2560))); return _t84->H = _t85; }());
+            if ((((this)->positionY <= jsub32(Actor::dH, 40)))) {
+               ((this)->positionY = jsub32(Actor::dH, 40));
                this->m_p_I(141);
             }
             break;
          case 141:
-            if ((((((this)->aK == 1) && ((this)->positionX <= (Actor::dJ - 40))) || (((this)->aK == 2) && ((this)->positionX >= (Actor::dK + 40)))))) {
+            if ((((((this)->aK == 1) && ((this)->positionX <= jsub32(Actor::dJ, 40))) || (((this)->aK == 2) && ((this)->positionX >= jadd32(Actor::dK, 40)))))) {
                this->m_db_V();
                ((this)->H = 3072);
                if ((((this)->positionY >= Actor::fl))) {
@@ -13353,20 +13353,20 @@ void Actor::m_bT_V() {
          case 154:
             ((this)->aK = (((this)->G < 0) ? 1 : 2));
             ((this)->G = jshl32((jint)((this)->av), (jint)(8)));
-            ([&]{ auto _t90 = this; auto _t91 = (jint)(([&]{ auto _t88 = (jshr32((jint)(([&]{ auto _t86 = (this)->ay; auto _t87 = Game::m_m_I(((jshr32((jint)(((this)->aw * (((this)->ac - (this)->positionX)))), (jint)(8))) + (this)->ax)); return (_t86 * _t87); }())), (jint)(8))); auto _t89 = (this)->ad; return (_t88 + _t89); }())); return _t90->positionY = _t91; }());
+            ([&]{ auto _t90 = this; auto _t91 = (jint)(([&]{ auto _t88 = (jshr32((jint)(([&]{ auto _t86 = (this)->ay; auto _t87 = Game::m_m_I(jadd32((jshr32((jint)(jmul32((this)->aw, (jsub32((this)->ac, (this)->positionX)))), (jint)(8))), (this)->ax)); return jmul32(_t86, _t87); }())), (jint)(8))); auto _t89 = (this)->ad; return jadd32(_t88, _t89); }())); return _t90->positionY = _t91; }());
             break;
          case 152:
-            (Actor::dD = (Actor::dD + ((Actor::dE ? Actor::dC : (-Actor::dC)))));
-            (Actor::dG = (Actor::dG + Actor::dC));
+            (Actor::dD = jadd32(Actor::dD, ((Actor::dE ? Actor::dC : jneg32(Actor::dC)))));
+            (Actor::dG = jadd32(Actor::dG, Actor::dC));
             if (((Actor::dG < 180))) {
                if (((Actor::dG >= 180))) {
-                  (Actor::dD = (Actor::dD + ((Actor::dE ? (-((Actor::dG - 180))) : (Actor::dG - 180)))));
+                  (Actor::dD = jadd32(Actor::dD, ((Actor::dE ? jneg32((jsub32(Actor::dG, 180))) : jsub32(Actor::dG, 180)))));
                }
-               ([&]{ auto _t96 = this; auto _t97 = (jint)(([&]{ auto _t94 = Actor::dz; auto _t95 = (jshr32((jint)(([&]{ auto _t92 = Actor::dB; auto _t93 = Game::m_l_I(Actor::dD); return (_t92 * _t93); }())), (jint)(8))); return (_t94 + _t95); }())); return _t96->positionX = _t97; }());
-               ([&]{ auto _t102 = this; auto _t103 = (jint)(([&]{ auto _t100 = Actor::dA; auto _t101 = (jshr32((jint)(([&]{ auto _t98 = Actor::dB; auto _t99 = Game::m_m_I(Actor::dD); return (_t98 * _t99); }())), (jint)(8))); return (_t100 + _t101); }())); return _t102->positionY = _t103; }());
+               ([&]{ auto _t96 = this; auto _t97 = (jint)(([&]{ auto _t94 = Actor::dz; auto _t95 = (jshr32((jint)(([&]{ auto _t92 = Actor::dB; auto _t93 = Game::m_l_I(Actor::dD); return jmul32(_t92, _t93); }())), (jint)(8))); return jadd32(_t94, _t95); }())); return _t96->positionX = _t97; }());
+               ([&]{ auto _t102 = this; auto _t103 = (jint)(([&]{ auto _t100 = Actor::dA; auto _t101 = (jshr32((jint)(([&]{ auto _t98 = Actor::dB; auto _t99 = Game::m_m_I(Actor::dD); return jmul32(_t98, _t99); }())), (jint)(8))); return jadd32(_t100, _t101); }())); return _t102->positionY = _t103; }());
                (Actor::fr = (Actor::dD % 360));
                if (((Actor::fr < 0))) {
-                  (Actor::fr = (jint)((Actor::fr + 360)));
+                  (Actor::fr = (jint)(jadd32(Actor::fr, 360)));
                }
                if ((((Actor::fr >= 90) && (Actor::fr < 270)))) {
                   ((this)->aK = (Actor::dE ? 4 : 8));
@@ -13450,8 +13450,8 @@ void Actor::m_bU_V() {
       if (((Actor::dN == 0))) {
          if ((((((Actor::dp)[(this)->aF])->aK == 1) || (((Actor::dp)[(this)->aF])->aK == 2)))) {
             (((Actor::fa)[(this)->aF])->facingLeft = (!(this)->facingLeft));
-            (((Actor::fa)[(this)->aF])->positionX = ((this)->positionX + (((this)->facingLeft ? 20 : -20))));
-            (((Actor::fa)[(this)->aF])->positionY = ((this)->positionY - 14));
+            (((Actor::fa)[(this)->aF])->positionX = jadd32((this)->positionX, (((this)->facingLeft ? 20 : -20))));
+            (((Actor::fa)[(this)->aF])->positionY = jsub32((this)->positionY, 14));
             if (((((Actor::fa)[(this)->aF])->animationId != 12))) {
                ((Actor::fa)[(this)->aF])->m_b_I(12);
                ([&]{ auto _t5 = (Actor::fa)[(this)->aF]; auto _t6 = (jint)(Game::m_i_II(0, (((Actor::fa)[(this)->aF])->p)->m_a_I(12))); return _t5->i = _t6; }());
@@ -13459,7 +13459,7 @@ void Actor::m_bU_V() {
             }
          } else if (((((Actor::dp)[(this)->aF])->aK == 4))) {
             (((Actor::fa)[(this)->aF])->positionX = (this)->positionX);
-            (((Actor::fa)[(this)->aF])->positionY = ((this)->positionY - 12));
+            (((Actor::fa)[(this)->aF])->positionY = jsub32((this)->positionY, 12));
             if (((((Actor::fa)[(this)->aF])->animationId != 13))) {
                ((Actor::fa)[(this)->aF])->m_b_I(13);
                ([&]{ auto _t7 = (Actor::fa)[(this)->aF]; auto _t8 = (jint)(Game::m_i_II(0, (((Actor::fa)[(this)->aF])->p)->m_a_I(13))); return _t7->i = _t8; }());
@@ -13467,7 +13467,7 @@ void Actor::m_bU_V() {
             }
          } else if (((((Actor::dp)[(this)->aF])->aK == 8))) {
             (((Actor::fa)[(this)->aF])->positionX = (this)->positionX);
-            (((Actor::fa)[(this)->aF])->positionY = ((this)->positionY + 12));
+            (((Actor::fa)[(this)->aF])->positionY = jadd32((this)->positionY, 12));
             if (((((Actor::fa)[(this)->aF])->animationId != 14))) {
                ((Actor::fa)[(this)->aF])->m_b_I(14);
                ([&]{ auto _t9 = (Actor::fa)[(this)->aF]; auto _t10 = (jint)(Game::m_i_II(0, (((Actor::fa)[(this)->aF])->p)->m_a_I(14))); return _t9->i = _t10; }());
@@ -13477,14 +13477,14 @@ void Actor::m_bU_V() {
       } else if (((Actor::dN == 1))) {
          if ((((((Actor::dp)[(this)->aF])->aK == 1) || (((Actor::dp)[(this)->aF])->aK == 2)))) {
             (((Actor::fa)[(this)->aF])->facingLeft = (!(this)->facingLeft));
-            (((Actor::fa)[(this)->aF])->positionX = ((this)->positionX + (((this)->facingLeft ? 10 : -10))));
-            (((Actor::fa)[(this)->aF])->positionY = ((this)->positionY - 8));
+            (((Actor::fa)[(this)->aF])->positionX = jadd32((this)->positionX, (((this)->facingLeft ? 10 : -10))));
+            (((Actor::fa)[(this)->aF])->positionY = jsub32((this)->positionY, 8));
             ((Actor::fa)[(this)->aF])->m_b_I(68);
             return;
          }
          if ((((((Actor::dp)[(this)->aF])->aK == 4) || (((Actor::dp)[(this)->aF])->aK == 8)))) {
             (((Actor::fa)[(this)->aF])->positionX = (this)->positionX);
-            (((Actor::fa)[(this)->aF])->positionY = ((this)->positionY + (((((Actor::dp)[(this)->aF])->aK == 4) ? -12 : 12))));
+            (((Actor::fa)[(this)->aF])->positionY = jadd32((this)->positionY, (((((Actor::dp)[(this)->aF])->aK == 4) ? -12 : 12))));
             ((Actor::fa)[(this)->aF])->m_b_I(69);
          }
       }
@@ -13493,7 +13493,7 @@ void Actor::m_bU_V() {
 
 jint Actor::m_y_I(jint var1) {
    Ref<Actor> _self(this);
-   return (var1 + jdiv32((((var1 * 30) / 100) * ((Actor::fo - (this)->as))), Actor::fo));
+   return jadd32(var1, jdiv32(jmul32((jmul32(var1, 30) / 100), (jsub32(Actor::fo, (this)->as))), Actor::fo));
 }
 
 void Actor::m_r_II(jint var1, jint var2) {
@@ -13502,25 +13502,25 @@ void Actor::m_r_II(jint var1, jint var2) {
    if ((((this)->collisionBounds != nullptr))) {
       this->m_g_V();
       if (((Actor::aT == nullptr))) {
-         jint var4 = jshr32((jint)(((Game::player)->b + (Game::player)->H)), (jint)(8));
-         if ((((((((Game::player)->H >= 0) && ((Game::player)->positionY <= (((this)->collisionBounds)[1] + var1))) && (((Game::player)->collisionBounds)[2] > ((this)->collisionBounds)[0])) && (((Game::player)->collisionBounds)[0] < ((this)->collisionBounds)[2])) && (((var4 >= (((this)->collisionBounds)[1] + (jshr32((jint)((this)->H), (jint)(8))))) || (var4 >= ((this)->collisionBounds)[1])))))) {
+         jint var4 = jshr32((jint)(jadd32((Game::player)->b, (Game::player)->H)), (jint)(8));
+         if ((((((((Game::player)->H >= 0) && ((Game::player)->positionY <= jadd32(((this)->collisionBounds)[1], var1))) && (((Game::player)->collisionBounds)[2] > ((this)->collisionBounds)[0])) && (((Game::player)->collisionBounds)[0] < ((this)->collisionBounds)[2])) && (((var4 >= jadd32(((this)->collisionBounds)[1], (jshr32((jint)((this)->H), (jint)(8))))) || (var4 >= ((this)->collisionBounds)[1])))))) {
             (Actor::aT = this);
             (Game::player)->m_a_I(9);
-            ((Game::player)->positionY = (((this)->collisionBounds)[1] + var1));
+            ((Game::player)->positionY = jadd32(((this)->collisionBounds)[1], var1));
             ((Game::player)->G = (Actor::aT)->G);
             ((Game::player)->H = (Actor::aT)->H);
             return;
          }
       } else if (((Actor::aT == this))) {
          (Game::player)->m_g_V();
-         if (((((((((Game::player)->animationId == 7) || Actor::m_b_AIAI((Game::player)->collisionBounds, (this)->collisionBounds)) || (((Game::player)->H - (this)->H) >= 0))) && ((Game::player)->positionX <= ((this)->collisionBounds)[2])) && ((Game::player)->positionX >= ((this)->collisionBounds)[0])))) {
-            ((Game::player)->positionX = ((Game::player)->positionX + (((this)->positionX - var2))));
-            ((Game::player)->positionY = (((this)->collisionBounds)[1] - 1));
+         if (((((((((Game::player)->animationId == 7) || Actor::m_b_AIAI((Game::player)->collisionBounds, (this)->collisionBounds)) || (jsub32((Game::player)->H, (this)->H) >= 0))) && ((Game::player)->positionX <= ((this)->collisionBounds)[2])) && ((Game::player)->positionX >= ((this)->collisionBounds)[0])))) {
+            ((Game::player)->positionX = jadd32((Game::player)->positionX, (jsub32((this)->positionX, var2))));
+            ((Game::player)->positionY = jsub32(((this)->collisionBounds)[1], 1));
          } else {
             if ((((Game::player)->positionX > ((this)->collisionBounds)[2]))) {
                {
-                  jint var6 = ((this)->aF - 1);
-                  for (; (var6 <= ((this)->aF + 1)); (var6 = (jint)((var6 + 2)))) {
+                  jint var6 = jsub32((this)->aF, 1);
+                  for (; (var6 <= jadd32((this)->aF, 1)); (var6 = (jint)(jadd32(var6, 2)))) {
                      if (((((var6 >= 0) && (var6 < 11)) && (((Actor::dp)[var6])->positionX > (this)->positionX)))) {
                         (Actor::aT = (Actor::dp)[var6]);
                         (var3 = true);
@@ -13530,8 +13530,8 @@ void Actor::m_r_II(jint var1, jint var2) {
                }
             } else if ((((Game::player)->positionX < ((this)->collisionBounds)[0]))) {
                {
-                  jint var5 = ((this)->aF - 1);
-                  for (; (var5 <= ((this)->aF + 1)); (var5 = (jint)((var5 + 2)))) {
+                  jint var5 = jsub32((this)->aF, 1);
+                  for (; (var5 <= jadd32((this)->aF, 1)); (var5 = (jint)(jadd32(var5, 2)))) {
                      if (((((var5 >= 0) && (var5 < 11)) && (((Actor::dp)[var5])->positionX < (this)->positionX)))) {
                         (Actor::aT = (Actor::dp)[var5]);
                         (var3 = true);
@@ -13563,17 +13563,17 @@ void Actor::m_Q_V() {
             Game::m_e_Actor((Actor::dp)[var1]);
          }
          if (((var1 == 10))) {
-            ([&]{ auto _t0 = Actor::dp; auto _t1 = var1; auto _t2 = (Ref<Actor>)(this->m_a_IIIIIIZ(85, 47, 2, 0, 0, ((this)->ap - var1), false)); return _t0[_t1] = _t2; }());
-            (((Actor::dp)[var1])->positionX = ((((this)->positionX + 25) + 20) + 192));
+            ([&]{ auto _t0 = Actor::dp; auto _t1 = var1; auto _t2 = (Ref<Actor>)(this->m_a_IIIIIIZ(85, 47, 2, 0, 0, jsub32((this)->ap, var1), false)); return _t0[_t1] = _t2; }());
+            (((Actor::dp)[var1])->positionX = jadd32(jadd32(jadd32((this)->positionX, 25), 20), 192));
          } else {
-            ([&]{ auto _t3 = Actor::dp; auto _t4 = var1; auto _t5 = (Ref<Actor>)(this->m_a_IIIIIIZ(84, 47, 1, 0, 0, ((this)->ap - var1), false)); return _t3[_t4] = _t5; }());
-            (((Actor::dp)[var1])->positionX = (((this)->positionX + 25) + (((var1 - 1)) * 24)));
+            ([&]{ auto _t3 = Actor::dp; auto _t4 = var1; auto _t5 = (Ref<Actor>)(this->m_a_IIIIIIZ(84, 47, 1, 0, 0, jsub32((this)->ap, var1), false)); return _t3[_t4] = _t5; }());
+            (((Actor::dp)[var1])->positionX = jadd32(jadd32((this)->positionX, 25), jmul32((jsub32(var1, 1)), 24)));
          }
          (((Actor::dp)[var1])->aF = var1);
          (((Actor::dp)[var1])->aH = (this)->aH);
-         ((Actor::dp)[(var1 - 1)])->m_b_Actor((Actor::dp)[var1]);
-         ([&]{ auto _t6 = Actor::dq; auto _t7 = (var1 - 1); auto _t8 = (Ref<Vector>)(jnew<Vector>()); return _t6[_t7] = _t8; }());
-         (((Actor::dp)[var1])->eX = (((Actor::dp)[var1])->positionX - ((Actor::dp)[(var1 - 1)])->positionX));
+         ((Actor::dp)[jsub32(var1, 1)])->m_b_Actor((Actor::dp)[var1]);
+         ([&]{ auto _t6 = Actor::dq; auto _t7 = jsub32(var1, 1); auto _t8 = (Ref<Vector>)(jnew<Vector>()); return _t6[_t7] = _t8; }());
+         (((Actor::dp)[var1])->eX = jsub32(((Actor::dp)[var1])->positionX, ((Actor::dp)[jsub32(var1, 1)])->positionX));
          (((Actor::dp)[var1])->aK = (this)->aK);
          ((Actor::dp)[var1])->m_bZ_V();
       }
@@ -13581,13 +13581,13 @@ void Actor::m_Q_V() {
    {
       jint var2 = 0;
       for (; (var2 < 10); (var2++)) {
-         ((Actor::dp)[var2])->m_b_III(((Actor::dp)[(var2 + 1)])->positionX, ((Actor::dp)[(var2 + 1)])->positionY, (this)->aK);
+         ((Actor::dp)[var2])->m_b_III(((Actor::dp)[jadd32(var2, 1)])->positionX, ((Actor::dp)[jadd32(var2, 1)])->positionY, (this)->aK);
       }
    }
    {
       jint var3 = 1;
       for (; (var3 < 10); (var3++)) {
-         ([&]{ auto _t9 = Actor::fa; auto _t10 = var3; auto _t11 = (Ref<Actor>)(this->m_a_IIIIIIZ(-103, 21, 12, 0, 0, ((((this)->ap - var3) + 11) + 5), false)); return _t9[_t10] = _t11; }());
+         ([&]{ auto _t9 = Actor::fa; auto _t10 = var3; auto _t11 = (Ref<Actor>)(this->m_a_IIIIIIZ(-103, 21, 12, 0, 0, jadd32(jadd32(jsub32((this)->ap, var3), 11), 5), false)); return _t9[_t10] = _t11; }());
          if ((((this)->aH == 0))) {
             ([&]{ auto _t12 = (Actor::fa)[var3]; auto _t13 = (jint)(Game::m_i_II(0, (((Actor::fa)[var3])->p)->m_a_I(12))); return _t12->i = _t13; }());
          } else {
@@ -13599,28 +13599,28 @@ void Actor::m_Q_V() {
 
 void Actor::m_z_I(jint var1) {
    Ref<Actor> _self(this);
-   jint var2 = ((var1 == 0) ? (-Actor::dO) : Actor::dO);
-   jint var3 = ((var1 == 0) ? (-Actor::dP) : Actor::dP);
+   jint var2 = ((var1 == 0) ? jneg32(Actor::dO) : Actor::dO);
+   jint var3 = ((var1 == 0) ? jneg32(Actor::dP) : Actor::dP);
    {
       jint var8 = 0;
       for (; (var8 < 11); (var8++)) {
          (((Actor::dp)[var8])->aL = ((var1 == 0) ? 0 : 1));
-         (((Actor::dp)[var8])->positionX = (jint)((((Actor::dp)[var8])->positionX + var2)));
-         (((Actor::dp)[var8])->positionY = (jint)((((Actor::dp)[var8])->positionY + var3)));
+         (((Actor::dp)[var8])->positionX = (jint)(jadd32(((Actor::dp)[var8])->positionX, var2)));
+         (((Actor::dp)[var8])->positionY = (jint)(jadd32(((Actor::dp)[var8])->positionY, var3)));
          Ref<Vector> var7{};
          if ((((var8 < 10) && (((var7 = (Actor::dq)[var8])) != nullptr)))) {
             jint var4 = (var7)->size();
             {
                jint var9 = 0;
                for (; (var9 < (var4 / 3)); (var9++)) {
-                  jint var5 = this->m_a_Object((var7)->elementAt(((var9 * 3) + 0)));
-                  jint var6 = this->m_a_Object((var7)->elementAt(((var9 * 3) + 1)));
-                  (var5 = (jint)((var5 + var2)));
-                  (var6 = (jint)((var6 + var3)));
-                  (var7)->removeElementAt(((var9 * 3) + 0));
-                  (var7)->insertElementAt(jnew<Integer>(var5), ((var9 * 3) + 0));
-                  (var7)->removeElementAt(((var9 * 3) + 1));
-                  (var7)->insertElementAt(jnew<Integer>(var6), ((var9 * 3) + 1));
+                  jint var5 = this->m_a_Object((var7)->elementAt(jadd32(jmul32(var9, 3), 0)));
+                  jint var6 = this->m_a_Object((var7)->elementAt(jadd32(jmul32(var9, 3), 1)));
+                  (var5 = (jint)(jadd32(var5, var2)));
+                  (var6 = (jint)(jadd32(var6, var3)));
+                  (var7)->removeElementAt(jadd32(jmul32(var9, 3), 0));
+                  (var7)->insertElementAt(jnew<Integer>(var5), jadd32(jmul32(var9, 3), 0));
+                  (var7)->removeElementAt(jadd32(jmul32(var9, 3), 1));
+                  (var7)->insertElementAt(jnew<Integer>(var6), jadd32(jmul32(var9, 3), 1));
                }
             }
          }
@@ -13635,31 +13635,31 @@ void Actor::m_z_I(jint var1) {
          }
          ((Actor::fa)[var12] = nullptr);
          if (((var1 == 0))) {
-            ([&]{ auto _t0 = Actor::fa; auto _t1 = var12; auto _t2 = (Ref<Actor>)(this->m_a_IIIIIIZ(-103, 21, 12, 0, 0, (((this)->ap - var12) + 11), false)); return _t0[_t1] = _t2; }());
+            ([&]{ auto _t0 = Actor::fa; auto _t1 = var12; auto _t2 = (Ref<Actor>)(this->m_a_IIIIIIZ(-103, 21, 12, 0, 0, jadd32(jsub32((this)->ap, var12), 11), false)); return _t0[_t1] = _t2; }());
             ([&]{ auto _t3 = (Actor::fa)[var12]; auto _t4 = (jint)(Game::m_i_II(0, (((Actor::fa)[var12])->p)->m_a_I(12))); return _t3->i = _t4; }());
          } else if ((((var1 == 1) && ((var12 % 2) == 1)))) {
-            ([&]{ auto _t5 = Actor::fa; auto _t6 = var12; auto _t7 = (Ref<Actor>)(this->m_a_IIIIIIZ(-103, 17, 68, 0, 0, (((this)->ap - var12) + 11), false)); return _t5[_t6] = _t7; }());
+            ([&]{ auto _t5 = Actor::fa; auto _t6 = var12; auto _t7 = (Ref<Actor>)(this->m_a_IIIIIIZ(-103, 17, 68, 0, 0, jadd32(jsub32((this)->ap, var12), 11), false)); return _t5[_t6] = _t7; }());
          }
          if (((Actor::fg && ((Actor::fa)[var12] != nullptr)))) {
             Game::m_b_Actor((Actor::fa)[var12]);
          }
       }
    }
-   ((Game::player)->positionX = (jint)(((Game::player)->positionX + var2)));
-   ((Game::player)->positionY = (jint)(((Game::player)->positionY + var3)));
+   ((Game::player)->positionX = (jint)(jadd32((Game::player)->positionX, var2)));
+   ((Game::player)->positionY = (jint)(jadd32((Game::player)->positionY, var3)));
 }
 
 void Actor::m_bV_V() {
    Ref<Actor> _self(this);
    jint var1{};
    if (((((var1 = Actor::m_l_I(((this)->aA % 500)))) >= 250))) {
-      (var1 = (500 - var1));
+      (var1 = jsub32(500, var1));
    }
    {
       jint var3 = 1;
       for (; (var3 <= 4); (var3++)) {
-         jint var2 = ((9 * (((4 - var3) + 1))) / 4);
-         (((Actor::dp)[(11 - var3)])->positionY = (jint)((((Actor::dp)[(11 - var3)])->positionY - (var2 - ((var1 * var2) / 125)))));
+         jint var2 = (jmul32(9, (jadd32(jsub32(4, var3), 1))) / 4);
+         (((Actor::dp)[jsub32(11, var3)])->positionY = (jint)(jsub32(((Actor::dp)[jsub32(11, var3)])->positionY, jsub32(var2, (jmul32(var1, var2) / 125)))));
       }
    }
 }
@@ -13699,10 +13699,10 @@ void Actor::m_bW_V() {
       for (; (var1 < Game::ck); (var1++)) {
          Ref<Actor> var2{};
          if ((((((var2 = (Game::cj)[var1])) != nullptr) && ((var2)->type == 79)))) {
-            ((Actor::dV)[1] = (((this)->collisionBounds)[1] - 10));
-            ((Actor::dV)[3] = (((this)->collisionBounds)[3] + 10));
-            ((Actor::dV)[0] = (((this)->collisionBounds)[0] - 10));
-            ((Actor::dV)[2] = (((this)->collisionBounds)[2] + 10));
+            ((Actor::dV)[1] = jsub32(((this)->collisionBounds)[1], 10));
+            ((Actor::dV)[3] = jadd32(((this)->collisionBounds)[3], 10));
+            ((Actor::dV)[0] = jsub32(((this)->collisionBounds)[0], 10));
+            ((Actor::dV)[2] = jadd32(((this)->collisionBounds)[2], 10));
             if ((Actor::m_b_AIAI((var2)->collisionBounds, Actor::dV))) {
                (var2)->m_a_AIZI(Actor::dV, false, 79);
             }
@@ -13719,7 +13719,7 @@ void Actor::m_bX_V() {
          Ref<Actor> var2{};
          if ((((((var2 = (Game::cj)[var1])) != nullptr) && ((var2)->type == 78)))) {
             ((Actor::dV)[1] = ((var2)->collisionBounds)[1]);
-            ((Actor::dV)[3] = ((Actor::dV)[1] + 1));
+            ((Actor::dV)[3] = jadd32((Actor::dV)[1], 1));
             ((Actor::dV)[0] = ((var2)->collisionBounds)[0]);
             ((Actor::dV)[2] = ((var2)->collisionBounds)[2]);
             {
@@ -13737,7 +13737,7 @@ void Actor::m_bX_V() {
 
 void Actor::m_a_ActorIII(Ref<Actor> var1, jint var2, jint var3, jint var4) {
    Ref<Actor> _self(this);
-   ((Actor::fc)[var2] = ((Actor::fc)[var2] - Game::h));
+   ((Actor::fc)[var2] = jsub32((Actor::fc)[var2], Game::h));
    if ((((Actor::fc)[var2] <= 0))) {
       this->m_a_IIIIIIZ(-53, 18, 2, 0, 0, 308, false);
       ([&]{ auto _t0 = Actor::aU; auto _t1 = (jint)(Game::m_i_II(var3, var4)); return _t0->positionX = _t1; }());
@@ -13751,7 +13751,7 @@ void Actor::m_a_ActorIII(Ref<Actor> var1, jint var2, jint var3, jint var4) {
 void Actor::m_bY_V() {
    Ref<Actor> _self(this);
    ((Actor::dV)[1] = (((this)->v)->collisionBounds)[1]);
-   ((Actor::dV)[3] = ((Actor::dV)[1] + 1));
+   ((Actor::dV)[3] = jadd32((Actor::dV)[1], 1));
    ((Actor::dV)[0] = (((this)->v)->collisionBounds)[0]);
    ((Actor::dV)[2] = (((this)->v)->collisionBounds)[2]);
    {
@@ -13767,7 +13767,7 @@ void Actor::m_bY_V() {
 
 void Actor::m_c_IIZ(jint var1, jint var2, jboolean var3) {
    Ref<Actor> _self(this);
-   (Actor::fp = (Actor::fp - Game::h));
+   (Actor::fp = jsub32(Actor::fp, Game::h));
    if (((Actor::fp <= 0))) {
       this->m_a_IIIIIIZ(-53, 18, 2, 0, 0, 308, false);
       ([&]{ auto _t0 = Actor::aU; auto _t1 = (jint)(Game::m_i_II(var1, var2)); return _t0->positionX = _t1; }());
@@ -13777,7 +13777,7 @@ void Actor::m_c_IIZ(jint var1, jint var2, jboolean var3) {
       (Actor::fp = Game::m_i_II(80, 600));
    }
    if (((var3 && (Game::aN <= 0)))) {
-      (Actor::fq = (Actor::fq - Game::h));
+      (Actor::fq = jsub32(Actor::fq, Game::h));
       if (((Actor::fq <= 0))) {
          Game::m_e_I(Game::m_i_II(2, 5));
          (Actor::fq = Game::m_i_II(80, 600));
@@ -13803,29 +13803,29 @@ void Actor::m_bZ_V() {
 void Actor::m_ca_V() {
    Ref<Actor> _self(this);
    Ref<Vector> var1{};
-   jint var2 = ((((var1 = (Actor::dq)[((this)->aF - 1)])))->size() / 3);
+   jint var2 = ((((var1 = (Actor::dq)[jsub32((this)->aF, 1)])))->size() / 3);
    jint var8 = 0;
    {
       jint var9 = 0;
-      for (; (var9 < (var2 - 1)); (var9++)) {
-         jint var3 = this->m_a_Object((var1)->elementAt(((var9 * 3) + 0)));
-         jint var4 = this->m_a_Object((var1)->elementAt(((var9 * 3) + 1)));
-         jint var5 = this->m_a_Object((var1)->elementAt(((var9 * 3) + 3)));
-         jint var6 = this->m_a_Object((var1)->elementAt(((var9 * 3) + 4)));
-         jint var7 = this->m_a_Object((var1)->elementAt(((var9 * 3) + 5)));
-         jint var10 = Game::m_h_II((var5 - var3), (var6 - var4));
-         if (((((var8 = (jint)((var8 + var10)))) >= (this)->eX))) {
-            jint var11 = (var10 - ((var8 - (this)->eX)));
-            ((this)->positionX = (var3 + jdiv32((((var5 - var3)) * var11), var10)));
-            ((this)->positionY = (var4 + jdiv32((((var6 - var4)) * var11), var10)));
+      for (; (var9 < jsub32(var2, 1)); (var9++)) {
+         jint var3 = this->m_a_Object((var1)->elementAt(jadd32(jmul32(var9, 3), 0)));
+         jint var4 = this->m_a_Object((var1)->elementAt(jadd32(jmul32(var9, 3), 1)));
+         jint var5 = this->m_a_Object((var1)->elementAt(jadd32(jmul32(var9, 3), 3)));
+         jint var6 = this->m_a_Object((var1)->elementAt(jadd32(jmul32(var9, 3), 4)));
+         jint var7 = this->m_a_Object((var1)->elementAt(jadd32(jmul32(var9, 3), 5)));
+         jint var10 = Game::m_h_II(jsub32(var5, var3), jsub32(var6, var4));
+         if (((((var8 = (jint)(jadd32(var8, var10)))) >= (this)->eX))) {
+            jint var11 = jsub32(var10, (jsub32(var8, (this)->eX)));
+            ((this)->positionX = jadd32(var3, jdiv32(jmul32((jsub32(var5, var3)), var11), var10)));
+            ((this)->positionY = jadd32(var4, jdiv32(jmul32((jsub32(var6, var4)), var11), var10)));
             ((this)->aK = var7);
             this->m_bZ_V();
             {
-               jint var12 = (var2 - 1);
-               for (; (var12 > (var9 + 2)); (var12--)) {
-                  (var1)->removeElementAt(((var12 * 3) + 2));
-                  (var1)->removeElementAt(((var12 * 3) + 1));
-                  (var1)->removeElementAt((var12 * 3));
+               jint var12 = jsub32(var2, 1);
+               for (; (var12 > jadd32(var9, 2)); (var12--)) {
+                  (var1)->removeElementAt(jadd32(jmul32(var12, 3), 2));
+                  (var1)->removeElementAt(jadd32(jmul32(var12, 3), 1));
+                  (var1)->removeElementAt(jmul32(var12, 3));
                }
             }
             break;
@@ -13851,13 +13851,13 @@ jint Actor::m_a_Object(Ref<Object> var1) {
 
 void Actor::m_cb_V() {
    Ref<Actor> _self(this);
-   jint var1 = jshr32((jint)((Actor::fj + Actor::fk)), (jint)(1));
+   jint var1 = jshr32((jint)(jadd32(Actor::fj, Actor::fk)), (jint)(1));
    jint var2 = Actor::fh;
    {
       jint var3 = 0;
       for (; (var3 < 7); (var3++)) {
          this->m_a_IIIIIIZ(75, 17, 49, 0, 0, 302, false);
-         ((Actor::aU)->positionX = ((var1 - ((((((var3 % 2) == 0) ? 1 : -1)) * (jshr32((jint)((var3 + 1)), (jint)(1)))) * 25)) - 0));
+         ((Actor::aU)->positionX = jsub32(jsub32(var1, jmul32(jmul32(((((var3 % 2) == 0) ? 1 : -1)), (jshr32((jint)(jadd32(var3, 1)), (jint)(1)))), 25)), 0));
          ((Actor::aU)->positionY = var2);
          ((Actor::aU)->aH = 2);
          ((Actor::aU)->aq = 104);
@@ -13868,13 +13868,13 @@ void Actor::m_cb_V() {
 
 void Actor::m_cc_V() {
    Ref<Actor> _self(this);
-   jint var1 = jshr32((jint)((Actor::fj + Actor::fk)), (jint)(1));
+   jint var1 = jshr32((jint)(jadd32(Actor::fj, Actor::fk)), (jint)(1));
    jint var2 = ((this)->collisionBounds)[3];
    {
       jint var3 = 0;
       for (; (var3 < 4); (var3++)) {
          this->m_a_IIIIIIZ(75, 17, 48, 0, 0, 302, false);
-         ((Actor::aU)->positionX = ((var1 - ((((((var3 % 2) == 0) ? 1 : -1)) * (jshr32((jint)(var3), (jint)(1)))) * 30)) - (((((var3 % 2) == 0) ? 1 : -1)) * 50)));
+         ((Actor::aU)->positionX = jsub32(jsub32(var1, jmul32(jmul32(((((var3 % 2) == 0) ? 1 : -1)), (jshr32((jint)(var3), (jint)(1)))), 30)), jmul32(((((var3 % 2) == 0) ? 1 : -1)), 50)));
          ((Actor::aU)->positionY = var2);
          ((Actor::aU)->aH = 3);
          ((Actor::aU)->aq = 106);
@@ -13919,7 +13919,7 @@ void Actor::m_cd_V() {
                   ((Actor::dp)[0])->m_c_IZ(152, true);
                   break;
                case 3:
-                  (((Actor::dp)[0])->positionX = (jint)((((Actor::dp)[0])->positionX - 120)));
+                  (((Actor::dp)[0])->positionX = (jint)(jsub32(((Actor::dp)[0])->positionX, 120)));
                   (((Actor::dp)[0])->G = jshl32((jint)((this)->av), (jint)(8)));
                   (((Actor::dp)[0])->ac = ((Actor::dp)[0])->positionX);
                   (((Actor::dp)[0])->ad = ((Actor::dp)[0])->positionY);
@@ -13959,15 +13959,15 @@ void Actor::m_ce_V() {
       (Actor::dG = 90);
       (((Actor::dp)[0])->H = -1024);
       (((Actor::dp)[0])->ac = ((Actor::dp)[0])->positionX);
-      ([&]{ auto _t2 = (Actor::dp)[0]; auto _t3 = (jint)(([&]{ auto _t0 = ((Actor::dp)[0])->positionY; auto _t1 = (jshr32((jint)((8 * Game::m_m_I((-Actor::dG)))), (jint)(8))); return (_t0 + _t1); }())); return _t2->ad = _t3; }());
+      ([&]{ auto _t2 = (Actor::dp)[0]; auto _t3 = (jint)(([&]{ auto _t0 = ((Actor::dp)[0])->positionY; auto _t1 = (jshr32((jint)(jmul32(8, Game::m_m_I(jneg32(Actor::dG)))), (jint)(8))); return jadd32(_t0, _t1); }())); return _t2->ad = _t3; }());
    } else if ((Game::m_F_I(33024))) {
       (Actor::dG = -90);
       (((Actor::dp)[0])->H = 1024);
       (((Actor::dp)[0])->ac = ((Actor::dp)[0])->positionX);
-      ([&]{ auto _t6 = (Actor::dp)[0]; auto _t7 = (jint)(([&]{ auto _t4 = ((Actor::dp)[0])->positionY; auto _t5 = (jshr32((jint)((8 * Game::m_m_I((-Actor::dG)))), (jint)(8))); return (_t4 + _t5); }())); return _t6->ad = _t7; }());
+      ([&]{ auto _t6 = (Actor::dp)[0]; auto _t7 = (jint)(([&]{ auto _t4 = ((Actor::dp)[0])->positionY; auto _t5 = (jshr32((jint)(jmul32(8, Game::m_m_I(jneg32(Actor::dG)))), (jint)(8))); return jadd32(_t4, _t5); }())); return _t6->ad = _t7; }());
    } else {
       (((Actor::dp)[0])->H = 0);
-      ([&]{ auto _t10 = (Actor::dp)[0]; auto _t11 = (jint)(([&]{ auto _t8 = (jshr32((jint)((8 * Game::m_m_I(((2 * ((((Actor::dp)[0])->ac - ((Actor::dp)[0])->positionX))) + Actor::dG)))), (jint)(8))); auto _t9 = ((Actor::dp)[0])->ad; return (_t8 + _t9); }())); return _t10->positionY = _t11; }());
+      ([&]{ auto _t10 = (Actor::dp)[0]; auto _t11 = (jint)(([&]{ auto _t8 = (jshr32((jint)(jmul32(8, Game::m_m_I(jadd32(jmul32(2, (jsub32(((Actor::dp)[0])->ac, ((Actor::dp)[0])->positionX))), Actor::dG)))), (jint)(8))); auto _t9 = ((Actor::dp)[0])->ad; return jadd32(_t8, _t9); }())); return _t10->positionY = _t11; }());
    }
    ((this)->positionX = ((Actor::dp)[0])->positionX);
    ((this)->positionY = ((Actor::dp)[0])->positionY);
@@ -14049,7 +14049,7 @@ void Actor::m_ch_V() {
       switch (((this)->aq)) {
          case 0:
             this->m_a_I(0);
-            if ((((Actor::m_l_I(((this)->positionX - (Game::player)->positionX)) > 160) || (!this->m_cZ_V())))) {
+            if ((((Actor::m_l_I(jsub32((this)->positionX, (Game::player)->positionX)) > 160) || (!this->m_cZ_V())))) {
                this->m_cg_V();
             } else if (((Game::player)->cI)) {
                if ((((((((this)->facingLeft && ((Game::player)->positionX < (this)->positionX)) || ((!(this)->facingLeft) && ((Game::player)->positionX > (this)->positionX)))) && ((this)->positionY <= ((Game::player)->collisionBounds)[3])) && ((this)->positionY >= ((Game::player)->collisionBounds)[1])))) {
@@ -14075,12 +14075,12 @@ void Actor::m_ch_V() {
                ((this)->aq = 0);
             }
             if ((((this)->G > 0))) {
-               if (((((this)->collisionBounds)[2] >= (((this)->m)[2] - 30)))) {
+               if (((((this)->collisionBounds)[2] >= jsub32(((this)->m)[2], 30)))) {
                   ((this)->G = 0);
                   ((this)->aq = 0);
                   this->m_da_V();
                }
-            } else if (((((this)->collisionBounds)[0] <= (((this)->m)[0] + 30)))) {
+            } else if (((((this)->collisionBounds)[0] <= jadd32(((this)->m)[0], 30)))) {
                ((this)->G = 0);
                ((this)->aq = 0);
                this->m_da_V();
@@ -14102,7 +14102,7 @@ void Actor::m_ch_V() {
    } else if (((((this)->collisionBounds)[0] <= ((this)->m)[0]))) {
       ((this)->G = 0);
    }
-   if ((((((this)->aq != 0) && ((this)->aq != 3)) && (Actor::m_l_I(((this)->positionX - (Game::player)->positionX)) > 160)))) {
+   if ((((((this)->aq != 0) && ((this)->aq != 3)) && (Actor::m_l_I(jsub32((this)->positionX, (Game::player)->positionX)) > 160)))) {
       ((this)->aq = 0);
    }
    if ((this->m_at_V())) {
@@ -14120,7 +14120,7 @@ void Actor::m_ci_V() {
       (Game::player)->m_a_IIIActor(4, (this)->ay, 0, this);
       Game::m_e_Actor(this);
    }
-   ([&]{ auto _t0 = this; auto _t1 = (jint)(jshr32((jint)(Game::m_h_II(((Game::player)->a - (this)->a), ((Game::player)->b - (this)->b))), (jint)(8))); return _t0->eX = _t1; }());
+   ([&]{ auto _t0 = this; auto _t1 = (jint)(jshr32((jint)(Game::m_h_II(jsub32((Game::player)->a, (this)->a), jsub32((Game::player)->b, (this)->b))), (jint)(8))); return _t0->eX = _t1; }());
    if ((((this)->eX >= 640))) {
       Game::m_e_Actor(this);
    }
@@ -14133,8 +14133,8 @@ void Actor::m_cj_V() {
       switch (((this)->aq)) {
          case 0:
             if ((Actor::m_b_AIAI((Game::player)->collisionBounds, (this)->m))) {
-               ((this)->fv = (((Game::aJ)->collisionBounds)[0] + 20));
-               ((this)->fu = (((Game::aJ)->collisionBounds)[2] - 20));
+               ((this)->fv = jadd32(((Game::aJ)->collisionBounds)[0], 20));
+               ((this)->fu = jsub32(((Game::aJ)->collisionBounds)[2], 20));
                if ((((this)->aH == 2))) {
                   this->m_p_I(105);
                   ((this)->aB = 0);
@@ -14177,11 +14177,11 @@ void Actor::m_cj_V() {
             }
             break;
          case 101:
-            if (((((this)->aH == 1) && (jshr32((jint)(Actor::m_l_I(((Game::player)->a - (this)->a))), (jint)(8)) <= 80)))) {
+            if (((((this)->aH == 1) && (jshr32((jint)(Actor::m_l_I(jsub32((Game::player)->a, (this)->a))), (jint)(8)) <= 80)))) {
                this->m_p_I(104);
             }
-            var1 = ((Game::player)->positionY - (this)->positionY);
-            if (((((jshr32((jint)(Actor::m_l_I(((Game::player)->a - (this)->a))), (jint)(8)) <= 200) && (var1 > -20)) && (var1 < 60)))) {
+            var1 = jsub32((Game::player)->positionY, (this)->positionY);
+            if (((((jshr32((jint)(Actor::m_l_I(jsub32((Game::player)->a, (this)->a))), (jint)(8)) <= 200) && (var1 > -20)) && (var1 < 60)))) {
                ([&]{ auto _t0 = this; auto _t1 = (Ref<Actor>)(this->m_a_IIIIIIZ(-41, 15, 0, ((this)->facingLeft ? -10 : 10), -10, 302, false)); return _t0->r = _t1; }());
                (((this)->r)->c = (jint)((((this)->r)->c | 16)));
                ([&]{ auto _t2 = (this)->r; auto _t3 = (jint)(this->m_B_I(1)); return _t2->ay = _t3; }());
@@ -14205,7 +14205,7 @@ void Actor::m_cj_V() {
             break;
          case 103:
             this->m_cV_V();
-            if (((((this)->aH == 1) && (jshr32((jint)(Actor::m_l_I(((Game::player)->a - (this)->a))), (jint)(8)) <= 80)))) {
+            if (((((this)->aH == 1) && (jshr32((jint)(Actor::m_l_I(jsub32((Game::player)->a, (this)->a))), (jint)(8)) <= 80)))) {
                this->m_p_I(104);
             }
             if ((((this)->aA <= 0))) {
@@ -14213,33 +14213,33 @@ void Actor::m_cj_V() {
             }
             break;
          case 104:
-            if (((Actor::m_l_I(((this)->b - (Game::player)->b)) >= 512))) {
-               ((this)->H = ((((((Game::player)->b - (this)->b) > 10) ? 1 : -1)) * 512));
+            if (((Actor::m_l_I(jsub32((this)->b, (Game::player)->b)) >= 512))) {
+               ((this)->H = jmul32((((jsub32((Game::player)->b, (this)->b) > 10) ? 1 : -1)), 512));
             } else {
                ((this)->H = 0);
             }
             this->m_b_ZZ(true, true);
-            if (((jshr32((jint)(Actor::m_l_I(((Game::player)->a - (this)->a))), (jint)(8)) > 80))) {
+            if (((jshr32((jint)(Actor::m_l_I(jsub32((Game::player)->a, (this)->a))), (jint)(8)) > 80))) {
                this->m_p_I(101);
             }
             break;
          case 105:
             ([&]{ auto _t6 = this; auto _t7 = (jint)(this->m_D_I(1792)); return _t6->G = _t7; }());
             this->m_da_V();
-            if (((Actor::m_l_I(jshr32((jint)(((Game::player)->a - (this)->a)), (jint)(8))) <= 80))) {
+            if (((Actor::m_l_I(jshr32((jint)(jsub32((Game::player)->a, (this)->a)), (jint)(8))) <= 80))) {
                ((this)->G = 0);
             }
             if ((((this)->aB <= 0))) {
-               ((this)->aB = (jint)(((this)->aB + 1000)));
+               ((this)->aB = (jint)(jadd32((this)->aB, 1000)));
             }
-            ([&]{ auto _t10 = this; auto _t11 = (jint)(([&]{ auto _t8 = (this)->av; auto _t9 = (jshr32((jint)((Game::m_m_I((((this)->aB * 360) / 1000)) * 5)), (jint)(8))); return (_t8 + _t9); }())); return _t10->positionY = _t11; }());
+            ([&]{ auto _t10 = this; auto _t11 = (jint)(([&]{ auto _t8 = (this)->av; auto _t9 = (jshr32((jint)(jmul32(Game::m_m_I((jmul32((this)->aB, 360) / 1000)), 5)), (jint)(8))); return jadd32(_t8, _t9); }())); return _t10->positionY = _t11; }());
             if ((((this)->aA <= 0))) {
-               if (((Actor::m_l_I(jshr32((jint)(((Game::player)->a - (this)->a)), (jint)(8))) <= 80))) {
+               if (((Actor::m_l_I(jshr32((jint)(jsub32((Game::player)->a, (this)->a)), (jint)(8))) <= 80))) {
                   ([&]{ auto _t12 = this; auto _t13 = (Ref<Actor>)(this->m_a_IIIIIIZ(-41, 15, 0, ((this)->facingLeft ? -10 : 10), -10, 302, false)); return _t12->r = _t13; }());
                   (((this)->r)->c = (jint)((((this)->r)->c | 16)));
                   ([&]{ auto _t14 = (this)->r; auto _t15 = (jint)(this->m_B_I(1)); return _t14->ay = _t15; }());
-                  (((this)->r)->aw = ((Game::player)->a - (jshl32((jint)(((this)->r)->positionX), (jint)(8)))));
-                  (((this)->r)->az = ((Game::player)->b - (jshl32((jint)(((this)->r)->positionY), (jint)(8)))));
+                  (((this)->r)->aw = jsub32((Game::player)->a, (jshl32((jint)(((this)->r)->positionX), (jint)(8)))));
+                  (((this)->r)->az = jsub32((Game::player)->b, (jshl32((jint)(((this)->r)->positionY), (jint)(8)))));
                   this->m_p_I(102);
                }
             } else {
@@ -14258,10 +14258,10 @@ void Actor::m_cj_V() {
             this->m_cV_V();
             this->m_cW_V();
             if ((((this)->aB <= 0))) {
-               ((this)->aB = (jint)(((this)->aB + 1000)));
+               ((this)->aB = (jint)(jadd32((this)->aB, 1000)));
             }
-            ([&]{ auto _t18 = this; auto _t19 = (jint)(([&]{ auto _t16 = (this)->av; auto _t17 = (jshr32((jint)((Game::m_m_I((((this)->aB * 360) / 1000)) * 5)), (jint)(8))); return (_t16 + _t17); }())); return _t18->positionY = _t19; }());
-            if ((((((Actor::m_l_I(jshr32((jint)(((this)->aw - (this)->a)), (jint)(8))) >= 80) && ((((((this)->aw - (this)->a) > 0) ? 1 : -1)) == (this)->ay)) || ((this)->fv >= (this)->positionX)) || ((this)->fu <= (this)->positionX)))) {
+            ([&]{ auto _t18 = this; auto _t19 = (jint)(([&]{ auto _t16 = (this)->av; auto _t17 = (jshr32((jint)(jmul32(Game::m_m_I((jmul32((this)->aB, 360) / 1000)), 5)), (jint)(8))); return jadd32(_t16, _t17); }())); return _t18->positionY = _t19; }());
+            if ((((((Actor::m_l_I(jshr32((jint)(jsub32((this)->aw, (this)->a)), (jint)(8))) >= 80) && ((((jsub32((this)->aw, (this)->a) > 0) ? 1 : -1)) == (this)->ay)) || ((this)->fv >= (this)->positionX)) || ((this)->fu <= (this)->positionX)))) {
                this->m_p_I(105);
             }
       }
@@ -14304,16 +14304,16 @@ void Actor::m_cl_V() {
 
 void Actor::m_cm_V() {
    Ref<Actor> _self(this);
-   ((this)->ay = ((this)->ac - (this)->positionX));
-   ((this)->av = ((this)->ad - (this)->positionY));
+   ((this)->ay = jsub32((this)->ac, (this)->positionX));
+   ((this)->av = jsub32((this)->ad, (this)->positionY));
    ([&]{ auto _t0 = this; auto _t1 = (jint)(Game::m_h_II((this)->ay, (this)->av)); return _t0->eX = _t1; }());
    if ((((this)->eX == 0))) {
       ((this)->eX = 1);
    }
-   ((this)->G = (((this)->eX == 1) ? 0 : jdiv32(((this)->ay * 896), (this)->eX)));
-   ((this)->H = (((this)->eX == 1) ? 0 : jdiv32(((this)->av * 896), (this)->eX)));
-   ((this)->ay = jdiv32(((this)->ay * -24), (this)->eX));
-   ((this)->av = jdiv32(((this)->av * -24), (this)->eX));
+   ((this)->G = (((this)->eX == 1) ? 0 : jdiv32(jmul32((this)->ay, 896), (this)->eX)));
+   ((this)->H = (((this)->eX == 1) ? 0 : jdiv32(jmul32((this)->av, 896), (this)->eX)));
+   ((this)->ay = jdiv32(jmul32((this)->ay, -24), (this)->eX));
+   ((this)->av = jdiv32(jmul32((this)->av, -24), (this)->eX));
 }
 
 void Actor::m_cn_V() {
@@ -14338,7 +14338,7 @@ void Actor::m_cn_V() {
             }
             if (((((this)->t != nullptr) && (((((this)->t)->G != 0) || (((this)->t)->H != 0)))))) {
                ((this)->ac = ((this)->t)->positionX);
-               ((this)->ad = (((this)->t)->positionY - 20));
+               ((this)->ad = jsub32(((this)->t)->positionY, 20));
                this->m_cm_V();
             }
             if ((Actor::m_i_II((this)->G, (this)->ay))) {
@@ -14403,7 +14403,7 @@ Ref<Actor> Actor::m_cp_V() {
          ((var1)->ad = (var2)->positionY);
          ((var1)->t = var2);
       } else {
-         ((var1)->ac = ((var1)->positionX + (((this)->facingLeft ? -10 : 10))));
+         ((var1)->ac = jadd32((var1)->positionX, (((this)->facingLeft ? -10 : 10))));
          ((var1)->ad = (var1)->positionY);
       }
    }
@@ -14426,7 +14426,7 @@ Ref<Actor> Actor::m_j_Z(jboolean var1) {
       for (; (var4 < Game::ci); (var4++)) {
          Ref<Actor> var5{};
          jint var6{};
-         if (((((((((var5 = (Game::ch)[var4])) != nullptr) && ((((var5)->c & 1024)) == 0)) && (((var5)->m_M_V() || this->m_s_Actor(var5)))) && (((!var1) || ((((!(this)->facingLeft) || ((this)->positionX >= (var5)->positionX))) && (((this)->facingLeft || ((this)->positionX <= (var5)->positionX))))))) && (((var6 = (((((var5)->positionX - (this)->positionX)) * (((var5)->positionX - (this)->positionX))) + ((((var5)->positionY - (this)->positionY)) * (((var5)->positionY - (this)->positionY)))))) < var2)))) {
+         if (((((((((var5 = (Game::ch)[var4])) != nullptr) && ((((var5)->c & 1024)) == 0)) && (((var5)->m_M_V() || this->m_s_Actor(var5)))) && (((!var1) || ((((!(this)->facingLeft) || ((this)->positionX >= (var5)->positionX))) && (((this)->facingLeft || ((this)->positionX <= (var5)->positionX))))))) && (((var6 = jadd32(jmul32((jsub32((var5)->positionX, (this)->positionX)), (jsub32((var5)->positionX, (this)->positionX))), jmul32((jsub32((var5)->positionY, (this)->positionY)), (jsub32((var5)->positionY, (this)->positionY)))))) < var2)))) {
             (var3 = var5);
             (var2 = var6);
          }
@@ -14493,15 +14493,15 @@ void Actor::m_cr_V() {
    }
    if (((((this)->s != nullptr) && (((this)->s)->type == 49)))) {
       if (((((((this)->s)->c & 16)) != 0))) {
-         ((this)->positionY = ((this)->positionY - ((this)->s)->ay));
-         ((this)->av = ((this)->av + ((this)->s)->ay));
-         if ((((this)->positionY >= ((Game::viewBounds)[3] - 4)))) {
-            jint var1 = (((this)->positionY - (Game::viewBounds)[3]) + 4);
-            ((this)->av = (jint)(((this)->av + var1)));
-            ((this)->positionY = ((Game::viewBounds)[3] - 4));
+         ((this)->positionY = jsub32((this)->positionY, ((this)->s)->ay));
+         ((this)->av = jadd32((this)->av, ((this)->s)->ay));
+         if ((((this)->positionY >= jsub32((Game::viewBounds)[3], 4)))) {
+            jint var1 = jadd32(jsub32((this)->positionY, (Game::viewBounds)[3]), 4);
+            ((this)->av = (jint)(jadd32((this)->av, var1)));
+            ((this)->positionY = jsub32((Game::viewBounds)[3], 4));
          }
          if (((Game::levelIndex == 6))) {
-            (Game::aC = ((this)->positionY - Game::cameraY));
+            (Game::aC = jsub32((this)->positionY, Game::cameraY));
          }
          ((this)->ac = ((this)->s)->ay);
       }
@@ -14581,7 +14581,7 @@ void Actor::m_ct_V() {
             ((this)->P = true);
             this->m_i_I((this)->aC);
             if ((((this)->fv != 0))) {
-               ((this)->fv = (jint)(((this)->fv + -4)));
+               ((this)->fv = (jint)(jadd32((this)->fv, -4)));
                if ((((this)->aC >= 4))) {
                   ((this)->H = (((this)->aC == 4) ? -1024 : 1024));
                   return;
@@ -14619,12 +14619,12 @@ void Actor::m_ct_V() {
             if ((((this)->aC >= 4))) {
                if ((((this)->positionY != (this)->az))) {
                   ((this)->positionY = (this)->az);
-                  ((this)->fv = (20 * (this)->aH));
+                  ((this)->fv = jmul32(20, (this)->aH));
                   ((this)->aq = 107);
                }
             } else if ((((this)->positionX != (this)->aw))) {
                ((this)->positionX = (this)->aw);
-               ((this)->fv = (20 * (this)->aH));
+               ((this)->fv = jmul32(20, (this)->aH));
                ((this)->aq = 107);
             }
             if (((((this)->positionY == (this)->az) && ((this)->positionX == (this)->aw)))) {
@@ -14674,13 +14674,13 @@ void Actor::m_cu_V() {
    {
       switch (((this)->aq)) {
          case 0:
-            ((this)->aB = ((this)->aB + Game::h));
+            ((this)->aB = jadd32((this)->aB, Game::h));
             if ((((this)->aB >= 1000))) {
                ((this)->aB = 0);
             }
             if ((((this)->animationId == 1))) {
-               jint var1 = jshr32((jint)(((Game::player)->b + (Game::player)->H)), (jint)(8));
-               if (((((((Game::player)->positionY <= (((this)->collisionBounds)[1] + 10)) && (((Game::player)->collisionBounds)[2] > ((this)->collisionBounds)[0])) && (((Game::player)->collisionBounds)[0] < ((this)->collisionBounds)[2])) && (var1 >= ((this)->collisionBounds)[1])))) {
+               jint var1 = jshr32((jint)(jadd32((Game::player)->b, (Game::player)->H)), (jint)(8));
+               if (((((((Game::player)->positionY <= jadd32(((this)->collisionBounds)[1], 10)) && (((Game::player)->collisionBounds)[2] > ((this)->collisionBounds)[0])) && (((Game::player)->collisionBounds)[0] < ((this)->collisionBounds)[2])) && (var1 >= ((this)->collisionBounds)[1])))) {
                   ((this)->ay = (Game::player)->positionX);
                   this->m_a_AIZ((this)->collisionBounds, true);
                   ((this)->aq = 100);
@@ -14703,7 +14703,7 @@ void Actor::m_cu_V() {
             }
             break;
          case 100:
-            ((this)->aA = ((this)->aA + Game::h));
+            ((this)->aA = jadd32((this)->aA, Game::h));
             if ((((this)->aA >= ((((this)->animationId == 7) ? 300 : 1000))))) {
                ((this)->aq = 101);
                return;
@@ -14782,7 +14782,7 @@ void Actor::m_cv_V() {
                break;
             case 100:
                ((this)->H = -2048);
-               var4 = ((((Game::player)->positionY - ((Game::player)->collisionBounds)[3]) + ((Game::player)->collisionBounds)[1]) - 15);
+               var4 = jsub32(jadd32(jsub32((Game::player)->positionY, ((Game::player)->collisionBounds)[3]), ((Game::player)->collisionBounds)[1]), 15);
                if ((((this)->positionY < var4))) {
                   ((this)->positionY = var4);
                   ((this)->H = 0);
@@ -14796,10 +14796,10 @@ void Actor::m_cv_V() {
                }
                break;
             case 102:
-               ([&]{ auto _t0 = this; auto _t1 = (jint)(Game::m_h_II(((Game::player)->a - (this)->a), ((Game::player)->b - (this)->b))); return _t0->eX = _t1; }());
+               ([&]{ auto _t0 = this; auto _t1 = (jint)(Game::m_h_II(jsub32((Game::player)->a, (this)->a), jsub32((Game::player)->b, (this)->b))); return _t0->eX = _t1; }());
                if ((((this)->eX <= 40960))) {
-                  ((this)->G = (((this)->eX == 0) ? 0 : jdiv32(((((Game::player)->a - (this)->a)) * 2048), (this)->eX)));
-                  ((this)->H = (((this)->eX == 0) ? 0 : jdiv32(((((Game::player)->b - (this)->b)) * 2048), (this)->eX)));
+                  ((this)->G = (((this)->eX == 0) ? 0 : jdiv32(jmul32((jsub32((Game::player)->a, (this)->a)), 2048), (this)->eX)));
+                  ((this)->H = (((this)->eX == 0) ? 0 : jdiv32(jmul32((jsub32((Game::player)->b, (this)->b)), 2048), (this)->eX)));
                }
                if ((((this)->eX < 2048))) {
                   ((this)->positionX = (Game::player)->positionX);
@@ -14822,7 +14822,7 @@ void Actor::m_cv_V() {
                break;
             case 103:
                ((this)->H = -2048);
-               var1 = ((((Game::player)->positionY - ((Game::player)->collisionBounds)[3]) + ((Game::player)->collisionBounds)[1]) - 15);
+               var1 = jsub32(jadd32(jsub32((Game::player)->positionY, ((Game::player)->collisionBounds)[3]), ((Game::player)->collisionBounds)[1]), 15);
                if ((((this)->positionY < var1))) {
                   ((this)->positionY = var1);
                   ((this)->H = 0);
@@ -14830,7 +14830,7 @@ void Actor::m_cv_V() {
                   {
                      jint var3 = 0;
                      for (; (var3 < var2); (var3++)) {
-                        ([&]{ auto _t2 = 35; auto _t3 = 31; auto _t4 = 5; auto _t5 = Game::m_i_II(-20, 20); auto _t6 = (-Game::m_i_II(-40, 10)); auto _t7 = 308; auto _t8 = false; return this->m_a_IIIIIIZ(_t2, _t3, _t4, _t5, _t6, _t7, _t8); }());
+                        ([&]{ auto _t2 = 35; auto _t3 = 31; auto _t4 = 5; auto _t5 = Game::m_i_II(-20, 20); auto _t6 = jneg32(Game::m_i_II(-40, 10)); auto _t7 = 308; auto _t8 = false; return this->m_a_IIIIIIZ(_t2, _t3, _t4, _t5, _t6, _t7, _t8); }());
                      }
                   }
                   Game::m_e_Actor(this);
@@ -15242,37 +15242,37 @@ void Actor::m_cx_V() {
                   ;
                case 3:
                   ((this)->v)->m_g_V();
-                  var1 = ((((Game::player)->positionX - 10) < (((this)->v)->positionX - 10)) ? ((Game::player)->positionX - 10) : (((this)->v)->positionX - 10));
-                  var2 = ((((Game::player)->positionX + 10) > (((this)->v)->positionX + 10)) ? ((Game::player)->positionX + 10) : (((this)->v)->positionX + 10));
-                  var3 = ((((Game::player)->positionY - 50) < (((this)->v)->positionY - 50)) ? ((Game::player)->positionY - 50) : (((this)->v)->positionY - 50));
+                  var1 = ((jsub32((Game::player)->positionX, 10) < jsub32(((this)->v)->positionX, 10)) ? jsub32((Game::player)->positionX, 10) : jsub32(((this)->v)->positionX, 10));
+                  var2 = ((jadd32((Game::player)->positionX, 10) > jadd32(((this)->v)->positionX, 10)) ? jadd32((Game::player)->positionX, 10) : jadd32(((this)->v)->positionX, 10));
+                  var3 = ((jsub32((Game::player)->positionY, 50) < jsub32(((this)->v)->positionY, 50)) ? jsub32((Game::player)->positionY, 50) : jsub32(((this)->v)->positionY, 50));
                   var4 = (((Game::player)->positionY > ((this)->v)->positionY) ? (Game::player)->positionY : ((this)->v)->positionY);
-                  var5 = (var1 + (jshr32((jint)((var2 - var1)), (jint)(1))));
-                  var6 = (var3 + (jshr32((jint)((var4 - var3)), (jint)(1))));
+                  var5 = jadd32(var1, (jshr32((jint)(jsub32(var2, var1)), (jint)(1))));
+                  var6 = jadd32(var3, (jshr32((jint)(jsub32(var4, var3)), (jint)(1))));
                   if ((((((Game::player)->G != 0) || ((Game::player)->H != 0)) || ((this)->aA == 3)))) {
-                     (Game::ac = (var5 - 120));
-                     (Game::ad = (var6 - 160));
+                     (Game::ac = jsub32(var5, 120));
+                     (Game::ad = jsub32(var6, 160));
                   }
-                  if (((((((Game::ac + 240) > ((Game::player)->positionX + 10)) && (Game::ac < ((Game::player)->positionX - 10))) && ((Game::ad + 320) > (Game::player)->positionY)) && (Game::ad < ((Game::player)->positionY - 50))))) {
+                  if ((((((jadd32(Game::ac, 240) > jadd32((Game::player)->positionX, 10)) && (Game::ac < jsub32((Game::player)->positionX, 10))) && (jadd32(Game::ad, 320) > (Game::player)->positionY)) && (Game::ad < jsub32((Game::player)->positionY, 50))))) {
                      (Game::aB = (this)->an);
                   } else if (((0 == (this)->aA))) {
                      (Game::ay = false);
                      (Game::aB = -1);
                   } else {
                      (Game::aB = (this)->an);
-                     if ((((Game::ac + 240) <= ((Game::player)->positionX + 10)))) {
-                        (Game::ac = (((Game::player)->positionX + 10) - 240));
-                     } else if (((Game::ac >= ((Game::player)->positionX - 10)))) {
-                        (Game::ac = ((Game::player)->positionX - 10));
-                     } else if ((((Game::ad + 320) <= (Game::player)->positionY))) {
-                        (Game::ad = ((Game::player)->positionY - 320));
-                     } else if (((Game::ad >= ((Game::player)->positionY - 50)))) {
-                        (Game::ad = ((Game::player)->positionY - 50));
+                     if (((jadd32(Game::ac, 240) <= jadd32((Game::player)->positionX, 10)))) {
+                        (Game::ac = jsub32(jadd32((Game::player)->positionX, 10), 240));
+                     } else if (((Game::ac >= jsub32((Game::player)->positionX, 10)))) {
+                        (Game::ac = jsub32((Game::player)->positionX, 10));
+                     } else if (((jadd32(Game::ad, 320) <= (Game::player)->positionY))) {
+                        (Game::ad = jsub32((Game::player)->positionY, 320));
+                     } else if (((Game::ad >= jsub32((Game::player)->positionY, 50)))) {
+                        (Game::ad = jsub32((Game::player)->positionY, 50));
                      }
                   }
                   break;
                case 1:
                   if ((((Game::player)->H > 0))) {
-                     (Game::ad = ((Game::player)->positionY - 160));
+                     (Game::ad = jsub32((Game::player)->positionY, 160));
                      (Game::aB = (this)->an);
                   } else {
                      (Game::ay = false);
@@ -15313,11 +15313,11 @@ void Actor::m_cx_V() {
                      (Game::player)->m_a_I(37);
                   }
                   if ((((((this)->aB & 1)) != 0))) {
-                     (Game::ac = (Game::cameraX - var8));
+                     (Game::ac = jsub32(Game::cameraX, var8));
                      if (((((Game::player)->collisionBounds)[0] > ((this)->collisionBounds)[0]))) {
-                        if ((((Game::player)->positionX > ((Game::viewBounds)[2] - 10)))) {
+                        if ((((Game::player)->positionX > jsub32((Game::viewBounds)[2], 10)))) {
                            if ((((Game::player)->eE <= 21))) {
-                              ((Game::player)->positionX = ((Game::viewBounds)[2] - 10));
+                              ((Game::player)->positionX = jsub32((Game::viewBounds)[2], 10));
                               if ((((3 != (Game::be)[Game::levelIndex]) && ((Game::player)->G > 0)))) {
                                  ((Game::player)->G = 0);
                               }
@@ -15326,17 +15326,17 @@ void Actor::m_cx_V() {
                            } else if (((3 != (Game::be)[Game::levelIndex]))) {
                               ((Game::player)->G = 0);
                            }
-                        } else if ((((Game::player)->positionX < (Game::cameraX + 10)))) {
-                           ((Game::player)->positionX = (Game::cameraX + 10));
+                        } else if ((((Game::player)->positionX < jadd32(Game::cameraX, 10)))) {
+                           ((Game::player)->positionX = jadd32(Game::cameraX, 10));
                         }
                         (Game::aD = true);
                      }
                   }
                   if (((((((this)->aB & 2)) != 0) && (((Game::player)->collisionBounds)[2] < ((this)->collisionBounds)[2])))) {
-                     (Game::ac = (Game::cameraX + var8));
-                     if ((((Game::player)->positionX < ((Game::viewBounds)[0] + 30)))) {
+                     (Game::ac = jadd32(Game::cameraX, var8));
+                     if ((((Game::player)->positionX < jadd32((Game::viewBounds)[0], 30)))) {
                         if ((((Game::player)->eF <= 21))) {
-                           ((Game::player)->positionX = ((Game::viewBounds)[0] + 30));
+                           ((Game::player)->positionX = jadd32((Game::viewBounds)[0], 30));
                            if ((((3 != (Game::be)[Game::levelIndex]) && ((Game::player)->G < 0)))) {
                               ((Game::player)->G = 0);
                            }
@@ -15345,14 +15345,14 @@ void Actor::m_cx_V() {
                         } else {
                            ((Game::player)->G = 0);
                         }
-                     } else if ((((Game::player)->positionX > ((Game::viewBounds)[2] - 10)))) {
-                        ((Game::player)->positionX = ((Game::viewBounds)[2] - 10));
+                     } else if ((((Game::player)->positionX > jsub32((Game::viewBounds)[2], 10)))) {
+                        ((Game::player)->positionX = jsub32((Game::viewBounds)[2], 10));
                      }
                      (Game::aD = true);
                   }
                   if ((((((this)->aB & 4)) != 0))) {
                      if (((((Game::player)->collisionBounds)[1] > ((this)->collisionBounds)[1]))) {
-                        (Game::ad = (Game::cameraY - var8));
+                        (Game::ad = jsub32(Game::cameraY, var8));
                         if ((((Game::player)->positionY > (Game::viewBounds)[3]))) {
                            (var7 = true);
                         } else if ((((Game::player)->positionY < (Game::viewBounds)[1]))) {
@@ -15361,16 +15361,16 @@ void Actor::m_cx_V() {
                         (Game::aD = false);
                      }
                      if (((5 == (this)->aA))) {
-                        if ((((Game::player)->positionX > ((Game::cameraX + 240) - 10)))) {
-                           ((Game::player)->positionX = ((Game::cameraX + 240) - 10));
+                        if ((((Game::player)->positionX > jsub32(jadd32(Game::cameraX, 240), 10)))) {
+                           ((Game::player)->positionX = jsub32(jadd32(Game::cameraX, 240), 10));
                         }
-                        if ((((Game::player)->positionX < (Game::cameraX + 10)))) {
-                           ((Game::player)->positionX = (Game::cameraX + 10));
+                        if ((((Game::player)->positionX < jadd32(Game::cameraX, 10)))) {
+                           ((Game::player)->positionX = jadd32(Game::cameraX, 10));
                         }
                      }
                   }
                   if (((((((this)->aB & 8)) != 0) && (((Game::player)->collisionBounds)[3] < ((this)->collisionBounds)[3])))) {
-                     (Game::ad = (Game::cameraY + var8));
+                     (Game::ad = jadd32(Game::cameraY, var8));
                      if ((((Game::player)->positionY < (Game::viewBounds)[1]))) {
                         (var7 = true);
                      } else if ((((Game::player)->positionY > (Game::viewBounds)[3]))) {
@@ -15413,11 +15413,11 @@ void Actor::m_cz_V() {
          if ((((((var2 = (Game::cj)[var3])) != nullptr) && (var2 != this)))) {
             (var2)->m_g_V();
             if ((((var2)->T == this))) {
-               ((var2)->positionY = (((this)->collisionBounds)[1] - 1));
+               ((var2)->positionY = jsub32(((this)->collisionBounds)[1], 1));
                ((var2)->bL = true);
                ((Actor::dV)[1] = ((var2)->collisionBounds)[1]);
                ((Actor::dV)[0] = ((var2)->collisionBounds)[0]);
-               ((Actor::dV)[3] = (((var2)->collisionBounds)[3] + 2));
+               ((Actor::dV)[3] = jadd32(((var2)->collisionBounds)[3], 2));
                ((Actor::dV)[2] = ((var2)->collisionBounds)[2]);
                if (((!Actor::m_b_AIAI((this)->collisionBounds, Actor::dV)))) {
                   ((var2)->T = nullptr);
@@ -15431,7 +15431,7 @@ void Actor::m_cz_V() {
       }
    }
    if ((((Actor::aT == this) || var1))) {
-      if ((((this)->positionY < ((this)->az - 7)))) {
+      if ((((this)->positionY < jsub32((this)->az, 7)))) {
          ((this)->positionY++);
       }
       if (((((this)->r)->aq != 103))) {
@@ -15488,9 +15488,9 @@ void Actor::m_cB_V() {
                }
             case 100:
                if ((((((this)->aH == 5) || ((this)->aH == 4)) || ((this)->aH == 2)))) {
-                  ((this)->positionX = (Game::cameraX + (this)->ac));
-                  ((this)->ad = (jint)(((this)->ad + -4)));
-                  ((this)->positionY = ((this)->ad + Game::cameraY));
+                  ((this)->positionX = jadd32(Game::cameraX, (this)->ac));
+                  ((this)->ad = (jint)(jadd32((this)->ad, -4)));
+                  ((this)->positionY = jadd32((this)->ad, Game::cameraY));
                }
                if (((!Actor::m_b_AIAI(Game::viewBounds, (this)->collisionBounds)))) {
                   this->m_p_I(101);
@@ -15499,14 +15499,14 @@ void Actor::m_cB_V() {
                break;
             case 101:
                if (((((this)->aH == 5) || ((this)->aH == 4)))) {
-                  ((this)->positionX = (Game::cameraX + (this)->ac));
+                  ((this)->positionX = jadd32(Game::cameraX, (this)->ac));
                } else if ((((this)->aH == 2))) {
                   ((this)->positionX = (this)->av);
                }
                this->m_cV_V();
                if ((((this)->aA <= 0))) {
                   this->m_p_I(102);
-                  ((this)->positionY = (((Game::viewBounds)[1] + ((this)->collisionBounds)[1]) - ((this)->collisionBounds)[3]));
+                  ((this)->positionY = jsub32(jadd32((Game::viewBounds)[1], ((this)->collisionBounds)[1]), ((this)->collisionBounds)[3]));
                   ((this)->H = 1536);
                   if ((((this)->aH == 4))) {
                      if ((((this)->ay == 0))) {
@@ -15514,16 +15514,16 @@ void Actor::m_cB_V() {
                         ((Actor::dQ)[var3] = (Game::player)->positionX);
                         if (((var3 == 0))) {
                            (var3 = Game::m_i_II(0, 2));
-                           ((Actor::dQ)[1] = ((Actor::dQ)[0] + (((var3 == 0) ? -100 : 100))));
-                           ((Actor::dQ)[2] = ((Actor::dQ)[0] + (((var3 == 0) ? 100 : -100))));
+                           ((Actor::dQ)[1] = jadd32((Actor::dQ)[0], (((var3 == 0) ? -100 : 100))));
+                           ((Actor::dQ)[2] = jadd32((Actor::dQ)[0], (((var3 == 0) ? 100 : -100))));
                         } else if (((var3 == 1))) {
                            (var3 = Game::m_i_II(0, 2));
-                           ((Actor::dQ)[0] = ((Actor::dQ)[1] + (((var3 == 0) ? -100 : 100))));
-                           ((Actor::dQ)[2] = ((Actor::dQ)[1] + (((var3 == 0) ? 100 : -100))));
+                           ((Actor::dQ)[0] = jadd32((Actor::dQ)[1], (((var3 == 0) ? -100 : 100))));
+                           ((Actor::dQ)[2] = jadd32((Actor::dQ)[1], (((var3 == 0) ? 100 : -100))));
                         } else if (((var3 == 2))) {
                            (var3 = Game::m_i_II(0, 2));
-                           ((Actor::dQ)[0] = ((Actor::dQ)[2] + (((var3 == 0) ? -100 : 100))));
-                           ((Actor::dQ)[1] = ((Actor::dQ)[2] + (((var3 == 0) ? 100 : -100))));
+                           ((Actor::dQ)[0] = jadd32((Actor::dQ)[2], (((var3 == 0) ? -100 : 100))));
+                           ((Actor::dQ)[1] = jadd32((Actor::dQ)[2], (((var3 == 0) ? 100 : -100))));
                         }
                      }
                      ((this)->positionX = (Actor::dQ)[(this)->ay]);
@@ -15563,7 +15563,7 @@ void Actor::m_cB_V() {
                      this->m_db_V();
                      this->m_cV_V();
                      if ((((this)->aA <= 0))) {
-                        ((this)->G = ((this)->facingLeft ? (-(this)->ax) : (this)->ax));
+                        ((this)->G = ((this)->facingLeft ? jneg32((this)->ax) : (this)->ax));
                      }
                      this->m_bi_V();
                   } else {
@@ -15587,12 +15587,12 @@ void Actor::m_cB_V() {
                   }
                }
                if ((((this)->T == nullptr))) {
-                  if (((((((((((Actor::ba != nullptr) && ((Actor::ba)[0] != nullptr)) && (2 != (Game::be)[Game::levelIndex])) && (((Actor::ba)[0])->animationId == 19)) && Actor::m_b_AIAI(((Actor::ba)[0])->collisionBounds, (this)->collisionBounds)) && ((this)->H > 0)) && ((((this)->collisionBounds)[3] - (jshr32((jint)((this)->H), (jint)(8)))) < (((Actor::ba)[0])->collisionBounds)[1])) && ((this)->positionX >= (((Actor::ba)[0])->collisionBounds)[0])) && ((this)->positionX <= (((Actor::ba)[0])->collisionBounds)[2])))) {
+                  if (((((((((((Actor::ba != nullptr) && ((Actor::ba)[0] != nullptr)) && (2 != (Game::be)[Game::levelIndex])) && (((Actor::ba)[0])->animationId == 19)) && Actor::m_b_AIAI(((Actor::ba)[0])->collisionBounds, (this)->collisionBounds)) && ((this)->H > 0)) && (jsub32(((this)->collisionBounds)[3], (jshr32((jint)((this)->H), (jint)(8)))) < (((Actor::ba)[0])->collisionBounds)[1])) && ((this)->positionX >= (((Actor::ba)[0])->collisionBounds)[0])) && ((this)->positionX <= (((Actor::ba)[0])->collisionBounds)[2])))) {
                      ((this)->T = (Actor::ba)[0]);
-                     ((this)->positionY = ((((this)->T)->collisionBounds)[1] + (jshr32((jint)((((this)->collisionBounds)[1] - ((this)->collisionBounds)[3])), (jint)(1)))));
+                     ((this)->positionY = jadd32((((this)->T)->collisionBounds)[1], (jshr32((jint)(jsub32(((this)->collisionBounds)[1], ((this)->collisionBounds)[3])), (jint)(1)))));
                      ((this)->H = 0);
                      ((this)->J = 0);
-                     ((this)->G = ((this)->facingLeft ? (-(this)->ax) : (this)->ax));
+                     ((this)->G = ((this)->facingLeft ? jneg32((this)->ax) : (this)->ax));
                      (((Actor::ba)[0])->s = this);
                   }
                } else {
@@ -15601,10 +15601,10 @@ void Actor::m_cB_V() {
                      ((this)->T = nullptr);
                   }
                   if (((((this)->T != nullptr) && (((this)->T)->type == 39)))) {
-                     ((this)->positionY = ((((this)->T)->collisionBounds)[1] + (jshr32((jint)((((this)->collisionBounds)[1] - ((this)->collisionBounds)[3])), (jint)(1)))));
+                     ((this)->positionY = jadd32((((this)->T)->collisionBounds)[1], (jshr32((jint)(jsub32(((this)->collisionBounds)[1], ((this)->collisionBounds)[3])), (jint)(1)))));
                      ((this)->H = 0);
                      ((this)->J = 0);
-                     ((this)->G = ((this)->facingLeft ? (-(this)->ax) : (this)->ax));
+                     ((this)->G = ((this)->facingLeft ? jneg32((this)->ax) : (this)->ax));
                      if ((((((((Actor::ba == nullptr) || ((Actor::ba)[0] == nullptr)) || (((Actor::ba)[0])->animationId != 19)) || (!Actor::m_b_AIAI(((Actor::ba)[0])->collisionBounds, (this)->collisionBounds)))) && ((this)->T == (Actor::ba)[0])))) {
                         (((this)->T)->s = nullptr);
                         ((this)->T = nullptr);
@@ -15628,7 +15628,7 @@ void Actor::m_cB_V() {
                if ((((this)->cI && ((this)->cJ != nullptr)))) {
                   this->m_cC_V();
                   if ((((this)->eL || (this)->eM))) {
-                     ((this)->G = (-(this)->G));
+                     ((this)->G = jneg32((this)->G));
                   }
                } else {
                   this->m_p_I(102);
@@ -15683,8 +15683,8 @@ void Actor::m_cB_V() {
 void Actor::m_cC_V() {
    Ref<Actor> _self(this);
    jint var1{};
-   (var1 = ((((var1 = (((-(this)->aA) / 500) % 4))) < 2) ? var1 : (4 - var1)));
-   ((this)->positionY = (((((this)->cJ)->collisionBounds)[1] + 0) + (--var1)));
+   (var1 = ((((var1 = ((jneg32((this)->aA) / 500) % 4))) < 2) ? var1 : jsub32(4, var1)));
+   ((this)->positionY = jadd32(jadd32((((this)->cJ)->collisionBounds)[1], 0), (--var1)));
    this->m_b_ZZ(true, false);
    this->m_d_IAI(0, (this)->collisionBounds);
 }
@@ -15707,13 +15707,13 @@ void Actor::m_cD_V() {
                this->m_p_I(103);
                (var2)->m_p_I(103);
             } else if ((((((((this)->az == 0) && ((var2)->type == 73)) && ((((this)->aq == 107) || ((this)->aq == 108)))) && ((((var2)->aq == 107) || ((var2)->aq == 108)))) && Actor::m_b_AIAI((var2)->collisionBounds, (this)->collisionBounds)))) {
-               ((this)->G = (-(this)->G));
-               ((var2)->G = (-(var2)->G));
+               ((this)->G = jneg32((this)->G));
+               ((var2)->G = jneg32((var2)->G));
             } else if (((((this)->az == 1) && ((var2)->type == 79)))) {
-               ((Actor::dV)[1] = (((this)->collisionBounds)[1] - 10));
-               ((Actor::dV)[3] = (((this)->collisionBounds)[3] + 10));
-               ((Actor::dV)[0] = (((this)->collisionBounds)[0] - 10));
-               ((Actor::dV)[2] = (((this)->collisionBounds)[2] + 10));
+               ((Actor::dV)[1] = jsub32(((this)->collisionBounds)[1], 10));
+               ((Actor::dV)[3] = jadd32(((this)->collisionBounds)[3], 10));
+               ((Actor::dV)[0] = jsub32(((this)->collisionBounds)[0], 10));
+               ((Actor::dV)[2] = jadd32(((this)->collisionBounds)[2], 10));
                if ((Actor::m_b_AIAI((var2)->collisionBounds, Actor::dV))) {
                   (var2)->m_a_AIZI(Actor::dV, false, 79);
                }
@@ -15776,7 +15776,7 @@ void Actor::m_s_II(jint var1, jint var2) {
    Ref<Actor> _self(this);
    Ref<Actor> var3{};
    ((((var3 = this->m_A_I(var1))))->ay = var2);
-   ((var3)->av = (var2 * 500));
+   ((var3)->av = jmul32(var2, 500));
 }
 
 Ref<Actor> Actor::m_A_I(jint var1) {
@@ -15794,15 +15794,15 @@ Ref<Actor> Actor::m_A_I(jint var1) {
    ((var2)->c = (jint)(((var2)->c | 16)));
    if (((var1 == 4))) {
       if ((((this)->aH == 1))) {
-         ((var2)->positionY = (((Game::viewBounds)[1] + ((this)->collisionBounds)[1]) - ((this)->collisionBounds)[3]));
+         ((var2)->positionY = jsub32(jadd32((Game::viewBounds)[1], ((this)->collisionBounds)[1]), ((this)->collisionBounds)[3]));
          ((var2)->N = true);
          (var2)->m_p_I(102);
       } else if ((((((this)->aH == 5) || ((this)->aH == 4)) || ((this)->aH == 2)))) {
          ((var2)->av = (this)->av);
-         ((var2)->positionX = (((var2)->positionX + jdiv32((Game::cameraX * ((Game::cC - 13))), ((Game::cy - 13)))) + Game::cameraX));
-         ((var2)->positionY = (((var2)->positionY + jdiv32((Game::cameraY * ((Game::cE - 17))), ((Game::cz - 17)))) + Game::cameraY));
-         ((var2)->ac = ((var2)->positionX - Game::cameraX));
-         ((var2)->ad = ((var2)->positionY - Game::cameraY));
+         ((var2)->positionX = jadd32(jadd32((var2)->positionX, jdiv32(jmul32(Game::cameraX, (jsub32(Game::cC, 13))), (jsub32(Game::cy, 13)))), Game::cameraX));
+         ((var2)->positionY = jadd32(jadd32((var2)->positionY, jdiv32(jmul32(Game::cameraY, (jsub32(Game::cE, 17))), (jsub32(Game::cz, 17)))), Game::cameraY));
+         ((var2)->ac = jsub32((var2)->positionX, Game::cameraX));
+         ((var2)->ad = jsub32((var2)->positionY, Game::cameraY));
          (var2)->m_p_I(100);
       }
    } else {
@@ -15894,7 +15894,7 @@ jboolean Actor::m_W_V() {
    {
       jint var0 = 0;
       for (; (var0 < 3); (var0++)) {
-         if (((((Actor::dU)[var0] != nullptr) && ((((Actor::dU)[var0])->positionY - Game::cameraY) > 200)))) {
+         if (((((Actor::dU)[var0] != nullptr) && (jsub32(((Actor::dU)[var0])->positionY, Game::cameraY) > 200)))) {
             return true;
          }
       }
@@ -15954,7 +15954,7 @@ void Actor::m_Y_V() {
    {
       jint var2 = 0;
       for (; (var2 < 3); (var2++)) {
-         if ((((((Actor::dU)[var2] != nullptr) && (((this)->positionY + 1) >= ((Actor::dU)[var2])->positionY)) && (((this)->positionY - 5) < ((Actor::dU)[var2])->positionY)))) {
+         if ((((((Actor::dU)[var2] != nullptr) && (jadd32((this)->positionY, 1) >= ((Actor::dU)[var2])->positionY)) && (jsub32((this)->positionY, 5) < ((Actor::dU)[var2])->positionY)))) {
             (var1 = true);
             break;
          }
@@ -16022,20 +16022,20 @@ void Actor::m_Z_V() {
          if (((((((((var1 = (Game::cj)[var2])) != this) && (var1 != nullptr)) && (var1 != (Actor::dU)[0])) && (var1 != (Actor::dU)[2])) && (var1 != (Actor::dU)[1])))) {
             (var1)->m_g_V();
             if ((((var1)->T == this))) {
-               ((var1)->positionY = (((this)->collisionBounds)[1] - 1));
+               ((var1)->positionY = jsub32(((this)->collisionBounds)[1], 1));
                if ((((var1)->type == 73))) {
-                  ((var1)->positionY = ((((this)->collisionBounds)[1] - 1) + (jshr32((jint)((((var1)->collisionBounds)[1] - ((var1)->collisionBounds)[3])), (jint)(1)))));
+                  ((var1)->positionY = jadd32(jsub32(((this)->collisionBounds)[1], 1), (jshr32((jint)(jsub32(((var1)->collisionBounds)[1], ((var1)->collisionBounds)[3])), (jint)(1)))));
                   ((var1)->H = 0);
                   ((var1)->J = 0);
-                  ((var1)->G = ((var1)->facingLeft ? (-(var1)->ax) : (var1)->ax));
+                  ((var1)->G = ((var1)->facingLeft ? jneg32((var1)->ax) : (var1)->ax));
                }
                ((var1)->bL = true);
                (var1)->m_g_V();
                ((Actor::dV)[1] = ((var1)->collisionBounds)[1]);
                ((Actor::dV)[0] = ((var1)->collisionBounds)[0]);
-               ((Actor::dV)[3] = (((var1)->collisionBounds)[3] + 1));
+               ((Actor::dV)[3] = jadd32(((var1)->collisionBounds)[3], 1));
                ((Actor::dV)[2] = ((var1)->collisionBounds)[2]);
-               (Actor::dR = (jint)((Actor::dR + 64)));
+               (Actor::dR = (jint)(jadd32(Actor::dR, 64)));
                (Actor::dT++);
                this->m_ac_V();
                if (((!Actor::m_b_AIAI(Actor::ey, Actor::dV)))) {
@@ -16072,7 +16072,7 @@ void Actor::m_aa_V() {
 void Actor::m_ab_V() {
    Ref<Actor> _self(this);
    jint var1 = (this)->positionY;
-   ((this)->positionY = jshr32((jint)(((this)->b + (this)->H)), (jint)(8)));
+   ((this)->positionY = jshr32((jint)(jadd32((this)->b, (this)->H)), (jint)(8)));
    this->m_b_ZZ(false, true);
    if ((((this)->eC > 15))) {
       this->m_aa_V();
@@ -16157,7 +16157,7 @@ void Actor::m_ae_V() {
          case 103:
             this->m_a_I(22);
             ((this)->H = 0);
-            if ((((this)->positionY >= (Game::cameraY + 320)))) {
+            if ((((this)->positionY >= jadd32(Game::cameraY, 320)))) {
                ((this)->aq = 104);
                return;
             }
@@ -16176,21 +16176,21 @@ void Actor::m_af_V() {
          jboolean var1{};
          switch (((this)->aq)) {
             case 0:
-               ((this)->aA = ((this)->aA - Game::h));
+               ((this)->aA = jsub32((this)->aA, Game::h));
                if ((((this)->aA <= 0))) {
                   ((this)->aq = 105);
                   if ((((this)->aB < 2))) {
-                     ((this)->G = ((((this)->aB * -2) * (this)->ay) + (this)->ay));
+                     ((this)->G = jadd32(jmul32(jmul32((this)->aB, -2), (this)->ay), (this)->ay));
                   } else if ((((this)->aB < 4))) {
-                     ((this)->H = (((((3 - (this)->aB)) * -2) * (this)->ay) + (this)->ay));
+                     ((this)->H = jadd32(jmul32(jmul32((jsub32(3, (this)->aB)), -2), (this)->ay), (this)->ay));
                   } else if ((((this)->aB < 6))) {
-                     ((this)->G = ((((((this)->aB - 4)) * -2) * (this)->ay) + (this)->ay));
-                     ((this)->H = jdiv32((jshl32((jint)(((this)->ay * ((((this)->m)[2] - ((this)->m)[0])))), (jint)(8))), ((((this)->m)[3] - ((this)->m)[1]))));
-                     ((this)->H = ((((((this)->aB - 4)) * -2) * (this)->H) + (this)->H));
+                     ((this)->G = jadd32(jmul32(jmul32((jsub32((this)->aB, 4)), -2), (this)->ay), (this)->ay));
+                     ((this)->H = jdiv32((jshl32((jint)(jmul32((this)->ay, (jsub32(((this)->m)[2], ((this)->m)[0])))), (jint)(8))), (jsub32(((this)->m)[3], ((this)->m)[1]))));
+                     ((this)->H = jadd32(jmul32(jmul32((jsub32((this)->aB, 4)), -2), (this)->H), (this)->H));
                   } else {
-                     ((this)->G = (((((7 - (this)->aB)) * -2) * (this)->ay) + (this)->ay));
-                     ((this)->H = jdiv32(((this)->ay * ((((this)->m)[2] - ((this)->m)[0]))), ((((this)->m)[3] - ((this)->m)[1]))));
-                     ((this)->H = (((((7 - (this)->aB)) * -2) * (this)->H) + (this)->H));
+                     ((this)->G = jadd32(jmul32(jmul32((jsub32(7, (this)->aB)), -2), (this)->ay), (this)->ay));
+                     ((this)->H = jdiv32(jmul32((this)->ay, (jsub32(((this)->m)[2], ((this)->m)[0]))), (jsub32(((this)->m)[3], ((this)->m)[1]))));
+                     ((this)->H = jadd32(jmul32(jmul32((jsub32(7, (this)->aB)), -2), (this)->H), (this)->H));
                   }
                }
                break;
@@ -16208,13 +16208,13 @@ void Actor::m_af_V() {
                   ([&]{ auto _t0 = this; auto _t1 = (jint)(((this)->H = 0)); return _t0->G = _t1; }());
                   ((this)->aA = (this)->aw);
                   if ((((this)->aB < 2))) {
-                     ((this)->aB = (1 - (this)->aB));
+                     ((this)->aB = jsub32(1, (this)->aB));
                   } else if ((((this)->aB < 4))) {
-                     ((this)->aB = ((2 - (this)->aB) + 3));
+                     ((this)->aB = jadd32(jsub32(2, (this)->aB), 3));
                   } else if ((((this)->aB < 6))) {
-                     ((this)->aB = ((5 - (this)->aB) + 4));
+                     ((this)->aB = jadd32(jsub32(5, (this)->aB), 4));
                   } else {
-                     ((this)->aB = ((7 - (this)->aB) + 6));
+                     ((this)->aB = jadd32(jsub32(7, (this)->aB), 6));
                   }
                }
          }
@@ -16224,17 +16224,17 @@ void Actor::m_af_V() {
       this->m_cV_V();
       if (((Actor::aT == nullptr))) {
          this->m_a_I(9);
-         jint var2 = (((this)->collisionBounds)[3] - ((this)->collisionBounds)[1]);
-         if (((((Game::player)->positionY >= (((this)->m)[1] + var2)) && ((Game::player)->positionY <= (((this)->m)[3] - var2))))) {
-            ((this)->H = jshl32((jint)(((((Game::player)->positionY - (this)->positionY) + var2) + 10)), (jint)(4)));
-         } else if ((((Game::player)->positionY < (((this)->m)[1] + var2)))) {
+         jint var2 = jsub32(((this)->collisionBounds)[3], ((this)->collisionBounds)[1]);
+         if (((((Game::player)->positionY >= jadd32(((this)->m)[1], var2)) && ((Game::player)->positionY <= jsub32(((this)->m)[3], var2))))) {
+            ((this)->H = jshl32((jint)(jadd32(jadd32(jsub32((Game::player)->positionY, (this)->positionY), var2), 10)), (jint)(4)));
+         } else if ((((Game::player)->positionY < jadd32(((this)->m)[1], var2)))) {
             ((this)->G = 0);
-            if ((((this)->positionY > (((this)->m)[1] + var2)))) {
+            if ((((this)->positionY > jadd32(((this)->m)[1], var2)))) {
                ((this)->H = -512);
             } else {
                ((this)->H = 0);
             }
-         } else if ((((Game::player)->positionY > (((this)->m)[3] - var2)))) {
+         } else if ((((Game::player)->positionY > jsub32(((this)->m)[3], var2)))) {
             ((this)->G = 0);
             if ((((this)->positionY < ((this)->m)[3]))) {
                ((this)->H = 512);
@@ -16252,8 +16252,8 @@ void Actor::m_af_V() {
                   break;
                case 102:
                   ((this)->J = -256);
-                  if ((((this)->H <= (-(this)->ay)))) {
-                     ((this)->H = (-(this)->ay));
+                  if ((((this)->H <= jneg32((this)->ay)))) {
+                     ((this)->H = jneg32((this)->ay));
                   }
                   if ((((((Game::player)->animationId == 13) || ((Game::player)->animationId == 23)) || ((Game::player)->animationId == 31)))) {
                      ((this)->aq = 104);
@@ -16278,10 +16278,10 @@ void Actor::m_af_V() {
          ((this)->H = 0);
       }
       if (((Actor::aT == this))) {
-         if ((((Game::player)->positionX <= ((this)->positionX - 10)))) {
+         if ((((Game::player)->positionX <= jsub32((this)->positionX, 10)))) {
             ((this)->G = -512);
             this->m_a_I(11);
-         } else if ((((Game::player)->positionX >= ((this)->positionX + 10)))) {
+         } else if ((((Game::player)->positionX >= jadd32((this)->positionX, 10)))) {
             ((this)->G = 512);
             this->m_a_I(12);
          } else {
@@ -16308,7 +16308,7 @@ void Actor::m_af_V() {
          } else {
             (((this)->r)->positionX = ((this)->collisionBounds)[0]);
          }
-         (((this)->r)->positionY = ((this)->positionY + (this)->av));
+         (((this)->r)->positionY = jadd32((this)->positionY, (this)->av));
       }
    }
    this->m_d_IAI(0, (this)->collisionBounds);
@@ -16330,7 +16330,7 @@ void Actor::m_cF_V() {
          ((Game::player)->cI = true);
       }
       if ((((Game::player)->eC == 24))) {
-         ((Game::player)->positionY = (jint)(((Game::player)->positionY + 60)));
+         ((Game::player)->positionY = (jint)(jadd32((Game::player)->positionY, 60)));
          (Game::player)->m_q_I(0);
          (Actor::aT = nullptr);
          (Actor::cK = true);
@@ -16343,7 +16343,7 @@ void Actor::m_cF_V() {
    } else {
       if ((((this)->aC == 1))) {
          if ((((this)->av > 0))) {
-            ((this)->av = (jint)(((this)->av - 3)));
+            ((this)->av = (jint)(jsub32((this)->av, 3)));
          } else {
             ((this)->av = 0);
          }
@@ -16358,8 +16358,8 @@ void Actor::m_d_IAI(jint var1, Arr<jint> var2) {
    this->m_g_V();
    if ((((this)->collisionBounds != nullptr))) {
       if (((Actor::aT == nullptr))) {
-         jint var3 = ((Game::player)->positionY + (jshr32((jint)((Game::player)->H), (jint)(8))));
-         if ((((((((Game::player)->H >= 0) && ((Game::player)->positionY <= (((var2)[1] + var1) + ((((this)->type == 65) ? 0 : 5))))) && ((Game::player)->positionX >= (var2)[0])) && ((Game::player)->positionX <= (var2)[2])) && (((var3 >= ((var2)[1] + (jshr32((jint)((this)->H), (jint)(8))))) || (var3 >= (var2)[1])))))) {
+         jint var3 = jadd32((Game::player)->positionY, (jshr32((jint)((Game::player)->H), (jint)(8))));
+         if ((((((((Game::player)->H >= 0) && ((Game::player)->positionY <= jadd32(jadd32((var2)[1], var1), ((((this)->type == 65) ? 0 : 5))))) && ((Game::player)->positionX >= (var2)[0])) && ((Game::player)->positionX <= (var2)[2])) && (((var3 >= jadd32((var2)[1], (jshr32((jint)((this)->H), (jint)(8))))) || (var3 >= (var2)[1])))))) {
             if ((((this)->type == 64))) {
                this->m_a_I(1);
                (Actor::eT = false);
@@ -16383,7 +16383,7 @@ void Actor::m_d_IAI(jint var1, Arr<jint> var2) {
             if ((((Game::player)->aq != 1))) {
                (Game::player)->m_a_I(9);
             }
-            ((Game::player)->positionY = ((var2)[1] + 1));
+            ((Game::player)->positionY = jadd32((var2)[1], 1));
             if ((((this)->type == 50))) {
                (((this)->n)[11] = 0);
                return;
@@ -16399,7 +16399,7 @@ void Actor::m_d_IAI(jint var1, Arr<jint> var2) {
             }
          }
          (Game::player)->m_g_V();
-         if ((((((((Game::player)->animationId != 7) && (!Actor::m_b_AIAI((Game::player)->collisionBounds, var2))) && (((Game::player)->H - (this)->H) < 0)) || ((Game::player)->positionX > (var2)[2])) || ((Game::player)->positionX < (var2)[0])))) {
+         if ((((((((Game::player)->animationId != 7) && (!Actor::m_b_AIAI((Game::player)->collisionBounds, var2))) && (jsub32((Game::player)->H, (this)->H) < 0)) || ((Game::player)->positionX > (var2)[2])) || ((Game::player)->positionX < (var2)[0])))) {
             (Actor::aT = nullptr);
             ((Game::player)->G = 0);
             ((Game::player)->H = 0);
@@ -16407,10 +16407,10 @@ void Actor::m_d_IAI(jint var1, Arr<jint> var2) {
          }
          if ((((Actor::aT)->type == 33))) {
             if (((((Actor::aT)->animationId != 12) && ((Actor::aT)->animationId != 11)))) {
-               ((Game::player)->positionY = ((var2)[1] + 1));
+               ((Game::player)->positionY = jadd32((var2)[1], 1));
                return;
             }
-            ((Game::player)->positionY = ((var2)[1] + (Math::abs(((Game::player)->positionX - (Actor::aT)->positionX)) / 3)));
+            ((Game::player)->positionY = jadd32((var2)[1], (Math::abs(jsub32((Game::player)->positionX, (Actor::aT)->positionX)) / 3)));
             return;
          }
          if ((((Actor::aT)->type == 50))) {
@@ -16422,20 +16422,20 @@ void Actor::m_d_IAI(jint var1, Arr<jint> var2) {
             return;
          }
          if ((((Actor::aT)->type == 39))) {
-            ((Game::player)->positionY = ((var2)[1] + 1));
+            ((Game::player)->positionY = jadd32((var2)[1], 1));
             if ((((this)->s != nullptr))) {
-               ((Game::player)->G = ((Game::player)->G + ((this)->s)->G));
+               ((Game::player)->G = jadd32((Game::player)->G, ((this)->s)->G));
                return;
             }
          } else {
             if ((((Actor::aT)->type == 82))) {
                (Actor::aT)->m_ab_V();
                ((Game::player)->H = (Actor::aT)->H);
-               ((Game::player)->positionY = ((var2)[1] + var1));
+               ((Game::player)->positionY = jadd32((var2)[1], var1));
                return;
             }
             ((Game::player)->H = (this)->H);
-            ((Game::player)->positionY = ((var2)[1] + var1));
+            ((Game::player)->positionY = jadd32((var2)[1], var1));
          }
       }
    }
@@ -16475,13 +16475,13 @@ void Actor::m_cH_V() {
             this->m_ah_V();
             return;
          case 101:
-            (((this)->n)[10] = (((this)->n)[10] - Game::h));
+            (((this)->n)[10] = jsub32(((this)->n)[10], Game::h));
             this->m_aj_V();
             var1 = Math::abs((this)->av);
-            var2 = jshr32((jint)(([&]{ auto _t0 = (jshl32((jint)((this)->az), (jint)(8))); auto _t1 = (var1 * Game::m_l_I(jshr32((jint)((this)->aA), (jint)(16)))); return (_t0 + _t1); }())), (jint)(8));
-            var3 = jshr32((jint)(([&]{ auto _t2 = (jshl32((jint)((this)->aw), (jint)(8))); auto _t3 = (var1 * Game::m_m_I(jshr32((jint)((this)->aA), (jint)(16)))); return (_t2 + _t3); }())), (jint)(8));
-            ((this)->H = jshl32((jint)((var2 - (this)->positionY)), (jint)(8)));
-            ((this)->G = jshl32((jint)((var3 - (this)->positionX)), (jint)(8)));
+            var2 = jshr32((jint)(([&]{ auto _t0 = (jshl32((jint)((this)->az), (jint)(8))); auto _t1 = jmul32(var1, Game::m_l_I(jshr32((jint)((this)->aA), (jint)(16)))); return jadd32(_t0, _t1); }())), (jint)(8));
+            var3 = jshr32((jint)(([&]{ auto _t2 = (jshl32((jint)((this)->aw), (jint)(8))); auto _t3 = jmul32(var1, Game::m_m_I(jshr32((jint)((this)->aA), (jint)(16)))); return jadd32(_t2, _t3); }())), (jint)(8));
+            ((this)->H = jshl32((jint)(jsub32(var2, (this)->positionY)), (jint)(8)));
+            ((this)->G = jshl32((jint)(jsub32(var3, (this)->positionX)), (jint)(8)));
             if (((((Actor::aT != this) && ((this)->aA == 0)) && ((this)->aC != 1)))) {
                this->m_ag_V();
             }
@@ -16504,7 +16504,7 @@ void Actor::m_cH_V() {
                for (; (var4 < Game::ck); (var4++)) {
                   Ref<Actor> var5{};
                   if ((((((var5 = (Game::cj)[var4])) != nullptr) && ((((var5)->c & 1024)) == 0)))) {
-                     if (((((var5)->m_M_V() && Actor::m_b_AIAI((var5)->collisionBounds, (this)->collisionBounds)) && ((this)->positionY < ((var5)->positionY - 25))))) {
+                     if (((((var5)->m_M_V() && Actor::m_b_AIAI((var5)->collisionBounds, (this)->collisionBounds)) && ((this)->positionY < jsub32((var5)->positionY, 25))))) {
                         (var5)->m_s_I(100);
                         ((this)->G = 0);
                         break;
@@ -16513,7 +16513,7 @@ void Actor::m_cH_V() {
                         Arr<jint> var6{};
                         ((((var6 = jnewarray<Arr<jint>>(4))))[0] = ((var5)->collisionBounds)[0]);
                         ((var6)[2] = ((var5)->collisionBounds)[2]);
-                        ((var6)[1] = (((var5)->collisionBounds)[1] - 17));
+                        ((var6)[1] = jsub32(((var5)->collisionBounds)[1], 17));
                         ((var6)[3] = ((var5)->collisionBounds)[3]);
                         if ((Actor::m_b_AIAI(var6, (this)->collisionBounds))) {
                            ((var5)->ay = (this)->positionX);
@@ -16533,7 +16533,7 @@ void Actor::m_cH_V() {
                ((this)->J = 0);
                ((this)->H = 0);
             }
-            if (((Actor::m_b_AIAI((Game::player)->collisionBounds, (this)->collisionBounds) && ((this)->positionY < ((Game::player)->positionY - 25))))) {
+            if (((Actor::m_b_AIAI((Game::player)->collisionBounds, (this)->collisionBounds) && ((this)->positionY < jsub32((Game::player)->positionY, 25))))) {
                ([&]{ auto _t4 = Game::player; auto _t5 = 4; auto _t6 = this->m_B_I(1); auto _t7 = 0; auto _t8 = this; return _t4->m_a_IIIActor(_t5, _t6, _t7, _t8); }());
                return;
             }
@@ -16563,7 +16563,7 @@ void Actor::m_ag_V() {
    (((this)->n)[2] = ((this)->n)[3]);
    (((this)->n)[4] = ((this)->n)[5]);
    ((this)->positionX = (this)->aw);
-   ((this)->positionY = ((this)->az - (this)->av));
+   ((this)->positionY = jsub32((this)->az, (this)->av));
    ((this)->ay = 1);
    ((this)->aA = 0);
    ((this)->ax = ((this)->n)[7]);
@@ -16577,16 +16577,16 @@ void Actor::m_k_I(jint var1) {
    {
       switch ((var1)) {
          case 0:
-            ((Actor::ey)[0] = ((this)->positionX - 3));
-            ((Actor::ey)[2] = ((this)->positionX + 3));
+            ((Actor::ey)[0] = jsub32((this)->positionX, 3));
+            ((Actor::ey)[2] = jadd32((this)->positionX, 3));
             ((Actor::ey)[1] = (this)->az);
             ((Actor::ey)[3] = (this)->positionY);
             return;
          case 1:
             ((Actor::ey)[0] = ((this)->collisionBounds)[0]);
             ((Actor::ey)[2] = ((this)->collisionBounds)[2]);
-            ((Actor::ey)[1] = (((this)->collisionBounds)[1] - 3));
-            ((Actor::ey)[3] = (((this)->collisionBounds)[3] - 3));
+            ((Actor::ey)[1] = jsub32(((this)->collisionBounds)[1], 3));
+            ((Actor::ey)[3] = jsub32(((this)->collisionBounds)[3], 3));
       }
    }
 }
@@ -16650,35 +16650,35 @@ void Actor::m_aj_V() {
    Ref<Actor> _self(this);
    jint var1 = (((this)->ax >= 0) ? (this)->ax : 0);
    if ((((this)->aB == 1))) {
-      ((this)->aA = (jint)(((this)->aA + jshl32((jint)(var1), (jint)(8)))));
+      ((this)->aA = (jint)(jadd32((this)->aA, jshl32((jint)(var1), (jint)(8)))));
    } else {
-      ((this)->aA = (jint)(((this)->aA - jshl32((jint)(var1), (jint)(8)))));
+      ((this)->aA = (jint)(jsub32((this)->aA, jshl32((jint)(var1), (jint)(8)))));
    }
    if (((((this)->aA == 0) && (((this)->n)[8] != 1)))) {
       ((this)->ax = ((this)->n)[4]);
-      ((this)->ay = (-(this)->ay));
+      ((this)->ay = jneg32((this)->ay));
       (((this)->n)[9] = 1);
       (((this)->n)[8] = 1);
    }
    if (((((this)->aA < jshl32((jint)(((this)->n)[0]), (jint)(16))) && ((this)->ax > 0)))) {
-      if (((((this)->aA <= (-(jshl32((jint)(((this)->n)[0]), (jint)(16))))) || ((this)->ax <= 0)))) {
-         ((this)->aB = (-(this)->aB));
-         ((this)->ay = (-(this)->ay));
+      if (((((this)->aA <= jneg32((jshl32((jint)(((this)->n)[0]), (jint)(16))))) || ((this)->ax <= 0)))) {
+         ((this)->aB = jneg32((this)->aB));
+         ((this)->ay = jneg32((this)->ay));
          if ((((this)->ax > 0))) {
             (((this)->n)[9] = 1);
          }
          (((this)->n)[8] = 0);
       }
    } else {
-      ((this)->aB = (-(this)->aB));
-      ((this)->ay = (-(this)->ay));
+      ((this)->aB = jneg32((this)->aB));
+      ((this)->ay = jneg32((this)->ay));
       if ((((this)->ax > 0))) {
          (((this)->n)[9] = 1);
       }
       (((this)->n)[8] = 0);
    }
    if (((((this)->n)[9] != 1))) {
-      ((this)->ax = ((this)->ax - ((this)->ay * ((this)->n)[2])));
+      ((this)->ax = jsub32((this)->ax, jmul32((this)->ay, ((this)->n)[2])));
    } else {
       (((this)->n)[9] = 0);
    }
@@ -16689,7 +16689,7 @@ void Actor::m_ak_V() {
    {
       switch (((this)->aq)) {
          case 0:
-            ([&]{ auto _t0 = this; auto _t1 = (jint)(Game::m_h_II(((Game::player)->a - (this)->a), ((Game::player)->b - (this)->b))); return _t0->eX = _t1; }());
+            ([&]{ auto _t0 = this; auto _t1 = (jint)(Game::m_h_II(jsub32((Game::player)->a, (this)->a), jsub32((Game::player)->b, (this)->b))); return _t0->eX = _t1; }());
             if ((((this)->eX <= 40960))) {
                ((this)->aq = 101);
                return;
@@ -16697,7 +16697,7 @@ void Actor::m_ak_V() {
             break;
          case 101:
             this->m_a_I(5);
-            ([&]{ auto _t2 = this; auto _t3 = (jint)(Game::m_h_II(((Game::player)->a - (this)->a), ((Game::player)->b - (this)->b))); return _t2->eX = _t3; }());
+            ([&]{ auto _t2 = this; auto _t3 = (jint)(Game::m_h_II(jsub32((Game::player)->a, (this)->a), jsub32((Game::player)->b, (this)->b))); return _t2->eX = _t3; }());
             if ((((this)->eX < 20480))) {
                ((this)->aq = 102);
                this->m_a_I(6);
@@ -16743,19 +16743,19 @@ void Actor::m_al_V() {
    Ref<Actor> _self(this);
    {
       jint var2 = 0;
-      for (; (var2 < 20); (var2 = (jint)((var2 + 3)))) {
-         if ((((Game::bO)[(var2 + 0)] == (this)->an))) {
+      for (; (var2 < 20); (var2 = (jint)(jadd32(var2, 3)))) {
+         if ((((Game::bO)[jadd32(var2, 0)] == (this)->an))) {
             return;
          }
       }
    }
    {
       jint var1 = 0;
-      for (; (var1 < 20); (var1 = (jint)((var1 + 3)))) {
-         if ((((Game::bO)[(var1 + 0)] == 0))) {
-            ((Game::bO)[(var1 + 0)] = (this)->an);
-            ((Game::bO)[(var1 + 1)] = (this)->positionX);
-            ((Game::bO)[(var1 + 2)] = (this)->positionY);
+      for (; (var1 < 20); (var1 = (jint)(jadd32(var1, 3)))) {
+         if ((((Game::bO)[jadd32(var1, 0)] == 0))) {
+            ((Game::bO)[jadd32(var1, 0)] = (this)->an);
+            ((Game::bO)[jadd32(var1, 1)] = (this)->positionX);
+            ((Game::bO)[jadd32(var1, 2)] = (this)->positionY);
             return;
          }
       }
@@ -16766,9 +16766,9 @@ void Actor::m_cI_V() {
    Ref<Actor> _self(this);
    {
       jint var1 = 0;
-      for (; (var1 < 20); (var1 = (jint)((var1 + 3)))) {
-         if ((((Game::bO)[(var1 + 0)] == (this)->an))) {
-            ((Game::bO)[(var1 + 0)] = 0);
+      for (; (var1 < 20); (var1 = (jint)(jadd32(var1, 3)))) {
+         if ((((Game::bO)[jadd32(var1, 0)] == (this)->an))) {
+            ((Game::bO)[jadd32(var1, 0)] = 0);
             return;
          }
       }
@@ -16779,8 +16779,8 @@ jboolean Actor::m_cJ_V() {
    Ref<Actor> _self(this);
    {
       jint var1 = 0;
-      for (; (var1 < 20); (var1 = (jint)((var1 + 3)))) {
-         if (((((Game::bO)[(var1 + 0)] != 0) && (Game::m_h_II(((Game::bO)[(var1 + 1)] - (jshr32((jint)((((this)->collisionBounds)[0] + ((this)->collisionBounds)[2])), (jint)(1)))), ((Game::bO)[(var1 + 2)] - (jshr32((jint)((((this)->collisionBounds)[1] + ((this)->collisionBounds)[3])), (jint)(1))))) < 75)))) {
+      for (; (var1 < 20); (var1 = (jint)(jadd32(var1, 3)))) {
+         if (((((Game::bO)[jadd32(var1, 0)] != 0) && (Game::m_h_II(jsub32((Game::bO)[jadd32(var1, 1)], (jshr32((jint)(jadd32(((this)->collisionBounds)[0], ((this)->collisionBounds)[2])), (jint)(1)))), jsub32((Game::bO)[jadd32(var1, 2)], (jshr32((jint)(jadd32(((this)->collisionBounds)[1], ((this)->collisionBounds)[3])), (jint)(1))))) < 75)))) {
             return true;
          }
       }
@@ -16791,7 +16791,7 @@ jboolean Actor::m_cJ_V() {
 void Actor::am() {
    {
       jint var0 = 0;
-      for (; (var0 < 20); (var0 = (jint)((var0 + 3)))) {
+      for (; (var0 < 20); (var0 = (jint)(jadd32(var0, 3)))) {
          ((Game::bO)[var0] = 0);
       }
    }
@@ -16845,12 +16845,12 @@ void Actor::m_cK_V() {
 
 void Actor::m_cL_V() {
    Ref<Actor> _self(this);
-   jint var1 = (((this)->collisionBounds)[3] - (Game::player)->positionY);
-   jint var2 = (((this)->collisionBounds)[3] - ((this)->collisionBounds)[1]);
-   jint var3 = ((((this)->s)->collisionBounds)[3] - (((this)->s)->collisionBounds)[1]);
+   jint var1 = jsub32(((this)->collisionBounds)[3], (Game::player)->positionY);
+   jint var2 = jsub32(((this)->collisionBounds)[3], ((this)->collisionBounds)[1]);
+   jint var3 = jsub32((((this)->s)->collisionBounds)[3], (((this)->s)->collisionBounds)[1]);
    jint var4 = jdiv32((jshl32((jint)(var1), (jint)(8))), var2);
-   jint var5 = jshr32((jint)((var3 * var4)), (jint)(8));
-   ((Game::player)->positionY = ((((this)->s)->collisionBounds)[3] - var5));
+   jint var5 = jshr32((jint)(jmul32(var3, var4)), (jint)(8));
+   ((Game::player)->positionY = jsub32((((this)->s)->collisionBounds)[3], var5));
 }
 
 void Actor::m_cM_V() {
@@ -16896,7 +16896,7 @@ void Actor::m_cM_V() {
                if ((((Game::player)->H >= 0))) {
                   break;
                }
-               ((Game::player)->positionX = ((((this)->s)->collisionBounds)[0] + (((Game::player)->positionX - ((this)->collisionBounds)[0]))));
+               ((Game::player)->positionX = jadd32((((this)->s)->collisionBounds)[0], (jsub32((Game::player)->positionX, ((this)->collisionBounds)[0]))));
                ((Game::player)->positionY = (((this)->s)->collisionBounds)[3]);
                while ((([&]{ auto _t6 = (Game::player)->m_g_V(); auto _t7 = ((this)->s)->collisionBounds; return Actor::m_b_AIAI(_t6, _t7); }()))) {
                   ((Game::player)->positionY--);
@@ -16905,7 +16905,7 @@ void Actor::m_cM_V() {
                break;
             case 8:
                if ((((Game::player)->H > 0))) {
-                  ((Game::player)->positionX = ((((this)->s)->collisionBounds)[0] + (((Game::player)->positionX - ((this)->collisionBounds)[0]))));
+                  ((Game::player)->positionX = jadd32((((this)->s)->collisionBounds)[0], (jsub32((Game::player)->positionX, ((this)->collisionBounds)[0]))));
                   ((Game::player)->positionY = (((this)->s)->collisionBounds)[3]);
                   while ((([&]{ auto _t8 = (Game::player)->m_g_V(); auto _t9 = ((this)->s)->collisionBounds; return Actor::m_b_AIAI(_t8, _t9); }()))) {
                      ((Game::player)->positionY++);
@@ -16945,16 +16945,16 @@ void Actor::m_cO_V() {
       if ((Actor::m_b_AIAI((Game::player)->k, (this)->collisionBounds))) {
          this->m_a_AIZI((Game::player)->k, false, 61);
       } else if (((3 == (Game::be)[Game::levelIndex]))) {
-         ((Actor::dV)[1] = (((Game::player)->collisionBounds)[1] - 20));
-         ((Actor::dV)[3] = (((Game::player)->collisionBounds)[3] + 10));
+         ((Actor::dV)[1] = jsub32(((Game::player)->collisionBounds)[1], 20));
+         ((Actor::dV)[3] = jadd32(((Game::player)->collisionBounds)[3], 10));
          ((Actor::dV)[0] = ((Game::player)->collisionBounds)[0]);
-         ((Actor::dV)[2] = (((Game::player)->collisionBounds)[2] + 20));
+         ((Actor::dV)[2] = jadd32(((Game::player)->collisionBounds)[2], 20));
          if (((Actor::m_b_AIAI(Actor::dV, (this)->collisionBounds) && this->m_a_AIZI(Actor::dV, false, 61)))) {
             (Game::player)->m_a_IIIActor(4, 5, 0, this);
          }
       } else if (((2 == (Game::be)[Game::levelIndex]))) {
          (Game::player)->m_g_V();
-         ((Actor::dV)[1] = (((Game::player)->collisionBounds)[1] - 3));
+         ((Actor::dV)[1] = jsub32(((Game::player)->collisionBounds)[1], 3));
          ((Actor::dV)[3] = ((Game::player)->collisionBounds)[3]);
          ((Actor::dV)[0] = ((Game::player)->collisionBounds)[0]);
          ((Actor::dV)[2] = ((Game::player)->collisionBounds)[2]);
@@ -16994,7 +16994,7 @@ void Actor::m_cO_V() {
          Game::m_e_Actor(this);
       }
       if (((((((this)->animationId == 9) || ((this)->animationId == 11))) && this->m_e_V()))) {
-         this->m_a_I(((this)->animationId + 1));
+         this->m_a_I(jadd32((this)->animationId, 1));
          return;
       }
    } else if ((this->m_e_V())) {
@@ -17031,7 +17031,7 @@ void Actor::m_cQ_V() {
                return;
             }
             if ((((this)->aH == 1))) {
-               if ((((Actor::m_l_I(((Game::player)->positionX - (this)->positionX)) < 100) && ((Game::player)->positionY > (this)->positionY)))) {
+               if ((((Actor::m_l_I(jsub32((Game::player)->positionX, (this)->positionX)) < 100) && ((Game::player)->positionY > (this)->positionY)))) {
                   ((this)->aq = 109);
                   ((this)->aA = 500);
                   return;
@@ -17116,10 +17116,10 @@ jboolean Actor::m_a_AIZI(Arr<jint> var1, jboolean var2, jint var3) {
       for (; (var5 < ((this)->n).length()); (var5++)) {
          jint var6 = jdiv32(var5, (this)->aw);
          jint var7 = jrem32(var5, (this)->aw);
-         ((Actor::ey)[0] = (((this)->collisionBounds)[0] + (20 * var7)));
-         ((Actor::ey)[1] = (((this)->collisionBounds)[1] + (20 * var6)));
-         ((Actor::ey)[2] = ((Actor::ey)[0] + 20));
-         ((Actor::ey)[3] = ((Actor::ey)[1] + 20));
+         ((Actor::ey)[0] = jadd32(((this)->collisionBounds)[0], jmul32(20, var7)));
+         ((Actor::ey)[1] = jadd32(((this)->collisionBounds)[1], jmul32(20, var6)));
+         ((Actor::ey)[2] = jadd32((Actor::ey)[0], 20));
+         ((Actor::ey)[3] = jadd32((Actor::ey)[1], 20));
          if (((!var2))) {
             this->m_a_AIZ(Actor::ey, true);
             if ((((((this)->n)[var5] == 0) && Actor::m_b_AIAI(var1, Actor::ey)))) {
@@ -17128,9 +17128,9 @@ jboolean Actor::m_a_AIZI(Arr<jint> var1, jboolean var2, jint var3) {
                   (var4 = true);
                }
                if (((var3 == 61))) {
-                  ([&]{ auto _t4 = 61; auto _t5 = 38; auto _t6 = 0; auto _t7 = ([&]{ auto _t0 = ((Actor::ey)[0] - (this)->positionX); auto _t1 = Game::m_i_II(-10, 10); return (_t0 + _t1); }()); auto _t8 = ([&]{ auto _t2 = ((Actor::ey)[1] - (this)->positionY); auto _t3 = Game::m_i_II(-10, 10); return (_t2 + _t3); }()); auto _t9 = 302; auto _t10 = false; return this->m_a_IIIIIIZ(_t4, _t5, _t6, _t7, _t8, _t9, _t10); }());
+                  ([&]{ auto _t4 = 61; auto _t5 = 38; auto _t6 = 0; auto _t7 = ([&]{ auto _t0 = jsub32((Actor::ey)[0], (this)->positionX); auto _t1 = Game::m_i_II(-10, 10); return jadd32(_t0, _t1); }()); auto _t8 = ([&]{ auto _t2 = jsub32((Actor::ey)[1], (this)->positionY); auto _t3 = Game::m_i_II(-10, 10); return jadd32(_t2, _t3); }()); auto _t9 = 302; auto _t10 = false; return this->m_a_IIIIIIZ(_t4, _t5, _t6, _t7, _t8, _t9, _t10); }());
                } else {
-                  ([&]{ auto _t15 = 79; auto _t16 = 45; auto _t17 = 1; auto _t18 = ([&]{ auto _t11 = ((Actor::ey)[0] - (this)->positionX); auto _t12 = Game::m_i_II(-10, 10); return (_t11 + _t12); }()); auto _t19 = ([&]{ auto _t13 = ((Actor::ey)[1] - (this)->positionY); auto _t14 = Game::m_i_II(-10, 10); return (_t13 + _t14); }()); auto _t20 = 302; auto _t21 = false; return this->m_a_IIIIIIZ(_t15, _t16, _t17, _t18, _t19, _t20, _t21); }());
+                  ([&]{ auto _t15 = 79; auto _t16 = 45; auto _t17 = 1; auto _t18 = ([&]{ auto _t11 = jsub32((Actor::ey)[0], (this)->positionX); auto _t12 = Game::m_i_II(-10, 10); return jadd32(_t11, _t12); }()); auto _t19 = ([&]{ auto _t13 = jsub32((Actor::ey)[1], (this)->positionY); auto _t14 = Game::m_i_II(-10, 10); return jadd32(_t13, _t14); }()); auto _t20 = 302; auto _t21 = false; return this->m_a_IIIIIIZ(_t15, _t16, _t17, _t18, _t19, _t20, _t21); }());
                }
             }
             if (((((this)->n)[var5] == 0))) {
@@ -17169,9 +17169,9 @@ void Actor::m_cS_V() {
             if ((this->m_e_V())) {
                this->m_p_I(101);
             }
-            ((this)->aA = ((this)->aA + Game::h));
+            ((this)->aA = jadd32((this)->aA, Game::h));
             if ((((this)->aA > (this)->aB))) {
-               ((this)->aB = (jint)(((this)->aB + 300)));
+               ((this)->aB = (jint)(jadd32((this)->aB, 300)));
                this->m_c_IAI(32, (this)->collisionBounds);
                return;
             }
@@ -17313,60 +17313,60 @@ void Actor::m_a_IIIIAI(jint var0, jint var1, jint var2, jint var3, Arr<jint> var
       do {
          jboolean var10 = false;
          if ((var8)) {
-            if ((Actor::m_a_IIIIIIIIAI(var0, var1, var2, var3, (var6 * 20), (var7 * 20), (var6 * 20), (((var7 + 1)) * 20), var4))) {
+            if ((Actor::m_a_IIIIIIIIAI(var0, var1, var2, var3, jmul32(var6, 20), jmul32(var7, 20), jmul32(var6, 20), jmul32((jadd32(var7, 1)), 20), var4))) {
                (var10 = true);
                (var5 = Game::m_g_II((--var6), var7));
             }
-            if (((((var12 != nullptr) && (((var12)->collisionBounds)[2] <= (((var10 ? (var6 + 1) : var6)) * 20))) && (((var12)->collisionBounds)[2] >= (((var10 ? var6 : (var6 - 1))) * 20))))) {
+            if (((((var12 != nullptr) && (((var12)->collisionBounds)[2] <= jmul32(((var10 ? jadd32(var6, 1) : var6)), 20))) && (((var12)->collisionBounds)[2] >= jmul32(((var10 ? var6 : jsub32(var6, 1))), 20))))) {
                if ((Actor::m_a_IIIIIIIIAI(var0, var1, var2, var3, ((var12)->collisionBounds)[2], ((var12)->collisionBounds)[1], ((var12)->collisionBounds)[2], ((var12)->collisionBounds)[3], var4))) {
                   (var10 = true);
                   (var5 = 24);
                }
-            } else if ((((((var13 != nullptr) && (((var13)->collisionBounds)[2] <= (((var10 ? (var6 + 1) : var6)) * 20))) && (((var13)->collisionBounds)[2] >= (((var10 ? var6 : (var6 - 1))) * 20))) && Actor::m_a_IIIIIIIIAI(var0, var1, var2, var3, ((var13)->collisionBounds)[2], ((var13)->collisionBounds)[1], ((var13)->collisionBounds)[2], ((var13)->collisionBounds)[3], var4)))) {
+            } else if ((((((var13 != nullptr) && (((var13)->collisionBounds)[2] <= jmul32(((var10 ? jadd32(var6, 1) : var6)), 20))) && (((var13)->collisionBounds)[2] >= jmul32(((var10 ? var6 : jsub32(var6, 1))), 20))) && Actor::m_a_IIIIIIIIAI(var0, var1, var2, var3, ((var13)->collisionBounds)[2], ((var13)->collisionBounds)[1], ((var13)->collisionBounds)[2], ((var13)->collisionBounds)[3], var4)))) {
                (var10 = true);
                (var5 = 24);
             }
          } else {
-            if ((Actor::m_a_IIIIIIIIAI(var0, var1, var2, var3, (((var6 + 1)) * 20), (var7 * 20), (((var6 + 1)) * 20), (((var7 + 1)) * 20), var4))) {
+            if ((Actor::m_a_IIIIIIIIAI(var0, var1, var2, var3, jmul32((jadd32(var6, 1)), 20), jmul32(var7, 20), jmul32((jadd32(var6, 1)), 20), jmul32((jadd32(var7, 1)), 20), var4))) {
                (var10 = true);
                (var5 = Game::m_g_II((++var6), var7));
             }
-            if (((((var12 != nullptr) && (((var12)->collisionBounds)[0] >= (((var10 ? (var6 - 1) : var6)) * 20))) && (((var12)->collisionBounds)[0] <= (((var10 ? var6 : (var6 + 1))) * 20))))) {
+            if (((((var12 != nullptr) && (((var12)->collisionBounds)[0] >= jmul32(((var10 ? jsub32(var6, 1) : var6)), 20))) && (((var12)->collisionBounds)[0] <= jmul32(((var10 ? var6 : jadd32(var6, 1))), 20))))) {
                if ((Actor::m_a_IIIIIIIIAI(var0, var1, var2, var3, ((var12)->collisionBounds)[2], ((var12)->collisionBounds)[1], ((var12)->collisionBounds)[2], ((var12)->collisionBounds)[3], var4))) {
                   (var10 = true);
                   (var5 = 24);
                }
-            } else if ((((((var13 != nullptr) && (((var13)->collisionBounds)[0] >= (((var10 ? (var6 - 1) : var6)) * 20))) && (((var13)->collisionBounds)[0] <= (((var10 ? var6 : (var6 + 1))) * 20))) && Actor::m_a_IIIIIIIIAI(var0, var1, var2, var3, ((var13)->collisionBounds)[2], ((var13)->collisionBounds)[1], ((var13)->collisionBounds)[2], ((var13)->collisionBounds)[3], var4)))) {
+            } else if ((((((var13 != nullptr) && (((var13)->collisionBounds)[0] >= jmul32(((var10 ? jsub32(var6, 1) : var6)), 20))) && (((var13)->collisionBounds)[0] <= jmul32(((var10 ? var6 : jadd32(var6, 1))), 20))) && Actor::m_a_IIIIIIIIAI(var0, var1, var2, var3, ((var13)->collisionBounds)[2], ((var13)->collisionBounds)[1], ((var13)->collisionBounds)[2], ((var13)->collisionBounds)[3], var4)))) {
                (var10 = true);
                (var5 = 24);
             }
          }
          if (((!var10))) {
             if ((var9)) {
-               if ((Actor::m_a_IIIIIIIIAI(var0, var1, var2, var3, (var6 * 20), (var7 * 20), (((var6 + 1)) * 20), (var7 * 20), var4))) {
+               if ((Actor::m_a_IIIIIIIIAI(var0, var1, var2, var3, jmul32(var6, 20), jmul32(var7, 20), jmul32((jadd32(var6, 1)), 20), jmul32(var7, 20), var4))) {
                   (var10 = true);
                   (var5 = Game::m_g_II(var6, (--var7)));
                }
-               if (((((var12 != nullptr) && (((var12)->collisionBounds)[3] >= (((var7 + ((var10 ? 1 : 0)))) * 20))) && (((var12)->collisionBounds)[3] <= (((var7 + ((var10 ? 2 : 1)))) * 20))))) {
+               if (((((var12 != nullptr) && (((var12)->collisionBounds)[3] >= jmul32((jadd32(var7, ((var10 ? 1 : 0)))), 20))) && (((var12)->collisionBounds)[3] <= jmul32((jadd32(var7, ((var10 ? 2 : 1)))), 20))))) {
                   if ((Actor::m_a_IIIIIIIIAI(var0, var1, var2, var3, ((var12)->collisionBounds)[0], ((var12)->collisionBounds)[3], ((var12)->collisionBounds)[2], ((var12)->collisionBounds)[3], var4))) {
                      (var10 = true);
                      (var5 = 24);
                   }
-               } else if ((((((var13 != nullptr) && (((var13)->collisionBounds)[3] >= (((var7 + ((var10 ? 1 : 0)))) * 20))) && (((var13)->collisionBounds)[3] <= (((var7 + ((var10 ? 2 : 1)))) * 20))) && Actor::m_a_IIIIIIIIAI(var0, var1, var2, var3, ((var13)->collisionBounds)[0], ((var13)->collisionBounds)[3], ((var13)->collisionBounds)[2], ((var13)->collisionBounds)[3], var4)))) {
+               } else if ((((((var13 != nullptr) && (((var13)->collisionBounds)[3] >= jmul32((jadd32(var7, ((var10 ? 1 : 0)))), 20))) && (((var13)->collisionBounds)[3] <= jmul32((jadd32(var7, ((var10 ? 2 : 1)))), 20))) && Actor::m_a_IIIIIIIIAI(var0, var1, var2, var3, ((var13)->collisionBounds)[0], ((var13)->collisionBounds)[3], ((var13)->collisionBounds)[2], ((var13)->collisionBounds)[3], var4)))) {
                   (var10 = true);
                   (var5 = 24);
                }
             } else {
-               if ((Actor::m_a_IIIIIIIIAI(var0, var1, var2, var3, (var6 * 20), (((var7 + 1)) * 20), (((var6 + 1)) * 20), (((var7 + 1)) * 20), var4))) {
+               if ((Actor::m_a_IIIIIIIIAI(var0, var1, var2, var3, jmul32(var6, 20), jmul32((jadd32(var7, 1)), 20), jmul32((jadd32(var6, 1)), 20), jmul32((jadd32(var7, 1)), 20), var4))) {
                   (var10 = true);
                   (var5 = Game::m_g_II(var6, (++var7)));
                }
-               if (((((var12 != nullptr) && (((var12)->collisionBounds)[1] < (((var7 + ((var10 ? 0 : 1)))) * 20))) && (((var12)->collisionBounds)[1] > (((var7 + ((var10 ? -1 : 0)))) * 20))))) {
+               if (((((var12 != nullptr) && (((var12)->collisionBounds)[1] < jmul32((jadd32(var7, ((var10 ? 0 : 1)))), 20))) && (((var12)->collisionBounds)[1] > jmul32((jadd32(var7, ((var10 ? -1 : 0)))), 20))))) {
                   if ((Actor::m_a_IIIIIIIIAI(var0, var1, var2, var3, ((var12)->collisionBounds)[0], ((var12)->collisionBounds)[1], ((var12)->collisionBounds)[2], ((var12)->collisionBounds)[1], var4))) {
                      (var10 = true);
                      (var5 = 24);
                   }
-               } else if ((((((var13 != nullptr) && (((var13)->collisionBounds)[1] < (((var7 + ((var10 ? 0 : 1)))) * 20))) && (((var13)->collisionBounds)[1] > (((var7 + ((var10 ? -1 : 0)))) * 20))) && Actor::m_a_IIIIIIIIAI(var0, var1, var2, var3, ((var13)->collisionBounds)[0], ((var13)->collisionBounds)[1], ((var13)->collisionBounds)[2], ((var13)->collisionBounds)[1], var4)))) {
+               } else if ((((((var13 != nullptr) && (((var13)->collisionBounds)[1] < jmul32((jadd32(var7, ((var10 ? 0 : 1)))), 20))) && (((var13)->collisionBounds)[1] > jmul32((jadd32(var7, ((var10 ? -1 : 0)))), 20))) && Actor::m_a_IIIIIIIIAI(var0, var1, var2, var3, ((var13)->collisionBounds)[0], ((var13)->collisionBounds)[1], ((var13)->collisionBounds)[2], ((var13)->collisionBounds)[1], var4)))) {
                   (var10 = true);
                   (var5 = 24);
                }
@@ -17388,9 +17388,9 @@ jboolean Actor::m_b_IIIIAI(jint var0, jint var1, jint var2, jint var3, Arr<jint>
 }
 
 jboolean Actor::m_a_IIIIIIIIAI(jint var0, jint var1, jint var2, jint var3, jint var4, jint var5, jint var6, jint var7, Arr<jint> var8) {
-   jint var9 = (((-((var2 - var0))) * ((var7 - var5))) + (((var3 - var1)) * ((var6 - var4))));
-   jint var10 = (((-((var4 - var0))) * ((var7 - var5))) + (((var5 - var1)) * ((var6 - var4))));
-   jint var11 = ((((var2 - var0)) * ((var5 - var1))) - (((var3 - var1)) * ((var4 - var0))));
+   jint var9 = jadd32(jmul32(jneg32((jsub32(var2, var0))), (jsub32(var7, var5))), jmul32((jsub32(var3, var1)), (jsub32(var6, var4))));
+   jint var10 = jadd32(jmul32(jneg32((jsub32(var4, var0))), (jsub32(var7, var5))), jmul32((jsub32(var5, var1)), (jsub32(var6, var4))));
+   jint var11 = jsub32(jmul32((jsub32(var2, var0)), (jsub32(var5, var1))), jmul32((jsub32(var3, var1)), (jsub32(var4, var0))));
    if (((!Actor::m_i_II(var9, var10)))) {
       return false;
    }
@@ -17400,18 +17400,18 @@ jboolean Actor::m_a_IIIIIIIIAI(jint var0, jint var1, jint var2, jint var3, jint 
    if ((([&]{ auto _t0 = Actor::m_l_I(var11); auto _t1 = Actor::m_l_I(var9); return (_t0 > _t1); }()))) {
       return false;
    }
-   ((var8)[0] = (var0 + jdiv32((var10 * ((var2 - var0))), var9)));
-   ((var8)[1] = (var1 + jdiv32((var10 * ((var3 - var1))), var9)));
+   ((var8)[0] = jadd32(var0, jdiv32(jmul32(var10, (jsub32(var2, var0))), var9)));
+   ((var8)[1] = jadd32(var1, jdiv32(jmul32(var10, (jsub32(var3, var1))), var9)));
    return true;
 }
 
 jboolean Actor::m_a_IIIIIIII(jint var0, jint var1, jint var2, jint var3, jint var4, jint var5, jint var6, jint var7) {
    jint var8{};
-   if (((((var8 = (((-((var2 - var0))) * ((var7 - var5))) + (((var3 - var1)) * ((var6 - var4)))))) == 0))) {
+   if (((((var8 = jadd32(jmul32(jneg32((jsub32(var2, var0))), (jsub32(var7, var5))), jmul32((jsub32(var3, var1)), (jsub32(var6, var4)))))) == 0))) {
       return false;
    } else {
-      jint var9 = (((-((var4 - var0))) * ((var7 - var5))) + (((var5 - var1)) * ((var6 - var4))));
-      jint var10 = ((((var2 - var0)) * ((var5 - var1))) - (((var3 - var1)) * ((var4 - var0))));
+      jint var9 = jadd32(jmul32(jneg32((jsub32(var4, var0))), (jsub32(var7, var5))), jmul32((jsub32(var5, var1)), (jsub32(var6, var4))));
+      jint var10 = jsub32(jmul32((jsub32(var2, var0)), (jsub32(var5, var1))), jmul32((jsub32(var3, var1)), (jsub32(var4, var0))));
       if (((!Actor::m_i_II(var8, var9)))) {
          return false;
       } else if ((([&]{ auto _t0 = Actor::m_l_I(var9); auto _t1 = Actor::m_l_I(var8); return (_t0 > _t1); }()))) {
@@ -17425,7 +17425,7 @@ jboolean Actor::m_a_IIIIIIII(jint var0, jint var1, jint var2, jint var3, jint va
 void Actor::m_an_V() {
    Ref<Actor> _self(this);
    if ((((3 == (Game::be)[Game::levelIndex]) && Actor::bM))) {
-      ((this)->G = ((this)->G + (jshl32((jint)(Actor::fs), (jint)(8)))));
+      ((this)->G = jadd32((this)->G, (jshl32((jint)(Actor::fs), (jint)(8)))));
    }
 }
 
@@ -17455,24 +17455,24 @@ jboolean Actor::m_aq_V() {
 void Actor::m_g_AI(Arr<jint> var1) {
    Ref<Actor> _self(this);
    if (((this)->facingLeft)) {
-      (((this)->aJ)[2] = (((this)->collisionBounds)[0] - (var1)[0]));
-      (((this)->aJ)[0] = (((this)->aJ)[2] - (var1)[1]));
+      (((this)->aJ)[2] = jsub32(((this)->collisionBounds)[0], (var1)[0]));
+      (((this)->aJ)[0] = jsub32(((this)->aJ)[2], (var1)[1]));
    } else {
-      (((this)->aJ)[0] = (((this)->collisionBounds)[2] + (var1)[0]));
-      (((this)->aJ)[2] = (((this)->aJ)[0] + (var1)[1]));
+      (((this)->aJ)[0] = jadd32(((this)->collisionBounds)[2], (var1)[0]));
+      (((this)->aJ)[2] = jadd32(((this)->aJ)[0], (var1)[1]));
    }
-   (((this)->aJ)[1] = (((this)->collisionBounds)[1] - (var1)[2]));
-   (((this)->aJ)[3] = (((this)->collisionBounds)[3] + (var1)[3]));
+   (((this)->aJ)[1] = jsub32(((this)->collisionBounds)[1], (var1)[2]));
+   (((this)->aJ)[3] = jadd32(((this)->collisionBounds)[3], (var1)[3]));
 }
 
 void Actor::m_cV_V() {
    Ref<Actor> _self(this);
-   ((this)->aA = ((this)->aA - Game::h));
+   ((this)->aA = jsub32((this)->aA, Game::h));
 }
 
 void Actor::m_cW_V() {
    Ref<Actor> _self(this);
-   ((this)->aB = ((this)->aB - Game::h));
+   ((this)->aB = jsub32((this)->aB, Game::h));
 }
 
 void Actor::m_u_II(jint var1, jint var2) {
@@ -17483,12 +17483,12 @@ void Actor::m_u_II(jint var1, jint var2) {
          case 1:
             ;
          case 2:
-            (((this)->p)->q = (var2 - Game::cameraX));
+            (((this)->p)->q = jsub32(var2, Game::cameraX));
             return;
          case 4:
             ;
          case 8:
-            (((this)->p)->r = (var2 - Game::cameraY));
+            (((this)->p)->r = jsub32(var2, Game::cameraY));
          case 3:
             ;
          case 5:
@@ -17538,8 +17538,8 @@ void Actor::m_a_ActorII(Ref<Actor> var1, jint var2, jint var3) {
    Ref<Actor> _self(this);
    if (((var1 != nullptr))) {
       ((var1)->facingLeft = (this)->facingLeft);
-      ((var1)->positionX = ((this)->positionX + (((this)->facingLeft ? (-var2) : var2))));
-      ((var1)->positionY = ((this)->positionY + var3));
+      ((var1)->positionX = jadd32((this)->positionX, (((this)->facingLeft ? jneg32(var2) : var2))));
+      ((var1)->positionY = jadd32((this)->positionY, var3));
    }
 }
 
@@ -17626,7 +17626,7 @@ jint Actor::m_B_I(jint var1) {
             (var3 = 4);
       }
    }
-   return ((Game::cH)[var2])[((var3 * (this)->aI) + var1)];
+   return ((Game::cH)[var2])[jadd32(jmul32(var3, (this)->aI), var1)];
 }
 
 jint Actor::m_cX_V() {
@@ -17640,7 +17640,7 @@ jint Actor::m_ar_V() {
 }
 
 jint Actor::m_l_I(jint var0) {
-   return ((var0 < 0) ? (-var0) : var0);
+   return ((var0 < 0) ? jneg32(var0) : var0);
 }
 
 jint Actor::m_g_II(jint var0, jint var1) {
@@ -17655,28 +17655,28 @@ jlong Actor::m_a_J(jlong var0) {
    jlong var2{};
    if (((var0 < INT64_C(100)))) {
       (var2 = INT64_C(9));
-      while (((var0 < (var2 * var2)))) {
+      while (((var0 < jmul64(var2, var2)))) {
          (var2--);
       }
    } else {
       (var2 = Actor::m_a_J((var0 / INT64_C(100))));
       jlong var4{};
-      jlong var6 = jdiv64(((var4 = (var0 - ((var2 * var2) * INT64_C(100))))), ((var2 * INT64_C(20))));
-      while ((((var6 * (((var2 * INT64_C(20)) + var6))) > var4))) {
+      jlong var6 = jdiv64(((var4 = jsub64(var0, jmul64(jmul64(var2, var2), INT64_C(100))))), (jmul64(var2, INT64_C(20))));
+      while (((jmul64(var6, (jadd64(jmul64(var2, INT64_C(20)), var6))) > var4))) {
          (var6--);
       }
-      (var2 = ((var2 * INT64_C(10)) + var6));
+      (var2 = jadd64(jmul64(var2, INT64_C(10)), var6));
    }
    return var2;
 }
 
 void Actor::m_a_IIIIIAI(jint var0, jint var1, jint var2, jint var3, jint var4, Arr<jint> var5) {
-   jint var6 = jshl32((jint)((var2 - var0)), (jint)(8));
-   jint var7 = jshl32((jint)((var3 - var1)), (jint)(8));
-   ((var5)[0] = ((jshr32((jint)(([&]{ auto _t0 = (var6 * Game::m_l_I(var4)); auto _t1 = (var7 * Game::m_m_I(var4)); return (_t0 - _t1); }())), (jint)(8))) / 256));
-   ((var5)[1] = ((jshr32((jint)(([&]{ auto _t2 = (var6 * Game::m_m_I(var4)); auto _t3 = (var7 * Game::m_l_I(var4)); return (_t2 + _t3); }())), (jint)(8))) / 256));
-   ((var5)[0] = (jint)(((var5)[0] + var0)));
-   ((var5)[1] = (jint)(((var5)[1] + var1)));
+   jint var6 = jshl32((jint)(jsub32(var2, var0)), (jint)(8));
+   jint var7 = jshl32((jint)(jsub32(var3, var1)), (jint)(8));
+   ((var5)[0] = ((jshr32((jint)(([&]{ auto _t0 = jmul32(var6, Game::m_l_I(var4)); auto _t1 = jmul32(var7, Game::m_m_I(var4)); return jsub32(_t0, _t1); }())), (jint)(8))) / 256));
+   ((var5)[1] = ((jshr32((jint)(([&]{ auto _t2 = jmul32(var6, Game::m_m_I(var4)); auto _t3 = jmul32(var7, Game::m_l_I(var4)); return jadd32(_t2, _t3); }())), (jint)(8))) / 256));
+   ((var5)[0] = (jint)(jadd32((var5)[0], var0)));
+   ((var5)[1] = (jint)(jadd32((var5)[1], var1)));
 }
 
 jboolean Actor::m_i_II(jint var0, jint var1) {
@@ -17686,13 +17686,13 @@ jboolean Actor::m_i_II(jint var0, jint var1) {
 jint Actor::m_cY_V() {
    Ref<Actor> _self(this);
    jint var1{};
-   return ((((var1 = ((this)->a - (Game::player)->a))) < 0) ? (-var1) : var1);
+   return ((((var1 = jsub32((this)->a, (Game::player)->a))) < 0) ? jneg32(var1) : var1);
 }
 
 jint Actor::m_C_I(jint var1) {
    Ref<Actor> _self(this);
    jint var2{};
-   return ((((var2 = ((this)->a - (Game::player)->a))) < 0) ? var1 : (-var1));
+   return ((((var2 = jsub32((this)->a, (Game::player)->a))) < 0) ? var1 : jneg32(var1));
 }
 
 jboolean Actor::m_cZ_V() {
@@ -17702,14 +17702,14 @@ jboolean Actor::m_cZ_V() {
 
 void Actor::m_da_V() {
    Ref<Actor> _self(this);
-   ((this)->facingLeft = (((this)->a - (Game::player)->a) > 0));
+   ((this)->facingLeft = (jsub32((this)->a, (Game::player)->a) > 0));
 }
 
 jint Actor::m_D_I(jint var1) {
    Ref<Actor> _self(this);
    jint var2{};
-   if ((([&]{ auto _t0 = Actor::m_l_I((var2 = ((this)->a - (Game::player)->a))); auto _t1 = Actor::m_l_I(var1); return (_t0 > _t1); }()))) {
-      return ((var2 < 0) ? var1 : (-var1));
+   if ((([&]{ auto _t0 = Actor::m_l_I((var2 = jsub32((this)->a, (Game::player)->a))); auto _t1 = Actor::m_l_I(var1); return (_t0 > _t1); }()))) {
+      return ((var2 < 0) ? var1 : jneg32(var1));
    } else {
       return 0;
    }
@@ -17718,8 +17718,8 @@ jint Actor::m_D_I(jint var1) {
 jint Actor::m_E_I(jint var1) {
    Ref<Actor> _self(this);
    jint var2{};
-   if ((([&]{ auto _t0 = Actor::m_l_I((var2 = ((this)->b - (Game::player)->b))); auto _t1 = Actor::m_l_I(var1); return (_t0 > _t1); }()))) {
-      return ((var2 < 0) ? var1 : (-var1));
+   if ((([&]{ auto _t0 = Actor::m_l_I((var2 = jsub32((this)->b, (Game::player)->b))); auto _t1 = Actor::m_l_I(var1); return (_t0 > _t1); }()))) {
+      return ((var2 < 0) ? var1 : jneg32(var1));
    } else {
       return 0;
    }
@@ -17727,7 +17727,7 @@ jint Actor::m_E_I(jint var1) {
 
 void Actor::m_F_I(jint var1) {
    Ref<Actor> _self(this);
-   if ((([&]{ auto _t0 = Actor::m_l_I(((Game::player)->a - (this)->a)); auto _t1 = Actor::m_l_I(var1); return (_t0 > _t1); }()))) {
+   if ((([&]{ auto _t0 = Actor::m_l_I(jsub32((Game::player)->a, (this)->a)); auto _t1 = Actor::m_l_I(var1); return (_t0 > _t1); }()))) {
       ((this)->facingLeft = ((Game::player)->positionX < (this)->positionX));
    }
 }
@@ -17752,7 +17752,7 @@ void Actor::m_as_V() {
 void Actor::m_m_I(jint var1) {
    Ref<Actor> _self(this);
    if ((((Game::be)[Game::levelIndex] == 2))) {
-      ((this)->H = (var1 + Actor::dR));
+      ((this)->H = jadd32(var1, Actor::dR));
    }
 }
 
@@ -17874,10 +17874,10 @@ void Actor::m_au_V() {
 
 void Actor::m_a_AII(Arr<jint> var1, jint var2) {
    Ref<Actor> _self(this);
-   jint var3 = ((((var1)[0] + 10)) / 20);
-   jint var4 = ((((var1)[2] - 10)) / 20);
-   jint var5 = ((((var1)[1] + 10)) / 20);
-   jint var6 = ((((var1)[3] - 10)) / 20);
+   jint var3 = ((jadd32((var1)[0], 10)) / 20);
+   jint var4 = ((jsub32((var1)[2], 10)) / 20);
+   jint var5 = ((jadd32((var1)[1], 10)) / 20);
+   jint var6 = ((jsub32((var1)[3], 10)) / 20);
    {
       jint var7 = var3;
       for (; (var7 <= var4); (var7++)) {
@@ -17905,9 +17905,9 @@ jboolean Actor::m_dd_V() {
    jboolean var1 = false;
    jint var2 = 0;
    if (((this)->facingLeft)) {
-      (var2 = (((this)->collisionBounds)[0] - 1));
+      (var2 = jsub32(((this)->collisionBounds)[0], 1));
    } else {
-      (var2 = (((this)->collisionBounds)[2] + 1));
+      (var2 = jadd32(((this)->collisionBounds)[2], 1));
    }
    {
       switch ((Game::m_g_II((var2 / 20), ((this)->positionY / 20)))) {
@@ -17916,28 +17916,28 @@ jboolean Actor::m_dd_V() {
          case 24:
             return true;
          case 16:
-            ((this)->positionX = (((var2 / 20) * 20) + ((this)->positionY % 20)));
+            ((this)->positionX = jadd32(jmul32((var2 / 20), 20), ((this)->positionY % 20)));
             return true;
          case 17:
-            ((this)->positionX = (((var2 / 20) * 20) + ((20 - ((this)->positionY % 20)))));
+            ((this)->positionX = jadd32(jmul32((var2 / 20), 20), (jsub32(20, ((this)->positionY % 20)))));
             return true;
          case 18:
-            ((this)->positionX = (((var2 / 20) * 20) + (((this)->positionY % 20) * 2)));
+            ((this)->positionX = jadd32(jmul32((var2 / 20), 20), jmul32(((this)->positionY % 20), 2)));
             return true;
          case 19:
             if (((((this)->positionY % 20) > 10))) {
                return false;
             }
-            ((this)->positionX = (((var2 / 20) * 20) + (((((this)->positionY % 20) - 10)) * 2)));
+            ((this)->positionX = jadd32(jmul32((var2 / 20), 20), jmul32((jsub32(((this)->positionY % 20), 10)), 2)));
             return true;
          case 20:
             if (((((this)->positionY % 20) < 10))) {
                return false;
             }
-            ((this)->positionX = (((var2 / 20) * 20) + (((20 - ((this)->positionY % 20))) * 2)));
+            ((this)->positionX = jadd32(jmul32((var2 / 20), 20), jmul32((jsub32(20, ((this)->positionY % 20))), 2)));
             return true;
          case 21:
-            ((this)->positionX = (((var2 / 20) * 20) + (((10 - ((this)->positionY % 20))) * 2)));
+            ((this)->positionX = jadd32(jmul32((var2 / 20), 20), jmul32((jsub32(10, ((this)->positionY % 20))), 2)));
             return true;
          case 22:
             ;
@@ -17967,7 +17967,7 @@ void Actor::m_df_V() {
       for (; (var2 < Game::ci); (var2++)) {
          Ref<Actor> var1{};
          if ((((((((var1 = (Game::ch)[var2])))->type == 13) && ((var1)->aq != 0)) && ((((var1)->m_ar_V() == 1) || ((var1)->m_ar_V() == 3)))))) {
-            ([&]{ auto _t0 = this; auto _t1 = (jint)(Game::m_h_II(((var1)->positionX - (this)->positionX), ((var1)->positionY - (this)->positionY))); return _t0->eX = _t1; }());
+            ([&]{ auto _t0 = this; auto _t1 = (jint)(Game::m_h_II(jsub32((var1)->positionX, (this)->positionX), jsub32((var1)->positionY, (this)->positionY))); return _t0->eX = _t1; }());
             if ((((this)->eX < 100))) {
                ((this)->cI = true);
                ((this)->cJ = var1);
@@ -17985,9 +17985,9 @@ void Actor::m_df_V() {
             }
             if ((((this)->animationId < 6))) {
                if ((((this)->cI && ((((((this)->animationId == 0) || ((this)->animationId == 2)) || ((this)->animationId == 4)) || ((this)->animationId == 5)))))) {
-                  ([&]{ auto _t2 = this; auto _t3 = (jint)(Game::m_h_II((((this)->cJ)->a - (this)->a), (((this)->cJ)->b - (this)->b))); return _t2->eX = _t3; }());
-                  ((this)->G = (((this)->eX == 0) ? 0 : jdiv32((((((this)->cJ)->a - (this)->a)) * 1536), (this)->eX)));
-                  ((this)->H = (((this)->eX == 0) ? 0 : jdiv32((((((this)->cJ)->b - (this)->b)) * 1536), (this)->eX)));
+                  ([&]{ auto _t2 = this; auto _t3 = (jint)(Game::m_h_II(jsub32(((this)->cJ)->a, (this)->a), jsub32(((this)->cJ)->b, (this)->b))); return _t2->eX = _t3; }());
+                  ((this)->G = (((this)->eX == 0) ? 0 : jdiv32(jmul32((jsub32(((this)->cJ)->a, (this)->a)), 1536), (this)->eX)));
+                  ((this)->H = (((this)->eX == 0) ? 0 : jdiv32(jmul32((jsub32(((this)->cJ)->b, (this)->b)), 1536), (this)->eX)));
                   if ((Actor::m_b_AIAI((this)->collisionBounds, ((this)->cJ)->collisionBounds))) {
                      if (((((this)->cJ)->m_ar_V() == 1))) {
                         ((this)->cJ)->m_p_I(105);
@@ -18006,16 +18006,16 @@ void Actor::m_df_V() {
                      this->m_av_V();
                   }
                } else {
-                  jint var5 = jshl32((jint)((((Game::player)->collisionBounds)[3] - ((Game::player)->collisionBounds)[1])), (jint)(7));
-                  ([&]{ auto _t4 = this; auto _t5 = (jint)(Game::m_h_II(((Game::player)->a - (this)->a), ((((Game::player)->b - (this)->b) - var5) - 1))); return _t4->eX = _t5; }());
+                  jint var5 = jshl32((jint)(jsub32(((Game::player)->collisionBounds)[3], ((Game::player)->collisionBounds)[1])), (jint)(7));
+                  ([&]{ auto _t4 = this; auto _t5 = (jint)(Game::m_h_II(jsub32((Game::player)->a, (this)->a), jsub32(jsub32(jsub32((Game::player)->b, (this)->b), var5), 1))); return _t4->eX = _t5; }());
                   if ((((this)->eX <= ((((this)->an == -1) ? 40960 : 10240))))) {
-                     ((this)->G = (((this)->eX == 0) ? 0 : jdiv32(((((Game::player)->a - (this)->a)) * 1536), (this)->eX)));
-                     ((this)->H = (((this)->eX == 0) ? 0 : jdiv32((((((Game::player)->b - var5) - (this)->b)) * 1536), (this)->eX)));
-                     if (((((Game::player)->G != 0) && Actor::m_i_II((Game::player)->G, ((Game::player)->positionX - (this)->positionX))))) {
-                        ((this)->G = ((this)->G + (Game::player)->G));
+                     ((this)->G = (((this)->eX == 0) ? 0 : jdiv32(jmul32((jsub32((Game::player)->a, (this)->a)), 1536), (this)->eX)));
+                     ((this)->H = (((this)->eX == 0) ? 0 : jdiv32(jmul32((jsub32(jsub32((Game::player)->b, var5), (this)->b)), 1536), (this)->eX)));
+                     if (((((Game::player)->G != 0) && Actor::m_i_II((Game::player)->G, jsub32((Game::player)->positionX, (this)->positionX))))) {
+                        ((this)->G = jadd32((this)->G, (Game::player)->G));
                      }
-                     if (((((Game::player)->H != 0) && Actor::m_i_II((Game::player)->H, ((Game::player)->positionY - (this)->positionY))))) {
-                        ((this)->H = ((this)->H + (Game::player)->H));
+                     if (((((Game::player)->H != 0) && Actor::m_i_II((Game::player)->H, jsub32((Game::player)->positionY, (this)->positionY))))) {
+                        ((this)->H = jadd32((this)->H, (Game::player)->H));
                      }
                   }
                }
@@ -18032,7 +18032,7 @@ void Actor::m_df_V() {
                this->m_av_V();
             }
             if ((((this)->aw != -1))) {
-               ((this)->ay = ((this)->ay - Game::h));
+               ((this)->ay = jsub32((this)->ay, Game::h));
                if ((((this)->ay <= 0))) {
                   this->m_av_V();
                   return;
@@ -18040,13 +18040,13 @@ void Actor::m_df_V() {
             }
             break;
          case 100:
-            ((this)->aB = ((this)->aB + Game::h));
+            ((this)->aB = jadd32((this)->aB, Game::h));
             if ((((((this)->animationId < 6) && ((this)->aB >= 500)) || (((((this)->animationId == 7) || ((this)->animationId == 10))) && ((this)->h == 1))))) {
                if ((((this)->ay > 0))) {
                   {
                      switch (((this)->animationId)) {
                         case 0:
-                           (Game::health = (jint)((Game::health + 6)));
+                           (Game::health = (jint)(jadd32(Game::health, 6)));
                            if (((Game::health > Game::maxHealth))) {
                               (Game::health = Game::maxHealth);
                            }
@@ -18063,7 +18063,7 @@ void Actor::m_df_V() {
                         default:
                            break;
                         case 2:
-                           (Game::magic = (jint)((Game::magic + 6)));
+                           (Game::magic = (jint)(jadd32(Game::magic, 6)));
                            if (((Game::magic > Game::maxMagic))) {
                               (Game::magic = Game::maxMagic);
                            }
@@ -18073,7 +18073,7 @@ void Actor::m_df_V() {
                            }
                            break;
                         case 4:
-                           (Game::D = (jint)((Game::D + 5)));
+                           (Game::D = (jint)(jadd32(Game::D, 5)));
                            if (((!Actor::bu))) {
                               (Actor::bu = true);
                               Actor::m_b_IIZ(0, 56, true);
@@ -18081,7 +18081,7 @@ void Actor::m_df_V() {
                            }
                            break;
                         case 5:
-                           (Game::D = (Game::D + (10 * (Actor::eh)[(this)->aC])));
+                           (Game::D = jadd32(Game::D, jmul32(10, (Actor::eh)[(this)->aC])));
                            if (((!Actor::bu))) {
                               (Actor::bu = true);
                               Actor::m_b_IIZ(0, 56, true);
@@ -18130,12 +18130,12 @@ void Actor::m_df_V() {
             }
             break;
          case 103:
-            var3 = (((Game::player)->collisionBounds)[3] - ((Game::player)->collisionBounds)[1]);
+            var3 = jsub32(((Game::player)->collisionBounds)[3], ((Game::player)->collisionBounds)[1]);
             ((this)->positionX = (Game::player)->positionX);
-            ((this)->positionY = (((Game::player)->positionY - var3) - 20));
+            ((this)->positionY = jsub32(jsub32((Game::player)->positionY, var3), 20));
             (Game::Q = (Game::player)->positionX);
             (Game::R = (Game::player)->positionY);
-            (Game::bK = this->m_a_IIIIIIZ(39, 17, 34, 0, (var3 + 20), 308, false));
+            (Game::bK = this->m_a_IIIIIIZ(39, 17, 34, 0, jadd32(var3, 20), 308, false));
             Game::m_h_I((((this)->animationId == 1) ? 10 : 11));
             Game::m_T_V();
             Game::m_I_I(4);
@@ -18157,14 +18157,14 @@ void Actor::m_df_V() {
             }
             break;
          case 105:
-            ((this)->aD = ((this)->aD - Game::h));
+            ((this)->aD = jsub32((this)->aD, Game::h));
             if ((((this)->aD <= 0))) {
                ((this)->aq = 0);
                return;
             }
             break;
          case 106:
-            ((this)->aD = ((this)->aD - Game::h));
+            ((this)->aD = jsub32((this)->aD, Game::h));
             if ((((this)->aD <= 0))) {
                ((this)->aq = 0);
                ((this)->c = (jint)(((this)->c & -129)));
@@ -18182,14 +18182,14 @@ void Actor::m_av_V() {
       if (((((var2 = jshr32((jint)((this)->animationId), (jint)(1)))) > 2))) {
          (var2 = 2);
       }
-      this->m_a_IIIIIIZ(39, 17, (24 + var2), 0, 0, 308, false);
+      this->m_a_IIIIIIZ(39, 17, jadd32(24, var2), 0, 0, 308, false);
       if (((var2 == 2))) {
-         ([&]{ auto _t2 = Actor::aU; auto _t3 = (jint)(([&]{ auto _t0 = ((Game::player)->positionX - Game::cameraX); auto _t1 = Game::m_i_II(-10, 10); return (_t0 + _t1); }())); return _t2->ax = _t3; }());
-         ((Actor::aU)->az = (((Game::player)->positionY - Game::cameraY) + -55));
+         ([&]{ auto _t2 = Actor::aU; auto _t3 = (jint)(([&]{ auto _t0 = jsub32((Game::player)->positionX, Game::cameraX); auto _t1 = Game::m_i_II(-10, 10); return jadd32(_t0, _t1); }())); return _t2->ax = _t3; }());
+         ((Actor::aU)->az = jadd32(jsub32((Game::player)->positionY, Game::cameraY), -55));
          ((Actor::aU)->av = 0);
          if ((((!(this)->cI) && ((this)->cJ == nullptr)))) {
             if ((((this)->animationId == 5))) {
-               ((Actor::aU)->aB = (10 * (Actor::eh)[(this)->aC]));
+               ((Actor::aU)->aB = jmul32(10, (Actor::eh)[(this)->aC]));
             } else {
                ((Actor::aU)->aB = 5);
             }
@@ -18197,7 +18197,7 @@ void Actor::m_av_V() {
                if (((!Actor::dZ))) {
                   (Actor::dZ = true);
                }
-               (Actor::dW = (Actor::dW + (Actor::aU)->aB));
+               (Actor::dW = jadd32(Actor::dW, (Actor::aU)->aB));
                if (((Actor::dY >= 0))) {
                   (Actor::dY = 350);
                   ((Actor::aU)->aB = -1);
@@ -18246,8 +18246,8 @@ void Actor::m_a_IIZZ(jint var0, jint var1, jboolean var2, jboolean var3) {
    (Game::P = 0);
    (Game::bF = 0);
    (Game::bG = 1);
-   (Game::bC = ((Game::player)->positionX - Game::cameraX));
-   (Game::bD = ((Game::player)->positionY - Game::cameraY));
+   (Game::bC = jsub32((Game::player)->positionX, Game::cameraX));
+   (Game::bD = jsub32((Game::player)->positionY, Game::cameraY));
    if ((var2)) {
       Game::m_h_I(5);
    }
@@ -18324,7 +18324,7 @@ void Actor::m_ay_V() {
                      } else if ((((this)->av < 10))) {
                         ((this)->az = 3);
                      } else {
-                        ([&]{ auto _t4 = this; auto _t5 = (jint)((0 + (Game::m_i_II(0, 3) * 2))); return _t4->az = _t5; }());
+                        ([&]{ auto _t4 = this; auto _t5 = (jint)(jadd32(0, jmul32(Game::m_i_II(0, 3), 2))); return _t4->az = _t5; }());
                      }
                      this->m_a_IIIIIIZ(35, 31, (this)->az, 0, 0, 308, false);
                      if ((((--(this)->ax) > 0))) {
@@ -18340,7 +18340,7 @@ void Actor::m_ay_V() {
                      return;
                   }
                   jint var2{};
-                  if (((((this)->ay < 0) && ((((((var2 = (-(this)->ay))) == 5) && Actor::bB) || ((var2 == 8) && Actor::bD)))))) {
+                  if (((((this)->ay < 0) && ((((((var2 = jneg32((this)->ay))) == 5) && Actor::bB) || ((var2 == 8) && Actor::bD)))))) {
                      ((this)->ay = 2);
                   }
                   if ((((this)->ay >= 0))) {
@@ -18362,12 +18362,12 @@ void Actor::m_ay_V() {
                      {
                         jint var5 = 0;
                         for (; (var5 < var3); (var5++)) {
-                           ([&]{ auto _t6 = 35; auto _t7 = 31; auto _t8 = (((0 + (((!var6) ? 0 : 1))) + (2 * (this)->ay)) + var4); auto _t9 = ((!var6) ? Game::m_i_II(-40, 40) : 0); auto _t10 = ((!var6) ? Game::m_i_II(-70, 0) : 0); auto _t11 = 308; auto _t12 = false; return this->m_a_IIIIIIZ(_t6, _t7, _t8, _t9, _t10, _t11, _t12); }());
+                           ([&]{ auto _t6 = 35; auto _t7 = 31; auto _t8 = jadd32(jadd32(jadd32(0, (((!var6) ? 0 : 1))), jmul32(2, (this)->ay)), var4); auto _t9 = ((!var6) ? Game::m_i_II(-40, 40) : 0); auto _t10 = ((!var6) ? Game::m_i_II(-70, 0) : 0); auto _t11 = 308; auto _t12 = false; return this->m_a_IIIIIIZ(_t6, _t7, _t8, _t9, _t10, _t11, _t12); }());
                            ((Actor::aU)->facingLeft = false);
                         }
                      }
                   } else {
-                     this->m_a_IIIIIIZ(48, 23, (-(this)->ay), 0, 0, 308, false);
+                     this->m_a_IIIIIIZ(48, 23, jneg32((this)->ay), 0, 0, 308, false);
                   }
                   if ((((this)->animationId == 1))) {
                      this->m_a_I(2);
@@ -18410,8 +18410,8 @@ void Actor::m_ay_V() {
                   if (((((this)->H > 0) && ((this)->eD >= 15)))) {
                      this->m_bN_V();
                      this->m_db_V();
-                     this->m_a_IIIIIIZ(39, 17, 22, jshr32((jint)((((this)->collisionBounds)[0] - ((this)->collisionBounds)[2])), (jint)(1)), 0, 302, false);
-                     this->m_a_IIIIIIZ(39, 17, 22, jshr32((jint)((((this)->collisionBounds)[2] - ((this)->collisionBounds)[0])), (jint)(1)), 0, 302, true);
+                     this->m_a_IIIIIIZ(39, 17, 22, jshr32((jint)(jsub32(((this)->collisionBounds)[0], ((this)->collisionBounds)[2])), (jint)(1)), 0, 302, false);
+                     this->m_a_IIIIIIZ(39, 17, 22, jshr32((jint)(jsub32(((this)->collisionBounds)[2], ((this)->collisionBounds)[0])), (jint)(1)), 0, 302, true);
                   }
                }
                break;
@@ -18490,7 +18490,7 @@ void Actor::m_G_I(jint var1) {
                               Game::m_a_II(6, 0);
                               (var2)->m_c_IZ(9, true);
                            } else {
-                              (var2)->m_b_IZ((([&]{ auto _t8 = (Actor::ci)[(0 + (Actor::cl)[0])]; auto _t9 = Actor::m_e_II(0, (var2)->type); return (_t8 * _t9); }()) / 100), true);
+                              (var2)->m_b_IZ((([&]{ auto _t8 = (Actor::ci)[jadd32(0, (Actor::cl)[0])]; auto _t9 = Actor::m_e_II(0, (var2)->type); return jmul32(_t8, _t9); }()) / 100), true);
                            }
                         } else if (((((this)->animationId == 35) || ((this)->animationId == 36)))) {
                            this->m_a_IIIIIIZ(39, 17, 1, 0, 0, 302, (var2)->facingLeft);
@@ -18501,67 +18501,67 @@ void Actor::m_G_I(jint var1) {
                               Game::m_I_I(-1);
                            } else if ((((var2)->type == 11))) {
                               if ((((var2)->m_ar_V() != 1))) {
-                                 (var2)->m_b_IZ((([&]{ auto _t10 = (Actor::ci)[(0 + (Actor::cl)[0])]; auto _t11 = Actor::m_e_II(0, (var2)->type); return (_t10 * _t11); }()) / 100), true);
+                                 (var2)->m_b_IZ((([&]{ auto _t10 = (Actor::ci)[jadd32(0, (Actor::cl)[0])]; auto _t11 = Actor::m_e_II(0, (var2)->type); return jmul32(_t10, _t11); }()) / 100), true);
                               } else {
-                                 ([&]{ auto _t14 = var2; auto _t15 = (([&]{ auto _t12 = (Actor::ci)[(0 + (Actor::cl)[0])]; auto _t13 = Actor::m_e_II(0, (var2)->type); return (_t12 * _t13); }()) / 100); auto _t16 = Actor::aE; return _t14->m_b_IZ(_t15, _t16); }());
+                                 ([&]{ auto _t14 = var2; auto _t15 = (([&]{ auto _t12 = (Actor::ci)[jadd32(0, (Actor::cl)[0])]; auto _t13 = Actor::m_e_II(0, (var2)->type); return jmul32(_t12, _t13); }()) / 100); auto _t16 = Actor::aE; return _t14->m_b_IZ(_t15, _t16); }());
                               }
                            } else if (((((var2)->type == 90) || ((var2)->type == 100)))) {
-                              (var2)->m_b_IZ((([&]{ auto _t17 = (Actor::ci)[(0 + (Actor::cl)[0])]; auto _t18 = Actor::m_e_II(0, (var2)->type); return (_t17 * _t18); }()) / 100), false);
+                              (var2)->m_b_IZ((([&]{ auto _t17 = (Actor::ci)[jadd32(0, (Actor::cl)[0])]; auto _t18 = Actor::m_e_II(0, (var2)->type); return jmul32(_t17, _t18); }()) / 100), false);
                            } else if ((((var2)->type == 85))) {
                               ((var2)->as = ((Actor::dp)[0])->as);
-                              (var2)->m_b_IZ((([&]{ auto _t19 = (Actor::ci)[(0 + (Actor::cl)[0])]; auto _t20 = Actor::m_e_II(0, (var2)->type); return (_t19 * _t20); }()) / 100), false);
+                              (var2)->m_b_IZ((([&]{ auto _t19 = (Actor::ci)[jadd32(0, (Actor::cl)[0])]; auto _t20 = Actor::m_e_II(0, (var2)->type); return jmul32(_t19, _t20); }()) / 100), false);
                               (((Actor::dp)[0])->as = (var2)->as);
                               if (((((Actor::dp)[0])->as <= 0))) {
                                  ((Actor::dp)[0])->m_p_I(3);
                               }
                            } else {
-                              (var2)->m_b_IZ((([&]{ auto _t21 = (Actor::ci)[(0 + (Actor::cl)[0])]; auto _t22 = Actor::m_e_II(0, (var2)->type); return (_t21 * _t22); }()) / 100), true);
+                              (var2)->m_b_IZ((([&]{ auto _t21 = (Actor::ci)[jadd32(0, (Actor::cl)[0])]; auto _t22 = Actor::m_e_II(0, (var2)->type); return jmul32(_t21, _t22); }()) / 100), true);
                            }
                         }
                      } else if (((var1 == 1))) {
                         if ((((this)->animationId == 16))) {
                            if ((((var2)->type == 11))) {
                               if ((((var2)->m_ar_V() != 1))) {
-                                 (var2)->m_b_IZ((([&]{ auto _t23 = (Actor::ci)[(3 + (Actor::cl)[1])]; auto _t24 = Actor::m_e_II(1, (var2)->type); return (_t23 * _t24); }()) / 100), true);
+                                 (var2)->m_b_IZ((([&]{ auto _t23 = (Actor::ci)[jadd32(3, (Actor::cl)[1])]; auto _t24 = Actor::m_e_II(1, (var2)->type); return jmul32(_t23, _t24); }()) / 100), true);
                               } else {
-                                 ([&]{ auto _t27 = var2; auto _t28 = (([&]{ auto _t25 = (Actor::ci)[(3 + (Actor::cl)[1])]; auto _t26 = Actor::m_e_II(1, (var2)->type); return (_t25 * _t26); }()) / 100); auto _t29 = Actor::aE; return _t27->m_b_IZ(_t28, _t29); }());
+                                 ([&]{ auto _t27 = var2; auto _t28 = (([&]{ auto _t25 = (Actor::ci)[jadd32(3, (Actor::cl)[1])]; auto _t26 = Actor::m_e_II(1, (var2)->type); return jmul32(_t25, _t26); }()) / 100); auto _t29 = Actor::aE; return _t27->m_b_IZ(_t28, _t29); }());
                               }
                            } else if (((((var2)->type == 90) || ((var2)->type == 100)))) {
-                              (var2)->m_b_IZ((([&]{ auto _t30 = (Actor::ci)[(3 + (Actor::cl)[1])]; auto _t31 = Actor::m_e_II(1, (var2)->type); return (_t30 * _t31); }()) / 100), false);
+                              (var2)->m_b_IZ((([&]{ auto _t30 = (Actor::ci)[jadd32(3, (Actor::cl)[1])]; auto _t31 = Actor::m_e_II(1, (var2)->type); return jmul32(_t30, _t31); }()) / 100), false);
                            } else if ((((var2)->type == 85))) {
                               ((var2)->as = ((Actor::dp)[0])->as);
-                              (var2)->m_b_IZ((([&]{ auto _t32 = (Actor::ci)[(3 + (Actor::cl)[0])]; auto _t33 = Actor::m_e_II(1, (var2)->type); return (_t32 * _t33); }()) / 100), false);
+                              (var2)->m_b_IZ((([&]{ auto _t32 = (Actor::ci)[jadd32(3, (Actor::cl)[0])]; auto _t33 = Actor::m_e_II(1, (var2)->type); return jmul32(_t32, _t33); }()) / 100), false);
                               (((Actor::dp)[0])->as = (var2)->as);
                               if (((((Actor::dp)[0])->as <= 0))) {
                                  ((Actor::dp)[0])->m_p_I(3);
                               }
                            } else {
-                              (var2)->m_b_IZ((([&]{ auto _t34 = (Actor::ci)[(3 + (Actor::cl)[1])]; auto _t35 = Actor::m_e_II(1, (var2)->type); return (_t34 * _t35); }()) / 100), true);
+                              (var2)->m_b_IZ((([&]{ auto _t34 = (Actor::ci)[jadd32(3, (Actor::cl)[1])]; auto _t35 = Actor::m_e_II(1, (var2)->type); return jmul32(_t34, _t35); }()) / 100), true);
                            }
                            this->m_a_I(2);
                            ((this)->G = 0);
                         } else if ((((this)->animationId == 13))) {
                            if (((((var2)->type == 90) || ((var2)->type == 100)))) {
-                              (var2)->m_b_IZ((([&]{ auto _t36 = (Actor::ci)[(3 + (Actor::cl)[1])]; auto _t37 = Actor::m_e_II(1, (var2)->type); return (_t36 * _t37); }()) / 100), false);
+                              (var2)->m_b_IZ((([&]{ auto _t36 = (Actor::ci)[jadd32(3, (Actor::cl)[1])]; auto _t37 = Actor::m_e_II(1, (var2)->type); return jmul32(_t36, _t37); }()) / 100), false);
                            } else if ((((var2)->type == 11))) {
                               if ((((var2)->m_ar_V() != 1))) {
-                                 (var2)->m_b_IZ((([&]{ auto _t38 = Actor::m_x_V(); auto _t39 = Actor::m_e_II(Actor::ch, (var2)->type); return (_t38 * _t39); }()) / 100), true);
+                                 (var2)->m_b_IZ((([&]{ auto _t38 = Actor::m_x_V(); auto _t39 = Actor::m_e_II(Actor::ch, (var2)->type); return jmul32(_t38, _t39); }()) / 100), true);
                               } else {
-                                 ([&]{ auto _t42 = var2; auto _t43 = (([&]{ auto _t40 = Actor::m_x_V(); auto _t41 = Actor::m_e_II(Actor::ch, (var2)->type); return (_t40 * _t41); }()) / 100); auto _t44 = Actor::aE; return _t42->m_b_IZ(_t43, _t44); }());
+                                 ([&]{ auto _t42 = var2; auto _t43 = (([&]{ auto _t40 = Actor::m_x_V(); auto _t41 = Actor::m_e_II(Actor::ch, (var2)->type); return jmul32(_t40, _t41); }()) / 100); auto _t44 = Actor::aE; return _t42->m_b_IZ(_t43, _t44); }());
                               }
                            } else if ((((var2)->type == 85))) {
                               ((var2)->as = ((Actor::dp)[0])->as);
-                              (var2)->m_b_IZ((([&]{ auto _t45 = Actor::m_x_V(); auto _t46 = Actor::m_e_II(Actor::ch, (var2)->type); return (_t45 * _t46); }()) / 100), false);
+                              (var2)->m_b_IZ((([&]{ auto _t45 = Actor::m_x_V(); auto _t46 = Actor::m_e_II(Actor::ch, (var2)->type); return jmul32(_t45, _t46); }()) / 100), false);
                               (((Actor::dp)[0])->as = (var2)->as);
                               if (((((Actor::dp)[0])->as <= 0))) {
                                  ((Actor::dp)[0])->m_p_I(3);
                               }
                            } else {
-                              (var2)->m_b_IZ((([&]{ auto _t47 = Actor::m_x_V(); auto _t48 = Actor::m_e_II(Actor::ch, (var2)->type); return (_t47 * _t48); }()) / 100), true);
+                              (var2)->m_b_IZ((([&]{ auto _t47 = Actor::m_x_V(); auto _t48 = Actor::m_e_II(Actor::ch, (var2)->type); return jmul32(_t47, _t48); }()) / 100), true);
                            }
                         } else if ((((this)->animationId == 17))) {
                            if (((((var2)->type == 90) || ((var2)->type == 100)))) {
-                              (var2)->m_b_IZ((([&]{ auto _t49 = (Actor::ci)[(3 + (Actor::cl)[1])]; auto _t50 = Actor::m_e_II(1, (var2)->type); return (_t49 * _t50); }()) / 100), false);
+                              (var2)->m_b_IZ((([&]{ auto _t49 = (Actor::ci)[jadd32(3, (Actor::cl)[1])]; auto _t50 = Actor::m_e_II(1, (var2)->type); return jmul32(_t49, _t50); }()) / 100), false);
                            } else if ((((var2)->aq == 8))) {
                               (var2)->m_c_IZ(9, true);
                               this->m_a_IIIIIIZ(96, 51, 0, 0, -30, 300, false);
@@ -18572,19 +18572,19 @@ void Actor::m_G_I(jint var1) {
                               Game::m_a_II(6, 0);
                            } else if ((((var2)->type == 11))) {
                               if ((((var2)->m_ar_V() != 1))) {
-                                 (var2)->m_b_IZ((([&]{ auto _t51 = (Actor::ci)[5]; auto _t52 = Actor::m_e_II(1, (var2)->type); return (_t51 * _t52); }()) / 100), true);
+                                 (var2)->m_b_IZ((([&]{ auto _t51 = (Actor::ci)[5]; auto _t52 = Actor::m_e_II(1, (var2)->type); return jmul32(_t51, _t52); }()) / 100), true);
                               } else {
-                                 ([&]{ auto _t55 = var2; auto _t56 = (([&]{ auto _t53 = (Actor::ci)[5]; auto _t54 = Actor::m_e_II(1, (var2)->type); return (_t53 * _t54); }()) / 100); auto _t57 = Actor::aE; return _t55->m_b_IZ(_t56, _t57); }());
+                                 ([&]{ auto _t55 = var2; auto _t56 = (([&]{ auto _t53 = (Actor::ci)[5]; auto _t54 = Actor::m_e_II(1, (var2)->type); return jmul32(_t53, _t54); }()) / 100); auto _t57 = Actor::aE; return _t55->m_b_IZ(_t56, _t57); }());
                               }
                            } else if ((((var2)->type == 85))) {
                               ((var2)->as = ((Actor::dp)[0])->as);
-                              (var2)->m_b_IZ((([&]{ auto _t58 = (Actor::ci)[5]; auto _t59 = Actor::m_e_II(1, (var2)->type); return (_t58 * _t59); }()) / 100), false);
+                              (var2)->m_b_IZ((([&]{ auto _t58 = (Actor::ci)[5]; auto _t59 = Actor::m_e_II(1, (var2)->type); return jmul32(_t58, _t59); }()) / 100), false);
                               (((Actor::dp)[0])->as = (var2)->as);
                               if (((((Actor::dp)[0])->as <= 0))) {
                                  ((Actor::dp)[0])->m_p_I(3);
                               }
                            } else {
-                              (var2)->m_b_IZ((([&]{ auto _t60 = (Actor::ci)[5]; auto _t61 = Actor::m_e_II(1, (var2)->type); return (_t60 * _t61); }()) / 100), true);
+                              (var2)->m_b_IZ((([&]{ auto _t60 = (Actor::ci)[5]; auto _t61 = Actor::m_e_II(1, (var2)->type); return jmul32(_t60, _t61); }()) / 100), true);
                            }
                         }
                      }
@@ -18646,7 +18646,7 @@ void Actor::m_G_I(jint var1) {
                      } else {
                         ((this)->positionX = ((var2)->collisionBounds)[0]);
                      }
-                     ((this)->av = ((this)->positionY - (var2)->positionY));
+                     ((this)->av = jsub32((this)->positionY, (var2)->positionY));
                      ((this)->G = 0);
                      ((this)->H = 0);
                   } else if ((((var2)->type == 89))) {
@@ -18714,7 +18714,7 @@ void Actor::m_G_I(jint var1) {
                         Arr<jint> var4{};
                         ((((var4 = jnewarray<Arr<jint>>(4))))[0] = ((var2)->collisionBounds)[0]);
                         ((var4)[2] = ((var2)->collisionBounds)[2]);
-                        ((var4)[1] = (((var2)->collisionBounds)[1] - 3));
+                        ((var4)[1] = jsub32(((var2)->collisionBounds)[1], 3));
                         ((var4)[3] = ((var2)->collisionBounds)[3]);
                         if ((Actor::m_b_AIAI(var4, (this)->collisionBounds))) {
                            ((var2)->ay = (this)->positionX);
@@ -18740,7 +18740,7 @@ void Actor::m_G_I(jint var1) {
                            ((var2)->aH = 1);
                            (var2)->m_p_I(2);
                         } else {
-                           (var2)->m_b_IZ((([&]{ auto _t62 = (Actor::ci)[5]; auto _t63 = Actor::m_e_II(1, (var2)->type); return (_t62 * _t63); }()) / 100), true);
+                           (var2)->m_b_IZ((([&]{ auto _t62 = (Actor::ci)[5]; auto _t63 = Actor::m_e_II(1, (var2)->type); return jmul32(_t62, _t63); }()) / 100), true);
                         }
                      }
                      if (((var1 == 1))) {
@@ -18753,7 +18753,7 @@ void Actor::m_G_I(jint var1) {
                }
                if ((((((var2)->type == 70) && ((var2)->aH == 3)) && ((((var2)->aq == 114) || ((var2)->aq == 115)))))) {
                   (var2)->m_g_V();
-                  if ((Actor::m_b_IIIIAI((var2)->aw, (var2)->az, (var2)->positionX, jshr32((jint)((((var2)->collisionBounds)[3] + ((var2)->collisionBounds)[1])), (jint)(1)), (this)->collisionBounds))) {
+                  if ((Actor::m_b_IIIIAI((var2)->aw, (var2)->az, (var2)->positionX, jshr32((jint)(jadd32(((var2)->collisionBounds)[3], ((var2)->collisionBounds)[1])), (jint)(1)), (this)->collisionBounds))) {
                      ((var2)->n = nullptr);
                      ((var2)->O = true);
                      ((var2)->aH = 1);
@@ -18804,11 +18804,11 @@ jint Actor::m_o_I(jint var0) {
 
 jboolean Actor::m_dg_V() {
    Ref<Actor> _self(this);
-   jint var1 = (((this)->positionX / 20) + (((this)->facingLeft ? -1 : 1)));
+   jint var1 = jadd32(((this)->positionX / 20), (((this)->facingLeft ? -1 : 1)));
    {
       jint var2 = 1;
       for (; (var2 <= 3); (var2++)) {
-         if (((Game::m_g_II(var1, (((this)->positionY / 20) - var2)) >= 24))) {
+         if (((Game::m_g_II(var1, jsub32(((this)->positionY / 20), var2)) >= 24))) {
             return true;
          }
       }
@@ -18951,13 +18951,13 @@ void Actor::m_dh_V() {
             if (((!Actor::bM))) {
                this->m_b_ZZ(true, true);
             }
-            if ((([&]{ auto _t0 = (this)->h; auto _t1 = (((this)->p)->m_a_I((this)->animationId) - 3); return (_t0 == _t1); }()))) {
-               if ((((Actor::eq > 0) && ((Actor::er)[((3 - Actor::eq) - 1)] == this)))) {
+            if ((([&]{ auto _t0 = (this)->h; auto _t1 = jsub32(((this)->p)->m_a_I((this)->animationId), 3); return (_t0 == _t1); }()))) {
+               if ((((Actor::eq > 0) && ((Actor::er)[jsub32(jsub32(3, Actor::eq), 1)] == this)))) {
                   this->m_a_IIIIIIZ(39, 17, 13, ((this)->facingLeft ? -20 : 20), 0, 303, false);
                   (Actor::aU)->m_an_V();
-                  ((Actor::er)[(3 - Actor::eq)] = Actor::aU);
+                  ((Actor::er)[jsub32(3, Actor::eq)] = Actor::aU);
                   if (((!Actor::bM))) {
-                     ((Actor::er)[(3 - Actor::eq)])->m_b_ZZ(true, true);
+                     ((Actor::er)[jsub32(3, Actor::eq)])->m_b_ZZ(true, true);
                   }
                   (Actor::eq--);
                }
@@ -18975,8 +18975,8 @@ void Actor::m_dh_V() {
                Game::m_e_Actor(this);
                return;
             }
-            if (((((this)->collisionBounds)[0] > (((Game::aJ)->collisionBounds)[0] + 1)))) {
-               if (((((this)->collisionBounds)[2] >= (((Game::aJ)->collisionBounds)[2] - 1)))) {
+            if (((((this)->collisionBounds)[0] > jadd32(((Game::aJ)->collisionBounds)[0], 1)))) {
+               if (((((this)->collisionBounds)[2] >= jsub32(((Game::aJ)->collisionBounds)[2], 1)))) {
                   return;
                }
                if ((((this->m_dd_V() || ((this)->eL && (this)->facingLeft)) || ((this)->eM && (!(this)->facingLeft))))) {
@@ -19061,7 +19061,7 @@ void Actor::m_dh_V() {
                }
                if ((((this)->aq == 101))) {
                   if ((((this)->ax < 30))) {
-                     ((this)->ax = (jint)(((this)->ax + 5)));
+                     ((this)->ax = (jint)(jadd32((this)->ax, 5)));
                   } else {
                      if ((((Actor::E)->aq == 101))) {
                         (Actor::E)->m_p_I(102);
@@ -19071,10 +19071,10 @@ void Actor::m_dh_V() {
                } else if ((((this)->aq == 102))) {
                   ((this)->ax = 30);
                   if ((((this)->aA <= 0))) {
-                     ((this)->ay = ((this)->ay + (this)->av));
-                     ([&]{ auto _t4 = this; auto _t5 = (jint)(([&]{ auto _t2 = (this)->aw; auto _t3 = Actor::m_l_I((this)->av); return (_t2 + _t3); }())); return _t4->aw = _t5; }());
+                     ((this)->ay = jadd32((this)->ay, (this)->av));
+                     ([&]{ auto _t4 = this; auto _t5 = (jint)(([&]{ auto _t2 = (this)->aw; auto _t3 = Actor::m_l_I((this)->av); return jadd32(_t2, _t3); }())); return _t4->aw = _t5; }());
                   }
-                  if ((((this)->aw >= (((3 - (Math::min((Actor::E)->aC, 98) / 33))) * 90)))) {
+                  if ((((this)->aw >= jmul32((jsub32(3, (Math::min((Actor::E)->aC, 98) / 33))), 90)))) {
                      ((this)->aq = 103);
                      ((this)->aA = 1000);
                   }
@@ -19091,10 +19091,10 @@ void Actor::m_dh_V() {
                   (Actor::E)->m_p_I(103);
                   return;
                }
-               ([&]{ auto _t10 = this; auto _t11 = (jint)(([&]{ auto _t8 = (Actor::E)->positionX; auto _t9 = (jshr32((jint)(([&]{ auto _t6 = (this)->ax; auto _t7 = Game::m_l_I(((((this)->aB * 360) / 4) + (this)->ay)); return (_t6 * _t7); }())), (jint)(8))); return (_t8 + _t9); }())); return _t10->positionX = _t11; }());
-               ([&]{ auto _t16 = this; auto _t17 = (jint)((([&]{ auto _t14 = (Actor::E)->positionY; auto _t15 = (jshr32((jint)(([&]{ auto _t12 = (this)->ax; auto _t13 = Game::m_m_I(((((this)->aB * 360) / 4) + (this)->ay)); return (_t12 * _t13); }())), (jint)(8))); return (_t14 + _t15); }()) - 40)); return _t16->positionY = _t17; }());
+               ([&]{ auto _t10 = this; auto _t11 = (jint)(([&]{ auto _t8 = (Actor::E)->positionX; auto _t9 = (jshr32((jint)(([&]{ auto _t6 = (this)->ax; auto _t7 = Game::m_l_I(jadd32((jmul32((this)->aB, 360) / 4), (this)->ay)); return jmul32(_t6, _t7); }())), (jint)(8))); return jadd32(_t8, _t9); }())); return _t10->positionX = _t11; }());
+               ([&]{ auto _t16 = this; auto _t17 = (jint)(jsub32(([&]{ auto _t14 = (Actor::E)->positionY; auto _t15 = (jshr32((jint)(([&]{ auto _t12 = (this)->ax; auto _t13 = Game::m_m_I(jadd32((jmul32((this)->aB, 360) / 4), (this)->ay)); return jmul32(_t12, _t13); }())), (jint)(8))); return jadd32(_t14, _t15); }()), 40)); return _t16->positionY = _t17; }());
                if (((Actor::aZ != nullptr))) {
-                  Actor::m_a_IIIIAI((Actor::E)->positionX, ((Actor::E)->positionY - 40), (this)->positionX, (this)->positionY, Actor::cU);
+                  Actor::m_a_IIIIAI((Actor::E)->positionX, jsub32((Actor::E)->positionY, 40), (this)->positionX, (this)->positionY, Actor::cU);
                   (((Actor::aZ)[(this)->aB])->positionX = (Actor::cU)[0]);
                   (((Actor::aZ)[(this)->aB])->positionY = (Actor::cU)[1]);
                   return;
@@ -19117,15 +19117,15 @@ void Actor::m_dh_V() {
             } else {
                if ((((this)->ax < 30))) {
                   ((this)->ax = 30);
-                  ((this)->ay = (jint)(((this)->ay + 10)));
+                  ((this)->ay = (jint)(jadd32((this)->ay, 10)));
                   ((this)->aA = 0);
                } else {
-                  ((this)->ax = (jint)(((this)->ax + 3)));
-                  ((this)->ay = (jint)(((this)->ay + 3)));
+                  ((this)->ax = (jint)(jadd32((this)->ax, 3)));
+                  ((this)->ay = (jint)(jadd32((this)->ay, 3)));
                }
-               jint var5 = (jdiv32(((this)->aB * 360), Actor::aW) + (this)->ay);
-               ([&]{ auto _t22 = this; auto _t23 = (jint)(([&]{ auto _t20 = (Game::player)->positionX; auto _t21 = (jshr32((jint)(([&]{ auto _t18 = (this)->ax; auto _t19 = Game::m_l_I(var5); return (_t18 * _t19); }())), (jint)(8))); return (_t20 + _t21); }())); return _t22->positionX = _t23; }());
-               ([&]{ auto _t28 = this; auto _t29 = (jint)((([&]{ auto _t26 = (Game::player)->positionY; auto _t27 = (jshr32((jint)(([&]{ auto _t24 = (this)->ax; auto _t25 = Game::m_m_I(var5); return (_t24 * _t25); }())), (jint)(8))); return (_t26 + _t27); }()) - 22)); return _t28->positionY = _t29; }());
+               jint var5 = jadd32(jdiv32(jmul32((this)->aB, 360), Actor::aW), (this)->ay);
+               ([&]{ auto _t22 = this; auto _t23 = (jint)(([&]{ auto _t20 = (Game::player)->positionX; auto _t21 = (jshr32((jint)(([&]{ auto _t18 = (this)->ax; auto _t19 = Game::m_l_I(var5); return jmul32(_t18, _t19); }())), (jint)(8))); return jadd32(_t20, _t21); }())); return _t22->positionX = _t23; }());
+               ([&]{ auto _t28 = this; auto _t29 = (jint)(jsub32(([&]{ auto _t26 = (Game::player)->positionY; auto _t27 = (jshr32((jint)(([&]{ auto _t24 = (this)->ax; auto _t25 = Game::m_m_I(var5); return jmul32(_t24, _t25); }())), (jint)(8))); return jadd32(_t26, _t27); }()), 22)); return _t28->positionY = _t29; }());
                if ((((this)->aA <= 0))) {
                   if ((((this)->aw == 0))) {
                      this->m_a_I(36);
@@ -19149,7 +19149,7 @@ void Actor::m_dh_V() {
                   if (((((this)->r != nullptr) && (((this)->r)->aq != 0)))) {
                      (((this)->r)->aq = 0);
                      if (((((this)->r)->animationId > 35))) {
-                        ((this)->r)->m_a_I((((this)->r)->aC + 17));
+                        ((this)->r)->m_a_I(jadd32(((this)->r)->aC, 17));
                      }
                   }
                   Game::m_e_Actor(this);
@@ -19236,7 +19236,7 @@ void Actor::m_dh_V() {
             break;
          case 74:
             ((this)->positionX = (Game::player)->positionX);
-            ((this)->positionY = ((Game::player)->positionY - 35));
+            ((this)->positionY = jsub32((Game::player)->positionY, 35));
             ((this)->facingLeft = (Game::player)->facingLeft);
             if ((((((Game::player)->aq == 0) && (Game::player)->cI) && ((Game::player)->G != 0)))) {
                ((this)->c = (jint)(((this)->c & -129)));
@@ -19367,17 +19367,17 @@ jint Actor::m_a_IIIIII(jint var1, jint var2, jint var3, jint var4, jint var5, ji
    Ref<Actor> _self(this);
    jlong var7 = jshr32((jint)(var6), (jint)(1));
    jlong var9 = var5;
-   jlong var11 = (var2 - var4);
-   if (((((var9 * var9) - ((INT64_C(4) * var7) * var11)) < INT64_C(0)))) {
+   jlong var11 = jsub32(var2, var4);
+   if (((jsub64(jmul64(var9, var9), jmul64(jmul64(INT64_C(4), var7), var11)) < INT64_C(0)))) {
       return 0;
    }
-   jlong var13 = Actor::m_a_J(((var9 * var9) - ((INT64_C(4) * var7) * var11)));
-   jlong var15 = jdiv64((((-var9) - var13)), ((INT64_C(2) * var7)));
+   jlong var13 = Actor::m_a_J(jsub64(jmul64(var9, var9), jmul64(jmul64(INT64_C(4), var7), var11)));
+   jlong var15 = jdiv64((jsub64(jneg64(var9), var13)), (jmul64(INT64_C(2), var7)));
    jlong var17 = INT64_C(0);
    jlong var19 = INT64_C(0);
    (var19 = INT64_C(0));
    (var19 = var15);
-   return ((var15 == INT64_C(0)) ? 0 : ((jint)((jdiv64(((var3 - var1)), var19)))));
+   return ((var15 == INT64_C(0)) ? 0 : ((jint)((jdiv64((jsub32(var3, var1)), var19)))));
 }
 
 void Actor::m_dm_V() {
@@ -19397,13 +19397,13 @@ void Actor::m_dm_V() {
    }
    if ((((((this)->G > 0) && (this)->eM) || (((this)->G < 0) && (this)->eL)))) {
       ((this)->facingLeft = (!(this)->facingLeft));
-      ((this)->G = ((-(this)->G) / 2));
+      ((this)->G = (jneg32((this)->G) / 2));
    }
    this->m_b_ZZ(true, false);
    if ((((this)->H < 0))) {
       if ((((this)->eC >= 24))) {
-         ((this)->positionY = ((((this)->positionY + 20) - (((this)->collisionBounds)[1] % 20)) + 1));
-         ((this)->H = ((-(this)->H) / 2));
+         ((this)->positionY = jadd32(jsub32(jadd32((this)->positionY, 20), (((this)->collisionBounds)[1] % 20)), 1));
+         ((this)->H = (jneg32((this)->H) / 2));
          return;
       }
    } else if ((((this)->H >= 0))) {
@@ -19413,13 +19413,13 @@ void Actor::m_dm_V() {
       }
       if (((var1 >= 15))) {
          this->m_g_V();
-         ((this)->positionY = ((((((this)->collisionBounds)[3] + 1)) / 20) * 20));
+         ((this)->positionY = jmul32(((jadd32(((this)->collisionBounds)[3], 1)) / 20), 20));
          ((this)->positionY--);
          while (((Game::m_g_II(((this)->positionX / 20), ((this)->positionY / 20)) >= 24))) {
-            ((this)->positionY = (jint)(((this)->positionY - 20)));
+            ((this)->positionY = (jint)(jsub32((this)->positionY, 20)));
          }
          if ((((this)->H > 2048))) {
-            ((this)->H = ((-(this)->H) / 2));
+            ((this)->H = (jneg32((this)->H) / 2));
          } else if (((Game::m_j_II((this)->G, (this)->H) < 1280))) {
             ([&]{ auto _t4 = this; auto _t5 = (jint)(([&]{ auto _t2 = this; auto _t3 = (jint)(([&]{ auto _t0 = this; auto _t1 = (jint)(((this)->J = 0)); return _t0->I = _t1; }())); return _t2->H = _t3; }())); return _t4->G = _t5; }());
             ((this)->bL = true);
@@ -19433,20 +19433,20 @@ void Actor::m_dm_V() {
             jint var2 = 0;
             jint var3 = jshr32((jint)(((this)->positionX % 20)), (jint)(1));
             if ((((this)->eD == 18))) {
-               (var2 = (0 - var3));
+               (var2 = jsub32(0, var3));
             } else if ((((this)->eD == 19))) {
-               (var2 = (0 - ((var3 + 10))));
+               (var2 = jsub32(0, (jadd32(var3, 10))));
             } else if ((((this)->eD == 20))) {
-               (var2 = (0 - (((10 - var3) + 10))));
+               (var2 = jsub32(0, (jadd32(jsub32(10, var3), 10))));
             } else if ((((this)->eD == 21))) {
-               (var2 = (0 - ((10 - var3))));
+               (var2 = jsub32(0, (jsub32(10, var3))));
             }
             if ((((this)->eD == 16))) {
-               (var2 = (jint)((var2 - ((this)->positionX % 20))));
+               (var2 = (jint)(jsub32(var2, ((this)->positionX % 20))));
             } else if ((((this)->eD == 17))) {
-               (var2 = (jint)((var2 - (20 - ((this)->positionX % 20)))));
+               (var2 = (jint)(jsub32(var2, jsub32(20, ((this)->positionX % 20)))));
             }
-            ((this)->positionY = (jint)(((this)->positionY - var2)));
+            ((this)->positionY = (jint)(jsub32((this)->positionY, var2)));
             ([&]{ auto _t10 = this; auto _t11 = (jint)(([&]{ auto _t8 = this; auto _t9 = (jint)(([&]{ auto _t6 = this; auto _t7 = (jint)(((this)->J = 0)); return _t6->I = _t7; }())); return _t8->H = _t9; }())); return _t10->G = _t11; }());
             ((this)->bL = true);
             if ((((this)->type != 1))) {
@@ -19464,7 +19464,7 @@ void Actor::m_dn_V() {
       if (((((((this)->eC >= 24) || ((this)->eD >= 24)) || ((this)->eE >= 24)) || ((this)->eF >= 24)))) {
          jint var1 = this->m_aV_V();
          if (((((this)->H >= 0) && ((this)->eD >= 15)))) {
-            ((this)->positionY = (jint)(((this)->positionY - var1)));
+            ((this)->positionY = (jint)(jsub32((this)->positionY, var1)));
          }
          this->m_p_I(105);
       }
@@ -19515,7 +19515,7 @@ void Actor::m_c_IZ(jint var1, jboolean var2) {
                            this->m_a_IZ(4, true);
                            this->m_dc_V();
                            this->m_db_V();
-                           ([&]{ auto _t0 = this; auto _t1 = (jint)((-this->m_D_I(256))); return _t0->G = _t1; }());
+                           ([&]{ auto _t0 = this; auto _t1 = (jint)(jneg32(this->m_D_I(256))); return _t0->G = _t1; }());
                            goto brk_label1204;
                         case 3:
                            ;
@@ -19572,7 +19572,7 @@ void Actor::m_c_IZ(jint var1, jboolean var2) {
                            }
                            this->m_dc_V();
                            this->m_db_V();
-                           ([&]{ auto _t2 = this; auto _t3 = (jint)((-this->m_D_I(256))); return _t2->G = _t3; }());
+                           ([&]{ auto _t2 = this; auto _t3 = (jint)(jneg32(this->m_D_I(256))); return _t2->G = _t3; }());
                            goto brk_label1204;
                         case 3:
                            ;
@@ -19908,7 +19908,7 @@ void Actor::m_c_IZ(jint var1, jboolean var2) {
                            this->m_a_I(0);
                            this->m_db_V();
                            if (((this->m_cY_V() < 10240))) {
-                              ([&]{ auto _t4 = this; auto _t5 = (jint)((-this->m_C_I(1024))); return _t4->G = _t5; }());
+                              ([&]{ auto _t4 = this; auto _t5 = (jint)(jneg32(this->m_C_I(1024))); return _t4->G = _t5; }());
                            } else if (((this->m_cY_V() > 20480))) {
                               ([&]{ auto _t6 = this; auto _t7 = (jint)(this->m_C_I(1024)); return _t6->G = _t7; }());
                            } else {
@@ -19932,15 +19932,15 @@ void Actor::m_c_IZ(jint var1, jboolean var2) {
                         case 107:
                            this->m_a_I(5);
                            ((this)->aA = 600);
-                           ((this)->G = (((((this)->ay - (this)->a)) * 50) / 600));
-                           ((this)->H = (((((this)->aw - (this)->b)) * 50) / 600));
+                           ((this)->G = (jmul32((jsub32((this)->ay, (this)->a)), 50) / 600));
+                           ((this)->H = (jmul32((jsub32((this)->aw, (this)->b)), 50) / 600));
                            ((this)->ad = (this)->positionY);
                            goto brk_label1204;
                         case 108:
                            this->m_da_V();
                            this->m_a_I(2);
                            ((this)->aA = 1000);
-                           ((this)->ag = ((((jshl32((jint)(((jshl32((jint)((this)->ad), (jint)(8))) - (this)->b)), (jint)(1))) * 50) * 50) / 1000000));
+                           ((this)->ag = (jmul32(jmul32((jshl32((jint)(jsub32((jshl32((jint)((this)->ad), (jint)(8))), (this)->b)), (jint)(1))), 50), 50) / 1000000));
                            ((this)->H = 0);
                            goto brk_label1204;
                         case 109:
@@ -20007,9 +20007,9 @@ void Actor::m_c_IZ(jint var1, jboolean var2) {
                         case 118:
                            this->m_a_I(3);
                            ((this)->aA = 1700);
-                           ([&]{ auto _t12 = this; auto _t13 = (jint)(Game::m_h_II(((this)->a - (Game::player)->a), ((this)->b - (Game::player)->b))); return _t12->eX = _t13; }());
-                           ((this)->aw = (((this)->eX == 0) ? 0 : ((this)->a - (Game::player)->a)));
-                           ((this)->az = (((this)->eX == 0) ? 0 : ((this)->b - (Game::player)->b)));
+                           ([&]{ auto _t12 = this; auto _t13 = (jint)(Game::m_h_II(jsub32((this)->a, (Game::player)->a), jsub32((this)->b, (Game::player)->b))); return _t12->eX = _t13; }());
+                           ((this)->aw = (((this)->eX == 0) ? 0 : jsub32((this)->a, (Game::player)->a)));
+                           ((this)->az = (((this)->eX == 0) ? 0 : jsub32((this)->b, (Game::player)->b)));
                            ((this)->ax = (this)->eX);
                            goto brk_label1204;
                         case 119:
@@ -20067,9 +20067,9 @@ void Actor::m_c_IZ(jint var1, jboolean var2) {
                         case 131:
                            this->m_b_I(5);
                            this->m_dc_V();
-                           ([&]{ auto _t14 = this; auto _t15 = (jint)(Game::m_h_II(((Game::player)->eA - (this)->positionX), ((Game::player)->eB - (this)->positionY))); return _t14->eX = _t15; }());
-                           ((this)->G = (((this)->eX == 0) ? 0 : jdiv32(((((Game::player)->eA - (this)->positionX)) * 2560), (this)->eX)));
-                           ((this)->H = (((this)->eX == 0) ? 0 : jdiv32(((((Game::player)->eB - (this)->positionY)) * 2560), (this)->eX)));
+                           ([&]{ auto _t14 = this; auto _t15 = (jint)(Game::m_h_II(jsub32((Game::player)->eA, (this)->positionX), jsub32((Game::player)->eB, (this)->positionY))); return _t14->eX = _t15; }());
+                           ((this)->G = (((this)->eX == 0) ? 0 : jdiv32(jmul32((jsub32((Game::player)->eA, (this)->positionX)), 2560), (this)->eX)));
+                           ((this)->H = (((this)->eX == 0) ? 0 : jdiv32(jmul32((jsub32((Game::player)->eB, (this)->positionY)), 2560), (this)->eX)));
                            goto brk_label1204;
                         case 132:
                            ((this)->aA = 1500);
@@ -20118,7 +20118,7 @@ void Actor::m_c_IZ(jint var1, jboolean var2) {
                            this->m_a_IZ(13, true);
                            this->m_dc_V();
                            this->m_db_V();
-                           ([&]{ auto _t16 = this; auto _t17 = (jint)((-this->m_D_I(256))); return _t16->G = _t17; }());
+                           ([&]{ auto _t16 = this; auto _t17 = (jint)(jneg32(this->m_D_I(256))); return _t16->G = _t17; }());
                            goto brk_label1204;
                         case 3:
                            ;
@@ -20179,7 +20179,7 @@ void Actor::m_c_IZ(jint var1, jboolean var2) {
                            this->m_a_I(3);
                            this->m_dc_V();
                            this->m_db_V();
-                           ([&]{ auto _t18 = this; auto _t19 = (jint)((-this->m_D_I(1024))); return _t18->G = _t19; }());
+                           ([&]{ auto _t18 = this; auto _t19 = (jint)(jneg32(this->m_D_I(1024))); return _t18->G = _t19; }());
                            ((this)->aA = 500);
                            goto brk_label1204;
                         case 3:
@@ -20228,7 +20228,7 @@ void Actor::m_c_IZ(jint var1, jboolean var2) {
                            break;
                         case 101:
                            this->m_a_I(((jint)(var3)));
-                           ([&]{ auto _t20 = this; auto _t21 = (jint)(Game::m_i_II(0, (((this)->p)->m_a_I((this)->animationId) - 1))); return _t20->h = _t21; }());
+                           ([&]{ auto _t20 = this; auto _t21 = (jint)(Game::m_i_II(0, jsub32(((this)->p)->m_a_I((this)->animationId), 1))); return _t20->h = _t21; }());
                            break;
                         case 102:
                            ([&]{ auto _t22 = this; auto _t23 = (jint)(this->m_B_I(3)); return _t22->aA = _t23; }());
@@ -20407,7 +20407,7 @@ void Actor::m_c_IZ(jint var1, jboolean var2) {
                         case 3:
                            this->m_a_I(1);
                            ((this)->aA = 2500);
-                           ([&]{ auto _t24 = 39; auto _t25 = 17; auto _t26 = 7; auto _t27 = Game::m_i_II(jshr32((jint)((((this)->collisionBounds)[0] - ((this)->collisionBounds)[2])), (jint)(1)), jshr32((jint)((((this)->collisionBounds)[2] - ((this)->collisionBounds)[0])), (jint)(1))); auto _t28 = Game::m_i_II(jshr32((jint)((((this)->collisionBounds)[1] - ((this)->collisionBounds)[3])), (jint)(1)), jshr32((jint)((((this)->collisionBounds)[3] - ((this)->collisionBounds)[1])), (jint)(1))); auto _t29 = 302; auto _t30 = (this)->facingLeft; return this->m_a_IIIIIIZ(_t24, _t25, _t26, _t27, _t28, _t29, _t30); }());
+                           ([&]{ auto _t24 = 39; auto _t25 = 17; auto _t26 = 7; auto _t27 = Game::m_i_II(jshr32((jint)(jsub32(((this)->collisionBounds)[0], ((this)->collisionBounds)[2])), (jint)(1)), jshr32((jint)(jsub32(((this)->collisionBounds)[2], ((this)->collisionBounds)[0])), (jint)(1))); auto _t28 = Game::m_i_II(jshr32((jint)(jsub32(((this)->collisionBounds)[1], ((this)->collisionBounds)[3])), (jint)(1)), jshr32((jint)(jsub32(((this)->collisionBounds)[3], ((this)->collisionBounds)[1])), (jint)(1))); auto _t29 = 302; auto _t30 = (this)->facingLeft; return this->m_a_IIIIIIZ(_t24, _t25, _t26, _t27, _t28, _t29, _t30); }());
                            goto brk_label1204;
                         case 102:
                            ((this)->aA = 2000);
@@ -20422,7 +20422,7 @@ void Actor::m_c_IZ(jint var1, jboolean var2) {
                            goto brk_label1204;
                         case 104:
                            ((this)->aA = 1500);
-                           ([&]{ auto _t31 = this; auto _t32 = (jint)((((this)->ay == (Game::player)->eA) ? (-this->m_C_I(5)) : ((((this)->ay > (Game::player)->eA) ? -5 : 5)))); return _t31->ax = _t32; }());
+                           ([&]{ auto _t31 = this; auto _t32 = (jint)((((this)->ay == (Game::player)->eA) ? jneg32(this->m_C_I(5)) : ((((this)->ay > (Game::player)->eA) ? -5 : 5)))); return _t31->ax = _t32; }());
                            this->m_a_IIIIIIZ(39, 17, 29, 0, 0, 302, false);
                            ((this)->u = Actor::aU);
                            goto brk_label1204;
@@ -20463,23 +20463,23 @@ void Actor::m_c_IZ(jint var1, jboolean var2) {
                            ((this)->H = -1536);
                            ((this)->O = false);
                            ((this)->P = false);
-                           if ((((this)->as < ((Actor::F * 2) / 3)))) {
+                           if ((((this)->as < (jmul32(Actor::F, 2) / 3)))) {
                               ((this)->n = jnewarray<Arr<jint>>(2));
                               (((this)->n)[0] = (this)->positionX);
                               (((this)->n)[1] = (this)->positionY);
-                              ((this)->aw = ((((this)->positionX - (this)->ac) > 0) ? -1 : 1));
+                              ((this)->aw = ((jsub32((this)->positionX, (this)->ac) > 0) ? -1 : 1));
                               ((this)->H = 0);
                               ((this)->fu = 0);
-                              ((this)->ay = (((((this)->ac - (this)->positionX)) * 1000) / 1732));
-                              ((this)->av = (((((this)->ad - (this)->positionY)) * 1000) / 1732));
+                              ((this)->ay = (jmul32((jsub32((this)->ac, (this)->positionX)), 1000) / 1732));
+                              ((this)->av = (jmul32((jsub32((this)->ad, (this)->positionY)), 1000) / 1732));
                               jint var4 = Game::m_l_I(30);
-                              jint var15 = Game::m_m_I((30 * (-(this)->aw)));
-                              jint var16 = jshr32((jint)((((this)->ay * var4) - ((this)->av * var15))), (jint)(8));
-                              jint var17 = jshr32((jint)((((this)->ay * var15) + ((this)->av * var4))), (jint)(8));
+                              jint var15 = Game::m_m_I(jmul32(30, jneg32((this)->aw)));
+                              jint var16 = jshr32((jint)(jsub32(jmul32((this)->ay, var4), jmul32((this)->av, var15))), (jint)(8));
+                              jint var17 = jshr32((jint)(jadd32(jmul32((this)->ay, var15), jmul32((this)->av, var4))), (jint)(8));
                               ((this)->ay = var16);
                               ((this)->av = var17);
-                              ((this)->ay = ((this)->ay + (this)->positionX));
-                              ((this)->av = ((this)->av + (this)->positionY));
+                              ((this)->ay = jadd32((this)->ay, (this)->positionX));
+                              ((this)->av = jadd32((this)->av, (this)->positionY));
                               ((this)->aB = 20);
                            }
                            goto brk_label1204;
@@ -20494,12 +20494,12 @@ void Actor::m_c_IZ(jint var1, jboolean var2) {
                            this->m_db_V();
                            ((this)->fu = 0);
                            ((this)->n = jnewarray<Arr<jint>>(2));
-                           ((this)->aw = ((((this)->positionX - (Game::player)->positionX) > 0) ? 1 : -1));
+                           ((this)->aw = ((jsub32((this)->positionX, (Game::player)->positionX) > 0) ? 1 : -1));
                            ((this)->fv = 30);
-                           ((this)->ay = ((this)->positionX + ((this)->aw * (this)->fv)));
+                           ((this)->ay = jadd32((this)->positionX, jmul32((this)->aw, (this)->fv)));
                            ((this)->av = (this)->positionY);
-                           (((this)->n)[0] = jshr32((jint)((((this)->ay + ((this)->aw * (this)->fv)) + (Game::player)->positionX)), (jint)(1)));
-                           ([&]{ auto _t37 = (this)->n; auto _t38 = 1; auto _t39 = (jint)(Actor::m_l_I(((Game::player)->positionX - ((this)->n)[0]))); return _t37[_t38] = _t39; }());
+                           (((this)->n)[0] = jshr32((jint)(jadd32(jadd32((this)->ay, jmul32((this)->aw, (this)->fv)), (Game::player)->positionX)), (jint)(1)));
+                           ([&]{ auto _t37 = (this)->n; auto _t38 = 1; auto _t39 = (jint)(Actor::m_l_I(jsub32((Game::player)->positionX, ((this)->n)[0]))); return _t37[_t38] = _t39; }());
                            ((this)->aB = 20);
                         default:
                            goto brk_label1204;
@@ -20510,7 +20510,7 @@ void Actor::m_c_IZ(jint var1, jboolean var2) {
                      switch ((var1)) {
                         case 101:
                            this->m_a_I(0);
-                           ([&]{ auto _t40 = this; auto _t41 = (jint)(((this)->facingLeft ? (-(jshl32((jint)(this->m_B_I(2)), (jint)(8)))) : jshl32((jint)(this->m_B_I(2)), (jint)(8)))); return _t40->G = _t41; }());
+                           ([&]{ auto _t40 = this; auto _t41 = (jint)(((this)->facingLeft ? jneg32((jshl32((jint)(this->m_B_I(2)), (jint)(8)))) : jshl32((jint)(this->m_B_I(2)), (jint)(8)))); return _t40->G = _t41; }());
                            ([&]{ auto _t42 = this; auto _t43 = (jint)(this->m_B_I(1)); return _t42->aA = _t43; }());
                            if (((((this)->r != nullptr) && (((this)->r)->type == 51)))) {
                               Game::m_a_II(5, 5);
@@ -20538,7 +20538,7 @@ void Actor::m_c_IZ(jint var1, jboolean var2) {
                            this->m_db_V();
                            goto brk_label1204;
                         case 107:
-                           this->m_a_IIIIIIZ(56, 19, 0, 0, (((this)->aB - ((this)->collisionBounds)[3]) + -7), -1, false);
+                           this->m_a_IIIIIIZ(56, 19, 0, 0, jadd32(jsub32((this)->aB, ((this)->collisionBounds)[3]), -7), -1, false);
                            (Actor::aU)->m_p_I(100);
                            ((Actor::aU)->aA = 0);
                            ((this)->s = Actor::aU);
@@ -20621,7 +20621,7 @@ void Actor::m_c_IZ(jint var1, jboolean var2) {
                            this->m_db_V();
                            ((this)->aA = 300);
                            ((this)->az++);
-                           ([&]{ auto _t56 = this; auto _t57 = (jint)((-this->m_D_I(256))); return _t56->G = _t57; }());
+                           ([&]{ auto _t56 = this; auto _t57 = (jint)(jneg32(this->m_D_I(256))); return _t56->G = _t57; }());
                            break;
                         case 3:
                            ;
@@ -20632,7 +20632,7 @@ void Actor::m_c_IZ(jint var1, jboolean var2) {
                            this->m_a_I(3);
                            this->m_db_V();
                            ((this)->aA = 2500);
-                           ([&]{ auto _t58 = 39; auto _t59 = 17; auto _t60 = 7; auto _t61 = Game::m_i_II(jshr32((jint)((((this)->collisionBounds)[0] - ((this)->collisionBounds)[2])), (jint)(1)), jshr32((jint)((((this)->collisionBounds)[2] - ((this)->collisionBounds)[0])), (jint)(1))); auto _t62 = Game::m_i_II(jshr32((jint)((((this)->collisionBounds)[1] - ((this)->collisionBounds)[3])), (jint)(1)), jshr32((jint)((((this)->collisionBounds)[3] - ((this)->collisionBounds)[1])), (jint)(1))); auto _t63 = 302; auto _t64 = (this)->facingLeft; return this->m_a_IIIIIIZ(_t58, _t59, _t60, _t61, _t62, _t63, _t64); }());
+                           ([&]{ auto _t58 = 39; auto _t59 = 17; auto _t60 = 7; auto _t61 = Game::m_i_II(jshr32((jint)(jsub32(((this)->collisionBounds)[0], ((this)->collisionBounds)[2])), (jint)(1)), jshr32((jint)(jsub32(((this)->collisionBounds)[2], ((this)->collisionBounds)[0])), (jint)(1))); auto _t62 = Game::m_i_II(jshr32((jint)(jsub32(((this)->collisionBounds)[1], ((this)->collisionBounds)[3])), (jint)(1)), jshr32((jint)(jsub32(((this)->collisionBounds)[3], ((this)->collisionBounds)[1])), (jint)(1))); auto _t63 = 302; auto _t64 = (this)->facingLeft; return this->m_a_IIIIIIZ(_t58, _t59, _t60, _t61, _t62, _t63, _t64); }());
                            (Game::player)->m_au_V();
                            break;
                         case 4:
@@ -20994,7 +20994,7 @@ void Actor::m_c_IZ(jint var1, jboolean var2) {
                         case 125:
                            this->m_a_I(22);
                            this->m_db_V();
-                           ((this)->av = ((this)->positionY + -130));
+                           ((this)->av = jadd32((this)->positionY, -130));
                            ((this)->ac = (Game::player)->positionX);
                            ((this)->ad = (Game::player)->positionY);
                            break;
@@ -21014,9 +21014,9 @@ void Actor::m_c_IZ(jint var1, jboolean var2) {
                         case 129:
                            this->m_a_I(19);
                            ((this)->H = 2048);
-                           ([&]{ auto _t65 = this; auto _t66 = (jint)(this->m_a_IIIIII((this)->a, (-(this)->b), jshl32((jint)((this)->ac), (jint)(8)), (-(jshl32((jint)((this)->ad), (jint)(8)))), (-(this)->H), -320)); return _t65->G = _t66; }());
+                           ([&]{ auto _t65 = this; auto _t66 = (jint)(this->m_a_IIIIII((this)->a, jneg32((this)->b), jshl32((jint)((this)->ac), (jint)(8)), jneg32((jshl32((jint)((this)->ad), (jint)(8)))), jneg32((this)->H), -320)); return _t65->G = _t66; }());
                            if (((Actor::m_l_I((this)->G) > 4864))) {
-                              ([&]{ auto _t69 = this; auto _t70 = (jint)((([&]{ auto _t67 = Actor::m_l_I((this)->G); auto _t68 = (this)->G; return jdiv32(_t67, _t68); }()) * 4864)); return _t69->G = _t70; }());
+                              ([&]{ auto _t69 = this; auto _t70 = (jint)(jmul32(([&]{ auto _t67 = Actor::m_l_I((this)->G); auto _t68 = (this)->G; return jdiv32(_t67, _t68); }()), 4864)); return _t69->G = _t70; }());
                            }
                            (Actor::di = false);
                            break;
@@ -21125,7 +21125,7 @@ void Actor::m_c_IZ(jint var1, jboolean var2) {
                            }
                            this->m_dc_V();
                            this->m_db_V();
-                           ([&]{ auto _t73 = this; auto _t74 = (jint)((-this->m_D_I(256))); return _t73->G = _t74; }());
+                           ([&]{ auto _t73 = this; auto _t74 = (jint)(jneg32(this->m_D_I(256))); return _t73->G = _t74; }());
                            goto brk_label1204;
                         case 3:
                            ((this)->N = false);
@@ -21189,7 +21189,7 @@ void Actor::m_c_IZ(jint var1, jboolean var2) {
                            goto brk_label1204;
                         case 104:
                            this->m_a_I(2);
-                           ([&]{ auto _t75 = this; auto _t76 = (jint)((-this->m_C_I(3328))); return _t75->G = _t76; }());
+                           ([&]{ auto _t75 = this; auto _t76 = (jint)(jneg32(this->m_C_I(3328))); return _t75->G = _t76; }());
                            ((this)->H = -3328);
                            goto brk_label1204;
                         case 105:
@@ -21275,10 +21275,10 @@ void Actor::m_c_IZ(jint var1, jboolean var2) {
                            {
                               switch (((this)->aw)) {
                                  case 1:
-                                    (var14 = (((Game::viewBounds)[0] - (this)->positionX) + 18));
+                                    (var14 = jadd32(jsub32((Game::viewBounds)[0], (this)->positionX), 18));
                                     break;
                                  case 2:
-                                    (var14 = (((Game::viewBounds)[2] - (this)->positionX) - 36));
+                                    (var14 = jsub32(jsub32((Game::viewBounds)[2], (this)->positionX), 36));
                                  case 3:
                                     ;
                                  case 5:
@@ -21290,17 +21290,17 @@ void Actor::m_c_IZ(jint var1, jboolean var2) {
                                  default:
                                     break;
                                  case 4:
-                                    (var6 = (((Game::viewBounds)[1] - (this)->positionY) + 18));
+                                    (var6 = jadd32(jsub32((Game::viewBounds)[1], (this)->positionY), 18));
                                     break;
                                  case 8:
-                                    (var6 = (((Game::viewBounds)[3] - (this)->positionY) - 18));
+                                    (var6 = jsub32(jsub32((Game::viewBounds)[3], (this)->positionY), 18));
                               }
                            }
                            if ((((this)->r == nullptr))) {
                               Ref<Actor> var7{};
                               ((((var7 = this->m_a_IIIIIIZ(21, 16, 14, var14, var6, 100, false))))->aC = 1);
-                              ((var7)->ay = ((var7)->positionX - Game::cameraX));
-                              ((var7)->av = ((var7)->positionY - Game::cameraY));
+                              ((var7)->ay = jsub32((var7)->positionX, Game::cameraX));
+                              ((var7)->av = jsub32((var7)->positionY, Game::cameraY));
                               this->m_b_Actor(var7);
                            }
                            goto brk_label1204;
@@ -21353,12 +21353,12 @@ void Actor::m_c_IZ(jint var1, jboolean var2) {
                            ((this)->H = -1700);
                            if ((((this)->r == nullptr))) {
                               this->m_F_I(1200);
-                              ([&]{ auto _t77 = this; auto _t78 = (jint)((-this->m_C_I(1200))); return _t77->G = _t78; }());
+                              ([&]{ auto _t77 = this; auto _t78 = (jint)(jneg32(this->m_C_I(1200))); return _t77->G = _t78; }());
                            } else {
-                              if ((([&]{ auto _t79 = Actor::m_l_I((((this)->r)->a - (this)->a)); auto _t80 = Actor::m_l_I(1200); return (_t79 > _t80); }()))) {
+                              if ((([&]{ auto _t79 = Actor::m_l_I(jsub32(((this)->r)->a, (this)->a)); auto _t80 = Actor::m_l_I(1200); return (_t79 > _t80); }()))) {
                                  ((this)->facingLeft = (((this)->r)->positionX < (this)->positionX));
                               }
-                              ((this)->G = ((((((this)->a - ((this)->r)->a) < 0) ? -1 : 1)) * 1200));
+                              ((this)->G = jmul32((((jsub32((this)->a, ((this)->r)->a) < 0) ? -1 : 1)), 1200));
                               ((this)->r = nullptr);
                            }
                            if ((((this)->aH == 1))) {
@@ -21381,12 +21381,12 @@ void Actor::m_c_IZ(jint var1, jboolean var2) {
                            this->m_a_I(5);
                            goto brk_label1204;
                         case 102:
-                           ((this)->positionY = (((((this)->positionY + 10)) / 20) * 20));
+                           ((this)->positionY = jmul32(((jadd32((this)->positionY, 10)) / 20), 20));
                            this->m_db_V();
                            this->m_a_I(4);
                            goto brk_label1204;
                         case 103:
-                           ((this)->positionY = (((((this)->positionY + 10)) / 20) * 20));
+                           ((this)->positionY = jmul32(((jadd32((this)->positionY, 10)) / 20), 20));
                            this->m_a_I(7);
                            if (((this)->fx)) {
                               ((this)->aA = 400);
@@ -21400,7 +21400,7 @@ void Actor::m_c_IZ(jint var1, jboolean var2) {
                            goto brk_label1204;
                         case 105:
                            ((this)->aA = 1024);
-                           ((this)->positionY = (((((this)->positionY + 10)) / 20) * 20));
+                           ((this)->positionY = jmul32(((jadd32((this)->positionY, 10)) / 20), 20));
                            this->m_a_I(0);
                            goto brk_label1204;
                         case 106:
@@ -21419,7 +21419,7 @@ void Actor::m_c_IZ(jint var1, jboolean var2) {
                            goto brk_label1204;
                         case 110:
                            this->m_db_V();
-                           ((this)->positionY = (((((this)->positionY + 10)) / 20) * 20));
+                           ((this)->positionY = jmul32(((jadd32((this)->positionY, 10)) / 20), 20));
                            this->m_a_I(9);
                            goto brk_label1204;
                         case 111:
@@ -21427,11 +21427,11 @@ void Actor::m_c_IZ(jint var1, jboolean var2) {
                            this->m_db_V();
                            ((this)->aA = 200);
                            this->m_b_I(2);
-                           ((this)->positionY = (jint)(((this)->positionY + 27)));
+                           ((this)->positionY = (jint)(jadd32((this)->positionY, 27)));
                            goto brk_label1204;
                         case 112:
                            this->m_db_V();
-                           if (((Game::m_g_II(((this)->positionX / 20), (((this)->positionY / 20) - 1)) >= 15))) {
+                           if (((Game::m_g_II(((this)->positionX / 20), jsub32(((this)->positionY / 20), 1)) >= 15))) {
                               ((this)->H = -425);
                            } else {
                               ((this)->H = -3400);
@@ -21446,7 +21446,7 @@ void Actor::m_c_IZ(jint var1, jboolean var2) {
                         case 113:
                            this->m_db_V();
                            this->m_b_I(10);
-                           ((this)->positionY = (jint)(((this)->positionY - 27)));
+                           ((this)->positionY = (jint)(jsub32((this)->positionY, 27)));
                            goto brk_label1204;
                         case 114:
                            this->m_a_I(6);
@@ -21468,7 +21468,7 @@ void Actor::m_c_IZ(jint var1, jboolean var2) {
                            ((this)->az = (this)->positionY);
                            this->m_b_I(2);
                            ((this)->H = 850);
-                           ((this)->positionY = (jint)(((this)->positionY + 27)));
+                           ((this)->positionY = (jint)(jadd32((this)->positionY, 27)));
                            goto brk_label1204;
                         default:
                            this->m_db_V();
@@ -21484,7 +21484,7 @@ void Actor::m_c_IZ(jint var1, jboolean var2) {
                            Game::m_b_Actor(this);
                            goto brk_label1204;
                         case 101:
-                           ((this)->aA = (2000 + (this)->av));
+                           ((this)->aA = jadd32(2000, (this)->av));
                            ((this)->c = (jint)(((this)->c | 128)));
                            goto brk_label1204;
                         case 102:
@@ -21509,8 +21509,8 @@ void Actor::m_c_IZ(jint var1, jboolean var2) {
                               jint var13 = 0;
                               for (; (var13 < 4); (var13++)) {
                                  this->m_a_IIIIIIZ(39, 17, 1, 0, 0, 302, (this)->facingLeft);
-                                 ([&]{ auto _t102 = Actor::aU; auto _t103 = (jint)(([&]{ auto _t100 = (jshr32((jint)((((this)->collisionBounds)[0] + ((this)->collisionBounds)[2])), (jint)(1))); auto _t101 = ((((jshl32((jint)((var13 % 2)), (jint)(1))) + -1)) * Game::m_i_II(0, jshr32((jint)((((this)->collisionBounds)[0] - ((this)->collisionBounds)[2])), (jint)(1)))); return (_t100 + _t101); }())); return _t102->positionX = _t103; }());
-                                 ([&]{ auto _t106 = Actor::aU; auto _t107 = (jint)(([&]{ auto _t104 = (jshr32((jint)((((this)->collisionBounds)[1] + ((this)->collisionBounds)[3])), (jint)(1))); auto _t105 = ((((jshl32((jint)((var13 % 2)), (jint)(1))) + -1)) * Game::m_i_II(0, jshr32((jint)((((this)->collisionBounds)[1] - ((this)->collisionBounds)[3])), (jint)(1)))); return (_t104 + _t105); }())); return _t106->positionY = _t107; }());
+                                 ([&]{ auto _t102 = Actor::aU; auto _t103 = (jint)(([&]{ auto _t100 = (jshr32((jint)(jadd32(((this)->collisionBounds)[0], ((this)->collisionBounds)[2])), (jint)(1))); auto _t101 = jmul32((jadd32((jshl32((jint)((var13 % 2)), (jint)(1))), -1)), Game::m_i_II(0, jshr32((jint)(jsub32(((this)->collisionBounds)[0], ((this)->collisionBounds)[2])), (jint)(1)))); return jadd32(_t100, _t101); }())); return _t102->positionX = _t103; }());
+                                 ([&]{ auto _t106 = Actor::aU; auto _t107 = (jint)(([&]{ auto _t104 = (jshr32((jint)(jadd32(((this)->collisionBounds)[1], ((this)->collisionBounds)[3])), (jint)(1))); auto _t105 = jmul32((jadd32((jshl32((jint)((var13 % 2)), (jint)(1))), -1)), Game::m_i_II(0, jshr32((jint)(jsub32(((this)->collisionBounds)[1], ((this)->collisionBounds)[3])), (jint)(1)))); return jadd32(_t104, _t105); }())); return _t106->positionY = _t107; }());
                               }
                            }
                            Game::m_a_II(12, 8);
@@ -21523,9 +21523,9 @@ void Actor::m_c_IZ(jint var1, jboolean var2) {
                            if ((((Game::be)[Game::levelIndex] != 2))) {
                               if (((Actor::m_b_AIAI((this)->collisionBounds, Game::viewBounds) && ((this)->aC != 1)))) {
                                  if (((this)->facingLeft)) {
-                                    ((this)->positionX = ((Game::viewBounds)[2] + (jshr32((jint)((((this)->collisionBounds)[2] - ((this)->collisionBounds)[0])), (jint)(1)))));
+                                    ((this)->positionX = jadd32((Game::viewBounds)[2], (jshr32((jint)(jsub32(((this)->collisionBounds)[2], ((this)->collisionBounds)[0])), (jint)(1)))));
                                  } else {
-                                    ((this)->positionX = ((Game::viewBounds)[0] - (jshr32((jint)((((this)->collisionBounds)[2] - ((this)->collisionBounds)[0])), (jint)(1)))));
+                                    ((this)->positionX = jsub32((Game::viewBounds)[0], (jshr32((jint)(jsub32(((this)->collisionBounds)[2], ((this)->collisionBounds)[0])), (jint)(1)))));
                                  }
                               }
                               this->m_g_V();
@@ -21535,7 +21535,7 @@ void Actor::m_c_IZ(jint var1, jboolean var2) {
                            this->m_b_I(3);
                            ((this)->az = 1);
                            ((this)->aL = 1);
-                           ([&]{ auto _t108 = this; auto _t109 = (Ref<Actor>)(this->m_a_IIIIIIZ(-3, 21, 11, 0, 0, ((this)->ap + 1), false)); return _t108->v = _t109; }());
+                           ([&]{ auto _t108 = this; auto _t109 = (Ref<Actor>)(this->m_a_IIIIIIZ(-3, 21, 11, 0, 0, jadd32((this)->ap, 1), false)); return _t108->v = _t109; }());
                            ((this)->c = (jint)(((this)->c | 16)));
                         default:
                            goto brk_label1204;
@@ -21548,7 +21548,7 @@ void Actor::m_c_IZ(jint var1, jboolean var2) {
                            this->m_db_V();
                            ((this)->aA = 1000);
                            this->m_a_IIIIIIZ(98, 19, 10, -50, 30, 302, true);
-                           ((Actor::aU)->positionX = (((this)->aK == 1) ? (Actor::dK - 15) : (Actor::dJ + 15)));
+                           ((Actor::aU)->positionX = (((this)->aK == 1) ? jsub32(Actor::dK, 15) : jadd32(Actor::dJ, 15)));
                            ((Actor::aU)->aL = 2);
                            Game::m_a_II(4, 0);
                            break;
@@ -21569,7 +21569,7 @@ void Actor::m_c_IZ(jint var1, jboolean var2) {
                            ((this)->ac = (this)->positionX);
                            ((this)->ad = (this)->positionY);
                            if (((((this)->aK == 1) || ((this)->aK == 2)))) {
-                              ([&]{ auto _t110 = this; auto _t111 = (jint)((((this)->aK == 1) ? (-this->m_y_I(1280)) : this->m_y_I(1280))); return _t110->G = _t111; }());
+                              ([&]{ auto _t110 = this; auto _t111 = (jint)((((this)->aK == 1) ? jneg32(this->m_y_I(1280)) : this->m_y_I(1280))); return _t110->G = _t111; }());
                            }
                            ((this)->aB--);
                            break;
@@ -21580,11 +21580,11 @@ void Actor::m_c_IZ(jint var1, jboolean var2) {
                            (Actor::dG = 0);
                            if ((((this)->aK == 1))) {
                               (Actor::dz = (this)->positionX);
-                              (Actor::dA = ((this)->positionY + ((Actor::dE ? (-Actor::dB) : Actor::dB))));
+                              (Actor::dA = jadd32((this)->positionY, ((Actor::dE ? jneg32(Actor::dB) : Actor::dB))));
                               (Actor::dD = (Actor::dE ? 90 : -90));
                            } else if ((((this)->aK == 2))) {
                               (Actor::dz = (this)->positionX);
-                              (Actor::dA = ((this)->positionY - ((Actor::dE ? (-Actor::dB) : Actor::dB))));
+                              (Actor::dA = jsub32((this)->positionY, ((Actor::dE ? jneg32(Actor::dB) : Actor::dB))));
                               (Actor::dD = (Actor::dE ? -90 : 90));
                            }
                            break;
@@ -21642,14 +21642,14 @@ void Actor::m_c_IZ(jint var1, jboolean var2) {
                            break;
                         case 114:
                            ((this)->aA = 1500);
-                           (Actor::fe = (((Game::player)->positionX <= ((this)->aw + 30)) ? (this)->aw : ((((Game::player)->positionX >= ((this)->ax - 30)) ? (this)->ax : (this)->ay))));
-                           (Actor::ff = (((Game::player)->positionX <= ((this)->aw + 30)) ? 0 : ((((Game::player)->positionX >= ((this)->ax - 30)) ? 2 : 1))));
+                           (Actor::fe = (((Game::player)->positionX <= jadd32((this)->aw, 30)) ? (this)->aw : ((((Game::player)->positionX >= jsub32((this)->ax, 30)) ? (this)->ax : (this)->ay))));
+                           (Actor::ff = (((Game::player)->positionX <= jadd32((this)->aw, 30)) ? 0 : ((((Game::player)->positionX >= jsub32((this)->ax, 30)) ? 2 : 1))));
                            ((this)->positionX = Actor::fe);
                            ((this)->aB = 3);
                            this->m_i_Z(false);
                            break;
                         case 115:
-                           ([&]{ auto _t112 = this; auto _t113 = (jint)((((this)->aK == 4) ? (-this->m_y_I(2560)) : this->m_y_I(2560))); return _t112->H = _t113; }());
+                           ([&]{ auto _t112 = this; auto _t113 = (jint)((((this)->aK == 4) ? jneg32(this->m_y_I(2560)) : this->m_y_I(2560))); return _t112->H = _t113; }());
                            ((this)->aB--);
                            break;
                         case 116:
@@ -21671,10 +21671,10 @@ void Actor::m_c_IZ(jint var1, jboolean var2) {
                            }
                            if ((((this)->aK == 4))) {
                               (Actor::dD = (Actor::dE ? 180 : 0));
-                              (Actor::dz = ((this)->positionX + (((Actor::dE ? 1 : -1)) * Actor::dB)));
+                              (Actor::dz = jadd32((this)->positionX, jmul32(((Actor::dE ? 1 : -1)), Actor::dB)));
                            } else if ((((this)->aK == 8))) {
                               (Actor::dD = (Actor::dE ? 0 : 180));
-                              (Actor::dz = ((this)->positionX - (((Actor::dE ? 1 : -1)) * Actor::dB)));
+                              (Actor::dz = jsub32((this)->positionX, jmul32(((Actor::dE ? 1 : -1)), Actor::dB)));
                            }
                            (Actor::dC = this->m_y_I(15));
                            (Actor::dG = 0);
@@ -21689,7 +21689,7 @@ void Actor::m_c_IZ(jint var1, jboolean var2) {
                               (Actor::dE = false);
                            }
                            (Actor::dD = (Actor::dE ? 0 : 180));
-                           (Actor::dz = ((this)->positionX - (((Actor::dE ? 1 : -1)) * Actor::dB)));
+                           (Actor::dz = jsub32((this)->positionX, jmul32(((Actor::dE ? 1 : -1)), Actor::dB)));
                            (Actor::dC = 5);
                            (Actor::dG = 0);
                            (Actor::dA = (this)->positionY);
@@ -21708,7 +21708,7 @@ void Actor::m_c_IZ(jint var1, jboolean var2) {
                            Game::m_h_I(12);
                            break;
                         case 121:
-                           ([&]{ auto _t114 = this; auto _t115 = (jint)((((this)->aK == 1) ? (-this->m_y_I(1536)) : 1536)); return _t114->G = _t115; }());
+                           ([&]{ auto _t114 = this; auto _t115 = (jint)((((this)->aK == 1) ? jneg32(this->m_y_I(1536)) : 1536)); return _t114->G = _t115; }());
                            break;
                         case 122:
                            this->m_db_V();
@@ -21737,10 +21737,10 @@ void Actor::m_c_IZ(jint var1, jboolean var2) {
                            break;
                         case 127:
                            this->m_db_V();
-                           ((this)->ac = (((((this)->aK == 1) ? (Actor::fj - -50) : (Actor::fk + -50))) - (this)->positionX));
+                           ((this)->ac = jsub32(((((this)->aK == 1) ? jsub32(Actor::fj, -50) : jadd32(Actor::fk, -50))), (this)->positionX));
                            ((this)->ad = 110);
-                           ([&]{ auto _t116 = this; auto _t117 = (jint)((((this)->aK == 1) ? (-this->m_y_I(1536)) : this->m_y_I(1536))); return _t116->G = _t117; }());
-                           ((this)->H = jdiv32(((this)->G * (this)->ad), (this)->ac));
+                           ([&]{ auto _t116 = this; auto _t117 = (jint)((((this)->aK == 1) ? jneg32(this->m_y_I(1536)) : this->m_y_I(1536))); return _t116->G = _t117; }());
+                           ((this)->H = jdiv32(jmul32((this)->G, (this)->ad), (this)->ac));
                            ((this)->aB--);
                            break;
                         case 128:
@@ -21749,7 +21749,7 @@ void Actor::m_c_IZ(jint var1, jboolean var2) {
                            (Actor::dE = ((this)->aK == 1));
                            (Actor::dG = 0);
                            (Actor::dz = (this)->positionX);
-                           (Actor::dA = ((this)->positionY - Actor::dB));
+                           (Actor::dA = jsub32((this)->positionY, Actor::dB));
                            (Actor::dD = 90);
                            break;
                         case 129:
@@ -21772,7 +21772,7 @@ void Actor::m_c_IZ(jint var1, jboolean var2) {
                            ((this)->aA = 1000);
                            break;
                         case 132:
-                           ([&]{ auto _t118 = this; auto _t119 = (jint)((((this)->aK == 1) ? (-this->m_y_I(1536)) : this->m_y_I(1536))); return _t118->G = _t119; }());
+                           ([&]{ auto _t118 = this; auto _t119 = (jint)((((this)->aK == 1) ? jneg32(this->m_y_I(1536)) : this->m_y_I(1536))); return _t118->G = _t119; }());
                            break;
                         case 133:
                            (Actor::dB = 45);
@@ -21780,7 +21780,7 @@ void Actor::m_c_IZ(jint var1, jboolean var2) {
                            (Actor::dE = ((this)->aK == 1));
                            (Actor::dG = 0);
                            (Actor::dz = (this)->positionX);
-                           (Actor::dA = ((this)->positionY - Actor::dB));
+                           (Actor::dA = jsub32((this)->positionY, Actor::dB));
                            (Actor::dD = 90);
                            break;
                         case 134:
@@ -21791,7 +21791,7 @@ void Actor::m_c_IZ(jint var1, jboolean var2) {
                         case 135:
                            this->m_db_V();
                            ((this)->aA = 0);
-                           ((this)->positionY = (jint)(((this)->positionY + 10)));
+                           ((this)->positionY = (jint)(jadd32((this)->positionY, 10)));
                            Game::m_e_I(6);
                            this->m_cc_V();
                            break;
@@ -21819,7 +21819,7 @@ void Actor::m_c_IZ(jint var1, jboolean var2) {
                            ;
                         case 154:
                            ((this)->ac = (this)->positionX);
-                           ([&]{ auto _t128 = this; auto _t129 = (jint)(([&]{ auto _t126 = (this)->positionY; auto _t127 = (jshr32((jint)(([&]{ auto _t124 = (this)->ay; auto _t125 = Game::m_m_I((-(this)->ax)); return (_t124 * _t125); }())), (jint)(8))); return (_t126 + _t127); }())); return _t128->ad = _t129; }());
+                           ([&]{ auto _t128 = this; auto _t129 = (jint)(([&]{ auto _t126 = (this)->positionY; auto _t127 = (jshr32((jint)(([&]{ auto _t124 = (this)->ay; auto _t125 = Game::m_m_I(jneg32((this)->ax)); return jmul32(_t124, _t125); }())), (jint)(8))); return jadd32(_t126, _t127); }())); return _t128->ad = _t129; }());
                            break;
                         case 152:
                            (Actor::dB = (this)->ay);
@@ -21827,10 +21827,10 @@ void Actor::m_c_IZ(jint var1, jboolean var2) {
                            (Actor::dE = ((this)->az == 0));
                            if ((((this)->aK == 4))) {
                               (Actor::dD = (Actor::dE ? 180 : 0));
-                              (Actor::dz = ((this)->positionX + (((Actor::dE ? 1 : -1)) * Actor::dB)));
+                              (Actor::dz = jadd32((this)->positionX, jmul32(((Actor::dE ? 1 : -1)), Actor::dB)));
                            } else if ((((this)->aK == 8))) {
                               (Actor::dD = (Actor::dE ? 0 : 180));
-                              (Actor::dz = ((this)->positionX - (((Actor::dE ? 1 : -1)) * Actor::dB)));
+                              (Actor::dz = jsub32((this)->positionX, jmul32(((Actor::dE ? 1 : -1)), Actor::dB)));
                            }
                            (Actor::dG = 0);
                            (Actor::dA = (this)->positionY);
@@ -22157,7 +22157,7 @@ void Actor::m_c_IZ(jint var1, jboolean var2) {
                         case 114:
                            this->m_a_I(0);
                            ((this)->ay = 120);
-                           ([&]{ auto _t132 = this; auto _t133 = (jint)((197 + (Game::m_i_II(-1, 2) * 80))); return _t132->av = _t133; }());
+                           ([&]{ auto _t132 = this; auto _t133 = (jint)(jadd32(197, jmul32(Game::m_i_II(-1, 2), 80))); return _t132->av = _t133; }());
                            goto brk_label1204;
                         case 115:
                            ((this)->aA = 500);
@@ -22189,8 +22189,8 @@ void Actor::m_c_IZ(jint var1, jboolean var2) {
                            this->m_a_I(6);
                            ((this)->aA = 3000);
                            this->m_au_V();
-                           this->m_c_III(25, ((this)->positionX + -35), ((this)->positionY + -90));
-                           ([&]{ auto _t136 = this; auto _t137 = (Ref<Actor>)(this->m_d_III(14, ((this)->positionX + -35), ((this)->positionY + -10))); return _t136->x = _t137; }());
+                           this->m_c_III(25, jadd32((this)->positionX, -35), jadd32((this)->positionY, -90));
+                           ([&]{ auto _t136 = this; auto _t137 = (Ref<Actor>)(this->m_d_III(14, jadd32((this)->positionX, -35), jadd32((this)->positionY, -10))); return _t136->x = _t137; }());
                            goto brk_label1204;
                         case 122:
                            this->m_a_I(7);
@@ -22200,8 +22200,8 @@ void Actor::m_c_IZ(jint var1, jboolean var2) {
                            this->m_a_I(0);
                            goto brk_label1204;
                         case 124:
-                           ((Game::player)->positionX = ((this)->positionX + -35));
-                           ((Game::player)->positionY = ((this)->positionY + -10));
+                           ((Game::player)->positionX = jadd32((this)->positionX, -35));
+                           ((Game::player)->positionY = jadd32((this)->positionY, -10));
                            (Game::player)->m_db_V();
                            goto brk_label1204;
                         case 126:
@@ -22209,7 +22209,7 @@ void Actor::m_c_IZ(jint var1, jboolean var2) {
                            (Actor::br = true);
                            ((this)->ax = 0);
                            this->m_au_V();
-                           this->m_c_III(25, ((Game::player)->positionX + -35), ((Game::player)->positionY + -90));
+                           this->m_c_III(25, jadd32((Game::player)->positionX, -35), jadd32((Game::player)->positionY, -90));
                            (Game::player)->m_a_I(33);
                            goto brk_label1204;
                         case 128:
@@ -22223,8 +22223,8 @@ void Actor::m_c_IZ(jint var1, jboolean var2) {
                                  goto brk_label1204;
                               }
                               this->m_a_IIIIIIZ(61, 38, 0, 0, 0, 101, false);
-                              ([&]{ auto _t140 = Actor::aU; auto _t141 = (jint)(([&]{ auto _t138 = ((this)->positionX + (((((var9 % 2) * 2) - 1)) * 15)); auto _t139 = Game::m_i_II(-7, 7); return (_t138 + _t139); }())); return _t140->positionX = _t141; }());
-                              ([&]{ auto _t144 = Actor::aU; auto _t145 = (jint)(([&]{ auto _t142 = ((this)->positionY - ((var9 / 2) * 30)); auto _t143 = Game::m_i_II(-15, 15); return (_t142 + _t143); }())); return _t144->positionY = _t145; }());
+                              ([&]{ auto _t140 = Actor::aU; auto _t141 = (jint)(([&]{ auto _t138 = jadd32((this)->positionX, jmul32((jsub32(jmul32((var9 % 2), 2), 1)), 15)); auto _t139 = Game::m_i_II(-7, 7); return jadd32(_t138, _t139); }())); return _t140->positionX = _t141; }());
+                              ([&]{ auto _t144 = Actor::aU; auto _t145 = (jint)(([&]{ auto _t142 = jsub32((this)->positionY, jmul32((var9 / 2), 30)); auto _t143 = Game::m_i_II(-15, 15); return jadd32(_t142, _t143); }())); return _t144->positionY = _t145; }());
                               ((Actor::aU)->ap = 319);
                               ((Actor::aU)->G = jshl32((jint)(Actor::fs), (jint)(8)));
                               (var9++);
@@ -22259,7 +22259,7 @@ void Actor::m_c_IZ(jint var1, jboolean var2) {
                            goto brk_label1204;
                         case 104:
                            this->m_a_I(3);
-                           ([&]{ auto _t146 = this; auto _t147 = (jint)((-this->m_C_I(512))); return _t146->G = _t147; }());
+                           ([&]{ auto _t146 = this; auto _t147 = (jint)(jneg32(this->m_C_I(512))); return _t146->G = _t147; }());
                            goto brk_label1204;
                         case 105:
                            ([&]{ auto _t148 = this; auto _t149 = (jint)(this->m_D_I(1792)); return _t148->G = _t149; }());
@@ -22301,7 +22301,7 @@ void Actor::m_c_IZ(jint var1, jboolean var2) {
                            goto brk_label1204;
                         case 104:
                            this->m_a_I(4);
-                           (Game::player)->m_c_III(25, (this)->positionX, ((this)->positionY - 80));
+                           (Game::player)->m_c_III(25, (this)->positionX, jsub32((this)->positionY, 80));
                            (Actor::aM = true);
                            (Actor::ez = true);
                            (Game::player)->m_db_V();
@@ -22321,7 +22321,7 @@ void Actor::m_c_IZ(jint var1, jboolean var2) {
                            ((this)->P = false);
                            this->m_a_I(0);
                            if ((((this)->r == nullptr))) {
-                              ([&]{ auto _t152 = this; auto _t153 = (Ref<Actor>)(this->m_a_IIIIIIZ(-50, 17, 72, 0, 0, ((this)->ap + 1), (this)->facingLeft)); return _t152->r = _t153; }());
+                              ([&]{ auto _t152 = this; auto _t153 = (Ref<Actor>)(this->m_a_IIIIIIZ(-50, 17, 72, 0, 0, jadd32((this)->ap, 1), (this)->facingLeft)); return _t152->r = _t153; }());
                               (((this)->r)->c = (jint)((((this)->r)->c | 32)));
                            } else {
                               ((this)->r)->m_a_I(72);
@@ -22359,7 +22359,7 @@ void Actor::m_c_IZ(jint var1, jboolean var2) {
                               jint var5 = 0;
                               for (; (var5 < 4); (var5++)) {
                                  ([&]{ auto _t158 = Actor::aZ; auto _t159 = var5; auto _t160 = (Ref<Actor>)(this->m_a_IIIIIIZ(39, 17, 29, 0, 0, 302, false)); return _t158[_t159] = _t160; }());
-                                 Actor::m_a_IIIIAI((this)->positionX, ((this)->positionY - 40), ((Actor::aY)[var5])->positionX, ((Actor::aY)[var5])->positionY, Actor::cU);
+                                 Actor::m_a_IIIIAI((this)->positionX, jsub32((this)->positionY, 40), ((Actor::aY)[var5])->positionX, ((Actor::aY)[var5])->positionY, Actor::cU);
                                  (((Actor::aZ)[var5])->positionX = (Actor::cU)[0]);
                                  (((Actor::aZ)[var5])->positionY = (Actor::cU)[1]);
                               }
@@ -22395,7 +22395,7 @@ void Actor::m_c_IZ(jint var1, jboolean var2) {
                            }
                            ((this)->aA = 6000);
                            if ((((this)->aq == 106))) {
-                              ((this)->positionX = (jint)(((this)->positionX - 60)));
+                              ((this)->positionX = (jint)(jsub32((this)->positionX, 60)));
                            }
                            break;
                         case 109:
@@ -22493,7 +22493,7 @@ void Actor::m_do__V() {
          case 5:
             (Actor::en = false);
             ((Actor::ey)[0] = ((this)->collisionBounds)[0]);
-            ((Actor::ey)[2] = (((this)->collisionBounds)[0] + 240));
+            ((Actor::ey)[2] = jadd32(((this)->collisionBounds)[0], 240));
             ((Actor::ey)[1] = ((this)->collisionBounds)[1]);
             ((Actor::ey)[3] = ((this)->collisionBounds)[3]);
             if (((!Actor::m_b_AIAI((Game::player)->collisionBounds, Actor::ey)))) {
@@ -22512,17 +22512,17 @@ void Actor::m_do__V() {
                   (Actor::ep = this);
                }
             }
-            (Actor::eo = (Actor::eo + (this)->aA));
+            (Actor::eo = jadd32(Actor::eo, (this)->aA));
             (Game::cameraX = ((this)->collisionBounds)[0]);
             ((Game::viewBounds)[0] = Game::cameraX);
-            ((Game::viewBounds)[2] = (Game::cameraX + 240));
+            ((Game::viewBounds)[2] = jadd32(Game::cameraX, 240));
             PortConfig::updateView();
             (Game::ac = Game::cameraX);
-            if ((((Game::player)->positionX < ((Actor::ey)[0] + 10)))) {
-               ((Game::player)->positionX = ((Actor::ey)[0] + 10));
+            if ((((Game::player)->positionX < jadd32((Actor::ey)[0], 10)))) {
+               ((Game::player)->positionX = jadd32((Actor::ey)[0], 10));
             }
-            if ((((Game::player)->positionX > ((Game::viewBounds)[2] - 10)))) {
-               ((Game::player)->positionX = ((Game::viewBounds)[2] - 10));
+            if ((((Game::player)->positionX > jsub32((Game::viewBounds)[2], 10)))) {
+               ((Game::player)->positionX = jsub32((Game::viewBounds)[2], 10));
                return;
             }
             break;
@@ -22575,7 +22575,7 @@ void Actor::m_do__V() {
             if (((((this)->aA != -1) && ((this)->s == nullptr)))) {
                ([&]{ auto _t4 = this; auto _t5 = (Ref<Actor>)(Game::m_i_I((this)->aA)); return _t4->s = _t5; }());
             }
-            if ((((Game::cameraX + 240) <= ((this)->collisionBounds)[2]))) {
+            if (((jadd32(Game::cameraX, 240) <= ((this)->collisionBounds)[2]))) {
                ((this)->s)->m_cy_V();
                ((this)->s = nullptr);
                Game::m_e_Actor(this);
@@ -22657,20 +22657,20 @@ void Actor::m_dp_V() {
                (var1 = 8);
             }
             if ((((this)->type == 37))) {
-               ((this)->positionY = ((this)->positionY + (((this)->fx ? (jint)((-var1)) : (jint)(var1)))));
+               ((this)->positionY = jadd32((this)->positionY, (((this)->fx ? (jint)(jneg32(var1)) : (jint)(var1)))));
             }
-            ((this)->fw = ((this)->fw + (((this)->fx ? (jint)(var1) : (jint)((-var1))))));
+            ((this)->fw = jadd32((this)->fw, (((this)->fx ? (jint)(var1) : (jint)(jneg32(var1))))));
             if (((((this)->fw >= (this)->fu) || ((this)->fw <= (this)->fv)))) {
                ((this)->aq = 102);
                ((this)->aA = 1000);
             }
             if ((((this)->an == -1))) {
                if ((((Game::player)->w != nullptr))) {
-                  ((this)->positionY = ((this)->positionY + (((this)->az - ((Game::player)->w)->av))));
+                  ((this)->positionY = jadd32((this)->positionY, (jsub32((this)->az, ((Game::player)->w)->av))));
                   ((this)->az = ((Game::player)->w)->av);
                }
                if ((((this)->cI && ((Game::player)->aq == 1)))) {
-                  ((Game::player)->positionY = ((this)->positionY - 115));
+                  ((Game::player)->positionY = jsub32((this)->positionY, 115));
                }
                if ((((this)->fw < (this)->fv))) {
                   ((Game::player)->u = nullptr);
@@ -22691,11 +22691,11 @@ void Actor::m_dp_V() {
                }
                if ((((this)->an == -1))) {
                   if ((((Game::player)->w != nullptr))) {
-                     ((this)->positionY = ((this)->positionY + (((this)->az - ((Game::player)->w)->av))));
+                     ((this)->positionY = jadd32((this)->positionY, (jsub32((this)->az, ((Game::player)->w)->av))));
                      ((this)->az = ((Game::player)->w)->av);
                   }
                   if ((((((Game::player)->u == this) && (this)->cI) && ((Game::player)->aq == 1)))) {
-                     ((Game::player)->positionY = ((this)->positionY - 115));
+                     ((Game::player)->positionY = jsub32((this)->positionY, 115));
                   } else {
                      ((this)->aq = 101);
                      ((this)->fx = false);
@@ -22723,10 +22723,10 @@ void Actor::m_dq_V() {
    Ref<Actor> _self(this);
    if ((((this)->collisionBounds != nullptr))) {
       if ((((this)->aC == 1))) {
-         ((this)->positionX = ((this)->ay + Game::cameraX));
-         ((this)->positionY = ((this)->av + Game::cameraY));
+         ((this)->positionX = jadd32((this)->ay, Game::cameraX));
+         ((this)->positionY = jadd32((this)->av, Game::cameraY));
       } else if ((((this)->aC == 2))) {
-         ((this)->positionY = ((this)->av + Game::cameraY));
+         ((this)->positionY = jadd32((this)->av, Game::cameraY));
       } else if ((((this)->aC != 3))) {
          if ((((((this)->animationId == 31) && ((Game::player)->aq == 1)) && Actor::m_b_AIAI((Game::player)->collisionBounds, (this)->collisionBounds)))) {
             ((this)->c = (jint)(((this)->c & -129)));
@@ -22753,7 +22753,7 @@ void Actor::m_dq_V() {
             }
          } else {
             ((this)->positionX = (Game::player)->positionX);
-            ((this)->positionY = ((Game::player)->positionY + -80));
+            ((this)->positionY = jadd32((Game::player)->positionY, -80));
             if (((Actor::bb <= 50))) {
                Game::m_e_Actor(this);
             }
@@ -22764,15 +22764,15 @@ void Actor::m_dq_V() {
 
 void Actor::m_a_IIIIIIIZ(jint var0, jint var1, jint var2, jint var3, jint var4, jint var5, jint var6, jboolean var7) {
    (Game::graphics)->setColor(4215580);
-   Game::m_c_IIIIII((var2 - var5), (var3 - var5), (var5 * 2), (var5 * 2), 0, 360);
-   Game::m_c_IIIIII((var0 - var4), (var1 - var4), (var4 * 2), (var4 * 2), 0, 360);
+   Game::m_c_IIIIII(jsub32(var2, var5), jsub32(var3, var5), jmul32(var5, 2), jmul32(var5, 2), 0, 360);
+   Game::m_c_IIIIII(jsub32(var0, var4), jsub32(var1, var4), jmul32(var4, 2), jmul32(var4, 2), 0, 360);
    Arr<jint> var8 = jnewarray<Arr<jint>>(2);
    jint var9 = var2;
-   jint var10 = (var3 - var5);
-   jint var11 = (var2 - (jshr32((jint)((var5 * Game::m_m_I(60))), (jint)(8))));
-   jint var12 = (var3 + (jshr32((jint)(var5), (jint)(1))));
-   jint var13 = (var2 + (jshr32((jint)((var5 * Game::m_m_I(60))), (jint)(8))));
-   jint var14 = (var3 + (jshr32((jint)(var5), (jint)(1))));
+   jint var10 = jsub32(var3, var5);
+   jint var11 = jsub32(var2, (jshr32((jint)(jmul32(var5, Game::m_m_I(60))), (jint)(8))));
+   jint var12 = jadd32(var3, (jshr32((jint)(var5), (jint)(1))));
+   jint var13 = jadd32(var2, (jshr32((jint)(jmul32(var5, Game::m_m_I(60))), (jint)(8))));
+   jint var14 = jadd32(var3, (jshr32((jint)(var5), (jint)(1))));
    Actor::m_a_IIIIIAI(var2, var3, var9, var10, var6, var8);
    (var9 = (var8)[0]);
    (var10 = (var8)[1]);
@@ -22783,11 +22783,11 @@ void Actor::m_a_IIIIIIIZ(jint var0, jint var1, jint var2, jint var3, jint var4, 
    (var13 = (var8)[0]);
    (var14 = (var8)[1]);
    jint var15 = var2;
-   jint var16 = (var3 + var5);
-   jint var17 = (var2 - (jshr32((jint)((var5 * Game::m_m_I(60))), (jint)(8))));
-   jint var18 = (var3 - (jshr32((jint)(var5), (jint)(1))));
-   jint var19 = (var2 + (jshr32((jint)((var5 * Game::m_m_I(60))), (jint)(8))));
-   jint var20 = (var3 - (jshr32((jint)(var5), (jint)(1))));
+   jint var16 = jadd32(var3, var5);
+   jint var17 = jsub32(var2, (jshr32((jint)(jmul32(var5, Game::m_m_I(60))), (jint)(8))));
+   jint var18 = jsub32(var3, (jshr32((jint)(var5), (jint)(1))));
+   jint var19 = jadd32(var2, (jshr32((jint)(jmul32(var5, Game::m_m_I(60))), (jint)(8))));
+   jint var20 = jsub32(var3, (jshr32((jint)(var5), (jint)(1))));
    Actor::m_a_IIIIIAI(var2, var3, var15, var16, var6, var8);
    (var15 = (var8)[0]);
    (var16 = (var8)[1]);

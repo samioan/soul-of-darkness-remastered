@@ -125,7 +125,7 @@ void Game::clinit() {
    Game::do_ = 0;
    Game::dp = Arr<jint>::of({(jint)(327712), (jint)(4112), (jint)(8256), (jint)(16388), (jint)(33024)});
    Game::dq = Arr<jint>::of({(jint)(25), (jint)(22), (jint)(28), (jint)(31), (jint)(19)});
-   Game::ds = ((1127 + Game::cc) + 64);
+   Game::ds = jadd32(jadd32(1127, Game::cc), 64);
    Game::dt = jnewarray<Arr<jbyte>>(Game::ds);
    Game::saveLoaded = false;
    Game::dF = 0;
@@ -232,7 +232,7 @@ void Game::paint(Ref<Graphics> var1) {
          this->m_d_V();
          (Game::l = false);
       }
-      if ((((([&]{ auto _t3 = System::currentTimeMillis(); auto _t4 = Game::lastPaintMs; return (_t3 - _t4); }()) >= INT64_C(2500)) && (Game::lastPaintMs > INT64_C(0))))) {
+      if ((((([&]{ auto _t3 = System::currentTimeMillis(); auto _t4 = Game::lastPaintMs; return jsub64(_t3, _t4); }()) >= INT64_C(2500)) && (Game::lastPaintMs > INT64_C(0))))) {
          this->hideNotify();
          this->showNotify();
       }
@@ -242,7 +242,7 @@ void Game::paint(Ref<Graphics> var1) {
          (Game::stateFrame++);
          PortConfig::beginFrame(Game::graphics, Game::state);
          (Game::h = Math::min(Game::frameDeltaMs, 50));
-         (Game::f = (((Game::h + 12)) / 50));
+         (Game::f = ((jadd32(Game::h, 12)) / 50));
          (Game::f = Math::min(Game::f, 1));
          (Game::g = ((jshl32((jint)(Game::h), (jint)(8))) / 50));
          {
@@ -475,8 +475,8 @@ void Game::m_b_V() {
                }
                break;
             case 8:
-               var18 = ((Game::player)->positionX - Game::cameraX);
-               var3 = ((Game::player)->positionY - Game::cameraY);
+               var18 = jsub32((Game::player)->positionX, Game::cameraX);
+               var3 = jsub32((Game::player)->positionY, Game::cameraY);
                if ((Game::modalActive)) {
                   if (((Game::bJ == 1))) {
                      if ((((((Game::m > 55) && (Game::m < 95)) && (Game::n > 140)) && (Game::n < 190)))) {
@@ -496,52 +496,52 @@ void Game::m_b_V() {
                } else if ((((((Game::m > 158) && (Game::m < 200)) && (Game::n < 330)) && (Game::n > 293)))) {
                   this->keyPressed(57);
                } else if ((((Game::player)->aq == 1))) {
-                  if ((((((Game::m < (var18 + 15)) && (Game::m > (var18 - 15))) && (Game::n > var3)) && (Game::n < (var3 - 30))))) {
+                  if ((((((Game::m < jadd32(var18, 15)) && (Game::m > jsub32(var18, 15))) && (Game::n > var3)) && (Game::n < jsub32(var3, 30))))) {
                      this->keyPressed(53);
-                  } else if (((((Game::m > (var18 + 15)) && (Game::n < (var3 + 50))) && (Game::n > (var3 - 50))))) {
+                  } else if (((((Game::m > jadd32(var18, 15)) && (Game::n < jadd32(var3, 50))) && (Game::n > jsub32(var3, 50))))) {
                      if ((Game::p)) {
                         this->keyPressed(53);
                      } else {
                         this->keyPressed(54);
                      }
-                  } else if ((((((Game::m > (var18 - 15)) && (Game::m < (var18 + 15))) && (Game::n < var3)) && (Game::n > (var3 - 15))))) {
+                  } else if ((((((Game::m > jsub32(var18, 15)) && (Game::m < jadd32(var18, 15))) && (Game::n < var3)) && (Game::n > jsub32(var3, 15))))) {
                      this->keyPressed(-5);
-                  } else if ((((((Game::m < (var18 - 15)) && (Game::m > 0)) && (Game::n < (var3 + 50))) && (Game::n > (var3 - 50))))) {
+                  } else if ((((((Game::m < jsub32(var18, 15)) && (Game::m > 0)) && (Game::n < jadd32(var3, 50))) && (Game::n > jsub32(var3, 50))))) {
                      if ((Game::p)) {
                         this->keyPressed(53);
                      } else {
                         this->keyPressed(52);
                      }
-                  } else if (((((Game::m < (var18 + 15)) && (Game::m > (var18 - 15))) && (Game::n > var3)))) {
+                  } else if (((((Game::m < jadd32(var18, 15)) && (Game::m > jsub32(var18, 15))) && (Game::n > var3)))) {
                      this->keyPressed(56);
-                  } else if (((((Game::m < (var18 + 15)) && (Game::m > (var18 - 15))) && (Game::n < (var3 - 15))))) {
+                  } else if (((((Game::m < jadd32(var18, 15)) && (Game::m > jsub32(var18, 15))) && (Game::n < jsub32(var3, 15))))) {
                      this->keyPressed(50);
-                  } else if (((((Game::m > 0) && (Game::m < (var18 - 15))) && (Game::n < (var3 - 15))))) {
+                  } else if (((((Game::m > 0) && (Game::m < jsub32(var18, 15))) && (Game::n < jsub32(var3, 15))))) {
                      this->keyPressed(49);
-                  } else if ((((Game::m > (var18 + 15)) && (Game::n < (var3 - 15))))) {
+                  } else if ((((Game::m > jadd32(var18, 15)) && (Game::n < jsub32(var3, 15))))) {
                      this->keyPressed(51);
                   }
-               } else if (((((Game::m > (var18 + 20)) && (Game::n < (var3 + 75))) && (Game::n > (var3 - 60))))) {
+               } else if (((((Game::m > jadd32(var18, 20)) && (Game::n < jadd32(var3, 75))) && (Game::n > jsub32(var3, 60))))) {
                   if ((Game::p)) {
                      this->keyPressed(53);
                   } else {
                      this->keyPressed(54);
                   }
-               } else if ((((((Game::m < (var18 - 20)) && (Game::m > 0)) && (Game::n < (var3 + 75))) && (Game::n > (var3 - 60))))) {
+               } else if ((((((Game::m < jsub32(var18, 20)) && (Game::m > 0)) && (Game::n < jadd32(var3, 75))) && (Game::n > jsub32(var3, 60))))) {
                   if ((Game::p)) {
                      this->keyPressed(53);
                   } else {
                      this->keyPressed(52);
                   }
-               } else if ((((((Game::m > (var18 - 20)) && (Game::m < (var18 + 20))) && (Game::n < (var3 + 5))) && (Game::n > (var3 - 60))))) {
+               } else if ((((((Game::m > jsub32(var18, 20)) && (Game::m < jadd32(var18, 20))) && (Game::n < jadd32(var3, 5))) && (Game::n > jsub32(var3, 60))))) {
                   this->keyPressed(-5);
-               } else if ((((Game::m > (var18 + 20)) && (Game::n < (var3 - 60))))) {
+               } else if ((((Game::m > jadd32(var18, 20)) && (Game::n < jsub32(var3, 60))))) {
                   this->keyPressed(51);
-               } else if (((((Game::m > 0) && (Game::m < (var18 - 20))) && (Game::n < (var3 - 60))))) {
+               } else if (((((Game::m > 0) && (Game::m < jsub32(var18, 20))) && (Game::n < jsub32(var3, 60))))) {
                   this->keyPressed(49);
-               } else if (((((Game::m < (var18 + 20)) && (Game::m > (var18 - 20))) && (Game::n > var3)))) {
+               } else if (((((Game::m < jadd32(var18, 20)) && (Game::m > jsub32(var18, 20))) && (Game::n > var3)))) {
                   this->keyPressed(56);
-               } else if (((((Game::m < (var18 + 20)) && (Game::m > (var18 - 20))) && (Game::n < (var3 - 60))))) {
+               } else if (((((Game::m < jadd32(var18, 20)) && (Game::m > jsub32(var18, 20))) && (Game::n < jsub32(var3, 60))))) {
                   this->keyPressed(50);
                }
                break;
@@ -555,7 +555,7 @@ void Game::m_b_V() {
                {
                   jint var17 = 0;
                   for (; (var17 < 6); (var17++)) {
-                     if ((((Game::n > (var10)[var17]) && (Game::n < (var10)[(var17 + 1)])))) {
+                     if ((((Game::n > (var10)[var17]) && (Game::n < (var10)[jadd32(var17, 1)])))) {
                         (Game::cP = var17);
                         this->keyPressed(53);
                         goto brk_label489;
@@ -575,7 +575,7 @@ void Game::m_b_V() {
                      {
                         jint var12 = 0;
                         for (; (var12 < 2); (var12++)) {
-                           if ((((Game::m > (var5)[var12]) && (Game::m < (var5)[(var12 + 1)])))) {
+                           if ((((Game::m > (var5)[var12]) && (Game::m < (var5)[jadd32(var12, 1)])))) {
                               if (((Game::ei == var12))) {
                                  this->keyPressed(53);
                               } else if (((var12 < Game::maxUnlockedLevel))) {
@@ -591,7 +591,7 @@ void Game::m_b_V() {
                      {
                         jint var13 = 2;
                         for (; (var13 < 5); (var13++)) {
-                           if ((((Game::m > (var6)[var13]) && (Game::m < (var6)[(var13 + 1)])))) {
+                           if ((((Game::m > (var6)[var13]) && (Game::m < (var6)[jadd32(var13, 1)])))) {
                               if (((Game::ei == var13))) {
                                  this->keyPressed(53);
                               } else if (((var13 < Game::maxUnlockedLevel))) {
@@ -607,7 +607,7 @@ void Game::m_b_V() {
                      {
                         jint var14 = 5;
                         for (; (var14 < 7); (var14++)) {
-                           if ((((Game::m > (var7)[var14]) && (Game::m < (var7)[(var14 + 1)])))) {
+                           if ((((Game::m > (var7)[var14]) && (Game::m < (var7)[jadd32(var14, 1)])))) {
                               if (((Game::ei == var14))) {
                                  this->keyPressed(53);
                               } else if (((var14 < Game::maxUnlockedLevel))) {
@@ -623,7 +623,7 @@ void Game::m_b_V() {
                      {
                         jint var15 = 7;
                         for (; (var15 < 10); (var15++)) {
-                           if ((((Game::m > (var8)[var15]) && (Game::m < (var8)[(var15 + 1)])))) {
+                           if ((((Game::m > (var8)[var15]) && (Game::m < (var8)[jadd32(var15, 1)])))) {
                               if (((Game::ei == var15))) {
                                  this->keyPressed(53);
                               } else if (((var15 < Game::maxUnlockedLevel))) {
@@ -639,7 +639,7 @@ void Game::m_b_V() {
                      {
                         jint var16 = 10;
                         for (; (var16 < 11); (var16++)) {
-                           if ((((Game::m > (var9)[var16]) && (Game::m < (var9)[(var16 + 1)])))) {
+                           if ((((Game::m > (var9)[var16]) && (Game::m < (var9)[jadd32(var16, 1)])))) {
                               if (((Game::ei == var16))) {
                                  this->keyPressed(53);
                               } else if (((var16 < Game::maxUnlockedLevel))) {
@@ -670,7 +670,7 @@ void Game::m_b_V() {
                   {
                      jint var11 = 0;
                      for (; (var11 < 4); (var11++)) {
-                        if ((((Game::n > (var4)[var11]) && (Game::n < (var4)[(var11 + 1)])))) {
+                        if ((((Game::n > (var4)[var11]) && (Game::n < (var4)[jadd32(var11, 1)])))) {
                            (Game::aW = var11);
                            break;
                         }
@@ -681,7 +681,7 @@ void Game::m_b_V() {
                   {
                      jint var2 = 0;
                      for (; (var2 < 3); (var2++)) {
-                        if ((((Game::n > (var1)[var2]) && (Game::n < (var1)[(var2 + 1)])))) {
+                        if ((((Game::n > (var1)[var2]) && (Game::n < (var1)[jadd32(var2, 1)])))) {
                            (Game::aW = var2);
                            break;
                         }
@@ -712,17 +712,17 @@ void Game::m_X_V() {
       (Game::bu = false);
    }
    if (((Game::t && (Game::u < 0)))) {
-      (Game::u = (jint)((Game::u + 5)));
+      (Game::u = (jint)(jadd32(Game::u, 5)));
       if (((Game::u > 0))) {
          (Game::u = 0);
       }
    }
    if ((((!Game::t) && (Game::u > -41)))) {
-      (Game::v = (Game::v + Game::h));
+      (Game::v = jadd32(Game::v, Game::h));
       if (((Game::v >= 4000))) {
-         (Game::u = (jint)((Game::u - 5)));
+         (Game::u = (jint)(jsub32(Game::u, 5)));
       } else if (((Game::u < 0))) {
-         (Game::u = (jint)((Game::u + 5)));
+         (Game::u = (jint)(jadd32(Game::u, 5)));
          if (((Game::u > 0))) {
             (Game::u = 0);
          }
@@ -738,14 +738,14 @@ jint Game::m_a_IIIZ(jint var0, jint var1, jint var2, jboolean var3) {
    jint var5 = (((var4 = jcat(jstr(var0), jstr(jlit(u""))))))->length();
    jint var6 = 0;
    if (((!var3))) {
-      (var1 = (jint)((var1 - (6 * var5))));
+      (var1 = (jint)(jsub32(var1, jmul32(6, var5))));
    }
    {
       jint var8 = 0;
       for (; (var8 < var5); (var8++)) {
-         jint var7 = ((var4)->charAt(var8) - ((jchar)48));
-         ((Game::b)[33])->m_a_GraphicsIIIIII(Game::graphics, (2 + var7), (var6 + var1), var2, 0, 0, 0);
-         (var6 = (jint)((var6 + 6)));
+         jint var7 = jsub32((var4)->charAt(var8), ((jchar)48));
+         ((Game::b)[33])->m_a_GraphicsIIIIII(Game::graphics, jadd32(2, var7), jadd32(var6, var1), var2, 0, 0, 0);
+         (var6 = (jint)(jadd32(var6, 6)));
       }
    }
    return var6;
@@ -753,15 +753,15 @@ jint Game::m_a_IIIZ(jint var0, jint var1, jint var2, jboolean var3) {
 
 void Game::m_a_IIIIII(jint var0, jint var1, jint var2, jint var3, jint var4, jint var5) {
    Game::m_b_I(var0);
-   Game::m_b_IIII(var2, var3, ((var5 * 60) / 60), var4);
+   Game::m_b_IIII(var2, var3, (jmul32(var5, 60) / 60), var4);
    Game::m_b_I(var1);
-   Game::m_b_IIII((var2 + 1), (var3 + 1), (((var5 * 60) / 60) - 2), (var4 - 2));
+   Game::m_b_IIII(jadd32(var2, 1), jadd32(var3, 1), jsub32((jmul32(var5, 60) / 60), 2), jsub32(var4, 2));
    Game::m_b_I(var0);
    if (((var5 > 0))) {
       {
          jint var6 = 0;
-         for (; (var6 <= jdiv32(((((var5 * 60) / 60) - 2)), Game::w)); (var6++)) {
-            Game::m_d_IIII((var2 + (var6 * Game::w)), var3, (var2 + (var6 * Game::w)), ((var3 + var4) - 1));
+         for (; (var6 <= jdiv32((jsub32((jmul32(var5, 60) / 60), 2)), Game::w)); (var6++)) {
+            Game::m_d_IIII(jadd32(var2, jmul32(var6, Game::w)), var3, jadd32(var2, jmul32(var6, Game::w)), jsub32(jadd32(var3, var4), 1));
          }
       }
    }
@@ -770,31 +770,31 @@ void Game::m_a_IIIIII(jint var0, jint var1, jint var2, jint var3, jint var4, jin
 void Game::m_Y_V() {
    ((Game::b)[33])->m_a_GraphicsIIIIII(Game::graphics, 0, 0, Game::u, 0, 0, 0);
    Game::m_b_I(15773760);
-   Game::m_c_IIII(51, (8 + Game::u), (((Game::maxHealth * 60) / 60) + 14), 8);
+   Game::m_c_IIII(51, jadd32(8, Game::u), jadd32((jmul32(Game::maxHealth, 60) / 60), 14), 8);
    Game::m_b_I(0);
-   Game::m_b_IIII(65, (9 + Game::u), ((Game::maxHealth * 60) / 60), 7);
-   Game::m_a_IIIIII(1611800, 63488, 65, (10 + Game::u), 5, Game::health);
+   Game::m_b_IIII(65, jadd32(9, Game::u), (jmul32(Game::maxHealth, 60) / 60), 7);
+   Game::m_a_IIIIII(1611800, 63488, 65, jadd32(10, Game::u), 5, Game::health);
    Game::m_b_I(8402944);
-   Game::m_c_IIII(65, (17 + Game::u), ((Game::maxHealth * 60) / 60), 1);
+   Game::m_c_IIII(65, jadd32(17, Game::u), (jmul32(Game::maxHealth, 60) / 60), 1);
    Game::m_b_I(15773760);
-   Game::m_c_IIII(51, (18 + Game::u), (((Game::maxMagic * 60) / 60) + 14), 8);
+   Game::m_c_IIII(51, jadd32(18, Game::u), jadd32((jmul32(Game::maxMagic, 60) / 60), 14), 8);
    Game::m_b_I(0);
-   Game::m_b_IIII(65, (19 + Game::u), ((Game::maxMagic * 60) / 60), 7);
+   Game::m_b_IIII(65, jadd32(19, Game::u), (jmul32(Game::maxMagic, 60) / 60), 7);
    Game::m_b_I(2132128);
-   Game::m_b_IIII(65, (20 + Game::u), ((Game::magic * 60) / 60), 5);
+   Game::m_b_IIII(65, jadd32(20, Game::u), (jmul32(Game::magic, 60) / 60), 5);
    Game::m_b_I(3725552);
-   Game::m_b_IIII(66, (21 + Game::u), (((Game::magic * 60) / 60) - 2), 3);
-   Game::m_a_IIIIII(2132128, 3725552, 65, (20 + Game::u), 5, Game::magic);
-   ((Game::b)[33])->m_a_GraphicsIIIIII(Game::graphics, 1, 0, (0 + Game::u), 0, 0, 0);
-   Game::m_a_IIIZ(Game::D, 67, (29 + Game::u), true);
-   ((Game::b)[33])->m_a_GraphicsIIIIII(Game::graphics, (20 + Actor::ch), -1, Game::u, 0, 0, 0);
+   Game::m_b_IIII(66, jadd32(21, Game::u), jsub32((jmul32(Game::magic, 60) / 60), 2), 3);
+   Game::m_a_IIIIII(2132128, 3725552, 65, jadd32(20, Game::u), 5, Game::magic);
+   ((Game::b)[33])->m_a_GraphicsIIIIII(Game::graphics, 1, 0, jadd32(0, Game::u), 0, 0, 0);
+   Game::m_a_IIIZ(Game::D, 67, jadd32(29, Game::u), true);
+   ((Game::b)[33])->m_a_GraphicsIIIIII(Game::graphics, jadd32(20, Actor::ch), -1, Game::u, 0, 0, 0);
    if (((Game::E > INT64_C(0)))) {
-      (Game::E = (Game::E - Game::h));
+      (Game::E = jsub64(Game::E, Game::h));
       if (((Game::E <= INT64_C(0)))) {
          Game::m_N_V();
       }
       PortConfig::pushWorld(Game::graphics);
-      ((Game::b)[33])->m_a_GraphicsIIIIIII(Game::graphics, 4, (((Game::stateFrame % 4) < 2) ? 0 : 1), ((Game::player)->positionX - Game::cameraX), (((Game::player)->positionY - Game::cameraY) - 70), 0, 0, 0);
+      ((Game::b)[33])->m_a_GraphicsIIIIIII(Game::graphics, 4, (((Game::stateFrame % 4) < 2) ? 0 : 1), jsub32((Game::player)->positionX, Game::cameraX), jsub32(jsub32((Game::player)->positionY, Game::cameraY), 70), 0, 0, 0);
       PortConfig::endWorld(Game::graphics);
    }
 }
@@ -830,7 +830,7 @@ void Game::m_L_I(jint var0) {
       if (((var0 == 0))) {
          if (((var1 == 4))) {
             (Game::z = 0);
-            (Game::maxHealth = (jint)((Game::maxHealth + 10)));
+            (Game::maxHealth = (jint)(jadd32(Game::maxHealth, 10)));
             if (((Game::maxHealth > 120))) {
                (Game::maxHealth = 120);
                if (((Game::maxUnlockedLevel == 11))) {
@@ -840,7 +840,7 @@ void Game::m_L_I(jint var0) {
             (Game::health = Game::maxHealth);
             (Game::eJ = true);
          } else {
-            (Game::health = (jint)((Game::health + 10)));
+            (Game::health = (jint)(jadd32(Game::health, 10)));
             if (((Game::health > Game::maxHealth))) {
                (Game::health = Game::maxHealth);
             }
@@ -848,7 +848,7 @@ void Game::m_L_I(jint var0) {
       } else if (((var0 == 1))) {
          if (((var1 == 4))) {
             (Game::C = 0);
-            (Game::maxMagic = (jint)((Game::maxMagic + 10)));
+            (Game::maxMagic = (jint)(jadd32(Game::maxMagic, 10)));
             if (((Game::maxMagic > 120))) {
                (Game::maxMagic = 120);
             }
@@ -856,7 +856,7 @@ void Game::m_L_I(jint var0) {
             (Game::eJ = true);
          } else {
             if ((Actor::bD)) {
-               (Game::magic = (jint)((Game::magic + 10)));
+               (Game::magic = (jint)(jadd32(Game::magic, 10)));
             }
             if (((Game::magic > Game::maxMagic))) {
                (Game::magic = Game::maxMagic);
@@ -867,18 +867,18 @@ void Game::m_L_I(jint var0) {
    {
       jint var2 = -1;
       for (; (var2 <= 1); (var2++)) {
-         Game::m_b_I((Game::q)[((((var2 == 0) ? 0 : 1)) + (var0 * 2))]);
-         Game::m_c_IIIIII((55 + var2), (55 + var2), jshl32((jint)((65 - var2)), (jint)(1)), jshl32((jint)((65 - var2)), (jint)(1)), 0, 360);
-         Game::m_c_IIII((74 + var2), (74 + var2), jshl32((jint)((46 - var2)), (jint)(1)), jshl32((jint)((46 - var2)), (jint)(1)));
-         Game::m_c_IIIIII((74 + var2), (74 + var2), jshl32((jint)((46 - var2)), (jint)(1)), jshl32((jint)((46 - var2)), (jint)(1)), 0, 360);
+         Game::m_b_I((Game::q)[jadd32((((var2 == 0) ? 0 : 1)), jmul32(var0, 2))]);
+         Game::m_c_IIIIII(jadd32(55, var2), jadd32(55, var2), jshl32((jint)(jsub32(65, var2)), (jint)(1)), jshl32((jint)(jsub32(65, var2)), (jint)(1)), 0, 360);
+         Game::m_c_IIII(jadd32(74, var2), jadd32(74, var2), jshl32((jint)(jsub32(46, var2)), (jint)(1)), jshl32((jint)(jsub32(46, var2)), (jint)(1)));
+         Game::m_c_IIIIII(jadd32(74, var2), jadd32(74, var2), jshl32((jint)(jsub32(46, var2)), (jint)(1)), jshl32((jint)(jsub32(46, var2)), (jint)(1)), 0, 360);
          {
             jint var3 = 0;
             for (; (var3 < 4); (var3++)) {
-               Game::m_d_IIII((Game::r)[((var3 * 2) + (((var2 + 1)) * 10))], (Game::r)[(((var3 * 2) + 1) + (((var2 + 1)) * 10))], (Game::r)[(((var3 * 2) + 2) + (((var2 + 1)) * 10))], (Game::r)[(((var3 * 2) + 3) + (((var2 + 1)) * 10))]);
-               ((Game::b)[33])->m_a_GraphicsIIIIII(Game::graphics, 50, (Game::s)[(var3 * 2)], (Game::s)[((var3 * 2) + 1)], 0, 0, 0);
+               Game::m_d_IIII((Game::r)[jadd32(jmul32(var3, 2), jmul32((jadd32(var2, 1)), 10))], (Game::r)[jadd32(jadd32(jmul32(var3, 2), 1), jmul32((jadd32(var2, 1)), 10))], (Game::r)[jadd32(jadd32(jmul32(var3, 2), 2), jmul32((jadd32(var2, 1)), 10))], (Game::r)[jadd32(jadd32(jmul32(var3, 2), 3), jmul32((jadd32(var2, 1)), 10))]);
+               ((Game::b)[33])->m_a_GraphicsIIIIII(Game::graphics, 50, (Game::s)[jmul32(var3, 2)], (Game::s)[jadd32(jmul32(var3, 2), 1)], 0, 0, 0);
                if (((var3 < var1))) {
                   (((Game::b)[31])->z = 0);
-                  ((Game::b)[31])->m_a_GraphicsIIIIIII(Game::graphics, ((var0 == 0) ? 1 : 3), 0, (Game::s)[(var3 * 2)], (Game::s)[((var3 * 2) + 1)], 0, 0, 0);
+                  ((Game::b)[31])->m_a_GraphicsIIIIIII(Game::graphics, ((var0 == 0) ? 1 : 3), 0, (Game::s)[jmul32(var3, 2)], (Game::s)[jadd32(jmul32(var3, 2), 1)], 0, 0, 0);
                }
             }
          }
@@ -887,9 +887,9 @@ void Game::m_L_I(jint var0) {
    ((Game::a)->z = 5);
    Ref<String> var4{};
    if (((var1 < 4))) {
-      (var4 = (Game::m_k_II(0, (60 + var0)))->replace(((jchar)35), ((jchar)(((52 - var1))))));
+      (var4 = (Game::m_k_II(0, jadd32(60, var0)))->replace(((jchar)35), ((jchar)((jsub32(52, var1))))));
    } else {
-      (var4 = Game::m_k_II(0, (62 + var0)));
+      (var4 = Game::m_k_II(0, jadd32(62, var0)));
    }
    (Game::a)->m_a_GraphicsStringIIIIII(Game::graphics, var4, 120, 195, 17, 180, 0, -1);
    if (((Game::eH > 10))) {
@@ -944,20 +944,20 @@ void Game::m_Z_V() {
       }
       jint var1 = (Game::eK / 2);
       if ((((Game::eK % 2) == 0))) {
-         (var1 = (-var1));
+         (var1 = jneg32(var1));
       }
-      ((Game::b)[37])->m_a_GraphicsIIIIII(Game::graphics, 5, 120, (160 + var1), 0, 0, 0);
-      ((Game::b)[37])->m_a_GraphicsIIIIII(Game::graphics, 6, 120, (160 + var1), 0, 0, 0);
+      ((Game::b)[37])->m_a_GraphicsIIIIII(Game::graphics, 5, 120, jadd32(160, var1), 0, 0, 0);
+      ((Game::b)[37])->m_a_GraphicsIIIIII(Game::graphics, 6, 120, jadd32(160, var1), 0, 0, 0);
       (Game::eK--);
    } else if (((Game::eL == 1))) {
-      ((Game::b)[37])->m_a_GraphicsIIIIII(Game::graphics, 5, 120, (0 + Game::eM), 0, 0, 0);
-      ((Game::b)[37])->m_a_GraphicsIIIIII(Game::graphics, 6, 120, (320 - Game::eM), 0, 0, 0);
+      ((Game::b)[37])->m_a_GraphicsIIIIII(Game::graphics, 5, 120, jadd32(0, Game::eM), 0, 0, 0);
+      ((Game::b)[37])->m_a_GraphicsIIIIII(Game::graphics, 6, 120, jsub32(320, Game::eM), 0, 0, 0);
       (Game::eK++);
-      if ((((0 + Game::eM) >= 160))) {
+      if (((jadd32(0, Game::eM) >= 160))) {
          (Game::eK = 15);
          (Game::eL = 2);
       } else {
-         (Game::eM = (Game::eM + (Game::eK * 5)));
+         (Game::eM = jadd32(Game::eM, jmul32(Game::eK, 5)));
       }
    } else {
       ((Game::b)[37])->m_a_GraphicsIIIIII(Game::graphics, 5, 120, 160, 0, 0, 0);
@@ -979,12 +979,12 @@ void Game::m_Z_V() {
 }
 
 void Game::m_a_Z(jboolean var0) {
-   (Game::ei = (Game::levelIndex + ((var0 ? 1 : 0))));
-   if ((((Game::levelIndex + ((var0 ? 1 : 0))) == 11))) {
+   (Game::ei = jadd32(Game::levelIndex, ((var0 ? 1 : 0))));
+   if (((jadd32(Game::levelIndex, ((var0 ? 1 : 0))) == 11))) {
       (Game::ei = 0);
       (Game::eg = 11);
    } else {
-      while ((((Game::eh)[((Game::eg - 11) + 1)] <= Game::ei))) {
+      while ((((Game::eh)[jadd32(jsub32(Game::eg, 11), 1)] <= Game::ei))) {
          (Game::eg++);
       }
    }
@@ -1034,7 +1034,7 @@ void Game::m_a_I(jint var0) {
       }
       jint var3{};
       if (((((var3 = (var1)->indexOf(jlit(u"X.X.X")))) != -1))) {
-         (((Game::fr)[0])[28] = jcat(jstr(jcat(jstr(jcat(jstr((var1)->substring(0, var3)), jstr(jlit(u" ")))), jstr(var2))), jstr((var1)->substring((var3 + 5)))));
+         (((Game::fr)[0])[28] = jcat(jstr(jcat(jstr(jcat(jstr((var1)->substring(0, var3)), jstr(jlit(u" ")))), jstr(var2))), jstr((var1)->substring(jadd32(var3, 5)))));
       }
       (Game::ee = 0);
    }
@@ -1155,7 +1155,7 @@ void Game::run() {
    Ref<Game> _self(this);
    while (((Game::state != 11))) {
       (Game::K = System::currentTimeMillis());
-      (Game::frameDeltaMs = ((jint)(((Game::K - Game::L)))));
+      (Game::frameDeltaMs = ((jint)((jsub64(Game::K, Game::L)))));
       if (((Game::frameDeltaMs > 1000))) {
          (Game::frameDeltaMs = 1000);
       }
@@ -1177,10 +1177,10 @@ void Game::run() {
          }
       }
       (Game::K = ([&]{ auto _t1 = Game::K; auto _t2 = System::currentTimeMillis(); return Math::min(_t1, _t2); }()));
-      (Game::J = ([&]{ auto _t3 = System::currentTimeMillis(); auto _t4 = Game::K; return (_t3 - _t4); }()));
+      (Game::J = ([&]{ auto _t3 = System::currentTimeMillis(); auto _t4 = Game::K; return jsub64(_t3, _t4); }()));
       jboolean var1 = Game::hasActiveBackgroundScript();
       try {
-         Thread::sleep(Math::max(INT64_C(1), (((var1 ? 66 : 50)) - Game::J)));
+         Thread::sleep(Math::max(INT64_C(1), jsub64(((var1 ? 66 : 50)), Game::J)));
       } catch (JavaThrow& _ex5) {
          Ref<Exception> var3 = jcaught<Exception>(_ex5);
          (var3)->printStackTrace();
@@ -1260,45 +1260,45 @@ void Game::m_f_V() {
 void Game::m_a_IZI(jint var0, jboolean var1, jint var2) {
    Game::m_b_I(-2013265920);
    Game::m_b_IIII(0, 0, 240, 320);
-   jint var3 = ((Game::Q - Game::cameraX) + 0);
-   jint var4 = ((Game::R - Game::cameraY) + 0);
+   jint var3 = jadd32(jsub32(Game::Q, Game::cameraX), 0);
+   jint var4 = jadd32(jsub32(Game::R, Game::cameraY), 0);
    if (((var1 || (!Game::modalActive)))) {
       (Game::P++);
    }
    if (((Game::P <= 8))) {
-      jint var12 = jshr32((jint)((((jshl32((jint)(var4), (jint)(8))) / 8) * Game::P)), (jint)(8));
+      jint var12 = jshr32((jint)(jmul32(((jshl32((jint)(var4), (jint)(8))) / 8), Game::P)), (jint)(8));
       Game::m_b_I((Game::V)[var0]);
-      Game::m_b_IIII((var3 - 15), (var4 - var12), 30, var12);
+      Game::m_b_IIII(jsub32(var3, 15), jsub32(var4, var12), 30, var12);
       Game::m_b_I((Game::W)[var0]);
-      Game::m_b_IIII(((var3 - 15) - 16), (var4 - var12), 16, var12);
-      Game::m_b_IIII((var3 + 15), (var4 - var12), 16, var12);
-   } else if (((Game::P <= (32 + var2)))) {
+      Game::m_b_IIII(jsub32(jsub32(var3, 15), 16), jsub32(var4, var12), 16, var12);
+      Game::m_b_IIII(jadd32(var3, 15), jsub32(var4, var12), 16, var12);
+   } else if (((Game::P <= jadd32(32, var2)))) {
       jint var9{};
-      if (((((var9 = (((((Game::P - 8) + var2) - 1)) % 8))) > 3))) {
-         (var9 = (7 - var9));
+      if (((((var9 = ((jsub32(jadd32(jsub32(Game::P, 8), var2), 1)) % 8))) > 3))) {
+         (var9 = jsub32(7, var9));
       }
-      jint var11 = jshr32((jint)(((3840 * var9) / 24)), (jint)(8));
-      jint var14 = jshr32((jint)(((2048 * var9) / 24)), (jint)(8));
+      jint var11 = jshr32((jint)((jmul32(3840, var9) / 24)), (jint)(8));
+      jint var14 = jshr32((jint)((jmul32(2048, var9) / 24)), (jint)(8));
       Game::m_b_I((Game::V)[var0]);
-      Game::m_b_IIII(((var3 - 15) + var11), 0, (((15 - var11)) * 2), var4);
+      Game::m_b_IIII(jadd32(jsub32(var3, 15), var11), 0, jmul32((jsub32(15, var11)), 2), var4);
       Game::m_b_I((Game::W)[var0]);
-      Game::m_b_IIII((((var3 - 15) - (((8 - var14)) * 2)) + var11), 0, (((8 - var14)) * 2), var4);
-      Game::m_b_IIII(((var3 + 15) - var11), 0, (((8 - var14)) * 2), var4);
-   } else if (((Game::P <= (56 + (var2 * 2))))) {
-      jint var8 = (((Game::P - 32) - 1) + (var2 * 2));
-      jint var10 = jshr32((jint)(((3840 * var8) / 24)), (jint)(8));
-      jint var13 = jshr32((jint)(((2048 * var8) / 24)), (jint)(8));
+      Game::m_b_IIII(jadd32(jsub32(jsub32(var3, 15), jmul32((jsub32(8, var14)), 2)), var11), 0, jmul32((jsub32(8, var14)), 2), var4);
+      Game::m_b_IIII(jsub32(jadd32(var3, 15), var11), 0, jmul32((jsub32(8, var14)), 2), var4);
+   } else if (((Game::P <= jadd32(56, jmul32(var2, 2))))) {
+      jint var8 = jadd32(jsub32(jsub32(Game::P, 32), 1), jmul32(var2, 2));
+      jint var10 = jshr32((jint)((jmul32(3840, var8) / 24)), (jint)(8));
+      jint var13 = jshr32((jint)((jmul32(2048, var8) / 24)), (jint)(8));
       Game::m_b_I((Game::V)[var0]);
-      Game::m_b_IIII(((var3 - 15) + var10), 0, (((15 - var10)) * 2), var4);
+      Game::m_b_IIII(jadd32(jsub32(var3, 15), var10), 0, jmul32((jsub32(15, var10)), 2), var4);
       Game::m_b_I((Game::W)[var0]);
-      Game::m_b_IIII((((var3 - 15) - (((8 - var13)) * 2)) + var10), 0, (((8 - var13)) * 2), var4);
-      Game::m_b_IIII(((var3 + 15) - var10), 0, (((8 - var13)) * 2), var4);
-   } else if (((Game::P <= (64 + (var2 * 2))))) {
-      jint var5 = ((Game::P - 56) + (var2 * 2));
+      Game::m_b_IIII(jadd32(jsub32(jsub32(var3, 15), jmul32((jsub32(8, var13)), 2)), var10), 0, jmul32((jsub32(8, var13)), 2), var4);
+      Game::m_b_IIII(jsub32(jadd32(var3, 15), var10), 0, jmul32((jsub32(8, var13)), 2), var4);
+   } else if (((Game::P <= jadd32(64, jmul32(var2, 2))))) {
+      jint var5 = jadd32(jsub32(Game::P, 56), jmul32(var2, 2));
       jint var6 = ((jshl32((jint)(var4), (jint)(8))) / 8);
-      jint var7 = jshr32((jint)((var5 * var6)), (jint)(8));
+      jint var7 = jshr32((jint)(jmul32(var5, var6)), (jint)(8));
       Game::m_b_I((Game::V)[var0]);
-      Game::m_b_IIII((var3 - 1), 0, 2, (var4 - var7));
+      Game::m_b_IIII(jsub32(var3, 1), 0, 2, jsub32(var4, var7));
    } else {
       Game::m_U_V();
       if ((var1)) {
@@ -1321,20 +1321,20 @@ void Game::m_e_IIII(jint var0, jint var1, jint var2, jint var3) {
    Game::m_b_I(-587202560);
    Game::m_b_IIII(var0, var1, var2, var3);
    Game::m_b_I(15700800);
-   Game::m_c_IIII((var0 + 1), var1, (var2 - 3), var3);
+   Game::m_c_IIII(jadd32(var0, 1), var1, jsub32(var2, 3), var3);
    Game::m_b_I(9781250);
-   Game::m_d_IIII(var0, (var1 + 1), ((var0 + var2) - 1), (var1 + 1));
+   Game::m_d_IIII(var0, jadd32(var1, 1), jsub32(jadd32(var0, var2), 1), jadd32(var1, 1));
    Game::m_b_I(4196354);
-   Game::m_d_IIII(var0, (var1 + 3), ((var0 + var2) - 1), (var1 + 3));
+   Game::m_d_IIII(var0, jadd32(var1, 3), jsub32(jadd32(var0, var2), 1), jadd32(var1, 3));
 }
 
 void Game::m_c_I(jint var0) {
    jint var1{};
-   if (((((var1 = (Game::P - var0))) <= 8))) {
+   if (((((var1 = jsub32(Game::P, var0))) <= 8))) {
       jboolean var2 = false;
       jboolean var3 = false;
       jboolean var4 = false;
-      Game::m_e_IIII((120 - (15 * var1)), (160 - (20 * var1)), ((15 * var1) * 2), (4 * var1));
+      Game::m_e_IIII(jsub32(120, jmul32(15, var1)), jsub32(160, jmul32(20, var1)), jmul32(jmul32(15, var1), 2), jmul32(4, var1));
    } else {
       Game::m_e_IIII(0, 0, 240, 70);
       ((Game::b)[33])->m_a_GraphicsIIIIII(Game::graphics, 23, 0, 0, 0, 0, 0);
@@ -1346,8 +1346,8 @@ void Game::m_c_I(jint var0) {
       ((Game::b)[33])->m_a_GraphicsIIIIIII(Game::graphics, 6, jshr32((jint)((Game::stateFrame % 6)), (jint)(1)), 232, 55, 0, 0, 0);
       if ((Game::m_G_I(327712))) {
          if (((Game::bI > 3))) {
-            (Game::bI = (jint)((Game::bI - 3)));
-            (Game::bH = (jint)((Game::bH + 3)));
+            (Game::bI = (jint)(jsub32(Game::bI, 3)));
+            (Game::bH = (jint)(jadd32(Game::bH, 3)));
          } else if (((Actor::bE != 2))) {
             (Game::dialogText = nullptr);
             Game::m_N_V();
@@ -1365,11 +1365,11 @@ void Game::m_g_V() {
    jboolean var1 = false;
    jboolean var2 = false;
    if (((var0 <= 4))) {
-      jint var3 = (Game::bC + ((((120 - Game::bC)) * var0) / 5));
-      jint var4 = (Game::bD + ((((35 - Game::bD)) * var0) / 5));
-      jint var5 = (24 * var0);
-      jint var6 = (7 * var0);
-      Game::m_e_IIII((var3 - var5), (var4 - var6), (var5 * 2), (var6 * 2));
+      jint var3 = jadd32(Game::bC, (jmul32((jsub32(120, Game::bC)), var0) / 5));
+      jint var4 = jadd32(Game::bD, (jmul32((jsub32(35, Game::bD)), var0) / 5));
+      jint var5 = jmul32(24, var0);
+      jint var6 = jmul32(7, var0);
+      Game::m_e_IIII(jsub32(var3, var5), jsub32(var4, var6), jmul32(var5, 2), jmul32(var6, 2));
    } else {
       jboolean var7 = ((Game::bF != -1) && (Game::bF <= 2));
       Game::m_e_IIII(0, 0, 240, 70);
@@ -1396,8 +1396,8 @@ void Game::m_g_V() {
    (Game::X++);
    if ((((Game::state != 14) && Game::m_G_I(327712)))) {
       if (((Game::bI > 2))) {
-         (Game::bI = (jint)((Game::bI - 2)));
-         (Game::bH = (jint)((Game::bH + 2)));
+         (Game::bI = (jint)(jsub32(Game::bI, 2)));
+         (Game::bH = (jint)(jadd32(Game::bH, 2)));
          return;
       }
       (Game::dialogText = nullptr);
@@ -1407,7 +1407,7 @@ void Game::m_g_V() {
 }
 
 void Game::m_h_V() {
-   jint var0 = ((320 - Game::bE) - 2);
+   jint var0 = jsub32(jsub32(320, Game::bE), 2);
    Game::m_e_IIII(0, var0, 240, Game::bE);
    ((Game::b)[33])->m_a_GraphicsIIIIII(Game::graphics, 23, 0, var0, 0, 0, 0);
    ((Game::b)[33])->m_a_GraphicsIIIIII(Game::graphics, 23, 240, var0, 1, 0, 0);
@@ -1420,15 +1420,15 @@ void Game::m_h_V() {
 void Game::m_i_V() {
    jint var0 = 0;
    if (((Game::Y <= 10))) {
-      Game::m_b_I((var0 = (-16777216 & jshl32((jint)((1677721 * Game::Y)), (jint)(8)))));
+      Game::m_b_I((var0 = (-16777216 & jshl32((jint)(jmul32(1677721, Game::Y)), (jint)(8)))));
       Game::m_b_IIII(0, 0, 240, 320);
    } else if (((Game::Y <= 100))) {
       Game::m_b_I(0);
       Game::m_b_IIII(0, 0, 240, 320);
       if (((Game::Y <= 30))) {
-         (var0 = jshr32((jint)((838860 * ((Game::Y - 10)))), (jint)(16)));
+         (var0 = jshr32((jint)(jmul32(838860, (jsub32(Game::Y, 10)))), (jint)(16)));
       } else if (((Game::Y > 80))) {
-         (var0 = (256 - (jshr32((jint)((838860 * ((Game::Y - 80)))), (jint)(16)))));
+         (var0 = jsub32(256, (jshr32((jint)(jmul32(838860, (jsub32(Game::Y, 80)))), (jint)(16)))));
       }
       if ((((Game::Y <= 30) || (Game::Y > 80)))) {
          ((Game::a)->t = true);
@@ -1450,7 +1450,7 @@ void Game::m_i_V() {
 
 void Game::m_j_V() {
    jint var0{};
-   Game::m_b_I((var0 = (16777215 | jshl32((jint)((3276 * Game::Y)), (jint)(16)))));
+   Game::m_b_I((var0 = (16777215 | jshl32((jint)(jmul32(3276, Game::Y)), (jint)(16)))));
    Game::m_b_IIII(0, 0, 240, 320);
    (Game::Y++);
    if (((Game::Y == 20))) {
@@ -1467,7 +1467,7 @@ void Game::m_a_IIIII(jint var0, jint var1, jint var2, jint var3, jint var4) {
       jint var5 = 0;
       for (; (var5 < var0); (var5++)) {
          Game::m_b_I((Game::Z)[jshr32((jint)(var5), (jint)(1))]);
-         Game::m_c_IIIIII((var1 - var5), (var2 - var5), (var3 + (2 * var5)), (var4 + (2 * var5)), 0, 360);
+         Game::m_c_IIIIII(jsub32(var1, var5), jsub32(var2, var5), jadd32(var3, jmul32(2, var5)), jadd32(var4, jmul32(2, var5)), 0, 360);
       }
    }
 }
@@ -1476,12 +1476,12 @@ void Game::m_k_V() {
    if (((Game::U >= 240))) {
       (Game::player)->m_A_V();
    } else {
-      (Game::U = (jint)((Game::U + 30)));
-      Game::m_b_I((jshl32((jint)((60928 - (54 * Game::U))), (jint)(16)) & -16777216));
-      jint var2 = ((Game::S - 0) - Game::U);
-      jint var3 = ((Game::T - 0) - Game::U);
-      jint var4 = (0 + (2 * Game::U));
-      jint var5 = (0 + (2 * Game::U));
+      (Game::U = (jint)(jadd32(Game::U, 30)));
+      Game::m_b_I((jshl32((jint)(jsub32(60928, jmul32(54, Game::U))), (jint)(16)) & -16777216));
+      jint var2 = jsub32(jsub32(Game::S, 0), Game::U);
+      jint var3 = jsub32(jsub32(Game::T, 0), Game::U);
+      jint var4 = jadd32(0, jmul32(2, Game::U));
+      jint var5 = jadd32(0, jmul32(2, Game::U));
       Game::m_b_IIIIII(var2, var3, var4, var5, 0, 360);
       (Game::player)->m_v_V();
       jint var6 = (Game::U / 3);
@@ -1489,9 +1489,9 @@ void Game::m_k_V() {
          jint var9 = 0;
          for (; (var9 < 20); (var9++)) {
             jint var8 = Game::m_i_II(0, jshr32((jint)(var6), (jint)(2)));
-            jint var7 = (var6 + var8);
+            jint var7 = jadd32(var6, var8);
             Game::m_b_I(-9150);
-            Game::m_b_IIIIII((Game::S - var7), (Game::T - var7), (var7 * 2), (var7 * 2), (((360 * var9) / 20) + 9), 2);
+            Game::m_b_IIIIII(jsub32(Game::S, var7), jsub32(Game::T, var7), jmul32(var7, 2), jmul32(var7, 2), jadd32((jmul32(360, var9) / 20), 9), 2);
          }
       }
    }
@@ -1500,13 +1500,13 @@ void Game::m_k_V() {
 void Game::m_f_IIII(jint var0, jint var1, jint var2, jint var3) {
    if (((Game::U >= 0))) {
       if (((Game::U <= 240))) {
-         (Game::U = (jint)((Game::U + var3)));
-         jint var16 = (240 - Game::U);
-         Game::m_b_I((jshl32((jint)((60928 - (54 * Game::U))), (jint)(16)) & -16777216));
-         jint var7 = (var1 - var16);
-         jint var8 = (var2 - var16);
-         jint var9 = (0 + (2 * var16));
-         jint var10 = (0 + (2 * var16));
+         (Game::U = (jint)(jadd32(Game::U, var3)));
+         jint var16 = jsub32(240, Game::U);
+         Game::m_b_I((jshl32((jint)(jsub32(60928, jmul32(54, Game::U))), (jint)(16)) & -16777216));
+         jint var7 = jsub32(var1, var16);
+         jint var8 = jsub32(var2, var16);
+         jint var9 = jadd32(0, jmul32(2, var16));
+         jint var10 = jadd32(0, jmul32(2, var16));
          if ((((var0 >= 0) && (var0 <= 2)))) {
             Game::m_b_IIIIII(var7, var8, var9, var10, 0, 360);
          }
@@ -1521,8 +1521,8 @@ void Game::m_f_IIII(jint var0, jint var1, jint var2, jint var3) {
             jint var14 = 0;
             for (; (var14 < 20); (var14++)) {
                jint var12 = Game::m_i_II(0, jshr32((jint)(var11), (jint)(1)));
-               jint var13 = (var11 + var12);
-               Game::m_b_IIIIII((var1 - var13), (var2 - var13), (var13 * 2), (var13 * 2), (((360 * var14) / 20) + 9), 2);
+               jint var13 = jadd32(var11, var12);
+               Game::m_b_IIIIII(jsub32(var1, var13), jsub32(var2, var13), jmul32(var13, 2), jmul32(var13, 2), jadd32((jmul32(360, var14) / 20), 9), 2);
             }
          }
          PortConfig::clipWorld(Game::graphics);
@@ -1593,8 +1593,8 @@ void Game::m_f_IIII(jint var0, jint var1, jint var2, jint var3) {
                if ((((Actor::cl)[Actor::ch] == 1))) {
                   jint var15 = ((!(Game::player)->facingLeft) ? 10 : -10);
                   ([&]{ auto _t6 = Actor::ba; auto _t7 = 0; auto _t8 = (Ref<Actor>)((Game::player)->m_a_IIIIIIZ(39, 17, 16, var15, -50, 302, false)); return _t6[_t7] = _t8; }());
-                  ([&]{ auto _t9 = Actor::ba; auto _t10 = 1; auto _t11 = (Ref<Actor>)((Game::player)->m_a_IIIIIIZ(39, 17, 16, (-var15), -70, 302, false)); return _t9[_t10] = _t11; }());
-                  ([&]{ auto _t12 = Actor::ba; auto _t13 = 2; auto _t14 = (Ref<Actor>)((Game::player)->m_a_IIIIIIZ(39, 17, 16, (-var15), -30, 302, false)); return _t12[_t13] = _t14; }());
+                  ([&]{ auto _t9 = Actor::ba; auto _t10 = 1; auto _t11 = (Ref<Actor>)((Game::player)->m_a_IIIIIIZ(39, 17, 16, jneg32(var15), -70, 302, false)); return _t9[_t10] = _t11; }());
+                  ([&]{ auto _t12 = Actor::ba; auto _t13 = 2; auto _t14 = (Ref<Actor>)((Game::player)->m_a_IIIIIIZ(39, 17, 16, jneg32(var15), -30, 302, false)); return _t12[_t13] = _t14; }());
                   {
                      jint var5 = 0;
                      for (; (var5 < 3); (var5++)) {
@@ -1618,7 +1618,7 @@ void Game::m_f_IIII(jint var0, jint var1, jint var2, jint var3) {
 }
 
 void Game::m_a_III(jint var0, jint var1, jint var2) {
-   jint var3 = ((100 * ((450 - Actor::bb))) / 450);
+   jint var3 = (jmul32(100, (jsub32(450, Actor::bb))) / 450);
    jint var4 = 0;
    if (((var0 == 1))) {
       (var4 = 5882111);
@@ -1630,8 +1630,8 @@ void Game::m_a_III(jint var0, jint var1, jint var2) {
       jint var7 = 0;
       for (; (var7 < 20); (var7++)) {
          jint var5 = Game::m_i_II(0, jshr32((jint)(var3), (jint)(1)));
-         jint var6 = (var3 + var5);
-         Game::m_b_IIIIII((var1 - var6), (var2 - var6), (var6 * 2), (var6 * 2), (((360 * var7) / 20) + 9), 2);
+         jint var6 = jadd32(var3, var5);
+         Game::m_b_IIIIII(jsub32(var1, var6), jsub32(var2, var6), jmul32(var6, 2), jmul32(var6, 2), jadd32((jmul32(360, var7) / 20), 9), 2);
       }
    }
 }
@@ -1669,7 +1669,7 @@ void Game::m_d_I(jint var0) {
       (Game::av = false);
       (Game::au = false);
       if (((((Game::aB == -1) && (!var1)) && (Game::aJ != nullptr)))) {
-         if ((((Game::cameraX + 240) > ((Game::aJ)->collisionBounds)[2]))) {
+         if (((jadd32(Game::cameraX, 240) > ((Game::aJ)->collisionBounds)[2]))) {
             (Game::at = true);
             (Game::ar = true);
          }
@@ -1677,7 +1677,7 @@ void Game::m_d_I(jint var0) {
             (Game::as = true);
             (Game::ar = true);
          }
-         if ((((Game::cameraY + 320) > ((Game::aJ)->collisionBounds)[3]))) {
+         if (((jadd32(Game::cameraY, 320) > ((Game::aJ)->collisionBounds)[3]))) {
             (Game::av = true);
             (Game::ar = true);
          }
@@ -1689,24 +1689,24 @@ void Game::m_d_I(jint var0) {
       if ((Game::ar)) {
          if (((!Game::ax))) {
             if (((Game::aN == 0))) {
-               (Game::ad = ((Game::player)->positionY - 220));
+               (Game::ad = jsub32((Game::player)->positionY, 220));
             }
          } else {
-            (Game::ad = ((Game::player)->positionY - 220));
+            (Game::ad = jsub32((Game::player)->positionY, 220));
             if ((((!Game::au) && (!Game::av)))) {
                if (((((Game::player)->G >= 0) && ((((Game::player)->G != 0) || (!(Game::player)->facingLeft)))))) {
                   (Game::ac = Game::regionLeft);
                } else {
-                  (Game::ac = (Game::regionRight - 240));
+                  (Game::ac = jsub32(Game::regionRight, 240));
                }
             } else if ((Game::au)) {
                (Game::ad = Game::ai);
             } else {
-               (Game::ad = (Game::aj - 320));
+               (Game::ad = jsub32(Game::aj, 320));
             }
             (Game::aw = true);
          }
-         (Game::aE = (Game::ad + 100));
+         (Game::aE = jadd32(Game::ad, 100));
          if (((Game::as || Game::at))) {
             (Game::cameraX = Game::ac);
          }
@@ -1746,11 +1746,11 @@ void Game::m_d_I(jint var0) {
             }
          }
          if (((var3 == 0))) {
-            (Game::ac = ((Game::player)->facingLeft ? ((Game::player)->positionX - 160) : ((Game::player)->positionX - 80)));
+            (Game::ac = ((Game::player)->facingLeft ? jsub32((Game::player)->positionX, 160) : jsub32((Game::player)->positionX, 80)));
             (Game::an = Game::am);
             (Game::am = 0);
             if ((((!(Game::player)->bL) && (Actor::aT == nullptr)))) {
-               if (((Math::abs((Game::ac - Game::cameraX)) <= 0))) {
+               if (((Math::abs(jsub32(Game::ac, Game::cameraX)) <= 0))) {
                   if (((Game::an != 2))) {
                      (Game::am = 1);
                   } else {
@@ -1767,23 +1767,23 @@ void Game::m_d_I(jint var0) {
             if (((((Game::player)->collisionBounds)[1] <= Game::aE))) {
                (Game::aF = 0);
             }
-            if ((((Game::player)->positionY >= (Game::aE + 90)))) {
+            if ((((Game::player)->positionY >= jadd32(Game::aE, 90)))) {
                (Game::aF = 1);
             }
             if ((((((((((Game::player)->H < 0) || (Game::player)->m_d_Z(true)) || (Actor::aT != nullptr)) || (Game::player)->cI)) && (Game::aF == 0)) || (((((((Game::player)->H > 0) || (Game::player)->m_d_Z(false)) || (Actor::aT != nullptr)) || (Game::player)->cI)) && (Game::aF == 1))))) {
                if (((Game::aF == 0))) {
                   (Game::aE = ((Game::player)->collisionBounds)[1]);
                } else {
-                  (Game::aE = (((Game::player)->collisionBounds)[3] - 90));
+                  (Game::aE = jsub32(((Game::player)->collisionBounds)[3], 90));
                }
-               (Game::ad = (Game::aE - 100));
+               (Game::ad = jsub32(Game::aE, 100));
             }
          }
          (Game::ak = 14);
          if (((((((var0 & 1)) == 0) || ((Game::aB != -1) && ((Game::be)[Game::levelIndex] == 2))) || ((Game::aB != -1) && (Game::levelIndex == 9))))) {
             if ((((Actor::W && (Game::al != 1)) && (Game::aB == -1)))) {
                if (((Actor::X == 1))) {
-                  if (((Math::abs((((var3 = ((Game::player)->facingLeft ? ((Game::player)->positionX - 160) : ((Game::player)->positionX - 80)))) - Game::cameraX)) < 40))) {
+                  if (((Math::abs(jsub32(((var3 = ((Game::player)->facingLeft ? jsub32((Game::player)->positionX, 160) : jsub32((Game::player)->positionX, 80)))), Game::cameraX)) < 40))) {
                      if (((Game::ac != var3))) {
                         (Game::ac = var3);
                         (Actor::Y = 0);
@@ -1791,16 +1791,16 @@ void Game::m_d_I(jint var0) {
                         (Actor::X++);
                         (Actor::W = false);
                      }
-                  } else if (((Math::abs(((Game::cameraX - (Game::player)->positionX) + 120)) > 2))) {
-                     (Game::ac = ((Game::player)->positionX - 120));
+                  } else if (((Math::abs(jadd32(jsub32(Game::cameraX, (Game::player)->positionX), 120)) > 2))) {
+                     (Game::ac = jsub32((Game::player)->positionX, 120));
                      (Actor::Y = 1);
                   } else {
                      (Actor::X++);
                      (Actor::W = false);
                   }
                } else if (((Actor::X == 3))) {
-                  (var3 = ((Game::player)->facingLeft ? ((Game::player)->positionX - 160) : ((Game::player)->positionX - 80)));
-                  if (((Math::abs((Game::cameraX - var3)) > 2))) {
+                  (var3 = ((Game::player)->facingLeft ? jsub32((Game::player)->positionX, 160) : jsub32((Game::player)->positionX, 80)));
+                  if (((Math::abs(jsub32(Game::cameraX, var3)) > 2))) {
                      (Game::ac = var3);
                      (Actor::Y = 2);
                   } else {
@@ -1815,11 +1815,11 @@ void Game::m_d_I(jint var0) {
             }
             if (((((((((((Game::player)->G != 0) || (((var0 & 4)) != 0)) || (Actor::aT != nullptr)) || (Game::player)->cI) || (Game::aB != -1)) || Game::aq) || Actor::W) || ((((Game::player)->aq == 1) && (Actor::ar == 2)) && (Actor::cv == 70))))) {
                if (((Actor::W && (Game::aB == -1)))) {
-                  (Game::ae = Game::m_k_IIII(Game::ae, (Game::ac - Game::cameraX), (Game::aI)[Actor::Y], (Game::aI)[(Actor::Y + 3)]));
+                  (Game::ae = Game::m_k_IIII(Game::ae, jsub32(Game::ac, Game::cameraX), (Game::aI)[Actor::Y], (Game::aI)[jadd32(Actor::Y, 3)]));
                } else if (((Game::am == 2))) {
-                  (Game::ae = Game::m_k_IIII(Game::ae, (Game::ac - Game::cameraX), 12, 2));
+                  (Game::ae = Game::m_k_IIII(Game::ae, jsub32(Game::ac, Game::cameraX), 12, 2));
                } else {
-                  (Game::ae = Game::m_k_IIII(Game::ae, (Game::ac - Game::cameraX), Game::ak, 2));
+                  (Game::ae = Game::m_k_IIII(Game::ae, jsub32(Game::ac, Game::cameraX), Game::ak, 2));
                }
             } else {
                (Game::ae = 0);
@@ -1827,14 +1827,14 @@ void Game::m_d_I(jint var0) {
             if ((((Game::am == 1) || ((Game::am == 0) && (Game::an == 1))))) {
                (Game::ae = 0);
             }
-            (Game::af = Game::m_k_IIII(Game::af, (Game::ad - Game::cameraY), 32, 2));
+            (Game::af = Game::m_k_IIII(Game::af, jsub32(Game::ad, Game::cameraY), 32, 2));
             if ((((Game::aB != -1) && (Game::az == 1)))) {
-               (Game::af = Game::m_k_IIII(Game::af, (Game::ad - Game::cameraY), 40, 15));
+               (Game::af = Game::m_k_IIII(Game::af, jsub32(Game::ad, Game::cameraY), 40, 15));
             }
             if ((((!Game::aw) && (!Actor::en)))) {
-               (Game::cameraX = (Game::cameraX + Game::ae));
+               (Game::cameraX = jadd32(Game::cameraX, Game::ae));
             }
-            (Game::cameraY = (Game::cameraY + Game::af));
+            (Game::cameraY = jadd32(Game::cameraY, Game::af));
             if ((((Game::aB != -1) && (Game::az >= 4)))) {
                if ((Game::aD)) {
                   (Game::cameraX = Game::ac);
@@ -1843,17 +1843,17 @@ void Game::m_d_I(jint var0) {
                }
             }
          } else {
-            (Game::ac = ((Game::player)->facingLeft ? ((Game::player)->positionX - 160) : ((Game::player)->positionX - 80)));
+            (Game::ac = ((Game::player)->facingLeft ? jsub32((Game::player)->positionX, 160) : jsub32((Game::player)->positionX, 80)));
             if (((Game::ac < 0))) {
                (Game::ac = 0);
             }
             if (((((Game::be)[Game::levelIndex] == 3) && (Game::levelIndex != 9)))) {
                (Game::ad = 0);
             } else {
-               (Game::ad = ((Game::player)->positionY - 220));
+               (Game::ad = jsub32((Game::player)->positionY, 220));
             }
-            if ((((Game::ad + 320) > Game::cB))) {
-               (Game::ad = (Game::cB - 320));
+            if (((jadd32(Game::ad, 320) > Game::cB))) {
+               (Game::ad = jsub32(Game::cB, 320));
             }
             if (((Game::ad < 0))) {
                (Game::ad = 0);
@@ -1864,15 +1864,15 @@ void Game::m_d_I(jint var0) {
                (Game::ae = 0);
                (Game::af = 0);
             } else {
-               (Game::ae = Game::m_k_IIII(Game::ae, (Game::ac - Game::cameraX), Game::ak, 2));
-               (Game::af = Game::m_k_IIII(Game::af, (Game::ad - Game::cameraY), 32, 2));
+               (Game::ae = Game::m_k_IIII(Game::ae, jsub32(Game::ac, Game::cameraX), Game::ak, 2));
+               (Game::af = Game::m_k_IIII(Game::af, jsub32(Game::ad, Game::cameraY), 32, 2));
             }
-            (Game::aE = (Game::ad + 100));
+            (Game::aE = jadd32(Game::ad, 100));
          }
       }
       if (((Actor::aP && Actor::bR))) {
-         (Game::cameraX = ((Game::player)->positionX - 120));
-         (Game::cameraY = ((Game::player)->positionY - 160));
+         (Game::cameraX = jsub32((Game::player)->positionX, 120));
+         (Game::cameraY = jsub32((Game::player)->positionY, 160));
       }
       if ((var1)) {
          Game::ab();
@@ -1889,22 +1889,22 @@ void Game::m_d_I(jint var0) {
 void Game::m_l_V() {
    ((Game::viewBounds)[0] = Game::cameraX);
    ((Game::viewBounds)[1] = Game::cameraY);
-   ((Game::viewBounds)[2] = (Game::cameraX + 240));
-   ((Game::viewBounds)[3] = (Game::cameraY + 320));
+   ((Game::viewBounds)[2] = jadd32(Game::cameraX, 240));
+   ((Game::viewBounds)[3] = jadd32(Game::cameraY, 320));
    PortConfig::updateView();
 }
 
 void Game::m_m_V() {
    if ((((Game::regionLeft > 0) && (Game::cameraX < Game::regionLeft)))) {
       (Game::cameraX = Game::regionLeft);
-   } else if ((((Game::regionRight > 0) && (Game::cameraX > (Game::regionRight - 240))))) {
-      (Game::cameraX = (Game::regionRight - 240));
+   } else if ((((Game::regionRight > 0) && (Game::cameraX > jsub32(Game::regionRight, 240))))) {
+      (Game::cameraX = jsub32(Game::regionRight, 240));
    }
    if ((((Game::ai > 0) && (Game::cameraY < Game::ai)))) {
       (Game::cameraY = Game::ai);
    } else {
-      if ((((Game::aj > 0) && (Game::cameraY > (Game::aj - 320))))) {
-         (Game::cameraY = (Game::aj - 320));
+      if ((((Game::aj > 0) && (Game::cameraY > jsub32(Game::aj, 320))))) {
+         (Game::cameraY = jsub32(Game::aj, 320));
       }
    }
 }
@@ -1912,11 +1912,11 @@ void Game::m_m_V() {
 void Game::m_n_V() {
    Game::m_m_V();
    Game::ab();
-   if ((((((((Game::player)->positionX - 80) <= Game::regionLeft) && ((Game::player)->G > 0)) && (Game::aB == -1)) && (Game::aN <= 0)))) {
+   if ((((((jsub32((Game::player)->positionX, 80) <= Game::regionLeft) && ((Game::player)->G > 0)) && (Game::aB == -1)) && (Game::aN <= 0)))) {
       (Game::cameraX = Game::regionLeft);
    } else {
-      if ((((((((Game::player)->positionX + 80) > Game::regionRight) && ((Game::player)->G < 0)) && (Game::aB == -1)) && (Game::aN <= 0)))) {
-         (Game::cameraX = (Game::regionRight - 240));
+      if ((((((jadd32((Game::player)->positionX, 80) > Game::regionRight) && ((Game::player)->G < 0)) && (Game::aB == -1)) && (Game::aN <= 0)))) {
+         (Game::cameraX = jsub32(Game::regionRight, 240));
       }
    }
 }
@@ -1924,11 +1924,11 @@ void Game::m_n_V() {
 void Game::ab() {
    if (((Game::aO > 0))) {
       jint var0{};
-      (var0 = (((var0 = (Game::aO / 2))) + (Game::aO % 2)));
+      (var0 = jadd32(((var0 = (Game::aO / 2))), (Game::aO % 2)));
       if (((((Game::aO & 1)) != 0))) {
-         (var0 = (-var0));
+         (var0 = jneg32(var0));
       }
-      (Game::cameraX = (jint)((Game::cameraX + var0)));
+      (Game::cameraX = (jint)(jadd32(Game::cameraX, var0)));
       (Game::aO--);
    }
    if (((Game::aN > 0))) {
@@ -1936,32 +1936,32 @@ void Game::ab() {
       if (((((var2 = (Game::aN / 2))) > 10))) {
          (var2 = 10);
       }
-      (var2 = (jint)((var2 + (Game::aO % 2))));
+      (var2 = (jint)(jadd32(var2, (Game::aO % 2))));
       if (((((Game::aN & 1)) != 0))) {
-         (var2 = (-var2));
+         (var2 = jneg32(var2));
       }
-      (Game::cameraY = (jint)((Game::cameraY + var2)));
+      (Game::cameraY = (jint)(jadd32(Game::cameraY, var2)));
       (Game::aN--);
    }
    if (((Game::cameraX < 0))) {
       (Game::cameraX = 0);
-   } else if (((Game::cameraX > (Game::levelPixelWidth - 240)))) {
-      (Game::cameraX = (Game::levelPixelWidth - 240));
+   } else if (((Game::cameraX > jsub32(Game::levelPixelWidth, 240)))) {
+      (Game::cameraX = jsub32(Game::levelPixelWidth, 240));
    }
    if (((Game::cameraY < 0))) {
       (Game::cameraY = 0);
    } else {
-      if (((Game::cameraY > (Game::cB - 320)))) {
-         (Game::cameraY = (Game::cB - 320));
+      if (((Game::cameraY > jsub32(Game::cB, 320)))) {
+         (Game::cameraY = jsub32(Game::cB, 320));
       }
    }
 }
 
 jint Game::m_k_IIII(jint var0, jint var1, jint var2, jint var3) {
    if (((var1 < 0))) {
-      (var0 = (jint)((var0 - var3)));
+      (var0 = (jint)(jsub32(var0, var3)));
    } else {
-      (var0 = (jint)((var0 + var3)));
+      (var0 = (jint)(jadd32(var0, var3)));
    }
    (var1 = (jint)((var1 / 2)));
    if (((Math::abs(var0) < Math::abs(var1)))) {
@@ -1969,8 +1969,8 @@ jint Game::m_k_IIII(jint var0, jint var1, jint var2, jint var3) {
    }
    if (((var1 > var2))) {
       (var1 = var2);
-   } else if (((var1 < (-var2)))) {
-      (var1 = (-var2));
+   } else if (((var1 < jneg32(var2)))) {
+      (var1 = jneg32(var2));
    }
    return var1;
 }
@@ -2004,7 +2004,7 @@ void Game::m_e_I(jint var0) {
          (Game::aN = var0);
          return;
       }
-      (Game::aN = (-var0));
+      (Game::aN = jneg32(var0));
    }
 }
 
@@ -2014,7 +2014,7 @@ void Game::m_a_II(jint var0, jint var1) {
       if (((var0 > 0))) {
          (Game::aO = var0);
       } else {
-         (Game::aO = (-var0));
+         (Game::aO = jneg32(var0));
       }
    }
    if (((Game::aN <= 0))) {
@@ -2022,7 +2022,7 @@ void Game::m_a_II(jint var0, jint var1) {
          (Game::aN = var1);
          return;
       }
-      (Game::aN = (-var1));
+      (Game::aN = jneg32(var1));
    }
 }
 
@@ -2099,7 +2099,7 @@ void Game::m_ac_V() {
          case 2:
             ;
          case 3:
-            var0 = Game::m_k_II(0, (87 + Game::aU));
+            var0 = Game::m_k_II(0, jadd32(87, Game::aU));
             var1 = Game::m_c_II(Game::aW, Game::aV);
             if (((Game::aU == 0))) {
                (var0 = jcat(jstr(jlit(u" ")), jstr(Game::m_k_II(0, 87))));
@@ -2113,7 +2113,7 @@ void Game::m_ac_V() {
             if (((Game::aU == 3))) {
                (var0 = jcat(jstr(jlit(u" ")), jstr(Game::m_k_II(0, 112))));
             }
-            var2 = ((jchar)((((var1 + 1) + 48))));
+            var2 = ((jchar)((jadd32(jadd32(var1, 1), 48))));
             (var0 = (var0)->replace(((jchar)35), var2));
             (Game::a)->m_a_GraphicsStringIIIIII(Game::graphics, var0, 120, 150, 3, 210, 0, -1);
             break;
@@ -2333,10 +2333,10 @@ void Game::ah() {
    } else if (((Game::cP == 1))) {
       ([&]{ auto _t15 = Game::a; auto _t16 = Game::graphics; auto _t17 = Game::m_k_II(0, 107); auto _t18 = 120; auto _t19 = 50; auto _t20 = 17; auto _t21 = 180; auto _t22 = 10; auto _t23 = 20; return _t15->m_a_GraphicsStringIIIIII(_t16, _t17, _t18, _t19, _t20, _t21, _t22, _t23); }());
    } else {
-      ([&]{ auto _t24 = Game::a; auto _t25 = Game::graphics; auto _t26 = Game::m_k_II(0, ((31 + Game::cP) - 1)); auto _t27 = 120; auto _t28 = 160; auto _t29 = 3; auto _t30 = 180; auto _t31 = 0; auto _t32 = -1; return _t24->m_a_GraphicsStringIIIIII(_t25, _t26, _t27, _t28, _t29, _t30, _t31, _t32); }());
+      ([&]{ auto _t24 = Game::a; auto _t25 = Game::graphics; auto _t26 = Game::m_k_II(0, jsub32(jadd32(31, Game::cP), 1)); auto _t27 = 120; auto _t28 = 160; auto _t29 = 3; auto _t30 = 180; auto _t31 = 0; auto _t32 = -1; return _t24->m_a_GraphicsStringIIIIII(_t25, _t26, _t27, _t28, _t29, _t30, _t31, _t32); }());
    }
    ([&]{ auto _t33 = Game::m_k_II(0, 18); auto _t34 = Game::m_k_II(0, 17); return Game::m_a_StringString(_t33, _t34); }());
-   (Game::a)->m_a_GraphicsStringIIIIII(Game::graphics, jcat(jstr(jcat(jstr((Game::cP + 1)), jstr(jlit(u"/")))), jstr(4)), 120, 305, 17, 180, 0, -1);
+   (Game::a)->m_a_GraphicsStringIIIIII(Game::graphics, jcat(jstr(jcat(jstr(jadd32(Game::cP, 1)), jstr(jlit(u"/")))), jstr(4)), 120, 305, 17, 180, 0, -1);
    if ((Game::m_G_I(262144))) {
       if ((Game::cT)) {
          (Game::aS = true);
@@ -2358,7 +2358,7 @@ void Game::ah() {
       (Game::cP = 0);
    }
    if ((Game::m_G_I(4112))) {
-      (Game::cP = ((((--Game::cP) + 4)) % 4));
+      (Game::cP = ((jadd32((--Game::cP), 4)) % 4));
       Game::m_I_I(-1);
    }
 }
@@ -2456,7 +2456,7 @@ jint Game::m_c_II(jint var0, jint var1) {
             break;
          case 1:
             if (((var1 == 0))) {
-               (var2 = ((Actor::ck)[var1] - 1));
+               (var2 = jsub32((Actor::ck)[var1], 1));
             } else {
                (var2 = (Actor::ck)[var1]);
             }
@@ -2554,11 +2554,11 @@ void Game::m_q_V() {
          if (((Actor::bD || (var0 != 3)))) {
             jboolean var1 = (!Game::m_d_II(var0, Game::aV));
             jint var2 = Game::m_c_II(var0, Game::aV);
-            (var2 = ((((Game::aV * 12) + (var0 * 3)) + var2) + ((var1 ? -1 : 0))));
-            ([&]{ auto _t0 = Game::m_k_II(0, (80 + var0)); auto _t1 = Game::m_c_II(var0, Game::aV); auto _t2 = (Game::aY)[(var0 + (Game::aV * 4))]; auto _t3 = (Game::ba)[var2]; auto _t4 = 45; auto _t5 = (104 + (32 * var0)); auto _t6 = 150; auto _t7 = Game::bc; auto _t8 = Game::bd; auto _t9 = var1; return Game::m_a_StringIIIIIIAIAIZ(_t0, _t1, _t2, _t3, _t4, _t5, _t6, _t7, _t8, _t9); }());
+            (var2 = jadd32(jadd32(jadd32(jmul32(Game::aV, 12), jmul32(var0, 3)), var2), ((var1 ? -1 : 0))));
+            ([&]{ auto _t0 = Game::m_k_II(0, jadd32(80, var0)); auto _t1 = Game::m_c_II(var0, Game::aV); auto _t2 = (Game::aY)[jadd32(var0, jmul32(Game::aV, 4))]; auto _t3 = (Game::ba)[var2]; auto _t4 = 45; auto _t5 = jadd32(104, jmul32(32, var0)); auto _t6 = 150; auto _t7 = Game::bc; auto _t8 = Game::bd; auto _t9 = var1; return Game::m_a_StringIIIIIIAIAIZ(_t0, _t1, _t2, _t3, _t4, _t5, _t6, _t7, _t8, _t9); }());
             if (((Game::aW == var0))) {
-               ([&]{ auto _t10 = (Game::b)[33]; auto _t11 = Game::graphics; auto _t12 = 1; auto _t13 = Game::m_b_II(Game::stateFrame, 1); auto _t14 = 32; auto _t15 = (108 + (var0 * 32)); auto _t16 = 0; auto _t17 = 0; auto _t18 = 0; return _t10->m_a_GraphicsIIIIIII(_t11, _t12, _t13, _t14, _t15, _t16, _t17, _t18); }());
-               ([&]{ auto _t19 = (Game::b)[33]; auto _t20 = Game::graphics; auto _t21 = 1; auto _t22 = Game::m_b_II(Game::stateFrame, 1); auto _t23 = 208; auto _t24 = (108 + (var0 * 32)); auto _t25 = 1; auto _t26 = 0; auto _t27 = 0; return _t19->m_a_GraphicsIIIIIII(_t20, _t21, _t22, _t23, _t24, _t25, _t26, _t27); }());
+               ([&]{ auto _t10 = (Game::b)[33]; auto _t11 = Game::graphics; auto _t12 = 1; auto _t13 = Game::m_b_II(Game::stateFrame, 1); auto _t14 = 32; auto _t15 = jadd32(108, jmul32(var0, 32)); auto _t16 = 0; auto _t17 = 0; auto _t18 = 0; return _t10->m_a_GraphicsIIIIIII(_t11, _t12, _t13, _t14, _t15, _t16, _t17, _t18); }());
+               ([&]{ auto _t19 = (Game::b)[33]; auto _t20 = Game::graphics; auto _t21 = 1; auto _t22 = Game::m_b_II(Game::stateFrame, 1); auto _t23 = 208; auto _t24 = jadd32(108, jmul32(var0, 32)); auto _t25 = 1; auto _t26 = 0; auto _t27 = 0; return _t19->m_a_GraphicsIIIIIII(_t20, _t21, _t22, _t23, _t24, _t25, _t26, _t27); }());
             }
          }
       }
@@ -2579,12 +2579,12 @@ void Game::m_q_V() {
 
 void Game::m_a_StringIIIIIIAIAIZ(Ref<String> var0, jint var1, jint var2, jint var3, jint var4, jint var5, jint var6, Arr<jint> var7, Arr<jint> var8, jboolean var9) {
    ((Game::a)->z = 5);
-   ([&]{ auto _t0 = Game::a; auto _t1 = Game::graphics; auto _t2 = jcat(jstr(jcat(jstr(jcat(jstr(var0), jstr(jlit(u" ")))), jstr(Game::m_k_II(0, 84)))), jstr(((var1 + 1)))); auto _t3 = (var4 - 1); auto _t4 = (var5 - 14); auto _t5 = 20; return _t0->m_a_GraphicsStringIII(_t1, _t2, _t3, _t4, _t5); }());
-   jint var10 = Game::m_a_IIIZ(var3, (var4 + var6), (var5 - 12), false);
-   (var10 = (jint)((var10 + 6)));
-   ((Game::b)[33])->m_a_GraphicsIIIIII(Game::graphics, 22, ((var4 + var6) - var10), (var5 - 12), 0, 0, 0);
-   Game::m_a_IIIZ(var2, ((var4 + var6) - var10), (var5 - 12), false);
-   jint var11 = jdiv32((var6 * var2), var3);
+   ([&]{ auto _t0 = Game::a; auto _t1 = Game::graphics; auto _t2 = jcat(jstr(jcat(jstr(jcat(jstr(var0), jstr(jlit(u" ")))), jstr(Game::m_k_II(0, 84)))), jstr((jadd32(var1, 1)))); auto _t3 = jsub32(var4, 1); auto _t4 = jsub32(var5, 14); auto _t5 = 20; return _t0->m_a_GraphicsStringIII(_t1, _t2, _t3, _t4, _t5); }());
+   jint var10 = Game::m_a_IIIZ(var3, jadd32(var4, var6), jsub32(var5, 12), false);
+   (var10 = (jint)(jadd32(var10, 6)));
+   ((Game::b)[33])->m_a_GraphicsIIIIII(Game::graphics, 22, jsub32(jadd32(var4, var6), var10), jsub32(var5, 12), 0, 0, 0);
+   Game::m_a_IIIZ(var2, jsub32(jadd32(var4, var6), var10), jsub32(var5, 12), false);
+   jint var11 = jdiv32(jmul32(var6, var2), var3);
    Game::m_a_IIIIAIAI(var4, var5, var6, var11, var7, var8);
 }
 
@@ -2594,9 +2594,9 @@ jboolean Game::m_aj_V() {
       for (; (var2 < 4); (var2++)) {
          if ((Game::m_d_II(var2, Actor::ch))) {
             jint var0 = Game::m_c_II(var2, Actor::ch);
-            (var0 = (((Actor::ch * 12) + (var2 * 3)) + var0));
+            (var0 = jadd32(jadd32(jmul32(Actor::ch, 12), jmul32(var2, 3)), var0));
             jint var1 = (Game::ba)[var0];
-            if (((Game::D >= (var1 - (Game::aY)[((Actor::ch * 4) + var2)])))) {
+            if (((Game::D >= jsub32(var1, (Game::aY)[jadd32(jmul32(Actor::ch, 4), var2)])))) {
                return true;
             }
          }
@@ -2643,44 +2643,44 @@ void Game::m_ak_V() {
       }
       if (((Game::D > 0))) {
          jboolean var0 = false;
-         jint var1 = ([&]{ auto _t2 = ([&]{ auto _t0 = Game::m_c_II(Game::aW, Game::aV); auto _t1 = (Game::aV * 12); return (_t0 + _t1); }()); auto _t3 = (Game::aW * 3); return (_t2 + _t3); }());
-         if ((((Actor::aP && Game::m_H_I(65568)) && (((Game::aY)[((Game::aV * 4) + Game::aW)] + Game::D) >= (Game::ba)[var1])))) {
-            (Game::aZ = ((Game::ba)[var1] - (Game::aY)[((Game::aV * 4) + Game::aW)]));
+         jint var1 = ([&]{ auto _t2 = ([&]{ auto _t0 = Game::m_c_II(Game::aW, Game::aV); auto _t1 = jmul32(Game::aV, 12); return jadd32(_t0, _t1); }()); auto _t3 = jmul32(Game::aW, 3); return jadd32(_t2, _t3); }());
+         if ((((Actor::aP && Game::m_H_I(65568)) && (jadd32((Game::aY)[jadd32(jmul32(Game::aV, 4), Game::aW)], Game::D) >= (Game::ba)[var1])))) {
+            (Game::aZ = jsub32((Game::ba)[var1], (Game::aY)[jadd32(jmul32(Game::aV, 4), Game::aW)]));
             Game::m_f_I(Game::aW);
             (Game::bb = true);
             (Game::aU = Game::aW);
-            (Game::D = (Game::D - Game::aZ));
+            (Game::D = jsub32(Game::D, Game::aZ));
             if (((!Game::m_d_II(Game::aW, Game::aV)))) {
-               ((Game::aY)[((Game::aV * 4) + Game::aW)] = (Game::ba)[var1]);
+               ((Game::aY)[jadd32(jmul32(Game::aV, 4), Game::aW)] = (Game::ba)[var1]);
                return;
             }
-            ((Game::aY)[((Game::aV * 4) + Game::aW)] = 0);
+            ((Game::aY)[jadd32(jmul32(Game::aV, 4), Game::aW)] = 0);
             return;
          }
          if ((((Game::aX % 5) == 0))) {
             (Game::aZ++);
          }
-         if ((((Game::D - Game::aZ) <= 0))) {
+         if (((jsub32(Game::D, Game::aZ) <= 0))) {
             (Game::aZ = Game::D);
             (Game::bb = true);
             (Game::aU = 4);
          }
-         if (((((Game::aY)[((Game::aV * 4) + Game::aW)] + Game::aZ) >= (Game::ba)[var1]))) {
-            (Game::aZ = ((Game::ba)[var1] - (Game::aY)[((Game::aV * 4) + Game::aW)]));
+         if (((jadd32((Game::aY)[jadd32(jmul32(Game::aV, 4), Game::aW)], Game::aZ) >= (Game::ba)[var1]))) {
+            (Game::aZ = jsub32((Game::ba)[var1], (Game::aY)[jadd32(jmul32(Game::aV, 4), Game::aW)]));
             Game::m_f_I(Game::aW);
             (var0 = true);
             (Game::bb = true);
             (Game::aU = Game::aW);
          }
-         (Game::D = (Game::D - Game::aZ));
-         ((Game::aY)[((Game::aV * 4) + Game::aW)] = ((Game::aY)[((Game::aV * 4) + Game::aW)] + Game::aZ));
+         (Game::D = jsub32(Game::D, Game::aZ));
+         ((Game::aY)[jadd32(jmul32(Game::aV, 4), Game::aW)] = jadd32((Game::aY)[jadd32(jmul32(Game::aV, 4), Game::aW)], Game::aZ));
          if (((var0 && Game::m_d_II(Game::aW, Game::aV)))) {
-            ((Game::aY)[((Game::aV * 4) + Game::aW)] = 0);
+            ((Game::aY)[jadd32(jmul32(Game::aV, 4), Game::aW)] = 0);
          }
          (((Game::b)[17])->z = 2);
          Game::m_j_IIII(0, 0, 240, 320);
-         ((Game::b)[17])->m_a_GraphicsIIIIIII(Game::graphics, 26, (Game::aX % 7), 35, (108 + (Game::aW * 32)), 0, 0, 0);
-         ((Game::b)[17])->m_a_GraphicsIIIIIII(Game::graphics, 26, (Game::aX % 7), 205, (108 + (Game::aW * 32)), 0, 0, 0);
+         ((Game::b)[17])->m_a_GraphicsIIIIIII(Game::graphics, 26, (Game::aX % 7), 35, jadd32(108, jmul32(Game::aW, 32)), 0, 0, 0);
+         ((Game::b)[17])->m_a_GraphicsIIIIIII(Game::graphics, 26, (Game::aX % 7), 205, jadd32(108, jmul32(Game::aW, 32)), 0, 0, 0);
       } else {
          (Game::aZ = 0);
          (Game::bb = true);
@@ -2749,15 +2749,15 @@ void Game::m_am_V() {
 
 void Game::m_a_IIIIAIAI(jint var0, jint var1, jint var2, jint var3, Arr<jint> var4, Arr<jint> var5) {
    Game::m_b_I(0);
-   Game::m_b_IIII(var0, (var1 + 1), (var2 + 1), 9);
+   Game::m_b_IIII(var0, jadd32(var1, 1), jadd32(var2, 1), 9);
    Game::m_b_I(9794829);
-   Game::m_d_IIII(var0, var1, (var0 + var2), var1);
-   Game::m_d_IIII((var0 - 1), (var1 + 1), (var0 - 1), ((var1 + 7) + 1));
-   Game::m_d_IIII(((var0 + var2) + 1), (var1 + 1), ((var0 + var2) + 1), ((var1 + 7) + 1));
-   Game::m_d_IIII(var0, ((var1 + 7) + 2), (var0 + var2), ((var1 + 7) + 2));
-   Game::m_a_IIIAI((var0 + 1), (var1 + 2), (var2 - 2), var4);
+   Game::m_d_IIII(var0, var1, jadd32(var0, var2), var1);
+   Game::m_d_IIII(jsub32(var0, 1), jadd32(var1, 1), jsub32(var0, 1), jadd32(jadd32(var1, 7), 1));
+   Game::m_d_IIII(jadd32(jadd32(var0, var2), 1), jadd32(var1, 1), jadd32(jadd32(var0, var2), 1), jadd32(jadd32(var1, 7), 1));
+   Game::m_d_IIII(var0, jadd32(jadd32(var1, 7), 2), jadd32(var0, var2), jadd32(jadd32(var1, 7), 2));
+   Game::m_a_IIIAI(jadd32(var0, 1), jadd32(var1, 2), jsub32(var2, 2), var4);
    if (((var3 > 2))) {
-      Game::m_a_IIIAI((var0 + 1), (var1 + 2), (var3 - 2), var5);
+      Game::m_a_IIIAI(jadd32(var0, 1), jadd32(var1, 2), jsub32(var3, 2), var5);
    }
 }
 
@@ -2766,7 +2766,7 @@ void Game::m_a_IIIAI(jint var0, jint var1, jint var2, Arr<jint> var3) {
       jint var4 = 0;
       for (; (var4 < (var3).length()); (var4++)) {
          Game::m_b_I((var3)[var4]);
-         Game::m_d_IIII(var0, (var1 + var4), (var0 + var2), (var1 + var4));
+         Game::m_d_IIII(var0, jadd32(var1, var4), jadd32(var0, var2), jadd32(var1, var4));
       }
    }
 }
@@ -2774,8 +2774,8 @@ void Game::m_a_IIIAI(jint var0, jint var1, jint var2, Arr<jint> var3) {
 void Game::m_c_Z(jboolean var0) {
    (Actor::bM = false);
    Game::m_a_ABII(Game::dt, 772, ((jint)(((jbyte)(((Actor::bM ? 1 : 0)))))));
-   if (((Game::maxUnlockedLevel < (Game::levelIndex + 1)))) {
-      (Game::maxUnlockedLevel = (Game::levelIndex + 1));
+   if (((Game::maxUnlockedLevel < jadd32(Game::levelIndex, 1)))) {
+      (Game::maxUnlockedLevel = jadd32(Game::levelIndex, 1));
    }
    ([&]{ auto _t3 = Actor::ej; auto _t4 = 0; auto _t5 = (jbyte)(([&]{ auto _t0 = Actor::ej; auto _t1 = 1; auto _t2 = (jbyte)(((Actor::ej)[2] = 0)); return _t0[_t1] = _t2; }())); return _t3[_t4] = _t5; }());
    (Game::bh = true);
@@ -2855,12 +2855,12 @@ void Game::m_an_V() {
       for (; (var5 < Game::ci); (var5++)) {
          Ref<Actor> var3{};
          if (((((((var3 = (Game::ch)[var5])) != nullptr) && ((((var3)->c & 4096)) == 0)) && ((var3)->type != 41)))) {
-            PortNative::layerActor(var3, (((var3)->positionX - Game::cameraX) + PortConfig::worldTx), ((var3)->positionY - Game::cameraY));
+            PortNative::layerActor(var3, jadd32(jsub32((var3)->positionX, Game::cameraX), PortConfig::worldTx), jsub32((var3)->positionY, Game::cameraY));
             (var3)->m_v_V();
          }
       }
    }
-   PortNative::layerWorld((PortConfig::worldTx - Game::cameraX), (-Game::cameraY));
+   PortNative::layerWorld(jsub32(PortConfig::worldTx, Game::cameraX), jneg32(Game::cameraY));
 }
 
 void Game::m_j_Actor(Ref<Actor> var0) {
@@ -2879,7 +2879,7 @@ void Game::m_j_Actor(Ref<Actor> var0) {
    {
       jint var3 = Game::ci;
       for (; (var3 > var1); (var3--)) {
-         ((Game::ch)[var3] = (Game::ch)[(var3 - 1)]);
+         ((Game::ch)[var3] = (Game::ch)[jsub32(var3, 1)]);
       }
    }
    ((Game::ch)[var1] = var0);
@@ -2918,7 +2918,7 @@ jboolean Game::m_l_Actor(Ref<Actor> var0) {
    if ((((Game::aJ == nullptr) && ((var0)->type == 22)))) {
       return true;
    }
-   if (((((var0)->type != 81) || (((var0)->aq != 101) && (((((var0)->n == nullptr) || (((var0)->n)[((var0)->ax - 1)] <= 0)) || (((var0)->n)[((var0)->ax - 1)] > 7))))))) {
+   if (((((var0)->type != 81) || (((var0)->aq != 101) && (((((var0)->n == nullptr) || (((var0)->n)[jsub32((var0)->ax, 1)] <= 0)) || (((var0)->n)[jsub32((var0)->ax, 1)] > 7))))))) {
       if (((((var0)->type == 40) || ((var0)->type == 49)))) {
          (var1 = 7);
          if (((((var0)->type == 49) && Actor::m_b_AIAI((var0)->collisionBounds, (Game::player)->collisionBounds)))) {
@@ -3088,7 +3088,7 @@ void Game::m_ao_V() {
                   if (((Actor::dS == 0))) {
                      (Actor::dS++);
                   }
-                  (Actor::dR = (Actor::dR + (-128 * Actor::dS)));
+                  (Actor::dR = jadd32(Actor::dR, jmul32(-128, Actor::dS)));
                } else {
                   (Actor::dR = -768);
                   (Actor::dS = 0);
@@ -3180,17 +3180,17 @@ void Game::m_d_Z(jboolean var0) {
    {
       jint var3 = 0;
       for (; (var3 < 3); (var3++)) {
-         if ((((Game::bj)[((var3 * 4) + 2)] < 0))) {
+         if ((((Game::bj)[jadd32(jmul32(var3, 4), 2)] < 0))) {
             jint var1 = Game::m_M_I(var3);
-            jint var2 = (40 + ((var1 * 60) / 3));
-            ([&]{ auto _t0 = Game::bj; auto _t1 = ((var3 * 4) + 2); auto _t2 = (jint)(Game::m_i_II(0, 2)); return _t0[_t1] = _t2; }());
+            jint var2 = jadd32(40, (jmul32(var1, 60) / 3));
+            ([&]{ auto _t0 = Game::bj; auto _t1 = jadd32(jmul32(var3, 4), 2); auto _t2 = (jint)(Game::m_i_II(0, 2)); return _t0[_t1] = _t2; }());
             if ((var0)) {
-               ([&]{ auto _t3 = Game::bj; auto _t4 = ((var3 * 4) + 0); auto _t5 = (jint)(jshl32((jint)(Game::m_i_II(-60, 300)), (jint)(8))); return _t3[_t4] = _t5; }());
+               ([&]{ auto _t3 = Game::bj; auto _t4 = jadd32(jmul32(var3, 4), 0); auto _t5 = (jint)(jshl32((jint)(Game::m_i_II(-60, 300)), (jint)(8))); return _t3[_t4] = _t5; }());
             } else {
-               ([&]{ auto _t6 = Game::bj; auto _t7 = ((var3 * 4) + 0); auto _t8 = (jint)(jshl32((jint)((240 + Game::m_i_II(60, 240))), (jint)(8))); return _t6[_t7] = _t8; }());
+               ([&]{ auto _t6 = Game::bj; auto _t7 = jadd32(jmul32(var3, 4), 0); auto _t8 = (jint)(jshl32((jint)(jadd32(240, Game::m_i_II(60, 240))), (jint)(8))); return _t6[_t7] = _t8; }());
             }
-            ([&]{ auto _t9 = Game::bj; auto _t10 = ((var3 * 4) + 1); auto _t11 = (jint)(Game::m_i_II(var2, (var2 + 20))); return _t9[_t10] = _t11; }());
-            ((Game::bj)[((var3 * 4) + 3)] = (-(jshl32((jint)(16), (jint)(var1)))));
+            ([&]{ auto _t9 = Game::bj; auto _t10 = jadd32(jmul32(var3, 4), 1); auto _t11 = (jint)(Game::m_i_II(var2, jadd32(var2, 20))); return _t9[_t10] = _t11; }());
+            ((Game::bj)[jadd32(jmul32(var3, 4), 3)] = jneg32((jshl32((jint)(16), (jint)(var1)))));
          }
       }
    }
@@ -3200,7 +3200,7 @@ void Game::m_aq_V() {
    {
       jint var0 = 0;
       for (; (var0 < 3); (var0++)) {
-         ((Game::bj)[((var0 * 4) + 2)] = -1);
+         ((Game::bj)[jadd32(jmul32(var0, 4), 2)] = -1);
          Game::m_d_Z(true);
       }
    }
@@ -3211,13 +3211,13 @@ void Game::m_ar_V() {
       {
          jint var0 = 0;
          for (; (var0 < 3); (var0++)) {
-            if ((((Game::bk)[((var0 * 4) + 2)] >= 0))) {
+            if ((((Game::bk)[jadd32(jmul32(var0, 4), 2)] >= 0))) {
                (((Game::b)[(Actor::bs)[24]])->z = 0);
-               ((Game::b)[(Actor::bs)[24]])->m_a_GraphicsIIIIII(Game::graphics, (Game::bk)[((var0 * 4) + 2)], ((jshr32((jint)((Game::bk)[((var0 * 4) + 0)]), (jint)(8))) - Game::cameraX), ((Game::bk)[((var0 * 4) + 1)] - Game::cameraY), 0, 0, 0);
+               ((Game::b)[(Actor::bs)[24]])->m_a_GraphicsIIIIII(Game::graphics, (Game::bk)[jadd32(jmul32(var0, 4), 2)], jsub32((jshr32((jint)((Game::bk)[jadd32(jmul32(var0, 4), 0)]), (jint)(8))), Game::cameraX), jsub32((Game::bk)[jadd32(jmul32(var0, 4), 1)], Game::cameraY), 0, 0, 0);
                if ((((Game::state != 14) && (Game::state != 31)))) {
-                  ((Game::bk)[((var0 * 4) + 0)] = ((Game::bk)[((var0 * 4) + 0)] + (Game::bk)[((var0 * 4) + 3)]));
-                  if ((((((((jshr32((jint)((Game::bk)[((var0 * 4) + 0)]), (jint)(8))) - Game::cameraX) < -60) || (((jshr32((jint)((Game::bk)[((var0 * 4) + 0)]), (jint)(8))) - Game::cameraX) > 480)) || (((Game::bk)[((var0 * 4) + 1)] - Game::cameraY) < -80)) || (((Game::bk)[((var0 * 4) + 1)] - Game::cameraY) > 320)))) {
-                     ((Game::bk)[((var0 * 4) + 2)] = -1);
+                  ((Game::bk)[jadd32(jmul32(var0, 4), 0)] = jadd32((Game::bk)[jadd32(jmul32(var0, 4), 0)], (Game::bk)[jadd32(jmul32(var0, 4), 3)]));
+                  if ((((((jsub32((jshr32((jint)((Game::bk)[jadd32(jmul32(var0, 4), 0)]), (jint)(8))), Game::cameraX) < -60) || (jsub32((jshr32((jint)((Game::bk)[jadd32(jmul32(var0, 4), 0)]), (jint)(8))), Game::cameraX) > 480)) || (jsub32((Game::bk)[jadd32(jmul32(var0, 4), 1)], Game::cameraY) < -80)) || (jsub32((Game::bk)[jadd32(jmul32(var0, 4), 1)], Game::cameraY) > 320)))) {
+                     ((Game::bk)[jadd32(jmul32(var0, 4), 2)] = -1);
                   }
                }
             } else {
@@ -3232,15 +3232,15 @@ void Game::m_e_Z(jboolean var0) {
    {
       jint var1 = 0;
       for (; (var1 < 3); (var1++)) {
-         if ((((Game::bk)[((var1 * 4) + 2)] < 0))) {
-            ([&]{ auto _t0 = Game::bk; auto _t1 = ((var1 * 4) + 2); auto _t2 = (jint)(Game::m_i_II(0, 2)); return _t0[_t1] = _t2; }());
+         if ((((Game::bk)[jadd32(jmul32(var1, 4), 2)] < 0))) {
+            ([&]{ auto _t0 = Game::bk; auto _t1 = jadd32(jmul32(var1, 4), 2); auto _t2 = (jint)(Game::m_i_II(0, 2)); return _t0[_t1] = _t2; }());
             if ((var0)) {
-               ([&]{ auto _t5 = Game::bk; auto _t6 = ((var1 * 4) + 0); auto _t7 = (jint)(jshl32((jint)(([&]{ auto _t3 = Game::m_i_II(-60, 300); auto _t4 = Game::cameraX; return (_t3 + _t4); }())), (jint)(8))); return _t5[_t6] = _t7; }());
+               ([&]{ auto _t5 = Game::bk; auto _t6 = jadd32(jmul32(var1, 4), 0); auto _t7 = (jint)(jshl32((jint)(([&]{ auto _t3 = Game::m_i_II(-60, 300); auto _t4 = Game::cameraX; return jadd32(_t3, _t4); }())), (jint)(8))); return _t5[_t6] = _t7; }());
             } else {
-               ([&]{ auto _t10 = Game::bk; auto _t11 = ((var1 * 4) + 0); auto _t12 = (jint)(jshl32((jint)(([&]{ auto _t8 = (240 + Game::m_i_II(60, 240)); auto _t9 = Game::cameraX; return (_t8 + _t9); }())), (jint)(8))); return _t10[_t11] = _t12; }());
+               ([&]{ auto _t10 = Game::bk; auto _t11 = jadd32(jmul32(var1, 4), 0); auto _t12 = (jint)(jshl32((jint)(([&]{ auto _t8 = jadd32(240, Game::m_i_II(60, 240)); auto _t9 = Game::cameraX; return jadd32(_t8, _t9); }())), (jint)(8))); return _t10[_t11] = _t12; }());
             }
-            ([&]{ auto _t15 = Game::bk; auto _t16 = ((var1 * 4) + 1); auto _t17 = (jint)(([&]{ auto _t13 = Game::m_i_II(240, 290); auto _t14 = Game::cameraY; return (_t13 + _t14); }())); return _t15[_t16] = _t17; }());
-            ([&]{ auto _t18 = Game::bk; auto _t19 = ((var1 * 4) + 3); auto _t20 = (jint)((-Game::m_i_II(64, 256))); return _t18[_t19] = _t20; }());
+            ([&]{ auto _t15 = Game::bk; auto _t16 = jadd32(jmul32(var1, 4), 1); auto _t17 = (jint)(([&]{ auto _t13 = Game::m_i_II(240, 290); auto _t14 = Game::cameraY; return jadd32(_t13, _t14); }())); return _t15[_t16] = _t17; }());
+            ([&]{ auto _t18 = Game::bk; auto _t19 = jadd32(jmul32(var1, 4), 3); auto _t20 = (jint)(jneg32(Game::m_i_II(64, 256))); return _t18[_t19] = _t20; }());
          }
       }
    }
@@ -3255,22 +3255,22 @@ void Game::portFar(jint var0, jint var1) {
       Game::m_a_IIZ(var0, var1, true);
    } else {
       PortConfig::drawFar(Game::graphics, var0, var1);
-      PortNative::layerWorld((PortConfig::worldTx - Game::cameraX), (-Game::cameraY));
+      PortNative::layerWorld(jsub32(PortConfig::worldTx, Game::cameraX), jneg32(Game::cameraY));
    }
 }
 
 void Game::m_as_V() {
    PortConfig::beginWorld(Game::graphics);
    if ((Actor::en)) {
-      Game::portFar(jshr32((jint)((Game::cameraX + Actor::eo)), (jint)(6)), 20);
-      Game::m_e_III(jrem32((jshr32((jint)((Game::cameraX + Actor::eo)), (jint)(3))), ((Game::cD * 20))), 20, 2);
-      Game::m_e_III((Game::cameraX + (Actor::eo % 240)), Game::cameraY, 1);
+      Game::portFar(jshr32((jint)(jadd32(Game::cameraX, Actor::eo)), (jint)(6)), 20);
+      Game::m_e_III(jrem32((jshr32((jint)(jadd32(Game::cameraX, Actor::eo)), (jint)(3))), (jmul32(Game::cD, 20))), 20, 2);
+      Game::m_e_III(jadd32(Game::cameraX, (Actor::eo % 240)), Game::cameraY, 1);
    } else if ((((Game::be)[Game::levelIndex] == 3))) {
       if (((Game::bo != -2))) {
          Game::portFar(jshr32((jint)(Game::cameraX), (jint)(6)), 20);
       }
       if (((Game::bo != -1))) {
-         Game::m_e_III(jrem32((jshr32((jint)(Game::cameraX), (jint)(3))), ((Game::cD * 20))), 20, 2);
+         Game::m_e_III(jrem32((jshr32((jint)(Game::cameraX), (jint)(3))), (jmul32(Game::cD, 20))), 20, 2);
       }
       if (((Game::levelIndex == 9))) {
          PortConfig::clipWorld(Game::graphics);
@@ -3281,19 +3281,19 @@ void Game::m_as_V() {
       }
    } else {
       if ((((Game::bo != -3) && (Game::bo != -2)))) {
-         Game::portFar(jdiv32((Game::cameraX * ((Game::cC - 13))), ((Game::cy - 13))), jdiv32((Game::cameraY * ((Game::cE - 17))), ((Game::cz - 17))));
+         Game::portFar(jdiv32(jmul32(Game::cameraX, (jsub32(Game::cC, 13))), (jsub32(Game::cy, 13))), jdiv32(jmul32(Game::cameraY, (jsub32(Game::cE, 17))), (jsub32(Game::cz, 17))));
       } else {
          Game::m_b_I(0);
-         ([&]{ auto _t2 = PortConfig::worldLeft(); auto _t3 = 0; auto _t4 = ([&]{ auto _t0 = PortConfig::worldRight(); auto _t1 = PortConfig::worldLeft(); return (_t0 - _t1); }()); auto _t5 = 320; return Game::m_b_IIII(_t2, _t3, _t4, _t5); }());
+         ([&]{ auto _t2 = PortConfig::worldLeft(); auto _t3 = 0; auto _t4 = ([&]{ auto _t0 = PortConfig::worldRight(); auto _t1 = PortConfig::worldLeft(); return jsub32(_t0, _t1); }()); auto _t5 = 320; return Game::m_b_IIII(_t2, _t3, _t4, _t5); }());
       }
       if ((((Game::bo != -1) && (Game::bo != -3)))) {
-         Game::m_e_III(jrem32((jshr32((jint)(Game::cameraX), (jint)(3))), ((Game::cD * 20))), jdiv32((((Game::cameraY + Game::bo)) * ((Game::cF - 16))), ((Game::cz - 16))), 2);
+         Game::m_e_III(jrem32((jshr32((jint)(Game::cameraX), (jint)(3))), (jmul32(Game::cD, 20))), jdiv32(jmul32((jadd32(Game::cameraY, Game::bo)), (jsub32(Game::cF, 16))), (jsub32(Game::cz, 16))), 2);
       }
       Game::m_u_V();
       Game::m_e_III(Game::cameraX, ((Game::cameraY < 0) ? 0 : Game::cameraY), 1);
    }
    if (((Game::dc && (Game::dd <= 1)))) {
-      Game::m_a_IZI((2 - Game::dd), false, Game::de);
+      Game::m_a_IZI(jsub32(2, Game::dd), false, Game::de);
    }
    Game::m_an_V();
    if (((Game::dc && (Game::dd > 1)))) {
@@ -3309,18 +3309,18 @@ void Game::m_as_V() {
    }
    PortConfig::clipWorld(Game::graphics);
    if (((Game::modalActive && (((Game::bJ == 9) || (Game::bJ == 12)))))) {
-      Game::m_h_IIII(Actor::dN, Game::bJ, ((jshr32((jint)((Actor::dJ + Actor::dK)), (jint)(1))) - Game::cameraX), ((Actor::dH + 120) - Game::cameraY));
+      Game::m_h_IIII(Actor::dN, Game::bJ, jsub32((jshr32((jint)(jadd32(Actor::dJ, Actor::dK)), (jint)(1))), Game::cameraX), jsub32(jadd32(Actor::dH, 120), Game::cameraY));
    }
    if ((((((!Game::hasActiveBackgroundScript()) && (!Actor::bm)) && (!Actor::br)) && (((Actor::E == nullptr) || ((Actor::E)->aq != 3)))))) {
       if ((((Game::player)->animationId == 25))) {
-         Game::m_f_IIII(3, ((Game::player)->positionX - Game::cameraX), (((Game::player)->positionY - Game::cameraY) - 30), 80);
+         Game::m_f_IIII(3, jsub32((Game::player)->positionX, Game::cameraX), jsub32(jsub32((Game::player)->positionY, Game::cameraY), 30), 80);
       } else if ((((Game::player)->animationId == 33))) {
-         Game::m_f_IIII(4, (((Game::player)->positionX - Game::cameraX) + (((Game::player)->facingLeft ? -40 : 40))), (((Game::player)->positionY - Game::cameraY) - 50), 80);
+         Game::m_f_IIII(4, jadd32(jsub32((Game::player)->positionX, Game::cameraX), (((Game::player)->facingLeft ? -40 : 40))), jsub32(jsub32((Game::player)->positionY, Game::cameraY), 50), 80);
       }
    }
    if ((Game::modalActive)) {
       if ((((Game::bJ >= 6) && (Game::bJ <= 8)))) {
-         Game::m_f_IIII((Game::bJ - 6), (((Game::player)->positionX - Game::cameraX) + (((Game::player)->facingLeft ? -20 : 20))), (((Game::player)->positionY - Game::cameraY) - 55), 40);
+         Game::m_f_IIII(jsub32(Game::bJ, 6), jadd32(jsub32((Game::player)->positionX, Game::cameraX), (((Game::player)->facingLeft ? -20 : 20))), jsub32(jsub32((Game::player)->positionY, Game::cameraY), 55), 40);
       } else if (((Game::bJ == 13))) {
          (Actor::E)->m_G_V();
       } else if (((Game::bJ == 3))) {
@@ -3336,7 +3336,7 @@ void Game::m_as_V() {
       }
    }
    if (((Actor::bb > 0))) {
-      Game::m_a_III(Actor::ch, ((Game::player)->positionX - Game::cameraX), ((((Game::player)->positionY - Game::cameraY) + 0) + -80));
+      Game::m_a_III(Actor::ch, jsub32((Game::player)->positionX, Game::cameraX), jadd32(jadd32(jsub32((Game::player)->positionY, Game::cameraY), 0), -80));
    }
    {
       jint var2 = 0;
@@ -3346,16 +3346,16 @@ void Game::m_as_V() {
             (System::out)->println(jlit(u"null actor in s_paintActors"));
          }
          if (((((((var1)->c & 4096)) != 0) && ((var1)->type != 41)))) {
-            PortNative::layerActor(var1, (((var1)->positionX - Game::cameraX) + PortConfig::worldTx), ((var1)->positionY - Game::cameraY));
+            PortNative::layerActor(var1, jadd32(jsub32((var1)->positionX, Game::cameraX), PortConfig::worldTx), jsub32((var1)->positionY, Game::cameraY));
             (var1)->m_v_V();
-            PortNative::layerWorld((PortConfig::worldTx - Game::cameraX), (-Game::cameraY));
+            PortNative::layerWorld(jsub32(PortConfig::worldTx, Game::cameraX), jneg32(Game::cameraY));
          }
          if ((((var1)->q != nullptr))) {
             ((var1)->q)->m_h_V();
          }
       }
    }
-   PortNative::layerWorld((PortConfig::worldTx - Game::cameraX), (-Game::cameraY));
+   PortNative::layerWorld(jsub32(PortConfig::worldTx, Game::cameraX), jneg32(Game::cameraY));
    Game::m_ar_V();
    PortConfig::endWorldForWeather(Game::graphics);
    Game::m_P_V();
@@ -3482,27 +3482,27 @@ void Game::m_as_V() {
 }
 
 void Game::m_g_IIII(jint var0, jint var1, jint var2, jint var3) {
-   Game::m_e_IIII(var0, var1, var2, (var3 - 1));
+   Game::m_e_IIII(var0, var1, var2, jsub32(var3, 1));
    ((Game::b)[33])->m_a_GraphicsIIIIII(Game::graphics, 23, var0, var1, 0, 0, 0);
-   ((Game::b)[33])->m_a_GraphicsIIIIII(Game::graphics, 23, (var0 + var2), var1, 1, 0, 0);
-   ((Game::b)[33])->m_a_GraphicsIIIIII(Game::graphics, 24, (39 + var0), var1, 0, 0, 0);
-   ((Game::b)[33])->m_a_GraphicsIIIIII(Game::graphics, 24, ((var0 + var2) - 39), var1, 1, 0, 0);
+   ((Game::b)[33])->m_a_GraphicsIIIIII(Game::graphics, 23, jadd32(var0, var2), var1, 1, 0, 0);
+   ((Game::b)[33])->m_a_GraphicsIIIIII(Game::graphics, 24, jadd32(39, var0), var1, 0, 0, 0);
+   ((Game::b)[33])->m_a_GraphicsIIIIII(Game::graphics, 24, jsub32(jadd32(var0, var2), 39), var1, 1, 0, 0);
 }
 
 void Game::m_e_II(jint var0, jint var1) {
-   Game::m_a_IIIIAIAI(60, 280, 120, jdiv32((var0 * 120), var1), Game::bR, Game::bp);
+   Game::m_a_IIIIAIAI(60, 280, 120, jdiv32(jmul32(var0, 120), var1), Game::bR, Game::bp);
    if (((Game::a != nullptr))) {
-      (Game::a)->m_a_GraphicsStringIII(Game::graphics, jcat(jstr(jcat(jstr(jlit(u"")), jstr(jdiv32((var0 * 100), var1)))), jstr(jlit(u"%"))), 120, 295, 17);
+      (Game::a)->m_a_GraphicsStringIII(Game::graphics, jcat(jstr(jcat(jstr(jlit(u"")), jstr(jdiv32(jmul32(var0, 100), var1)))), jstr(jlit(u"%"))), 120, 295, 17);
    }
 }
 
 void Game::m_b_ZI(jboolean var0, jint var1) {
    Game::m_a_IIII(0, 0, 240, 320);
    Game::m_g_IIII(0, 0, 240, 320);
-   Actor::m_a_IIIIIIIZ(120, 160, 120, 160, 60, 50, (Game::stateFrame * 5), true);
+   Actor::m_a_IIIIIIIZ(120, 160, 120, 160, 60, 50, jmul32(Game::stateFrame, 5), true);
    ((Game::a)->z = 5);
    if (((Game::levelIndex != 16))) {
-      Ref<String> var2 = Game::m_k_II(0, (71 + Game::eS));
+      Ref<String> var2 = Game::m_k_II(0, jadd32(71, Game::eS));
       if (((Game::eS == 0))) {
          (var2 = Game::m_k_II(0, 114));
       }
@@ -3735,10 +3735,10 @@ void Game::m_au_V() {
 void Game::m_av_V() {
    if ((((((Game::bt < 0) || Game::modalActive)) && (Game::br != Game::bs)))) {
       jint var0{};
-      if ((((((var0 = (Game::br - Game::bs))) > -20) && (var0 < 20)))) {
+      if ((((((var0 = jsub32(Game::br, Game::bs))) > -20) && (var0 < 20)))) {
          (Game::bs = Game::br);
       } else {
-         (Game::bs = (jint)((Game::bs + ((var0 > 0) ? 20 : -20))));
+         (Game::bs = (jint)(jadd32(Game::bs, ((var0 > 0) ? 20 : -20))));
       }
    }
    if (((Game::bs > 0))) {
@@ -3746,7 +3746,7 @@ void Game::m_av_V() {
       ([&]{ auto _t0 = PortConfig::screenLeft(Game::graphics); auto _t1 = 0; auto _t2 = PortConfig::screenWidth; auto _t3 = 320; return Game::m_j_IIII(_t0, _t1, _t2, _t3); }());
       Game::m_b_I(-587202560);
       ([&]{ auto _t4 = PortConfig::screenLeft(Game::graphics); auto _t5 = 0; auto _t6 = PortConfig::screenWidth; auto _t7 = Game::bs; return Game::m_b_IIII(_t4, _t5, _t6, _t7); }());
-      ([&]{ auto _t8 = PortConfig::screenLeft(Game::graphics); auto _t9 = (320 - Game::bs); auto _t10 = PortConfig::screenWidth; auto _t11 = Game::bs; return Game::m_b_IIII(_t8, _t9, _t10, _t11); }());
+      ([&]{ auto _t8 = PortConfig::screenLeft(Game::graphics); auto _t9 = jsub32(320, Game::bs); auto _t10 = PortConfig::screenWidth; auto _t11 = Game::bs; return Game::m_b_IIII(_t8, _t9, _t10, _t11); }());
    } else {
       (Game::bt = 2);
    }
@@ -3767,7 +3767,7 @@ void Game::m_h_I(jint var0) {
          {
             jint var1 = 0;
             for (; (var1 < 10); (var1++)) {
-               ([&]{ auto _t0 = Actor::dc; auto _t1 = var1; auto _t2 = (jint)(Game::m_i_II((var1 * 36), ((var1 * 36) + 18))); return _t0[_t1] = _t2; }());
+               ([&]{ auto _t0 = Actor::dc; auto _t1 = var1; auto _t2 = (jint)(Game::m_i_II(jmul32(var1, 36), jadd32(jmul32(var1, 36), 18))); return _t0[_t1] = _t2; }());
                ([&]{ auto _t3 = Actor::dd; auto _t4 = var1; auto _t5 = (jint)(Game::m_i_II(5, 15)); return _t3[_t4] = _t5; }());
             }
          }
@@ -3810,44 +3810,44 @@ void Game::m_s_V() {
 }
 
 void Game::m_a_IZ(jint var0, jboolean var1) {
-   ((Game::bM)[((var0 * 5) + 4)] = (var1 ? 1 : 0));
+   ((Game::bM)[jadd32(jmul32(var0, 5), 4)] = (var1 ? 1 : 0));
 }
 
 void Game::m_t_V() {
    {
       jint var0 = 0;
       for (; (var0 < 80); (var0++)) {
-         ((Game::bM)[((var0 * 5) + 4)] = 0);
+         ((Game::bM)[jadd32(jmul32(var0, 5), 4)] = 0);
       }
    }
 }
 
 void Game::m_b_III(jint var0, jint var1, jint var2) {
    Game::m_b_I(-33554432);
-   jint var3 = (Game::bM)[((var0 * 5) + 0)];
-   jint var4 = (Game::bM)[((var0 * 5) + 1)];
-   jint var5 = (Game::bM)[((var0 * 5) + 2)];
-   jint var6 = (Game::bM)[((var0 * 5) + 3)];
-   jint var7 = (Game::bM)[((var0 * 5) + 4)];
-   if (((((((var3 + var5) >= (var1 + PortConfig::worldLeft())) && ((var4 + var6) >= var2)) && (var3 <= (var1 + PortConfig::worldRight()))) && (var4 <= (var2 + 320))))) {
+   jint var3 = (Game::bM)[jadd32(jmul32(var0, 5), 0)];
+   jint var4 = (Game::bM)[jadd32(jmul32(var0, 5), 1)];
+   jint var5 = (Game::bM)[jadd32(jmul32(var0, 5), 2)];
+   jint var6 = (Game::bM)[jadd32(jmul32(var0, 5), 3)];
+   jint var7 = (Game::bM)[jadd32(jmul32(var0, 5), 4)];
+   if ((((((jadd32(var3, var5) >= jadd32(var1, PortConfig::worldLeft())) && (jadd32(var4, var6) >= var2)) && (var3 <= jadd32(var1, PortConfig::worldRight()))) && (var4 <= jadd32(var2, 320))))) {
       jint var8{};
-      if ((((((var8 = (var3 - var1))) < PortConfig::worldLeft()) && (var7 == 0)))) {
+      if ((((((var8 = jsub32(var3, var1))) < PortConfig::worldLeft()) && (var7 == 0)))) {
          (var8 = PortConfig::worldLeft());
-         (var5 = (((var5 + var3) - var1) - PortConfig::worldLeft()));
+         (var5 = jsub32(jsub32(jadd32(var5, var3), var1), PortConfig::worldLeft()));
       }
       jint var9{};
-      if ((((((var9 = (var4 - var2))) < 0) && (var7 == 0)))) {
+      if ((((((var9 = jsub32(var4, var2))) < 0) && (var7 == 0)))) {
          (var9 = 0);
-         (var6 = ((var6 + var4) - var2));
+         (var6 = jsub32(jadd32(var6, var4), var2));
       }
       if (((var7 == 0))) {
          Game::m_b_IIII(var8, var9, var5, var6);
       } else if (((var7 == 1))) {
-         ((Game::b)[29])->m_a_GraphicsIIIIII(Game::graphics, 0, (var8 + 70), (var9 + 70), 0, 0, 0);
+         ((Game::b)[29])->m_a_GraphicsIIIIII(Game::graphics, 0, jadd32(var8, 70), jadd32(var9, 70), 0, 0, 0);
       } else if (((var7 == 2))) {
          ((Game::b)[36])->m_a_GraphicsIIIIII(Game::graphics, 0, var8, var9, 0, 0, 0);
       } else {
-         ((Game::b)[36])->m_a_GraphicsIIIIII(Game::graphics, 0, (var8 + 40), var9, 1, 0, 0);
+         ((Game::b)[36])->m_a_GraphicsIIIIII(Game::graphics, 0, jadd32(var8, 40), var9, 1, 0, 0);
       }
    }
 }
@@ -3857,10 +3857,10 @@ void Game::m_u_V() {
       jint var0 = 0;
       for (; (var0 < Game::bP); (var0++)) {
          if (((((Game::bQ)[var0] != nullptr) && ((Game::bQ)[var0])->m_h_V()))) {
-            PortNative::layerActor((Game::bQ)[var0], ((((Game::bQ)[var0])->positionX - Game::cameraX) + PortConfig::worldTx), (((Game::bQ)[var0])->positionY - Game::cameraY));
+            PortNative::layerActor((Game::bQ)[var0], jadd32(jsub32(((Game::bQ)[var0])->positionX, Game::cameraX), PortConfig::worldTx), jsub32(((Game::bQ)[var0])->positionY, Game::cameraY));
             ((Game::bQ)[var0])->m_v_V();
             if (((((((Game::bQ)[var0])->q != nullptr) && (((Game::bQ)[var0])->q)->m_h_V()) && ((((((Game::bQ)[var0])->q)->c & 128)) == 0)))) {
-               PortNative::layerActor(((Game::bQ)[var0])->q, (((((Game::bQ)[var0])->q)->positionX - Game::cameraX) + PortConfig::worldTx), ((((Game::bQ)[var0])->q)->positionY - Game::cameraY));
+               PortNative::layerActor(((Game::bQ)[var0])->q, jadd32(jsub32((((Game::bQ)[var0])->q)->positionX, Game::cameraX), PortConfig::worldTx), jsub32((((Game::bQ)[var0])->q)->positionY, Game::cameraY));
                (((Game::bQ)[var0])->q)->m_v_V();
             }
          }
@@ -3877,7 +3877,7 @@ void Game::m_b_Actor(Ref<Actor> var0) {
    {
       jint var2 = Game::bP;
       for (; (var2 > var1); (var2--)) {
-         ((Game::bQ)[var2] = (Game::bQ)[(var2 - 1)]);
+         ((Game::bQ)[var2] = (Game::bQ)[jsub32(var2, 1)]);
       }
    }
    ((Game::bQ)[var1] = var0);
@@ -3910,10 +3910,10 @@ void Game::m_v_V() {
 
 void Game::m_h_IIII(jint var0, jint var1, jint var2, jint var3) {
    (Game::P++);
-   jint var4 = ((var1 == 9) ? Game::P : (25 - Game::P));
+   jint var4 = ((var1 == 9) ? Game::P : jsub32(25, Game::P));
    if (((((var1 == 9) && (var0 == 1)) || ((var1 == 12) && (var0 == 1))))) {
-      (var2 = (jint)((var2 + Actor::dO)));
-      (var3 = (jint)((var3 + Actor::dP)));
+      (var2 = (jint)(jadd32(var2, Actor::dO)));
+      (var3 = (jint)(jadd32(var3, Actor::dP)));
    }
    jboolean var5{};
    if ((((((var1 != 9) || (var0 != 0))) && (((var1 != 12) || (var0 != 1)))))) {
@@ -3923,9 +3923,9 @@ void Game::m_h_IIII(jint var0, jint var1, jint var2, jint var3) {
    }
    if (((Game::P != 1))) {
       if (((Game::P < 25))) {
-         jint var6 = ((var4 * 700) / 25);
-         Game::m_b_I((jshl32((jint)(((var4 * 221) / 25)), (jint)(24)) | ((var5 ? 255 : 16711680))));
-         Game::m_b_IIIIII((var2 - (jshr32((jint)(var6), (jint)(1)))), (var3 - (jshr32((jint)(var6), (jint)(1)))), var6, var6, 0, 360);
+         jint var6 = (jmul32(var4, 700) / 25);
+         Game::m_b_I((jshl32((jint)((jmul32(var4, 221) / 25)), (jint)(24)) | ((var5 ? 255 : 16711680))));
+         Game::m_b_IIIIII(jsub32(var2, (jshr32((jint)(var6), (jint)(1)))), jsub32(var3, (jshr32((jint)(var6), (jint)(1)))), var6, var6, 0, 360);
       } else {
          Game::m_s_V();
       }
@@ -3933,18 +3933,18 @@ void Game::m_h_IIII(jint var0, jint var1, jint var2, jint var3) {
 }
 
 void Game::m_a_IIIIIII(jint var0, jint var1, jint var2, jint var3, jint var4, jint var5, jint var6) {
-   jint var7 = (6 * Game::m_m_I(var4));
-   jint var8 = (6 * Game::m_l_I(var4));
+   jint var7 = jmul32(6, Game::m_m_I(var4));
+   jint var8 = jmul32(6, Game::m_l_I(var4));
    jint var9 = jshl32((jint)(var0), (jint)(8));
    jint var10 = jshl32((jint)(var1), (jint)(8));
    jboolean var11 = false;
    while (((var10 < jshl32((jint)(var3), (jint)(8))))) {
-      jint var12 = (var9 + var7);
-      jint var13 = (var10 + var8);
+      jint var12 = jadd32(var9, var7);
+      jint var13 = jadd32(var10, var8);
       jint var14 = jshr32((jint)(var9), (jint)(8));
       jint var15 = jshr32((jint)(var10), (jint)(8));
       jint var16 = var14;
-      jint var17 = (var15 + 4);
+      jint var17 = jadd32(var15, 4);
       jboolean var18 = false;
       if (((((var5 == 0) && (var10 >= var6)) && (!var11)))) {
          (var18 = true);
@@ -3952,9 +3952,9 @@ void Game::m_a_IIIIIII(jint var0, jint var1, jint var2, jint var3, jint var4, ji
       if ((var18)) {
          jint var19{};
          if (((((var19 = (Game::stateFrame % 14))) <= 9))) {
-            ((Game::b)[24])->m_a_GraphicsIIIIIII(Game::graphics, 14, 0, var14, (var15 + 3), 0, 0, 0);
+            ((Game::b)[24])->m_a_GraphicsIIIIIII(Game::graphics, 14, 0, var14, jadd32(var15, 3), 0, 0, 0);
          } else {
-            ((Game::b)[24])->m_a_GraphicsIIIIIII(Game::graphics, 14, (var19 - 9), var14, (var15 + 3), 0, 0, 0);
+            ((Game::b)[24])->m_a_GraphicsIIIIIII(Game::graphics, 14, jsub32(var19, 9), var14, jadd32(var15, 3), 0, 0, 0);
          }
          (var11 = true);
          (var13++);
@@ -3962,13 +3962,13 @@ void Game::m_a_IIIIIII(jint var0, jint var1, jint var2, jint var3, jint var4, ji
          Game::m_b_I(16777215);
          Game::m_d_IIII(var14, var15, var16, var17);
          Game::m_b_I(13027014);
-         Game::m_d_IIII((var14 - 2), (var15 + 2), (var16 - 2), (var17 + 2));
-         Game::m_d_IIII((var14 + 1), (var15 + 2), (var16 + 1), (var17 + 2));
+         Game::m_d_IIII(jsub32(var14, 2), jadd32(var15, 2), jsub32(var16, 2), jadd32(var17, 2));
+         Game::m_d_IIII(jadd32(var14, 1), jadd32(var15, 2), jadd32(var16, 1), jadd32(var17, 2));
          Game::m_b_I(7631988);
-         Game::m_d_IIII((var14 - 1), var15, (var16 - 1), var17);
+         Game::m_d_IIII(jsub32(var14, 1), var15, jsub32(var16, 1), var17);
          Game::m_b_I(6579300);
-         Game::m_d_IIII((var14 - 3), (var15 + 2), (var16 - 3), (var17 + 2));
-         Game::m_d_IIII((var14 + 2), (var15 + 2), (var16 + 2), (var17 + 2));
+         Game::m_d_IIII(jsub32(var14, 3), jadd32(var15, 2), jsub32(var16, 3), jadd32(var17, 2));
+         Game::m_d_IIII(jadd32(var14, 2), jadd32(var15, 2), jadd32(var16, 2), jadd32(var17, 2));
       }
       (var9 = var12);
       (var10 = var13);
@@ -3978,7 +3978,7 @@ void Game::m_a_IIIIIII(jint var0, jint var1, jint var2, jint var3, jint var4, ji
 void Game::m_f_II(jint var0, jint var1) {
    if (((Game::bs <= 0))) {
       jint var2 = jdiv32(11141120, var1);
-      jint var3 = jshr32((jint)((var0 * var2)), (jint)(16));
+      jint var3 = jshr32((jint)(jmul32(var0, var2)), (jint)(16));
       if (((var0 == var1))) {
          (var3 = 170);
       }
@@ -3993,7 +3993,7 @@ void Game::m_f_II(jint var0, jint var1) {
 }
 
 void Game::m_c_III(jint var0, jint var1, jint var2) {
-   jint var3 = (var0 + var1);
+   jint var3 = jadd32(var0, var1);
    if ((((((var0 <= 320) && (var3 >= 0)) && (var2 > 0)) && (var2 <= 240)))) {
       if (((var0 < 0))) {
          (var0 = 0);
@@ -4009,40 +4009,40 @@ void Game::m_c_III(jint var0, jint var1, jint var2) {
             jint var7 = Game::m_i_II(5, 7);
             jint var8 = Game::m_i_II(2, 4);
             jint var9 = var0;
-            jint var10 = (var2 - Game::m_i_II(0, 3));
+            jint var10 = jsub32(var2, Game::m_i_II(0, 3));
             jint var11 = 0;
             jint var12 = var0;
             if (((var6 == 0))) {
-               while ((((var9 < (var3 - 5)) || (var12 < (var3 - 5))))) {
-                  (var12 = (var9 + ((var7 * ([&]{ auto _t2 = Game::eT; auto _t3 = Game::m_i_II(0, 10); return _t2[_t3]; }())) / 1000)));
-                  (var11 = ((var2 - var8) + Game::m_i_II(-1, 2)));
+               while ((((var9 < jsub32(var3, 5)) || (var12 < jsub32(var3, 5))))) {
+                  (var12 = jadd32(var9, (jmul32(var7, ([&]{ auto _t2 = Game::eT; auto _t3 = Game::m_i_II(0, 10); return _t2[_t3]; }())) / 1000)));
+                  (var11 = jadd32(jsub32(var2, var8), Game::m_i_II(-1, 2)));
                   Game::m_d_IIII(var10, var9, var11, var12);
                   if (((Game::m_i_II(0, 4) == 0))) {
-                     Game::m_d_IIII(var11, var12, var11, (var12 + 1));
+                     Game::m_d_IIII(var11, var12, var11, jadd32(var12, 1));
                      (var12++);
                   }
-                  (var9 = (var12 + ((var7 * ([&]{ auto _t4 = Game::eT; auto _t5 = Game::m_i_II(0, 10); return _t4[_t5]; }())) / 1000)));
-                  (var10 = ((var2 + var8) + Game::m_i_II(-1, 2)));
+                  (var9 = jadd32(var12, (jmul32(var7, ([&]{ auto _t4 = Game::eT; auto _t5 = Game::m_i_II(0, 10); return _t4[_t5]; }())) / 1000)));
+                  (var10 = jadd32(jadd32(var2, var8), Game::m_i_II(-1, 2)));
                   Game::m_d_IIII(var11, var12, var10, var9);
                   if (((Game::m_i_II(0, 4) == 0))) {
-                     Game::m_d_IIII(var10, var9, var10, (var9 + 1));
+                     Game::m_d_IIII(var10, var9, var10, jadd32(var9, 1));
                      (var9++);
                   }
                }
             } else {
-               while ((((var9 < (var3 - 5)) || (var12 < (var3 - 5))))) {
-                  (var12 = (var9 + ((var7 * ([&]{ auto _t6 = Game::eT; auto _t7 = Game::m_i_II(0, 10); return _t6[_t7]; }())) / 1000)));
-                  (var11 = ((var2 + var8) + Game::m_i_II(-1, 2)));
+               while ((((var9 < jsub32(var3, 5)) || (var12 < jsub32(var3, 5))))) {
+                  (var12 = jadd32(var9, (jmul32(var7, ([&]{ auto _t6 = Game::eT; auto _t7 = Game::m_i_II(0, 10); return _t6[_t7]; }())) / 1000)));
+                  (var11 = jadd32(jadd32(var2, var8), Game::m_i_II(-1, 2)));
                   Game::m_d_IIII(var10, var9, var11, var12);
                   if (((Game::m_i_II(0, 4) == 0))) {
-                     Game::m_d_IIII(var11, var12, var11, (var12 + 1));
+                     Game::m_d_IIII(var11, var12, var11, jadd32(var12, 1));
                      (var12++);
                   }
-                  (var9 = (var12 + ((var7 * ([&]{ auto _t8 = Game::eT; auto _t9 = Game::m_i_II(0, 10); return _t8[_t9]; }())) / 1000)));
-                  (var10 = ((var2 - var8) + Game::m_i_II(-1, 2)));
+                  (var9 = jadd32(var12, (jmul32(var7, ([&]{ auto _t8 = Game::eT; auto _t9 = Game::m_i_II(0, 10); return _t8[_t9]; }())) / 1000)));
+                  (var10 = jadd32(jsub32(var2, var8), Game::m_i_II(-1, 2)));
                   Game::m_d_IIII(var11, var12, var10, var9);
                   if (((Game::m_i_II(0, 4) == 0))) {
-                     Game::m_d_IIII(var10, var9, var10, (var9 + 1));
+                     Game::m_d_IIII(var10, var9, var10, jadd32(var9, 1));
                      (var9++);
                   }
                }
@@ -4056,22 +4056,22 @@ void Game::m_q_II(jint var0, jint var1) {
    if (((var0 == 0))) {
       Game::m_a_String(jlit(u"/21"));
       if (((!Game::m_T_I(var1)))) {
-         (Game::eA = Game::m_U_I((Game::bV)[((var1 * 4) + 0)]));
+         (Game::eA = Game::m_U_I((Game::bV)[jadd32(jmul32(var1, 4), 0)]));
       }
    } else if (((var0 == 1))) {
       if (((!Game::m_T_I(var1)))) {
-         (Game::eB = Game::m_U_I((Game::bV)[((var1 * 4) + 1)]));
+         (Game::eB = Game::m_U_I((Game::bV)[jadd32(jmul32(var1, 4), 1)]));
       }
    } else if (((var0 == 2))) {
-      (Game::eC = Game::m_U_I((Game::bV)[((var1 * 4) + 2)]));
+      (Game::eC = Game::m_U_I((Game::bV)[jadd32(jmul32(var1, 4), 2)]));
    } else if (((var0 == 3))) {
-      (Game::eD = Game::m_U_I((Game::bV)[((var1 * 4) + 3)]));
+      (Game::eD = Game::m_U_I((Game::bV)[jadd32(jmul32(var1, 4), 3)]));
    } else if (((var0 == 4))) {
       (Game::eY = true);
       Game::m_B_V();
    } else if (((var0 == 5))) {
       if (((!Game::m_T_I(var1)))) {
-         jbyte var2 = (Game::bW)[((var1 * 4) + 0)];
+         jbyte var2 = (Game::bW)[jadd32(jmul32(var1, 4), 0)];
          if ((((Game::state == 20) && (var1 == 12)))) {
             (var2 = 1);
          }
@@ -4083,7 +4083,7 @@ void Game::m_q_II(jint var0, jint var1) {
       }
    } else if (((var0 == 6))) {
       if (((!Game::m_T_I(var1)))) {
-         jbyte var3 = (Game::bW)[((var1 * 4) + 1)];
+         jbyte var3 = (Game::bW)[jadd32(jmul32(var1, 4), 1)];
          if ((((Game::state == 20) && (var1 == 12)))) {
             (var3 = 1);
          }
@@ -4092,7 +4092,7 @@ void Game::m_q_II(jint var0, jint var1) {
          (Game::eB)->m_a_V();
       }
    } else if (((var0 == 7))) {
-      jbyte var4 = (Game::bW)[((var1 * 4) + 2)];
+      jbyte var4 = (Game::bW)[jadd32(jmul32(var1, 4), 2)];
       if ((((Game::state == 20) && (var1 == 12)))) {
          (var4 = 1);
       }
@@ -4100,7 +4100,7 @@ void Game::m_q_II(jint var0, jint var1) {
       (Game::eC)->m_a_IIII(var4, 0, -1, -1);
       (Game::eC)->m_a_V();
    } else if (((var0 == 8))) {
-      jbyte var5 = (Game::bW)[((var1 * 4) + 3)];
+      jbyte var5 = (Game::bW)[jadd32(jmul32(var1, 4), 3)];
       if ((((Game::state == 20) && (var1 == 12)))) {
          (var5 = 1);
       }
@@ -4128,46 +4128,46 @@ void Game::m_ax_V() {
 
 void Game::m_a_IIZ(jint var0, jint var1, jboolean var2) {
    if (((var1 < 0))) {
-      (var1 = (jint)((var1 - 20)));
+      (var1 = (jint)(jsub32(var1, 20)));
    }
    jint var3{};
    jint var7 = (var3 = (var0 / 20));
    jint var5{};
-   jint var8 = (var5 = ((((var0 + 240) - 1)) / 20));
+   jint var8 = (var5 = ((jsub32(jadd32(var0, 240), 1)) / 20));
    jint var4 = (var1 / 20);
-   jint var6 = ((((var1 + 320) - 1)) / 20);
+   jint var6 = ((jsub32(jadd32(var1, 320), 1)) / 20);
    if (((var1 < 0))) {
-      (var1 = (jint)((var1 + 20)));
+      (var1 = (jint)(jadd32(var1, 20)));
    }
    if (((var3 < 0))) {
       (var3 = 0);
       (var7 = 0);
-   } else if ((((var3 > (Game::cC - 1)) && (!var2)))) {
-      (var3 = (Game::cC - 1));
+   } else if ((((var3 > jsub32(Game::cC, 1)) && (!var2)))) {
+      (var3 = jsub32(Game::cC, 1));
    }
    if (((var4 < 0))) {
       (var4 = 0);
-   } else if (((var4 > (Game::cE - 1)))) {
-      (var4 = (Game::cE - 1));
+   } else if (((var4 > jsub32(Game::cE, 1)))) {
+      (var4 = jsub32(Game::cE, 1));
    }
    if ((((!Game::eY) && (((var3 != Game::eZ) || (var5 != Game::fb)))))) {
       if ((((var5 < Game::eZ) || (var3 > Game::fb)))) {
          (Game::eY = true);
       } else if (((var3 < Game::eZ))) {
          (var7 = Game::eZ);
-         Game::m_l_IIII(var3, var4, (Game::eZ - 1), var6);
+         Game::m_l_IIII(var3, var4, jsub32(Game::eZ, 1), var6);
       } else if (((var5 > Game::fb))) {
          (var8 = Game::fb);
-         Game::m_l_IIII((Game::fb + 1), var4, var5, var6);
+         Game::m_l_IIII(jadd32(Game::fb, 1), var4, var5, var6);
       }
    }
    if ((((!Game::eY) && (((var4 != Game::fa) || (var6 != Game::fc)))))) {
       if ((((var6 < Game::fa) || (var4 > Game::fc)))) {
          (Game::eY = true);
       } else if (((var4 < Game::fa))) {
-         Game::m_l_IIII(var7, var4, var8, (Game::fa - 1));
+         Game::m_l_IIII(var7, var4, var8, jsub32(Game::fa, 1));
       } else if (((var6 > Game::fc))) {
-         Game::m_l_IIII(var7, (Game::fc + 1), var8, var6);
+         Game::m_l_IIII(var7, jadd32(Game::fc, 1), var8, var6);
       }
    }
    if ((Game::eY)) {
@@ -4191,7 +4191,7 @@ void Game::m_l_IIII(jint var0, jint var1, jint var2, jint var3) {
             jint var8 = var0;
             for (; (var8 <= var2); (var8++)) {
                jint var4 = (var8 % 13);
-               Game::m_a_GraphicsIII(Game::eX, (var4 * 20), (var5 * 20), (jrem32(var8, Game::cC) + (var7 * Game::cC)));
+               Game::m_a_GraphicsIII(Game::eX, jmul32(var4, 20), jmul32(var5, 20), jadd32(jrem32(var8, Game::cC), jmul32(var7, Game::cC)));
             }
          }
       }
@@ -4200,22 +4200,22 @@ void Game::m_l_IIII(jint var0, jint var1, jint var2, jint var3) {
 
 void Game::m_e_III(jint var0, jint var1, jint var2) {
    if (((var1 < 0))) {
-      (var1 = (jint)((var1 - 20)));
+      (var1 = (jint)(jsub32(var1, 20)));
    }
    jint var5 = PortConfig::firstColumn(var0);
-   jint var6 = ((var1 / 20) - PortConfig::tileMargin());
+   jint var6 = jsub32((var1 / 20), PortConfig::tileMargin());
    jint var7 = PortConfig::lastColumn(var0);
-   jint var8 = (((((var1 + 320) - 1)) / 20) + PortConfig::tileMargin());
+   jint var8 = jadd32(((jsub32(jadd32(var1, 320), 1)) / 20), PortConfig::tileMargin());
    PortConfig::clipWorld(Game::graphics);
    if (((var1 < 0))) {
-      (var1 = (jint)((var1 + 20)));
+      (var1 = (jint)(jadd32(var1, 20)));
    }
-   PortNative::layerTiles(var2, (PortConfig::worldTx - var0), (-var1));
-   jint var3 = ((var5 * 20) - var0);
+   PortNative::layerTiles(var2, jsub32(PortConfig::worldTx, var0), jneg32(var1));
+   jint var3 = jsub32(jmul32(var5, 20), var0);
    {
       jint var9 = var5;
       for (; (var9 <= var7); (var9++)) {
-         jint var4 = (((var6 * 20) - var1) + 0);
+         jint var4 = jadd32(jsub32(jmul32(var6, 20), var1), 0);
          jint var10 = var9;
          if (((var9 < 0))) {
             (var10 = PortConfig::wrapColumn(var9, ((var2 == 2) ? Game::cD : Game::cy)));
@@ -4229,50 +4229,50 @@ void Game::m_e_III(jint var0, jint var1, jint var2) {
             for (; (var11 <= var8); (var11++)) {
                if ((((var2 != 0) && (((PortConfig::tileMargin() == 0) || PortConfig::rowInside(var11, ((var2 == 1) ? (Game::fm).length() : (Game::fh).length()), ((var2 == 1) ? Game::cy : Game::cD))))))) {
                   if (((var2 == 1))) {
-                     Game::m_a_GraphicsABABBSpriteIII(Game::graphics, Game::fm, Game::fn, Game::eC, var3, var4, (var10 + (var11 * Game::cy)));
-                     Game::m_a_GraphicsABABBSpriteIII(Game::graphics, Game::fo, Game::fp, Game::eD, var3, var4, (var10 + (var11 * Game::cy)));
+                     Game::m_a_GraphicsABABBSpriteIII(Game::graphics, Game::fm, Game::fn, Game::eC, var3, var4, jadd32(var10, jmul32(var11, Game::cy)));
+                     Game::m_a_GraphicsABABBSpriteIII(Game::graphics, Game::fo, Game::fp, Game::eD, var3, var4, jadd32(var10, jmul32(var11, Game::cy)));
                   } else {
-                     Game::m_a_GraphicsABABBSpriteIII(Game::graphics, Game::fh, Game::fi, Game::eB, var3, var4, (var10 + (var11 * Game::cD)));
+                     Game::m_a_GraphicsABABBSpriteIII(Game::graphics, Game::fh, Game::fi, Game::eB, var3, var4, jadd32(var10, jmul32(var11, Game::cD)));
                   }
                }
-               (var4 = (jint)((var4 + 20)));
+               (var4 = (jint)(jadd32(var4, 20)));
             }
          }
-         (var3 = (jint)((var3 + 20)));
+         (var3 = (jint)(jadd32(var3, 20)));
       }
    }
-   PortNative::layerWorld((PortConfig::worldTx - Game::cameraX), (-Game::cameraY));
+   PortNative::layerWorld(jsub32(PortConfig::worldTx, Game::cameraX), jneg32(Game::cameraY));
 }
 
 void Game::m_r_II(jint var0, jint var1) {
    if (((var1 < 0))) {
-      (var1 = ((var1 % 340) + 340));
+      (var1 = jadd32((var1 % 340), 340));
    }
    jint var2 = (var0 % 260);
    jint var4 = (var1 % 340);
-   jint var3 = (((var0 + 240)) % 260);
-   jint var5 = (((var1 + 320)) % 340);
+   jint var3 = ((jadd32(var0, 240)) % 260);
+   jint var5 = ((jadd32(var1, 320)) % 340);
    if (((var3 > var2))) {
       if (((var5 > var4))) {
          Game::m_d_IIIIII(var2, var4, 240, 320, 0, 0);
       } else {
-         Game::m_d_IIIIII(var2, var4, 240, (320 - var5), 0, 0);
-         Game::m_d_IIIIII(var2, 0, 240, var5, 0, (320 - var5));
+         Game::m_d_IIIIII(var2, var4, 240, jsub32(320, var5), 0, 0);
+         Game::m_d_IIIIII(var2, 0, 240, var5, 0, jsub32(320, var5));
       }
    } else if (((var5 > var4))) {
-      Game::m_d_IIIIII(var2, var4, (240 - var3), 320, 0, 0);
-      Game::m_d_IIIIII(0, var4, var3, 320, (240 - var3), 0);
+      Game::m_d_IIIIII(var2, var4, jsub32(240, var3), 320, 0, 0);
+      Game::m_d_IIIIII(0, var4, var3, 320, jsub32(240, var3), 0);
    } else {
-      Game::m_d_IIIIII(var2, var4, (240 - var3), (320 - var5), 0, 0);
-      Game::m_d_IIIIII(var2, 0, (240 - var3), var5, 0, (320 - var5));
-      Game::m_d_IIIIII(0, var4, var3, (320 - var5), (240 - var3), 0);
-      Game::m_d_IIIIII(0, 0, var3, var5, (240 - var3), (320 - var5));
+      Game::m_d_IIIIII(var2, var4, jsub32(240, var3), jsub32(320, var5), 0, 0);
+      Game::m_d_IIIIII(var2, 0, jsub32(240, var3), var5, 0, jsub32(320, var5));
+      Game::m_d_IIIIII(0, var4, var3, jsub32(320, var5), jsub32(240, var3), 0);
+      Game::m_d_IIIIII(0, 0, var3, var5, jsub32(240, var3), jsub32(320, var5));
    }
 }
 
 void Game::m_d_IIIIII(jint var0, jint var1, jint var2, jint var3, jint var4, jint var5) {
    Game::m_j_IIII(var4, var5, var2, var3);
-   Game::m_a_ImageIII(Game::eW, (var4 - var0), (var5 - var1), 0);
+   Game::m_a_ImageIII(Game::eW, jsub32(var4, var0), jsub32(var5, var1), 0);
 }
 
 void Game::m_a_GraphicsIII(Ref<Graphics> var0, jint var1, jint var2, jint var3) {
@@ -4280,7 +4280,7 @@ void Game::m_a_GraphicsIII(Ref<Graphics> var0, jint var1, jint var2, jint var3) 
       jint var6 = 0;
       jint var4 = ((Game::fk)[var3] & 255);
       jint var5{};
-      if (((((var5 = (jshr32((jint)((((Game::fl)[jshr32((jint)(var3), (jint)(2))] & 255))), (jint)((jshl32((jint)((3 - ((var3 & 3)))), (jint)(1))))) & 3))) != 0))) {
+      if (((((var5 = (jshr32((jint)((((Game::fl)[jshr32((jint)(var3), (jint)(2))] & 255))), (jint)((jshl32((jint)(jsub32(3, ((var3 & 3)))), (jint)(1))))) & 3))) != 0))) {
          if (((((var5 & 1)) != 0))) {
             (var6 = 2);
          }
@@ -4288,8 +4288,8 @@ void Game::m_a_GraphicsIII(Ref<Graphics> var0, jint var1, jint var2, jint var3) 
             (var6 = (jint)((var6 | 1)));
          }
       }
-      jint var7 = jrem32((var4 * 20), (Game::eV)->getWidth());
-      jint var8 = (jdiv32((var4 * 20), (Game::eV)->getWidth()) * 20);
+      jint var7 = jrem32(jmul32(var4, 20), (Game::eV)->getWidth());
+      jint var8 = jmul32(jdiv32(jmul32(var4, 20), (Game::eV)->getWidth()), 20);
       (var0)->drawRegion(Game::eV, var7, var8, 20, 20, var6, var1, var2, 20);
    }
 }
@@ -4303,7 +4303,7 @@ void Game::m_a_GraphicsABABBSpriteIII(Ref<Graphics> var0, Arr<jbyte> var1, Arr<j
       jint var9 = 0;
       jint var7 = ((var1)[var6] & 255);
       jint var8{};
-      if (((((var8 = (jshr32((jint)((((var2)[jshr32((jint)(var6), (jint)(2))] & 255))), (jint)((jshl32((jint)((3 - ((var6 & 3)))), (jint)(1))))) & 3))) != 0))) {
+      if (((((var8 = (jshr32((jint)((((var2)[jshr32((jint)(var6), (jint)(2))] & 255))), (jint)((jshl32((jint)(jsub32(3, ((var6 & 3)))), (jint)(1))))) & 3))) != 0))) {
          if (((((var8 & 1)) != 0))) {
             (var9 = 2);
          }
@@ -4480,23 +4480,23 @@ Ref<Actor> Game::m_j_I(jint var0) {
 }
 
 void Game::m_a_ActorI(Ref<Actor> var0, jint var1) {
-   ((Actor::bH)[(var1 * 18)] = ((jbyte)((var0)->animationId)));
-   ((Actor::bH)[((var1 * 18) + 1)] = ((jbyte)((var0)->h)));
-   Game::m_a_ABIS(Actor::bH, ((var1 * 18) + 2), ((jshort)((var0)->positionX)));
-   Game::m_a_ABIS(Actor::bH, ((var1 * 18) + 4), ((jshort)((var0)->positionY)));
-   Game::m_b_ABII(Actor::bH, ((var1 * 18) + 6), (var0)->aq);
-   Game::m_b_ABII(Actor::bH, ((var1 * 18) + 10), (var0)->c);
-   Game::m_b_ABII(Actor::bH, ((var1 * 18) + 14), (var0)->aA);
+   ((Actor::bH)[jmul32(var1, 18)] = ((jbyte)((var0)->animationId)));
+   ((Actor::bH)[jadd32(jmul32(var1, 18), 1)] = ((jbyte)((var0)->h)));
+   Game::m_a_ABIS(Actor::bH, jadd32(jmul32(var1, 18), 2), ((jshort)((var0)->positionX)));
+   Game::m_a_ABIS(Actor::bH, jadd32(jmul32(var1, 18), 4), ((jshort)((var0)->positionY)));
+   Game::m_b_ABII(Actor::bH, jadd32(jmul32(var1, 18), 6), (var0)->aq);
+   Game::m_b_ABII(Actor::bH, jadd32(jmul32(var1, 18), 10), (var0)->c);
+   Game::m_b_ABII(Actor::bH, jadd32(jmul32(var1, 18), 14), (var0)->aA);
 }
 
 void Game::m_b_ActorI(Ref<Actor> var0, jint var1) {
-   ((var0)->animationId = (Actor::bH)[(var1 * 18)]);
-   ((var0)->h = (Actor::bH)[((var1 * 18) + 1)]);
-   ((var0)->positionX = Game::m_b_ABI(Actor::bH, ((var1 * 18) + 2)));
-   ((var0)->positionY = Game::m_b_ABI(Actor::bH, ((var1 * 18) + 4)));
-   ((var0)->aq = Game::m_c_ABI(Actor::bH, ((var1 * 18) + 6)));
-   ((var0)->c = Game::m_c_ABI(Actor::bH, ((var1 * 18) + 10)));
-   ((var0)->aA = Game::m_c_ABI(Actor::bH, ((var1 * 18) + 14)));
+   ((var0)->animationId = (Actor::bH)[jmul32(var1, 18)]);
+   ((var0)->h = (Actor::bH)[jadd32(jmul32(var1, 18), 1)]);
+   ((var0)->positionX = Game::m_b_ABI(Actor::bH, jadd32(jmul32(var1, 18), 2)));
+   ((var0)->positionY = Game::m_b_ABI(Actor::bH, jadd32(jmul32(var1, 18), 4)));
+   ((var0)->aq = Game::m_c_ABI(Actor::bH, jadd32(jmul32(var1, 18), 6)));
+   ((var0)->c = Game::m_c_ABI(Actor::bH, jadd32(jmul32(var1, 18), 10)));
+   ((var0)->aA = Game::m_c_ABI(Actor::bH, jadd32(jmul32(var1, 18), 14)));
 }
 
 void Game::m_h_Actor(Ref<Actor> var0) {
@@ -4534,21 +4534,21 @@ void Game::m_i_Actor(Ref<Actor> var0) {
 }
 
 void Game::m_c_ActorI(Ref<Actor> var0, jint var1) {
-   Game::m_a_ABIS(Actor::dx, ((var1 * 20) + 0), ((jshort)((var0)->positionX)));
-   Game::m_a_ABIS(Actor::dx, ((var1 * 20) + 2), ((jshort)((var0)->positionY)));
-   Game::m_b_ABII(Actor::dx, ((var1 * 20) + 4), ((jshort)((var0)->G)));
-   Game::m_b_ABII(Actor::dx, ((var1 * 20) + 8), ((jshort)((var0)->H)));
-   Game::m_b_ABII(Actor::dx, ((var1 * 20) + 12), (var0)->aq);
-   Game::m_b_ABII(Actor::dx, ((var1 * 20) + 16), (var0)->c);
+   Game::m_a_ABIS(Actor::dx, jadd32(jmul32(var1, 20), 0), ((jshort)((var0)->positionX)));
+   Game::m_a_ABIS(Actor::dx, jadd32(jmul32(var1, 20), 2), ((jshort)((var0)->positionY)));
+   Game::m_b_ABII(Actor::dx, jadd32(jmul32(var1, 20), 4), ((jshort)((var0)->G)));
+   Game::m_b_ABII(Actor::dx, jadd32(jmul32(var1, 20), 8), ((jshort)((var0)->H)));
+   Game::m_b_ABII(Actor::dx, jadd32(jmul32(var1, 20), 12), (var0)->aq);
+   Game::m_b_ABII(Actor::dx, jadd32(jmul32(var1, 20), 16), (var0)->c);
 }
 
 void Game::m_d_ActorI(Ref<Actor> var0, jint var1) {
-   ((var0)->positionX = Game::m_b_ABI(Actor::dx, ((var1 * 20) + 0)));
-   ((var0)->positionY = Game::m_b_ABI(Actor::dx, ((var1 * 20) + 2)));
-   ((var0)->G = Game::m_c_ABI(Actor::dx, ((var1 * 20) + 4)));
-   ((var0)->H = Game::m_c_ABI(Actor::dx, ((var1 * 20) + 8)));
-   ((var0)->aq = Game::m_c_ABI(Actor::dx, ((var1 * 20) + 12)));
-   ((var0)->c = Game::m_c_ABI(Actor::dx, ((var1 * 20) + 16)));
+   ((var0)->positionX = Game::m_b_ABI(Actor::dx, jadd32(jmul32(var1, 20), 0)));
+   ((var0)->positionY = Game::m_b_ABI(Actor::dx, jadd32(jmul32(var1, 20), 2)));
+   ((var0)->G = Game::m_c_ABI(Actor::dx, jadd32(jmul32(var1, 20), 4)));
+   ((var0)->H = Game::m_c_ABI(Actor::dx, jadd32(jmul32(var1, 20), 8)));
+   ((var0)->aq = Game::m_c_ABI(Actor::dx, jadd32(jmul32(var1, 20), 12)));
+   ((var0)->c = Game::m_c_ABI(Actor::dx, jadd32(jmul32(var1, 20), 16)));
 }
 
 jboolean Game::m_O_I(jint var0) {
@@ -4572,7 +4572,7 @@ void Game::m_f_Z(jboolean var0) {
       {
          jint var5 = 0;
          for (; (var5 < var1); (var5++)) {
-            ((Game::cr)[var5] = ((jshort)((([&]{ auto _t0 = (((Game::cs)[(var2++)] & 255)); auto _t1 = (jshl32((jint)((Game::cs)[(var2++)]), (jint)(8))); return (_t0 + _t1); }())))));
+            ((Game::cr)[var5] = ((jshort)((([&]{ auto _t0 = (((Game::cs)[(var2++)] & 255)); auto _t1 = (jshl32((jint)((Game::cs)[(var2++)]), (jint)(8))); return jadd32(_t0, _t1); }())))));
          }
       }
       jboolean var11 = false;
@@ -4598,10 +4598,10 @@ void Game::m_f_Z(jboolean var0) {
             if (((!var0))) {
                ((((var12 = jnew<Actor>(Game::cr, var4, var1))))->af = var8);
             } else {
-               if (((((Game::cq)[(var10 - 1)] == -99) && Game::m_O_I(var7)))) {
+               if (((((Game::cq)[jsub32(var10, 1)] == -99) && Game::m_O_I(var7)))) {
                   continue;
                }
-               ((Game::cq)[(var10 - 1)] = 0);
+               ((Game::cq)[jsub32(var10, 1)] = 0);
                ((((var12 = jnew<Actor>(Game::cr, var4, var1))))->af = var8);
             }
          }
@@ -4620,7 +4620,7 @@ void Game::m_f_Z(jboolean var0) {
             if (((((var12)->type == 28) && (Game::cb == nullptr)))) {
                (Game::cb = var12);
             }
-            (((Game::actors)[(Game::actorCount - 1)])->af = (var10 - 1));
+            (((Game::actors)[jsub32(Game::actorCount, 1)])->af = jsub32(var10, 1));
             (var12)->m_a_AS(Game::cr);
          }
       }
@@ -4702,7 +4702,7 @@ void Game::m_aB_V() {
       {
          jint var3 = 0;
          for (; (var3 < var4); (var3++)) {
-            ((var1)[var3] = ((jshort)((([&]{ auto _t0 = (((Game::cs)[(var2++)] & 255)); auto _t1 = (jshl32((jint)((Game::cs)[(var2++)]), (jint)(8))); return (_t0 + _t1); }())))));
+            ((var1)[var3] = ((jshort)((([&]{ auto _t0 = (((Game::cs)[(var2++)] & 255)); auto _t1 = (jshl32((jint)((Game::cs)[(var2++)]), (jint)(8))); return jadd32(_t0, _t1); }())))));
          }
       }
       if (((((var1)[0] < (Actor::bs).length()) && ((Actor::bs)[(var1)[0]] != -1)))) {
@@ -4796,7 +4796,7 @@ jboolean Game::m_Q_I(jint var0) {
       if (((var0 == 1))) {
          (Game::eF = nullptr);
          (Game::bh = false);
-         Game::m_V_I((1 + (((Game::levelIndex == 16) ? 11 : Game::levelIndex))));
+         Game::m_V_I(jadd32(1, (((Game::levelIndex == 16) ? 11 : Game::levelIndex))));
          if ((((Game::levelIndex == 8) || (Game::levelIndex == 9)))) {
             (Game::bo = -1);
          }
@@ -4804,7 +4804,7 @@ jboolean Game::m_Q_I(jint var0) {
          Game::m_ax_V();
       } else if (((var0 < 14))) {
          jint var1{};
-         Game::m_q_II((var1 = (var0 - 4)), Game::levelIndex);
+         Game::m_q_II((var1 = jsub32(var0, 4)), Game::levelIndex);
       } else if (((var0 < 15))) {
          Game::m_c_IZ(Game::levelIndex, true);
          (Game::i = jnewarray<Arr<jint>>(19200));
@@ -4822,7 +4822,7 @@ jboolean Game::m_Q_I(jint var0) {
          Game::m_a_String(jlit(u"/2"));
          Game::m_aB_V();
       } else if ((((var0 < 70) && (var0 > 17)))) {
-         jint var5 = (var0 - 18);
+         jint var5 = jsub32(var0, 18);
          if ((((Game::fe)[var5] == 1))) {
             if ((((31 != var5) && (17 != var5)))) {
                ([&]{ auto _t0 = Game::b; auto _t1 = var5; auto _t2 = (Ref<BSprite>)(Game::m_U_I(var5)); return _t0[_t1] = _t2; }());
@@ -4971,7 +4971,7 @@ void Game::m_z_V() {
       {
          jint var0 = 0;
          for (; (var0 < 11); (var0++)) {
-            ([&]{ auto _t0 = Game::cw; auto _t1 = var0; auto _t2 = (jshort)(Game::m_b_ABI(Game::dt, (90 + (2 * var0)))); return _t0[_t1] = _t2; }());
+            ([&]{ auto _t0 = Game::cw; auto _t1 = var0; auto _t2 = (jshort)(Game::m_b_ABI(Game::dt, jadd32(90, jmul32(2, var0)))); return _t0[_t1] = _t2; }());
          }
       }
       (Game::cv = (Game::cw)[Game::levelIndex]);
@@ -4981,7 +4981,7 @@ void Game::m_z_V() {
             {
                jint var1 = 0;
                for (; (var1 < 30); (var1++)) {
-                  ([&]{ auto _t3 = (Game::ct)[var2]; auto _t4 = var1; auto _t5 = (jshort)(Game::m_b_ABI(Game::dt, ((112 + ((var2 * 30) * 2)) + (var1 * 2)))); return _t3[_t4] = _t5; }());
+                  ([&]{ auto _t3 = (Game::ct)[var2]; auto _t4 = var1; auto _t5 = (jshort)(Game::m_b_ABI(Game::dt, jadd32(jadd32(112, jmul32(jmul32(var2, 30), 2)), jmul32(var1, 2)))); return _t3[_t4] = _t5; }());
                }
             }
          }
@@ -4990,7 +4990,7 @@ void Game::m_z_V() {
       {
          jint var3 = 0;
          for (; (var3 < Game::cc); (var3++)) {
-            ([&]{ auto _t6 = Game::cq; auto _t7 = var3; auto _t8 = (jbyte)(Game::m_a_ABI(Game::dt, (1127 + var3))); return _t6[_t7] = _t8; }());
+            ([&]{ auto _t6 = Game::cq; auto _t7 = var3; auto _t8 = (jbyte)(Game::m_a_ABI(Game::dt, jadd32(1127, var3))); return _t6[_t7] = _t8; }());
          }
       }
    }
@@ -5021,10 +5021,10 @@ void Game::m_aE_V() {
       ([&]{ auto _t16 = Game::player; auto _t17 = (jboolean)((Game::m_b_ABI(Game::dt, 22) == 1)); return _t16->facingLeft = _t17; }());
       (Game::bh = (Game::m_b_ABI(Game::dt, 24) == 1));
       if (((Game::levelIndex == 6))) {
-         ((Game::player)->positionY = (jint)(((Game::player)->positionY - 20)));
+         ((Game::player)->positionY = (jint)(jsub32((Game::player)->positionY, 20)));
       }
       if (((Game::levelIndex == 9))) {
-         ((Game::player)->positionY = (jint)(((Game::player)->positionY - 20)));
+         ((Game::player)->positionY = (jint)(jsub32((Game::player)->positionY, 20)));
       }
    }
    Game::m_A_V();
@@ -5036,7 +5036,7 @@ void Game::m_aE_V() {
    {
       jint var1 = 0;
       for (; (var1 < 3); (var1++)) {
-         ([&]{ auto _t18 = Actor::ej; auto _t19 = var1; auto _t20 = (jbyte)(Game::m_a_ABI(Game::dt, (802 + var1))); return _t18[_t19] = _t20; }());
+         ([&]{ auto _t18 = Actor::ej; auto _t19 = var1; auto _t20 = (jbyte)(Game::m_a_ABI(Game::dt, jadd32(802, var1))); return _t18[_t19] = _t20; }());
       }
    }
 }
@@ -5046,10 +5046,10 @@ void Game::m_A_V() {
    {
       jint var0 = 0;
       for (; (var0 < 2); (var0++)) {
-         ([&]{ auto _t0 = Actor::cj; auto _t1 = var0; auto _t2 = (jint)(Game::m_b_ABI(Game::dt, (32 + (2 * var0)))); return _t0[_t1] = _t2; }());
-         ([&]{ auto _t3 = Actor::ck; auto _t4 = var0; auto _t5 = (jint)(Game::m_b_ABI(Game::dt, (36 + (2 * var0)))); return _t3[_t4] = _t5; }());
-         ([&]{ auto _t6 = Actor::cl; auto _t7 = var0; auto _t8 = (jint)(Game::m_b_ABI(Game::dt, (40 + (2 * var0)))); return _t6[_t7] = _t8; }());
-         ([&]{ auto _t9 = Actor::cm; auto _t10 = var0; auto _t11 = (jint)(Game::m_b_ABI(Game::dt, (44 + (2 * var0)))); return _t9[_t10] = _t11; }());
+         ([&]{ auto _t0 = Actor::cj; auto _t1 = var0; auto _t2 = (jint)(Game::m_b_ABI(Game::dt, jadd32(32, jmul32(2, var0)))); return _t0[_t1] = _t2; }());
+         ([&]{ auto _t3 = Actor::ck; auto _t4 = var0; auto _t5 = (jint)(Game::m_b_ABI(Game::dt, jadd32(36, jmul32(2, var0)))); return _t3[_t4] = _t5; }());
+         ([&]{ auto _t6 = Actor::cl; auto _t7 = var0; auto _t8 = (jint)(Game::m_b_ABI(Game::dt, jadd32(40, jmul32(2, var0)))); return _t6[_t7] = _t8; }());
+         ([&]{ auto _t9 = Actor::cm; auto _t10 = var0; auto _t11 = (jint)(Game::m_b_ABI(Game::dt, jadd32(44, jmul32(2, var0)))); return _t9[_t10] = _t11; }());
       }
    }
    (Game::maxHealth = Game::m_b_ABI(Game::dt, 64));
@@ -5062,7 +5062,7 @@ void Game::m_A_V() {
    {
       jint var1 = 0;
       for (; (var1 < 8); (var1++)) {
-         ([&]{ auto _t12 = Game::aY; auto _t13 = var1; auto _t14 = (jint)(Game::m_b_ABI(Game::dt, (48 + (var1 * 2)))); return _t12[_t13] = _t14; }());
+         ([&]{ auto _t12 = Game::aY; auto _t13 = var1; auto _t14 = (jint)(Game::m_b_ABI(Game::dt, jadd32(48, jmul32(var1, 2)))); return _t12[_t13] = _t14; }());
       }
    }
    (Actor::bu = (Game::m_a_ABI(Game::dt, 781) == 1));
@@ -5083,13 +5083,13 @@ void Game::m_g_Z(jboolean var0) {
       {
          jint var1 = 0;
          for (; (var1 < 3); (var1++)) {
-            ([&]{ auto _t0 = Actor::bG; auto _t1 = var1; auto _t2 = (jshort)(Game::m_b_ABI(Game::dt, (792 + (var1 * 2)))); return _t0[_t1] = _t2; }());
+            ([&]{ auto _t0 = Actor::bG; auto _t1 = var1; auto _t2 = (jshort)(Game::m_b_ABI(Game::dt, jadd32(792, jmul32(var1, 2)))); return _t0[_t1] = _t2; }());
          }
       }
       {
          jint var6 = 0;
          for (; (var6 < 54); (var6++)) {
-            ([&]{ auto _t3 = Actor::bH; auto _t4 = var6; auto _t5 = (jbyte)(Game::m_a_ABI(Game::dt, (805 + var6))); return _t3[_t4] = _t5; }());
+            ([&]{ auto _t3 = Actor::bH; auto _t4 = var6; auto _t5 = (jbyte)(Game::m_a_ABI(Game::dt, jadd32(805, var6))); return _t3[_t4] = _t5; }());
          }
       }
    }
@@ -5104,28 +5104,28 @@ void Game::m_g_Z(jboolean var0) {
          (Game::cameraX = Game::ac);
          (Game::cameraY = Game::ad);
          ((Game::viewBounds)[0] = Game::cameraX);
-         ((Game::viewBounds)[2] = (Game::cameraX + 240));
+         ((Game::viewBounds)[2] = jadd32(Game::cameraX, 240));
          ((Game::viewBounds)[1] = Game::cameraY);
-         ((Game::viewBounds)[3] = (Game::cameraY + 320));
+         ((Game::viewBounds)[3] = jadd32(Game::cameraY, 320));
          (Game::aE = Game::m_b_ABI(Game::dt, 877));
       }
       {
          jint var7 = 0;
          for (; (var7 < 220); (var7++)) {
-            ([&]{ auto _t6 = Actor::dx; auto _t7 = var7; auto _t8 = (jbyte)(Game::m_a_ABI(Game::dt, (907 + var7))); return _t6[_t7] = _t8; }());
+            ([&]{ auto _t6 = Actor::dx; auto _t7 = var7; auto _t8 = (jbyte)(Game::m_a_ABI(Game::dt, jadd32(907, var7))); return _t6[_t7] = _t8; }());
          }
       }
       {
          jint var8 = 0;
          for (; (var8 < (Actor::dy).length()); (var8++)) {
-            ([&]{ auto _t9 = Actor::dy; auto _t10 = var8; auto _t11 = (jbyte)(Game::m_a_ABI(Game::dt, (879 + var8))); return _t9[_t10] = _t11; }());
+            ([&]{ auto _t9 = Actor::dy; auto _t10 = var8; auto _t11 = (jbyte)(Game::m_a_ABI(Game::dt, jadd32(879, var8))); return _t9[_t10] = _t11; }());
          }
       }
    }
    {
       jint var9 = 0;
       for (; (var9 < 3); (var9++)) {
-         ([&]{ auto _t12 = Actor::ej; auto _t13 = var9; auto _t14 = (jbyte)(Game::m_a_ABI(Game::dt, (802 + var9))); return _t12[_t13] = _t14; }());
+         ([&]{ auto _t12 = Actor::ej; auto _t13 = var9; auto _t14 = (jbyte)(Game::m_a_ABI(Game::dt, jadd32(802, var9))); return _t12[_t13] = _t14; }());
       }
    }
    if ((Game::ff)) {
@@ -5156,11 +5156,11 @@ void Game::m_g_Z(jboolean var0) {
                if ((((var10)->aG == Game::aB))) {
                   jshort var16 = Game::m_b_ABI(Game::dt, 861);
                   jshort var4 = Game::m_b_ABI(Game::dt, 863);
-                  jint var5 = (var16 + var4);
-                  ([&]{ auto _t15 = Game::viewBounds; auto _t16 = 1; auto _t17 = (jint)((Game::ad = (Game::cameraY = (var16 - 2)))); return _t15[_t16] = _t17; }());
-                  ((var10)->av = ((var10)->positionY - var5));
+                  jint var5 = jadd32(var16, var4);
+                  ([&]{ auto _t15 = Game::viewBounds; auto _t16 = 1; auto _t17 = (jint)((Game::ad = (Game::cameraY = jsub32(var16, 2)))); return _t15[_t16] = _t17; }());
+                  ((var10)->av = jsub32((var10)->positionY, var5));
                   ((var10)->positionY = var5);
-                  ((Game::viewBounds)[3] = (Game::cameraY + 320));
+                  ((Game::viewBounds)[3] = jadd32(Game::cameraY, 320));
                   ((var10)->c = (jint)(((var10)->c | 16)));
                   ((var10)->c = (jint)(((var10)->c & -33)));
                   (Game::az = 4);
@@ -5207,7 +5207,7 @@ void Game::m_g_Z(jboolean var0) {
          {
             jint var15 = 0;
             for (; (var15 < 10); (var15++)) {
-               ((Actor::dp)[var15])->m_b_III(((Actor::dp)[(var15 + 1)])->positionX, ((Actor::dp)[(var15 + 1)])->positionY, ((Actor::dp)[(var15 + 1)])->aK);
+               ((Actor::dp)[var15])->m_b_III(((Actor::dp)[jadd32(var15, 1)])->positionX, ((Actor::dp)[jadd32(var15, 1)])->positionY, ((Actor::dp)[jadd32(var15, 1)])->aK);
             }
          }
          if (((Actor::dw == 1))) {
@@ -5243,7 +5243,7 @@ void Game::m_aF_V() {
 
 Arr<jbyte> Game::m_R_I(jint var0) {
    Arr<jbyte> var1 = Game::m_q_I(var0);
-   Game::m_p_I((var0 + 1));
+   Game::m_p_I(jadd32(var0, 1));
    (Game::cy = Game::m_D_V());
    (Game::cz = Game::m_D_V());
    return var1;
@@ -5278,8 +5278,8 @@ void Game::m_c_IZ(jint var0, jboolean var1) {
    (Game::fn = Game::m_S_I((var1 ? 7 : 2)));
    (Game::fo = Game::m_R_I((var1 ? 8 : 3)));
    (Game::fp = Game::m_S_I((var1 ? 10 : 5)));
-   (Game::levelPixelWidth = (Game::cy * 20));
-   (Game::cB = (Game::cz * 20));
+   (Game::levelPixelWidth = jmul32(Game::cy, 20));
+   (Game::cB = jmul32(Game::cz, 20));
    Game::m_B_V();
    if ((var1)) {
       {
@@ -5315,7 +5315,7 @@ jint Game::m_g_II(jint var0, jint var1) {
       } else if (((var1 < 0))) {
          return 24;
       }
-      return (Game::fj)[(var0 + (var1 * Game::cy))];
+      return (Game::fj)[jadd32(var0, jmul32(var1, Game::cy))];
    } else {
       return (((Game::be)[Game::levelIndex] == 2) ? 0 : 24);
    }
@@ -5323,7 +5323,7 @@ jint Game::m_g_II(jint var0, jint var1) {
 
 void Game::m_d_III(jint var0, jint var1, jint var2) {
    if ((((((var0 >= 0) && (var1 >= 0)) && (var0 < Game::cy)) && (var1 < Game::cz)))) {
-      ((Game::fj)[(var0 + (var1 * Game::cy))] = ((jbyte)(var2)));
+      ((Game::fj)[jadd32(var0, jmul32(var1, Game::cy))] = ((jbyte)(var2)));
    }
 }
 
@@ -5364,10 +5364,10 @@ void Game::m_aI_V() {
 
 jint Game::m_h_II(jint var0, jint var1) {
    if (((var0 < 0))) {
-      (var0 = (-var0));
+      (var0 = jneg32(var0));
    }
    if (((var1 < 0))) {
-      (var1 = (-var1));
+      (var1 = jneg32(var1));
    }
    jint var2{};
    jint var3{};
@@ -5378,31 +5378,31 @@ jint Game::m_h_II(jint var0, jint var1) {
       (var2 = var1);
       (var3 = var0);
    }
-   jint var4 = ((var3 * 1007) + (var2 * 441));
+   jint var4 = jadd32(jmul32(var3, 1007), jmul32(var2, 441));
    if (((var3 < jshl32((jint)(var2), (jint)(4))))) {
-      (var4 = (jint)((var4 - (var3 * 40))));
+      (var4 = (jint)(jsub32(var4, jmul32(var3, 40))));
    }
-   return jshr32((jint)((var4 + 512)), (jint)(10));
+   return jshr32((jint)(jadd32(var4, 512)), (jint)(10));
 }
 
 jint Game::m_l_I(jint var0) {
    while (((var0 < 0))) {
-      (var0 = (jint)((var0 + 360)));
+      (var0 = (jint)(jadd32(var0, 360)));
    }
-   return (Game::cG)[(((var0 % 360) * 256) / 360)];
+   return (Game::cG)[(jmul32((var0 % 360), 256) / 360)];
 }
 
 jint Game::m_m_I(jint var0) {
-   return Game::m_l_I((90 - var0));
+   return Game::m_l_I(jsub32(90, var0));
 }
 
 jint Game::m_i_II(jint var0, jint var1) {
    if (((var1 != var0))) {
       jint var2{};
       if (((((var2 = (Game::random)->nextInt())) < 0))) {
-         (var2 = (jint)((var2 * -1)));
+         (var2 = (jint)(jmul32(var2, -1)));
       }
-      return (var0 + jrem32(var2, ((var1 - var0))));
+      return jadd32(var0, jrem32(var2, (jsub32(var1, var0))));
    } else {
       return var1;
    }
@@ -5413,13 +5413,13 @@ jint Game::m_j_II(jint var0, jint var1) {
       return 0;
    }
    if (((var0 < 0))) {
-      (var0 = (-var0));
+      (var0 = jneg32(var0));
    }
    if (((var1 < 0))) {
-      (var1 = (-var1));
+      (var1 = jneg32(var1));
    }
    jint var2 = ((var0 > var1) ? var1 : var0);
-   return ((((var0 + var1) - (jshr32((jint)(var2), (jint)(1)))) - (jshr32((jint)(var2), (jint)(2)))) + (jshr32((jint)(var2), (jint)(3))));
+   return jadd32(jsub32(jsub32(jadd32(var0, var1), (jshr32((jint)(var2), (jint)(1)))), (jshr32((jint)(var2), (jint)(2)))), (jshr32((jint)(var2), (jint)(3))));
 }
 
 Ref<BSprite> Game::m_U_I(jint var0) {
@@ -5537,15 +5537,15 @@ void Game::m_a_String(Ref<String> var0) {
 
 void Game::m_aJ_V() {
    jint var0{};
-   if (((Game::fz == (Game::fx - 1)))) {
-      (var0 = (Game::fv - (Game::fy)[Game::fz]));
+   if (((Game::fz == jsub32(Game::fx, 1)))) {
+      (var0 = jsub32(Game::fv, (Game::fy)[Game::fz]));
    } else {
-      (var0 = ((Game::fy)[(Game::fz + 1)] - (Game::fy)[Game::fz]));
+      (var0 = jsub32((Game::fy)[jadd32(Game::fz, 1)], (Game::fy)[Game::fz]));
    }
-   (Game::fw = jnewarray<Arr<jint>>((var0 + 1)));
+   (Game::fw = jnewarray<Arr<jint>>(jadd32(var0, 1)));
    {
       jint var1 = 0;
-      for (; (var1 < (var0 + 1)); (var1++)) {
+      for (; (var1 < jadd32(var0, 1)); (var1++)) {
          ([&]{ auto _t0 = Game::fw; auto _t1 = var1; auto _t2 = (jint)(Game::m_E_V()); return _t0[_t1] = _t2; }());
       }
    }
@@ -5560,7 +5560,7 @@ void Game::m_B_V() {
 }
 
 jint Game::m_p_I(jint var0) {
-   jint var1 = (Game::fx - 1);
+   jint var1 = jsub32(Game::fx, 1);
    while ((((var1 >= 0) && ((Game::fy)[var1] > var0)))) {
       (var1--);
    }
@@ -5588,9 +5588,9 @@ jint Game::m_p_I(jint var0) {
          (Game::ft = Game::m_b_String(jcat(jstr(jcat(jstr(Game::fs), jstr(jlit(u".")))), jstr(Game::fz))));
       }
    }
-   (var0 = (jint)((var0 - (Game::fy)[Game::fz])));
+   (var0 = (jint)(jsub32(var0, (Game::fy)[Game::fz])));
    jint var5 = (Game::fw)[var0];
-   jint var3 = (((Game::fw)[(var0 + 1)] - (Game::fw)[var0]) - 1);
+   jint var3 = jsub32(jsub32((Game::fw)[jadd32(var0, 1)], (Game::fw)[var0]), 1);
    Game::m_r_I(var5);
    Game::m_C_V();
    return var3;
@@ -5616,7 +5616,7 @@ void Game::m_r_I(jint var0) {
             (Game::ft = Game::m_b_String(jcat(jstr(jcat(jstr(Game::fs), jstr(jlit(u".")))), jstr(Game::fz))));
          }
       } else {
-         (var0 = (jint)((var0 - Game::fu)));
+         (var0 = (jint)(jsub32(var0, Game::fu)));
       }
       Game::m_s_I(var0);
    }
@@ -5629,7 +5629,7 @@ void Game::m_s_I(jint var0) {
       }
       while (((var0 > 256))) {
          Game::m_c_ABII(Game::fA, 0, 256);
-         (var0 = (jint)((var0 - 256)));
+         (var0 = (jint)(jsub32(var0, 256)));
       }
       if (((var0 > 0))) {
          Game::m_c_ABII(Game::fA, 0, var0);
@@ -5659,10 +5659,10 @@ jint Game::m_c_ABII(Arr<jbyte> var0, jint var1, jint var2) {
    jint var5 = 0;
    while (((var4 > 0))) {
       (var5 = (Game::ft)->read(var0, var3, var4));
-      (var4 = (jint)((var4 - var5)));
-      (var3 = (jint)((var3 + var5)));
+      (var4 = (jint)(jsub32(var4, var5)));
+      (var3 = (jint)(jadd32(var3, var5)));
    }
-   (Game::fu = (jint)((Game::fu + var2)));
+   (Game::fu = (jint)(jadd32(Game::fu, var2)));
    return var2;
 }
 
@@ -5685,20 +5685,20 @@ void Game::m_d_ABI(Arr<jbyte> var0, jint var1) {
 }
 
 jint Game::m_t_I(jint var0) {
-   jlong var1 = ((jshr64((jlong)(Game::cL), (jint)(11))) * (Game::fB)[var0]);
+   jlong var1 = jmul64((jshr64((jlong)(Game::cL), (jint)(11))), (Game::fB)[var0]);
    if (((Game::cM < var1))) {
       (Game::cL = var1);
-      jint var3 = (2048 - (Game::fB)[var0]);
-      ((Game::fB)[var0] = ((jshort)((((Game::fB)[var0] + (jshr32((jint)(var3), (jint)(5))))))));
+      jint var3 = jsub32(2048, (Game::fB)[var0]);
+      ((Game::fB)[var0] = ((jshort)((jadd32((Game::fB)[var0], (jshr32((jint)(var3), (jint)(5))))))));
       if (((Game::cL < INT64_C(16777216)))) {
          (Game::cM = ([&]{ auto _t0 = jshl64((jlong)(Game::cM), (jint)(8)); auto _t1 = Game::m_F_V(); return (_t0 | _t1); }()));
          (Game::cL = (jlong)(jshl64((jlong)(Game::cL), (jint)(8))));
       }
       return 0;
    } else {
-      (Game::cL = (jlong)((Game::cL - var1)));
-      (Game::cM = (jlong)((Game::cM - var1)));
-      ((Game::fB)[var0] = ((jshort)((((Game::fB)[var0] - (jshr32((jint)((Game::fB)[var0]), (jint)(5))))))));
+      (Game::cL = (jlong)(jsub64(Game::cL, var1)));
+      (Game::cM = (jlong)(jsub64(Game::cM, var1)));
+      ((Game::fB)[var0] = ((jshort)((jsub32((Game::fB)[var0], (jshr32((jint)((Game::fB)[var0]), (jint)(5))))))));
       if (((Game::cL < INT64_C(16777216)))) {
          (Game::cM = ([&]{ auto _t2 = jshl64((jlong)(Game::cM), (jint)(8)); auto _t3 = Game::m_F_V(); return (_t2 | _t3); }()));
          (Game::cL = (jlong)(jshl64((jlong)(Game::cL), (jint)(8))));
@@ -5712,11 +5712,11 @@ jint Game::m_a_IB(jint var0, jbyte var1) {
    do {
       jint var4 = (jshr32((jint)(var1), (jint)(7)) & 1);
       (var1 = ((jbyte)((jshl32((jint)(var1), (jint)(1))))));
-      jint var3 = Game::m_t_I(((var0 + (jshl32((jint)((1 + var4)), (jint)(8)))) + var2));
+      jint var3 = Game::m_t_I(jadd32(jadd32(var0, (jshl32((jint)(jadd32(1, var4)), (jint)(8)))), var2));
       (var2 = (jshl32((jint)(var2), (jint)(1)) | var3));
       if (((var4 != var3))) {
          while (((var2 < 256))) {
-            (var2 = (jshl32((jint)(var2), (jint)(1)) | Game::m_t_I((var0 + var2))));
+            (var2 = (jshl32((jint)(var2), (jint)(1)) | Game::m_t_I(jadd32(var0, var2))));
          }
          break;
       }
@@ -5726,7 +5726,7 @@ jint Game::m_a_IB(jint var0, jbyte var1) {
 
 jint Game::m_u_I(jint var0) {
    jint var1 = 1;
-   while (((((var1 = (jshl32((jint)(var1), (jint)(1)) | Game::m_t_I((var0 + var1))))) < 256))) {
+   while (((((var1 = (jshl32((jint)(var1), (jint)(1)) | Game::m_t_I(jadd32(var0, var1))))) < 256))) {
    }
    return var1;
 }
@@ -5736,17 +5736,17 @@ jint Game::m_l_II(jint var0, jint var1) {
    {
       jint var3 = var1;
       for (; (var3 > 0); (var3--)) {
-         (var2 = ((jshl32((jint)(var2), (jint)(1))) + Game::m_t_I((var0 + var2))));
+         (var2 = jadd32((jshl32((jint)(var2), (jint)(1))), Game::m_t_I(jadd32(var0, var2))));
       }
    }
-   return (var2 - (jshl32((jint)(1), (jint)(var1))));
+   return jsub32(var2, (jshl32((jint)(1), (jint)(var1))));
 }
 
 jint Game::m_m_II(jint var0, jint var1) {
-   if (((Game::m_t_I((var0 + 0)) == 0))) {
-      return Game::m_l_II(((var0 + 2) + (jshl32((jint)(var1), (jint)(3)))), 3);
+   if (((Game::m_t_I(jadd32(var0, 0)) == 0))) {
+      return Game::m_l_II(jadd32(jadd32(var0, 2), (jshl32((jint)(var1), (jint)(3)))), 3);
    } else {
-      return ((Game::m_t_I((var0 + 1)) == 0) ? (8 + Game::m_l_II(((var0 + 130) + (jshl32((jint)(var1), (jint)(3)))), 3)) : (16 + Game::m_l_II((var0 + 258), 8)));
+      return ((Game::m_t_I(jadd32(var0, 1)) == 0) ? jadd32(8, Game::m_l_II(jadd32(jadd32(var0, 130), (jshl32((jint)(var1), (jint)(3)))), 3)) : jadd32(16, Game::m_l_II(jadd32(var0, 258), 8)));
    }
 }
 
@@ -5756,8 +5756,8 @@ jint Game::m_n_II(jint var0, jint var1) {
    {
       jint var3 = 0;
       for (; (var3 < var1); (var3++)) {
-         jint var5 = Game::m_t_I((var0 + var2));
-         (var2 = ((jshl32((jint)(var2), (jint)(1))) + var5));
+         jint var5 = Game::m_t_I(jadd32(var0, var2));
+         (var2 = jadd32((jshl32((jint)(var2), (jint)(1))), var5));
          (var4 = (jint)((var4 | jshl32((jint)(var5), (jint)(var3)))));
       }
    }
@@ -5774,7 +5774,7 @@ jint Game::m_v_I(jint var0) {
          (var1 = (jlong)(jshr64((jlong)(var1), (jint)(1))));
          (var5 = (jint)(jshl32((jint)(var5), (jint)(1))));
          if (((var3 >= var1))) {
-            (var3 = (jlong)((var3 - var1)));
+            (var3 = (jlong)(jsub64(var3, var1)));
             (var5 = (jint)((var5 | 1)));
          }
          if (((var1 < INT64_C(16777216)))) {
@@ -5790,7 +5790,7 @@ jint Game::m_v_I(jint var0) {
 
 void Game::m_a_IIIIABI(jint var0, jint var1, jint var2, jint var3, Arr<jbyte> var4, jint var5) {
    jint var6 = (var4).length();
-   jint var7 = (1846 + (jshl32((jint)(768), (jint)((var1 + var2)))));
+   jint var7 = jadd32(1846, (jshl32((jint)(768), (jint)(jadd32(var1, var2)))));
    Arr<jshort> var8 = Game::fB;
    jint var10 = 0;
    jboolean var11 = false;
@@ -5800,10 +5800,10 @@ void Game::m_a_IIIIABI(jint var0, jint var1, jint var2, jint var3, Arr<jbyte> va
    jint var15 = 1;
    jint var16 = 1;
    jint var17 = 0;
-   jint var18 = ((jshl32((jint)(1), (jint)(var3))) - 1);
-   jint var19 = ((jshl32((jint)(1), (jint)(var2))) - 1);
+   jint var18 = jsub32((jshl32((jint)(1), (jint)(var3))), 1);
+   jint var19 = jsub32((jshl32((jint)(1), (jint)(var2))), 1);
    jint var20 = 0;
-   if (((var0 >= (var7 * 2)))) {
+   if (((var0 >= jmul32(var7, 2)))) {
       {
          jint var9 = 0;
          for (; (var9 < var7); (var9++)) {
@@ -5813,17 +5813,17 @@ void Game::m_a_IIIIABI(jint var0, jint var1, jint var2, jint var3, Arr<jbyte> va
       Game::m_d_ABI(var4, var6);
       while (((var17 < var5))) {
          jint var21 = (var17 & var18);
-         if (((Game::m_t_I(((0 + (jshl32((jint)(var10), (jint)(4)))) + var21)) == 0))) {
-            jint var30 = (1846 + (768 * (((jshl32((jint)(((var17 & var19))), (jint)(var1))) + (jshr32((jint)(((var12 & 255))), (jint)((8 - var1))))))));
+         if (((Game::m_t_I(jadd32(jadd32(0, (jshl32((jint)(var10), (jint)(4)))), var21)) == 0))) {
+            jint var30 = jadd32(1846, jmul32(768, (jadd32((jshl32((jint)(((var17 & var19))), (jint)(var1))), (jshr32((jint)(((var12 & 255))), (jint)(jsub32(8, var1))))))));
             if (((var10 < 4))) {
                (var10 = 0);
             } else if (((var10 < 10))) {
-               (var10 = (jint)((var10 - 3)));
+               (var10 = (jint)(jsub32(var10, 3)));
             } else {
-               (var10 = (jint)((var10 - 6)));
+               (var10 = (jint)(jsub32(var10, 6)));
             }
             if ((var11)) {
-               jbyte var31 = (Game::cN)[(var17 - var25)];
+               jbyte var31 = (Game::cN)[jsub32(var17, var25)];
                (var12 = (Game::m_a_IB(var30, var31) & 255));
                (var11 = false);
             } else {
@@ -5832,20 +5832,20 @@ void Game::m_a_IIIIABI(jint var0, jint var1, jint var2, jint var3, Arr<jbyte> va
             ((Game::cN)[(var17++)] = ((jbyte)(var12)));
          } else {
             (var11 = true);
-            if (((Game::m_t_I((192 + var10)) == 1))) {
-               if (((Game::m_t_I((204 + var10)) == 0))) {
-                  if (((Game::m_t_I(((240 + (jshl32((jint)(var10), (jint)(4)))) + var21)) == 0))) {
+            if (((Game::m_t_I(jadd32(192, var10)) == 1))) {
+               if (((Game::m_t_I(jadd32(204, var10)) == 0))) {
+                  if (((Game::m_t_I(jadd32(jadd32(240, (jshl32((jint)(var10), (jint)(4)))), var21)) == 0))) {
                      (var10 = ((jbyte)((((var10 < 7) ? 9 : 11)))));
-                     (var12 = ((Game::cN)[(var17 - var25)] & 255));
+                     (var12 = ((Game::cN)[jsub32(var17, var25)] & 255));
                      ((Game::cN)[(var17++)] = ((jbyte)(var12)));
                      continue;
                   }
                } else {
                   jint var22{};
-                  if (((Game::m_t_I((216 + var10)) == 0))) {
+                  if (((Game::m_t_I(jadd32(216, var10)) == 0))) {
                      (var22 = var14);
                   } else {
-                     if (((Game::m_t_I((228 + var10)) == 0))) {
+                     if (((Game::m_t_I(jadd32(228, var10)) == 0))) {
                         (var22 = var15);
                      } else {
                         (var22 = var16);
@@ -5865,23 +5865,23 @@ void Game::m_a_IIIIABI(jint var0, jint var1, jint var2, jint var3, Arr<jbyte> va
                (var10 = ((jbyte)((((var10 < 7) ? 7 : 10)))));
                (var20 = Game::m_m_II(818, var21));
                jint var29{};
-               if (((((var29 = Game::m_l_II((432 + (jshl32((jint)((((var20 < 4) ? var20 : 3))), (jint)(6)))), 6))) >= 4))) {
-                  jint var23 = ((jshr32((jint)(var29), (jint)(1))) - 1);
+               if (((((var29 = Game::m_l_II(jadd32(432, (jshl32((jint)((((var20 < 4) ? var20 : 3))), (jint)(6)))), 6))) >= 4))) {
+                  jint var23 = jsub32((jshr32((jint)(var29), (jint)(1))), 1);
                   (var25 = jshl32((jint)(((2 | (var29 & 1)))), (jint)(var23)));
                   if (((var29 < 14))) {
-                     (var25 = (jint)((var25 + Game::m_n_II((((688 + var25) - var29) - 1), var23))));
+                     (var25 = (jint)(jadd32(var25, Game::m_n_II(jsub32(jsub32(jadd32(688, var25), var29), 1), var23))));
                   } else {
                      jint var26{};
-                     (var25 = ([&]{ auto _t0 = ((var26 = (var25 + (jshl32((jint)(Game::m_v_I((var23 - 4))), (jint)(4)))))); auto _t1 = Game::m_n_II(802, 4); return (_t0 + _t1); }()));
+                     (var25 = ([&]{ auto _t0 = ((var26 = jadd32(var25, (jshl32((jint)(Game::m_v_I(jsub32(var23, 4))), (jint)(4)))))); auto _t1 = Game::m_n_II(802, 4); return jadd32(_t0, _t1); }()));
                   }
                } else {
                   (var25 = var29);
                }
                (var25++);
             }
-            (var20 = (jint)((var20 + 2)));
+            (var20 = (jint)(jadd32(var20, 2)));
             while ((true)) {
-               (var12 = ((Game::cN)[(var17 - var25)] & 255));
+               (var12 = ((Game::cN)[jsub32(var17, var25)] & 255));
                ((Game::cN)[(var17++)] = ((jbyte)(var12)));
                if (((((--var20) <= 0) || (var17 >= var5)))) {
                   break;
@@ -5894,7 +5894,7 @@ void Game::m_a_IIIIABI(jint var0, jint var1, jint var2, jint var3, Arr<jbyte> va
 
 void Game::m_a_AB(Arr<jbyte> var0) {
    Arr<jbyte> var1 = jnewarray<Arr<jbyte>>(13);
-   Arr<jbyte> var2 = jnewarray<Arr<jbyte>>(((var0).length() - 13));
+   Arr<jbyte> var2 = jnewarray<Arr<jbyte>>(jsub32((var0).length(), 13));
    System::arraycopy(var0, 0, var1, 0, 13);
    System::arraycopy(var0, 13, var2, 0, (var2).length());
    Arr<jint> var3 = jnewarray<Arr<jint>>(5);
@@ -5908,26 +5908,26 @@ void Game::m_a_AB(Arr<jbyte> var0) {
    {
       jint var6 = 0;
       for (; (var6 < 4); (var6++)) {
-         jint var5 = ((var1)[(var6 + 5)] & 255);
-         (var11 = (jint)((var11 + jshl32((jint)(var5), (jint)((jshl32((jint)(var6), (jint)(3))))))));
+         jint var5 = ((var1)[jadd32(var6, 5)] & 255);
+         (var11 = (jint)(jadd32(var11, jshl32((jint)(var5), (jint)((jshl32((jint)(var6), (jint)(3))))))));
       }
    }
    jint var12 = (var3)[0];
    jint var9 = 0;
    while (((var12 >= 45))) {
       (var9++);
-      (var12 = (jint)((var12 - 45)));
+      (var12 = (jint)(jsub32(var12, 45)));
    }
    jint var8 = 0;
    while (((var12 >= 9))) {
       (var8++);
-      (var12 = (jint)((var12 - 9)));
+      (var12 = (jint)(jsub32(var12, 9)));
    }
    jint var7 = var12;
-   jint var10 = (1846 + (jshl32((jint)(768), (jint)((var7 + var8)))));
+   jint var10 = jadd32(1846, (jshl32((jint)(768), (jint)(jadd32(var7, var8)))));
    (Game::cN = jnewarray<Arr<jbyte>>(var11));
    (Game::fB = jnewarray<Arr<jshort>>(var10));
-   Game::m_a_IIIIABI((var10 * 2), var7, var8, var9, var2, var11);
+   Game::m_a_IIIIABI(jmul32(var10, 2), var7, var8, var9, var2, var11);
    (Game::fB = nullptr);
    (Game::cJ = nullptr);
    System::gc();
@@ -5992,17 +5992,17 @@ Ref<String> Game::m_s_II(jint var0, jint var1) {
 
 void Game::m_f_III(jint var0, jint var1, jint var2) {
    if (((var0 == 1))) {
-      (Game::cQ = ((35 * Game::cP) - 26));
+      (Game::cQ = jsub32(jmul32(35, Game::cP), 26));
       {
          jint var3 = 0;
          for (; (var3 < ((Game::fD)[1]).length()); (var3++)) {
-            ((Game::b)[33])->m_a_GraphicsIIIIII(Game::graphics, 66, 60, (38 + (var3 * 35)), 0, 0, 0);
+            ((Game::b)[33])->m_a_GraphicsIIIIII(Game::graphics, 66, 60, jadd32(38, jmul32(var3, 35)), 0, 0, 0);
          }
       }
    }
    if ((Game::cR)) {
       jint var8 = (Game::stateFrame % 4);
-      ((Game::b)[33])->m_a_GraphicsIIIIIII(Game::graphics, 14, var8, 60, (64 + Game::cQ), 0, 0, 0);
+      ((Game::b)[33])->m_a_GraphicsIIIIIII(Game::graphics, 14, var8, 60, jadd32(64, Game::cQ), 0, 0, 0);
       if (((var8 == 3))) {
          (Game::cR = false);
          (Game::cS = true);
@@ -6028,14 +6028,14 @@ void Game::m_f_III(jint var0, jint var1, jint var2) {
                ((Game::a)->z = ((Game::cP == var5) ? 4 : 5));
             }
             if (((((Game::fD)[var0])[var5] == 6))) {
-               ([&]{ auto _t0 = Game::a; auto _t1 = Game::graphics; auto _t2 = jcat(jstr(jcat(jstr(var7), jstr(jlit(u": ")))), jstr(((Game::el ? Ref<String>(Game::m_k_II(0, 23)) : Ref<String>(Game::m_k_II(0, 24)))))); auto _t3 = var6; auto _t4 = ((35 * var4) + var2); auto _t5 = 3; return _t0->m_a_GraphicsStringIII(_t1, _t2, _t3, _t4, _t5); }());
+               ([&]{ auto _t0 = Game::a; auto _t1 = Game::graphics; auto _t2 = jcat(jstr(jcat(jstr(var7), jstr(jlit(u": ")))), jstr(((Game::el ? Ref<String>(Game::m_k_II(0, 23)) : Ref<String>(Game::m_k_II(0, 24)))))); auto _t3 = var6; auto _t4 = jadd32(jmul32(35, var4), var2); auto _t5 = 3; return _t0->m_a_GraphicsStringIII(_t1, _t2, _t3, _t4, _t5); }());
             } else {
-               (Game::a)->m_a_GraphicsStringIII(Game::graphics, var7, var6, ((35 * var4) + var2), 3);
+               (Game::a)->m_a_GraphicsStringIII(Game::graphics, var7, var6, jadd32(jmul32(35, var4), var2), 3);
             }
             if (((((Game::fD)[var0])[var5] == 4))) {
-               InGamePromotion::a(Game::graphics, Game::eG, ((var6 + (BSprite::S / 2)) + 5), ((35 * var4) + var2), 6);
+               InGamePromotion::a(Game::graphics, Game::eG, jadd32(jadd32(var6, (BSprite::S / 2)), 5), jadd32(jmul32(35, var4), var2), 6);
             } else if (((((Game::fD)[var0])[var5] == 5))) {
-               InGamePromotion::b(Game::graphics, Game::eG, ((var6 + (BSprite::S / 2)) + 5), ((35 * var4) + var2), 6);
+               InGamePromotion::b(Game::graphics, Game::eG, jadd32(jadd32(var6, (BSprite::S / 2)), 5), jadd32(jmul32(35, var4), var2), 6);
             }
             (var4++);
          }
@@ -6072,9 +6072,9 @@ void Game::m_g_III(jint var0, jint var1, jint var2) {
    }
    (Game::a)->m_a_GraphicsStringIII(Game::graphics, var4, var1, var2, 3);
    if (((((Game::fD)[var0])[Game::cP] == 4))) {
-      InGamePromotion::a(Game::graphics, Game::eG, (var1 + 5), (var2 + 20), 3);
+      InGamePromotion::a(Game::graphics, Game::eG, jadd32(var1, 5), jadd32(var2, 20), 3);
    } else if (((((Game::fD)[var0])[Game::cP] == 5))) {
-      InGamePromotion::b(Game::graphics, Game::eG, (var1 + 5), (var2 + 20), 3);
+      InGamePromotion::b(Game::graphics, Game::eG, jadd32(var1, 5), jadd32(var2, 20), 3);
    }
    (Game::a)->m_a_String(var4);
    jboolean var5 = false;
@@ -6094,7 +6094,7 @@ void Game::m_d_IZ(jint var0, jboolean var1) {
    if (((var0 > 0))) {
       if ((Game::m_G_I((var1 ? 4112 : 16388)))) {
          Game::m_I_I(-1);
-         (Game::cP = (jint)((Game::cP + (var0 - 1))));
+         (Game::cP = (jint)(jadd32(Game::cP, jsub32(var0, 1))));
          (Game::cP = (jint)(jrem32(Game::cP, var0)));
          if ((((Game::fC == 0) || (Game::fC == 2)))) {
             if ((var1)) {
@@ -6102,12 +6102,12 @@ void Game::m_d_IZ(jint var0, jboolean var1) {
             }
             if (((((Game::fD)[Game::fC])[Game::cP] == 5))) {
                if (((!InGamePromotion::a()))) {
-                  (Game::cP = (jint)((Game::cP + (var0 - 2))));
+                  (Game::cP = (jint)(jadd32(Game::cP, jsub32(var0, 2))));
                   (Game::cP = (jint)(jrem32(Game::cP, var0)));
                   return;
                }
                if (((InGamePromotion::a() && (!InGamePromotion::d())))) {
-                  (Game::cP = (jint)((Game::cP + (var0 - 1))));
+                  (Game::cP = (jint)(jadd32(Game::cP, jsub32(var0, 1))));
                   (Game::cP = (jint)(jrem32(Game::cP, var0)));
                   return;
                }
@@ -6123,7 +6123,7 @@ void Game::m_d_IZ(jint var0, jboolean var1) {
          if ((((Game::fC == 0) || (Game::fC == 2)))) {
             if (((((Game::fD)[Game::fC])[Game::cP] == 4))) {
                if (((!InGamePromotion::a()))) {
-                  (Game::cP = (jint)((Game::cP + 2)));
+                  (Game::cP = (jint)(jadd32(Game::cP, 2)));
                   (Game::cP = (jint)(jrem32(Game::cP, var0)));
                   return;
                }
@@ -6146,10 +6146,10 @@ void Game::m_b_AB(Arr<jbyte> var0) {
    {
       jint var3 = 0;
       for (; (var3 < var2); (var3++)) {
-         ((Game::cW)[var3] = ((jshort)((((((var0)[var19] & 255)) + (jshl32((jint)((((var0)[(var19 + 1)] & 255))), (jint)(8))))))));
-         (var19 = (jint)((var19 + 2)));
+         ((Game::cW)[var3] = ((jshort)((jadd32((((var0)[var19] & 255)), (jshl32((jint)((((var0)[jadd32(var19, 1)] & 255))), (jint)(8))))))));
+         (var19 = (jint)(jadd32(var19, 2)));
          jbyte var4 = (var0)[(var19++)];
-         (var19 = (jint)((var19 + 2)));
+         (var19 = (jint)(jadd32(var19, 2)));
          ((Game::cV)[var3] = jnewarray<Arr<Arr<jbyte>>>(var4));
          ((Game::cY)[var3] = jnewarray<Arr<jint>>(var4));
          {
@@ -6167,26 +6167,26 @@ void Game::m_b_AB(Arr<jbyte> var0) {
                      default:
                         break;
                      case 2:
-                        (var19 = (jint)((var19 + 2)));
+                        (var19 = (jint)(jadd32(var19, 2)));
                         break;
                      case 3:
-                        (var19 = (jint)((var19 + 2)));
+                        (var19 = (jint)(jadd32(var19, 2)));
                   }
                }
-               jshort var8 = ((jshort)((((((var0)[var19] & 255)) + (jshl32((jint)((((var0)[(var19 + 1)] & 255))), (jint)(8)))))));
-               (var19 = (jint)((var19 + 2)));
+               jshort var8 = ((jshort)((jadd32((((var0)[var19] & 255)), (jshl32((jint)((((var0)[jadd32(var19, 1)] & 255))), (jint)(8)))))));
+               (var19 = (jint)(jadd32(var19, 2)));
                jint var9 = var19;
                {
                   jint var10 = 0;
                   for (; (var10 < var8); (var10++)) {
-                     (var19 = (jint)((var19 + 2)));
+                     (var19 = (jint)(jadd32(var19, 2)));
                      jbyte var11 = (var0)[(var19++)];
                      {
                         jint var12 = 0;
                         for (; (var12 < var11); (var12++)) {
                            jbyte var13{};
                            if (((((var13 = (var0)[(var19++)])) >= 100))) {
-                              (var19 = (jint)((var19 + Game::m_D_I(var13))));
+                              (var19 = (jint)(jadd32(var19, Game::m_D_I(var13))));
                            } else {
                               {
                                  switch ((var13)) {
@@ -6199,8 +6199,8 @@ void Game::m_b_AB(Arr<jbyte> var0) {
                                     case 31:
                                        ;
                                     case 41:
-                                       (var19 = (jint)((var19 + 2)));
-                                       (var19 = (jint)((var19 + 2)));
+                                       (var19 = (jint)(jadd32(var19, 2)));
+                                       (var19 = (jint)(jadd32(var19, 2)));
                                     case 13:
                                        ;
                                     case 14:
@@ -6249,21 +6249,21 @@ void Game::m_b_AB(Arr<jbyte> var0) {
                                     case 43:
                                        ;
                                     case 44:
-                                       (var19 = (jint)((var19 + 4)));
+                                       (var19 = (jint)(jadd32(var19, 4)));
                                        break;
                                     case 34:
                                        ;
                                     case 35:
                                        ;
                                     case 36:
-                                       (var19 = (jint)((var19 + ((jshl32((jint)(((((var13 - 34)) % 3) + 1)), (jint)(1))) + 2))));
+                                       (var19 = (jint)(jadd32(var19, jadd32((jshl32((jint)(jadd32(((jsub32(var13, 34)) % 3), 1)), (jint)(1))), 2))));
                                        break;
                                     case 37:
                                        ;
                                     case 38:
                                        ;
                                     case 39:
-                                       (var19 = (jint)((var19 + jshl32((jint)(((((var13 - 34)) % 3) + 1)), (jint)(1)))));
+                                       (var19 = (jint)(jadd32(var19, jshl32((jint)(jadd32(((jsub32(var13, 34)) % 3), 1)), (jint)(1)))));
                                  }
                               }
                            }
@@ -6271,12 +6271,12 @@ void Game::m_b_AB(Arr<jbyte> var0) {
                      }
                   }
                }
-               jint var21 = (var19 - var6);
-               (((Game::cV)[var3])[var5] = jnewarray<Arr<jbyte>>((var21 + 2)));
-               (((Game::cY)[var3])[var5] = (var9 - var6));
+               jint var21 = jsub32(var19, var6);
+               (((Game::cV)[var3])[var5] = jnewarray<Arr<jbyte>>(jadd32(var21, 2)));
+               (((Game::cY)[var3])[var5] = jsub32(var9, var6));
                System::arraycopy(var0, var6, ((Game::cV)[var3])[var5], 0, var21);
                ((((Game::cV)[var3])[var5])[var21] = ((jbyte)(((((Game::cY)[var3])[var5] & 255)))));
-               ((((Game::cV)[var3])[var5])[(var21 + 1)] = ((jbyte)(((jshr32((jint)(((Game::cY)[var3])[var5]), (jint)(8)) & 255)))));
+               ((((Game::cV)[var3])[var5])[jadd32(var21, 1)] = ((jbyte)(((jshr32((jint)(((Game::cY)[var3])[var5]), (jint)(8)) & 255)))));
             }
          }
       }
@@ -6301,7 +6301,7 @@ void Game::m_G_V() {
             jint var2 = 0;
             for (; (var2 < (var1).length()); (var2++)) {
                Arr<jbyte> var3 = (var1)[var2];
-               (((Game::cY)[var4])[var2] = ((((var3)[((var3).length() - 2)] & 255)) + ((jshl32((jint)((var3)[((var3).length() - 1)]), (jint)(8)) & 255))));
+               (((Game::cY)[var4])[var2] = jadd32((((var3)[jsub32((var3).length(), 2)] & 255)), ((jshl32((jint)((var3)[jsub32((var3).length(), 1)]), (jint)(8)) & 255))));
             }
          }
       }
@@ -6336,7 +6336,7 @@ void Game::m_y_I(jint var0) {
       jint var2 = 0;
       for (; (var2 < (var1).length()); (var2++)) {
          Arr<jbyte> var3 = (var1)[var2];
-         (((Game::cY)[var0])[var2] = ((((var3)[((var3).length() - 2)] & 255)) + ((jshl32((jint)((var3)[((var3).length() - 1)]), (jint)(8)) & 255))));
+         (((Game::cY)[var0])[var2] = jadd32((((var3)[jsub32((var3).length(), 2)] & 255)), ((jshl32((jint)((var3)[jsub32((var3).length(), 1)]), (jint)(8)) & 255))));
       }
    }
 }
@@ -6348,7 +6348,7 @@ void Game::m_z_I(jint var0) {
       jint var2 = 0;
       for (; (var2 < (var1).length()); (var2++)) {
          Arr<jbyte> var3 = (var1)[var2];
-         (((Game::cY)[var0])[var2] = ((((var3)[((var3).length() - 2)] & 255)) + ((jshl32((jint)((var3)[((var3).length() - 1)]), (jint)(8)) & 255))));
+         (((Game::cY)[var0])[var2] = jadd32((((var3)[jsub32((var3).length(), 2)] & 255)), ((jshl32((jint)((var3)[jsub32((var3).length(), 1)]), (jint)(8)) & 255))));
       }
    }
 }
@@ -6480,7 +6480,7 @@ void Game::m_b_IZI(jint var0, jboolean var1, jint var2) {
             }
             Actor::m_as_V();
          }
-         if (((jrem32(((Actor::bI + 1)), Actor::aS) != 1))) {
+         if (((jrem32((jadd32(Actor::bI, 1)), Actor::aS) != 1))) {
             return;
          }
       }
@@ -6493,7 +6493,7 @@ void Game::m_b_IZI(jint var0, jboolean var1, jint var2) {
             Ref<Actor> var11 = nullptr;
             jint var13 = 0;
             Arr<jbyte> var14 = (var8)[var10];
-            if (((((Game::cY)[var0])[var10] < ((var14).length() - 2)))) {
+            if (((((Game::cY)[var0])[var10] < jsub32((var14).length(), 2)))) {
                jbyte var15 = (var14)[0];
                jboolean var16 = false;
                {
@@ -6507,10 +6507,10 @@ void Game::m_b_IZI(jint var0, jboolean var1, jint var2) {
                      default:
                         break;
                      case 2:
-                        (var11 = Game::m_i_I(((((var14)[2] & 255)) + (jshl32((jint)((((var14)[3] & 255))), (jint)(8))))));
+                        (var11 = Game::m_i_I(jadd32((((var14)[2] & 255)), (jshl32((jint)((((var14)[3] & 255))), (jint)(8))))));
                         break;
                      case 3:
-                        if (((((var11 = Game::m_j_I((var12 = (((jshl32((jint)(((var17 = ((jshort)((((((var14)[2] & 255)) + (jshl32((jint)((((var14)[3] & 255))), (jint)(8)))))))))), (jint)(16))) + (jshl32((jint)(var0), (jint)(8)))) + var10))))) == nullptr))) {
+                        if (((((var11 = Game::m_j_I((var12 = jadd32(jadd32((jshl32((jint)(((var17 = ((jshort)((jadd32((((var14)[2] & 255)), (jshl32((jint)((((var14)[3] & 255))), (jint)(8)))))))))), (jint)(16))), (jshl32((jint)(var0), (jint)(8)))), var10))))) == nullptr))) {
                            (Game::player)->m_b_IIIIIIZ(-2, var17, 0, 0, 0, 200, false);
                            (var11 = Actor::aU);
                            if (((var17 == 31))) {
@@ -6527,15 +6527,15 @@ void Game::m_b_IZI(jint var0, jboolean var1, jint var2) {
                jint var32 = 0;
                jint var18 = 0;
                jshort var19 = -1;
-               jshort var20 = ((jshort)((((((var14)[var13] & 255)) + (jshl32((jint)((((var14)[(var13 + 1)] & 255))), (jint)(8)))))));
-               (var13 = (jint)((var13 + 2)));
+               jshort var20 = ((jshort)((jadd32((((var14)[var13] & 255)), (jshl32((jint)((((var14)[jadd32(var13, 1)] & 255))), (jint)(8)))))));
+               (var13 = (jint)(jadd32(var13, 2)));
                jbyte var21 = (var14)[(var13++)];
                {
                   jint var22 = 0;
                   for (; (var22 < var21); (var22++)) {
                      jbyte var23{};
                      if (((((var23 = (var14)[(var13++)])) >= 100))) {
-                        (var13 = (jint)((var13 + Game::m_a_IABIIIActor(var23, var14, var13, var9, var20, var11))));
+                        (var13 = (jint)(jadd32(var13, Game::m_a_IABIIIActor(var23, var14, var13, var9, var20, var11))));
                      } else {
                         {
                            jshort var24{};
@@ -6555,27 +6555,27 @@ void Game::m_b_IZI(jint var0, jboolean var1, jint var2) {
                               case 31:
                                  ;
                               case 41:
-                                 var24 = ((jshort)((((((var14)[var13] & 255)) + (jshl32((jint)((((var14)[(var13 + 1)] & 255))), (jint)(8)))))));
-                                 (var13 = (jint)((var13 + 2)));
-                                 var25 = ((jshort)((((((var14)[var13] & 255)) + (jshl32((jint)((((var14)[(var13 + 1)] & 255))), (jint)(8)))))));
-                                 (var13 = (jint)((var13 + 2)));
+                                 var24 = ((jshort)((jadd32((((var14)[var13] & 255)), (jshl32((jint)((((var14)[jadd32(var13, 1)] & 255))), (jint)(8)))))));
+                                 (var13 = (jint)(jadd32(var13, 2)));
+                                 var25 = ((jshort)((jadd32((((var14)[var13] & 255)), (jshl32((jint)((((var14)[jadd32(var13, 1)] & 255))), (jint)(8)))))));
+                                 (var13 = (jint)(jadd32(var13, 2)));
                                  if (((var9 <= var20))) {
                                     (var32 = var24);
                                     (var18 = var25);
                                     if (((var23 == 12))) {
-                                       (var32 = (jint)((var32 - 120)));
-                                       (var18 = (jint)((var18 - 160)));
+                                       (var32 = (jint)(jsub32(var32, 120)));
+                                       (var18 = (jint)(jsub32(var18, 160)));
                                     }
                                     if ((((var23 == 11) || (var23 == 12)))) {
                                        if (((var32 < 0))) {
                                           (var32 = 0);
-                                       } else if (((var32 > (Game::levelPixelWidth - 240)))) {
-                                          (var32 = (Game::levelPixelWidth - 240));
+                                       } else if (((var32 > jsub32(Game::levelPixelWidth, 240)))) {
+                                          (var32 = jsub32(Game::levelPixelWidth, 240));
                                        }
                                        if (((var18 < 0))) {
                                           (var18 = 0);
-                                       } else if (((var18 > (Game::cB - 320)))) {
-                                          (var18 = (Game::cB - 320));
+                                       } else if (((var18 > jsub32(Game::cB, 320)))) {
+                                          (var18 = jsub32(Game::cB, 320));
                                        }
                                     }
                                     (var19 = var20);
@@ -6626,7 +6626,7 @@ void Game::m_b_IZI(jint var0, jboolean var1, jint var2) {
                                  if (((var20 <= var9))) {
                                     jint var35{};
                                     if (((((var35 = (var14)[var13])) < 0))) {
-                                       (var35 = (jint)((var35 + 256)));
+                                       (var35 = (jint)(jadd32(var35, 256)));
                                     }
                                     (var11)->m_b_I(var35);
                                  }
@@ -6637,55 +6637,55 @@ void Game::m_b_IZI(jint var0, jboolean var1, jint var2) {
                               case 43:
                                  if (((var20 <= var9))) {
                                     jint var34{};
-                                    if (((((((var34 = ((((((var14)[var13] & 255)) + (jshl32((jint)((((var14)[(var13 + 1)] & 255))), (jint)(8)))) + (jshl32((jint)((((var14)[(var13 + 2)] & 255))), (jint)(16)))) + (jshl32((jint)((((var14)[(var13 + 3)] & 255))), (jint)(24)))))) & 1)) != 0))) {
+                                    if (((((((var34 = jadd32(jadd32(jadd32((((var14)[var13] & 255)), (jshl32((jint)((((var14)[jadd32(var13, 1)] & 255))), (jint)(8)))), (jshl32((jint)((((var14)[jadd32(var13, 2)] & 255))), (jint)(16)))), (jshl32((jint)((((var14)[jadd32(var13, 3)] & 255))), (jint)(24)))))) & 1)) != 0))) {
                                        (var34 = (jint)((var34 | 65536)));
                                     }
                                     ((var11)->c = (jint)(((var11)->c | jshr32((jint)(var34), (jint)(16)))));
                                     ((var11)->facingLeft = ((((var11)->c & 1)) != 0));
                                  }
-                                 (var13 = (jint)((var13 + 4)));
+                                 (var13 = (jint)(jadd32(var13, 4)));
                                  break;
                               case 24:
                                  ;
                               case 44:
                                  if (((var20 <= var9))) {
                                     jint var33{};
-                                    if (((((((var33 = ((((((var14)[var13] & 255)) + (jshl32((jint)((((var14)[(var13 + 1)] & 255))), (jint)(8)))) + (jshl32((jint)((((var14)[(var13 + 2)] & 255))), (jint)(16)))) + (jshl32((jint)((((var14)[(var13 + 3)] & 255))), (jint)(24)))))) & 1)) != 0))) {
+                                    if (((((((var33 = jadd32(jadd32(jadd32((((var14)[var13] & 255)), (jshl32((jint)((((var14)[jadd32(var13, 1)] & 255))), (jint)(8)))), (jshl32((jint)((((var14)[jadd32(var13, 2)] & 255))), (jint)(16)))), (jshl32((jint)((((var14)[jadd32(var13, 3)] & 255))), (jint)(24)))))) & 1)) != 0))) {
                                        (var33 = (jint)((var33 | 65536)));
                                     }
                                     ((var11)->c = (jint)(((var11)->c & (~(jshr32((jint)(var33), (jint)(16)))))));
                                  }
                                  ((var11)->facingLeft = ((((var11)->c & 1)) != 0));
-                                 (var13 = (jint)((var13 + 4)));
+                                 (var13 = (jint)(jadd32(var13, 4)));
                                  break;
                               case 34:
                                  ;
                               case 35:
                                  ;
                               case 36:
-                                 var27 = ((((var14)[var13] & 255)) + (jshl32((jint)((((var14)[(var13 + 1)] & 255))), (jint)(8))));
-                                 (var13 = (jint)((var13 + 2)));
+                                 var27 = jadd32((((var14)[var13] & 255)), (jshl32((jint)((((var14)[jadd32(var13, 1)] & 255))), (jint)(8))));
+                                 (var13 = (jint)(jadd32(var13, 2)));
                                  (var6 = Game::m_i_I(var27));
                               case 37:
                                  ;
                               case 38:
                                  ;
                               case 39:
-                                 var26 = ((((var23 - 34)) % 3) + 1);
+                                 var26 = jadd32(((jsub32(var23, 34)) % 3), 1);
                                  var5 = -1;
                                  var4 = -1;
                                  var3 = -1;
                                  if (((var26 >= 1))) {
-                                    (var3 = ((((var14)[var13] & 255)) + (jshl32((jint)((((var14)[(var13 + 1)] & 255))), (jint)(8)))));
-                                    (var13 = (jint)((var13 + 2)));
+                                    (var3 = jadd32((((var14)[var13] & 255)), (jshl32((jint)((((var14)[jadd32(var13, 1)] & 255))), (jint)(8)))));
+                                    (var13 = (jint)(jadd32(var13, 2)));
                                  }
                                  if (((var26 >= 2))) {
-                                    (var4 = ((((var14)[var13] & 255)) + (jshl32((jint)((((var14)[(var13 + 1)] & 255))), (jint)(8)))));
-                                    (var13 = (jint)((var13 + 2)));
+                                    (var4 = jadd32((((var14)[var13] & 255)), (jshl32((jint)((((var14)[jadd32(var13, 1)] & 255))), (jint)(8)))));
+                                    (var13 = (jint)(jadd32(var13, 2)));
                                  }
                                  if (((var26 >= 3))) {
-                                    (var5 = ((((var14)[var13] & 255)) + (jshl32((jint)((((var14)[(var13 + 1)] & 255))), (jint)(8)))));
-                                    (var13 = (jint)((var13 + 2)));
+                                    (var5 = jadd32((((var14)[var13] & 255)), (jshl32((jint)((((var14)[jadd32(var13, 1)] & 255))), (jint)(8)))));
+                                    (var13 = (jint)(jadd32(var13, 2)));
                                  }
                                  if (((var6 != nullptr))) {
                                     (var6 = nullptr);
@@ -6702,23 +6702,23 @@ void Game::m_b_IZI(jint var0, jboolean var1, jint var2) {
                } else if (((var20 < var9))) {
                   (((Game::cY)[var0])[var10] = var13);
                }
-               if (((((Game::cY)[var0])[var10] < ((var14).length() - 2)))) {
+               if (((((Game::cY)[var0])[var10] < jsub32((var14).length(), 2)))) {
                   (var7 = false);
                } else if (((var15 == 3))) {
                   Game::m_e_Actor(var11);
                }
                if (((var19 >= 0))) {
                   if (((var15 == 1))) {
-                     (Game::cameraX = (Game::cameraX + jdiv32(((var32 - Game::cameraX)), (((var19 - var9) + 1)))));
-                     (Game::cameraY = (Game::cameraY + jdiv32(((var18 - Game::cameraY)), (((var19 - var9) + 1)))));
+                     (Game::cameraX = jadd32(Game::cameraX, jdiv32((jsub32(var32, Game::cameraX)), (jadd32(jsub32(var19, var9), 1)))));
+                     (Game::cameraY = jadd32(Game::cameraY, jdiv32((jsub32(var18, Game::cameraY)), (jadd32(jsub32(var19, var9), 1)))));
                      Game::m_l_V();
                   } else {
-                     ((var11)->positionX = ((var11)->positionX + jdiv32(((var32 - (var11)->positionX)), (((var19 - var9) + 1)))));
-                     ((var11)->positionY = ((var11)->positionY + jdiv32(((var18 - (var11)->positionY)), (((var19 - var9) + 1)))));
+                     ((var11)->positionX = jadd32((var11)->positionX, jdiv32((jsub32(var32, (var11)->positionX)), (jadd32(jsub32(var19, var9), 1)))));
+                     ((var11)->positionY = jadd32((var11)->positionY, jdiv32((jsub32(var18, (var11)->positionY)), (jadd32(jsub32(var19, var9), 1)))));
                      (var11)->m_h_V();
                      if (((((var11)->type == 8) && ((var11)->q != nullptr)))) {
-                        (((var11)->q)->ac = ((var11)->positionX + 0));
-                        (((var11)->q)->ad = ((var11)->positionY + 0));
+                        (((var11)->q)->ac = jadd32((var11)->positionX, 0));
+                        (((var11)->q)->ad = jadd32((var11)->positionY, 0));
                         (((var11)->q)->positionX = (var11)->positionX);
                         (((var11)->q)->positionY = (var11)->positionY);
                      }
@@ -6742,14 +6742,14 @@ void Game::m_b_IZI(jint var0, jboolean var1, jint var2) {
             ((Game::player)->q = nullptr);
             if ((Game::dm)) {
                Game::m_w_I(Game::m_B_I(Game::dn));
-               ((Actor::E)->as = ((Actor::E)->as - ((Actor::E)->as / 5)));
+               ((Actor::E)->as = jsub32((Actor::E)->as, ((Actor::E)->as / 5)));
                if ((((Actor::E)->as <= 0))) {
                   ((Actor::E)->as = 1);
                   return;
                }
             } else {
                Game::m_w_I(Game::m_B_I(Game::do_));
-               (Game::health = (Game::health - (Game::health / 3)));
+               (Game::health = jsub32(Game::health, (Game::health / 3)));
             }
          }
       }
@@ -6780,7 +6780,7 @@ void Game::m_i_IIII(jint var0, jint var1, jint var2, jint var3) {
 }
 
 jint Game::m_D_I(jint var0) {
-   return (Game::dj)[(var0 - 100)];
+   return (Game::dj)[jsub32(var0, 100)];
 }
 
 jint Game::m_a_IABIIIActor(jint var0, Arr<jbyte> var1, jint var2, jint var3, jint var4, Ref<Actor> var5) {
@@ -6808,21 +6808,21 @@ jint Game::m_a_IABIIIActor(jint var0, Arr<jbyte> var1, jint var2, jint var3, jin
       jint var18{};
       switch ((var0)) {
          case 100:
-            var32 = ((jshort)((((((var1)[var2] & 255)) + (jshl32((jint)((((var1)[(var2 + 1)] & 255))), (jint)(8)))))));
-            (var2 = (jint)((var2 + 2)));
-            var34 = ((jshort)((((((var1)[var2] & 255)) + (jshl32((jint)((((var1)[(var2 + 1)] & 255))), (jint)(8)))))));
-            (var2 = (jint)((var2 + 2)));
-            var31 = ((jshort)((((((var1)[var2] & 255)) + (jshl32((jint)((((var1)[(var2 + 1)] & 255))), (jint)(8)))))));
+            var32 = ((jshort)((jadd32((((var1)[var2] & 255)), (jshl32((jint)((((var1)[jadd32(var2, 1)] & 255))), (jint)(8)))))));
+            (var2 = (jint)(jadd32(var2, 2)));
+            var34 = ((jshort)((jadd32((((var1)[var2] & 255)), (jshl32((jint)((((var1)[jadd32(var2, 1)] & 255))), (jint)(8)))))));
+            (var2 = (jint)(jadd32(var2, 2)));
+            var31 = ((jshort)((jadd32((((var1)[var2] & 255)), (jshl32((jint)((((var1)[jadd32(var2, 1)] & 255))), (jint)(8)))))));
             (Game::m_i_I(var32))->m_c_II(var34, var31);
             break;
          case 101:
-            var30 = ((jshort)((((((var1)[var2] & 255)) + (jshl32((jint)((((var1)[(var2 + 1)] & 255))), (jint)(8)))))));
+            var30 = ((jshort)((jadd32((((var1)[var2] & 255)), (jshl32((jint)((((var1)[jadd32(var2, 1)] & 255))), (jint)(8)))))));
             (Game::dr = true);
             Game::m_w_I(Game::m_B_I(var30));
             break;
          case 102:
-            var6 = ((jshort)((((((var1)[var2] & 255)) + (jshl32((jint)((((var1)[(var2 + 1)] & 255))), (jint)(8)))))));
-            (var2 = (jint)((var2 + 2)));
+            var6 = ((jshort)((jadd32((((var1)[var2] & 255)), (jshl32((jint)((((var1)[jadd32(var2, 1)] & 255))), (jint)(8)))))));
+            (var2 = (jint)(jadd32(var2, 2)));
             if (((((var8 = (var1)[var2])) == 0))) {
                (var8 = -1);
             }
@@ -6832,7 +6832,7 @@ jint Game::m_a_IABIIIActor(jint var0, Arr<jbyte> var1, jint var2, jint var3, jin
             Game::m_T_V();
             break;
          case 104:
-            Game::m_e_I(((jshort)((((((var1)[var2] & 255)) + (jshl32((jint)((((var1)[(var2 + 1)] & 255))), (jint)(8))))))));
+            Game::m_e_I(((jshort)((jadd32((((var1)[var2] & 255)), (jshl32((jint)((((var1)[jadd32(var2, 1)] & 255))), (jint)(8))))))));
             break;
          case 105:
             if (((((var33 = ((var1)[var2] & 255))) == 0))) {
@@ -6850,14 +6850,14 @@ jint Game::m_a_IABIIIActor(jint var0, Arr<jbyte> var1, jint var2, jint var3, jin
             }
             break;
          case 107:
-            var10 = ((((((var1)[var2] & 255)) + (jshl32((jint)((((var1)[(var2 + 1)] & 255))), (jint)(8)))) + (jshl32((jint)((((var1)[(var2 + 2)] & 255))), (jint)(16)))) + (jshl32((jint)((((var1)[(var2 + 3)] & 255))), (jint)(24))));
+            var10 = jadd32(jadd32(jadd32((((var1)[var2] & 255)), (jshl32((jint)((((var1)[jadd32(var2, 1)] & 255))), (jint)(8)))), (jshl32((jint)((((var1)[jadd32(var2, 2)] & 255))), (jint)(16)))), (jshl32((jint)((((var1)[jadd32(var2, 3)] & 255))), (jint)(24))));
             ((var5)->c = (jint)(((var5)->c | var10)));
             if (((var10 == 4096))) {
                (Game::bw = true);
             }
             break;
          case 108:
-            var11 = ((((((var1)[var2] & 255)) + (jshl32((jint)((((var1)[(var2 + 1)] & 255))), (jint)(8)))) + (jshl32((jint)((((var1)[(var2 + 2)] & 255))), (jint)(16)))) + (jshl32((jint)((((var1)[(var2 + 3)] & 255))), (jint)(24))));
+            var11 = jadd32(jadd32(jadd32((((var1)[var2] & 255)), (jshl32((jint)((((var1)[jadd32(var2, 1)] & 255))), (jint)(8)))), (jshl32((jint)((((var1)[jadd32(var2, 2)] & 255))), (jint)(16)))), (jshl32((jint)((((var1)[jadd32(var2, 3)] & 255))), (jint)(24))));
             ((var5)->c = (jint)(((var5)->c & (~var11))));
             break;
          case 109:
@@ -6876,9 +6876,9 @@ jint Game::m_a_IABIIIActor(jint var0, Arr<jbyte> var1, jint var2, jint var3, jin
             var15 = ((var1)[(++var2)] & 255);
             (var2++);
             if (((var0 == 111))) {
-               (var16 = ((jshort)((((((var1)[var2] & 255)) + (jshl32((jint)((((var1)[(var2 + 1)] & 255))), (jint)(8))))))));
-               (var2 = (jint)((var2 + 2)));
-               (var17 = ((jshort)((((((var1)[var2] & 255)) + (jshl32((jint)((((var1)[(var2 + 1)] & 255))), (jint)(8))))))));
+               (var16 = ((jshort)((jadd32((((var1)[var2] & 255)), (jshl32((jint)((((var1)[jadd32(var2, 1)] & 255))), (jint)(8))))))));
+               (var2 = (jint)(jadd32(var2, 2)));
+               (var17 = ((jshort)((jadd32((((var1)[var2] & 255)), (jshl32((jint)((((var1)[jadd32(var2, 1)] & 255))), (jint)(8))))))));
             } else {
                (var5)->m_g_V();
                (var16 = (var5)->positionX);
@@ -6886,7 +6886,7 @@ jint Game::m_a_IABIIIActor(jint var0, Arr<jbyte> var1, jint var2, jint var3, jin
             }
             if (((Game::dialogText == nullptr))) {
                (Game::dialogText = Game::m_k_II(var12, var13));
-               (Game::bA = Game::m_k_II(0, (var14 + 96)));
+               (Game::bA = Game::m_k_II(0, jadd32(var14, 96)));
                (Game::X = 0);
                (Game::bF = var14);
                (Game::bG = var15);
@@ -6895,8 +6895,8 @@ jint Game::m_a_IABIIIActor(jint var0, Arr<jbyte> var1, jint var2, jint var3, jin
                ((Game::a)->z = 5);
                (Game::a)->m_a_StringI(jcat(jstr(((jchar)125)), jstr(Game::dialogText)), (var35 ? 175 : 180));
                (Game::bH = 0);
-               (Game::bC = (var16 - Game::cameraX));
-               (Game::bD = (var17 - Game::cameraY));
+               (Game::bC = jsub32(var16, Game::cameraX));
+               (Game::bD = jsub32(var17, Game::cameraY));
                Game::m_h_I(5);
             }
             break;
@@ -6912,10 +6912,10 @@ jint Game::m_a_IABIIIActor(jint var0, Arr<jbyte> var1, jint var2, jint var3, jin
             break;
          case 114:
             (Game::dk = Game::m_i_II(0, 5));
-            (Game::player)->m_c_III((Game::dq)[Game::dk], (Game::cameraX + 120), (Game::cameraY + 160));
-            (Game::dn = ((jshort)((((((var1)[var2] & 255)) + (jshl32((jint)((((var1)[(var2 + 1)] & 255))), (jint)(8))))))));
-            (var2 = (jint)((var2 + 2)));
-            (Game::do_ = ((jshort)((((((var1)[var2] & 255)) + (jshl32((jint)((((var1)[(var2 + 1)] & 255))), (jint)(8))))))));
+            (Game::player)->m_c_III((Game::dq)[Game::dk], jadd32(Game::cameraX, 120), jadd32(Game::cameraY, 160));
+            (Game::dn = ((jshort)((jadd32((((var1)[var2] & 255)), (jshl32((jint)((((var1)[jadd32(var2, 1)] & 255))), (jint)(8))))))));
+            (var2 = (jint)(jadd32(var2, 2)));
+            (Game::do_ = ((jshort)((jadd32((((var1)[var2] & 255)), (jshl32((jint)((((var1)[jadd32(var2, 1)] & 255))), (jint)(8))))))));
             (Game::dl = true);
             (Game::dm = false);
             break;
@@ -7220,19 +7220,19 @@ void Game::m_O_V() {
          {
             jint var0 = 0;
             for (; (var0 < 20); (var0++)) {
-               ((Game::dI)[var0] = ((jshort)((((var0 * ((PortConfig::screenWidth + 80))) / 20)))));
-               ([&]{ auto _t0 = Game::dM; auto _t1 = var0; auto _t2 = (jshort)(((jshort)((((Game::m_i_II(0, 100) * 320) / 100))))); return _t0[_t1] = _t2; }());
+               ((Game::dI)[var0] = ((jshort)(((jmul32(var0, (jadd32(PortConfig::screenWidth, 80))) / 20)))));
+               ([&]{ auto _t0 = Game::dM; auto _t1 = var0; auto _t2 = (jshort)(((jshort)(((jmul32(Game::m_i_II(0, 100), 320) / 100))))); return _t0[_t1] = _t2; }());
                ([&]{ auto _t3 = Game::dK; auto _t4 = var0; auto _t5 = (jbyte)(((jbyte)(Game::m_i_II(0, 5)))); return _t3[_t4] = _t5; }());
                ([&]{ auto _t6 = Game::dL; auto _t7 = var0; auto _t8 = (jbyte)(((jbyte)(Game::m_i_II(0, 5)))); return _t6[_t7] = _t8; }());
-               ([&]{ auto _t9 = Game::dN; auto _t10 = var0; auto _t11 = (jbyte)(((jbyte)(((1 + Game::m_i_II(0, 4)))))); return _t9[_t10] = _t11; }());
-               ([&]{ auto _t12 = Game::dO; auto _t13 = var0; auto _t14 = (jbyte)(((jbyte)(((0 + Game::m_i_II(0, 5)))))); return _t12[_t13] = _t14; }());
+               ([&]{ auto _t9 = Game::dN; auto _t10 = var0; auto _t11 = (jbyte)(((jbyte)((jadd32(1, Game::m_i_II(0, 4)))))); return _t9[_t10] = _t11; }());
+               ([&]{ auto _t12 = Game::dO; auto _t13 = var0; auto _t14 = (jbyte)(((jbyte)((jadd32(0, Game::m_i_II(0, 5)))))); return _t12[_t13] = _t14; }());
                if ((((Game::dO)[var0] > 2))) {
                   ((Game::dP)[var0] = 0);
                } else {
                   ((Game::dP)[var0] = 4);
                }
                if (((Game::m_i_II(0, 2) == 0))) {
-                  ((Game::dO)[var0] = ((jbyte)(((-(Game::dO)[var0])))));
+                  ((Game::dO)[var0] = ((jbyte)((jneg32((Game::dO)[var0])))));
                }
             }
          }
@@ -7247,27 +7247,27 @@ void Game::m_O_V() {
          jint var3 = 0;
          for (; (var3 < 20); (var3++)) {
             if ((((Game::state != 14) && (Game::state != 31)))) {
-               ((Game::dM)[var3] = ((jshort)((((Game::dM)[var3] - (Game::dN)[var3])))));
-               ((Game::dI)[var3] = ((jshort)((((Game::dI)[var3] + (Game::dO)[var3])))));
+               ((Game::dM)[var3] = ((jshort)((jsub32((Game::dM)[var3], (Game::dN)[var3])))));
+               ((Game::dI)[var3] = ((jshort)((jadd32((Game::dI)[var3], (Game::dO)[var3])))));
                if (((Game::m_i_II(0, 300) == 0))) {
                   jbyte var2 = (Game::dO)[var3];
                   ((Game::dO)[var3] = (Game::dP)[var3]);
                   ((Game::dP)[var3] = var2);
                }
                while ((((Game::dM)[var3] < 0))) {
-                  ((Game::dM)[var3] = ((jshort)((((Game::dM)[var3] + 320)))));
+                  ((Game::dM)[var3] = ((jshort)((jadd32((Game::dM)[var3], 320)))));
                }
                while ((((Game::dM)[var3] > 320))) {
-                  ((Game::dM)[var3] = ((jshort)((((Game::dM)[var3] - 320)))));
+                  ((Game::dM)[var3] = ((jshort)((jsub32((Game::dM)[var3], 320)))));
                }
                while ((((Game::dI)[var3] > PortConfig::screenWidth))) {
-                  ((Game::dI)[var3] = ((jshort)((((Game::dI)[var3] - PortConfig::screenWidth)))));
+                  ((Game::dI)[var3] = ((jshort)((jsub32((Game::dI)[var3], PortConfig::screenWidth)))));
                }
                while ((((Game::dI)[var3] < 0))) {
-                  ((Game::dI)[var3] = ((jshort)((((Game::dI)[var3] + PortConfig::screenWidth)))));
+                  ((Game::dI)[var3] = ((jshort)((jadd32((Game::dI)[var3], PortConfig::screenWidth)))));
                }
             }
-            ((Game::b)[44])->m_a_GraphicsIIIIIII(Game::graphics, (((var1 ? 12 : 7)) + (Game::dK)[var3]), 0, (Game::dI)[var3], (Game::dM)[var3], 0, 0, 0);
+            ((Game::b)[44])->m_a_GraphicsIIIIIII(Game::graphics, jadd32(((var1 ? 12 : 7)), (Game::dK)[var3]), 0, (Game::dI)[var3], (Game::dM)[var3], 0, 0, 0);
          }
       }
    }
@@ -7280,10 +7280,10 @@ void Game::m_P_V() {
             {
                jint var0 = 0;
                for (; (var0 < 30); (var0++)) {
-                  ((Game::dI)[var0] = ((jshort)((((var0 * PortConfig::screenWidth) / 30)))));
-                  ([&]{ auto _t0 = Game::dM; auto _t1 = var0; auto _t2 = (jshort)(((jshort)((((Game::m_i_II(0, 100) * 320) / 100))))); return _t0[_t1] = _t2; }());
-                  ([&]{ auto _t3 = Game::dN; auto _t4 = var0; auto _t5 = (jbyte)(((jbyte)(((10 + Game::m_i_II(0, 8)))))); return _t3[_t4] = _t5; }());
-                  ([&]{ auto _t6 = Game::dO; auto _t7 = var0; auto _t8 = (jbyte)(((jbyte)(((7 + Game::m_i_II(0, 6)))))); return _t6[_t7] = _t8; }());
+                  ((Game::dI)[var0] = ((jshort)(((jmul32(var0, PortConfig::screenWidth) / 30)))));
+                  ([&]{ auto _t0 = Game::dM; auto _t1 = var0; auto _t2 = (jshort)(((jshort)(((jmul32(Game::m_i_II(0, 100), 320) / 100))))); return _t0[_t1] = _t2; }());
+                  ([&]{ auto _t3 = Game::dN; auto _t4 = var0; auto _t5 = (jbyte)(((jbyte)((jadd32(10, Game::m_i_II(0, 8)))))); return _t3[_t4] = _t5; }());
+                  ([&]{ auto _t6 = Game::dO; auto _t7 = var0; auto _t8 = (jbyte)(((jbyte)((jadd32(7, Game::m_i_II(0, 6)))))); return _t6[_t7] = _t8; }());
                   ([&]{ auto _t9 = Game::dJ; auto _t10 = var0; auto _t11 = (jbyte)(((jbyte)(Game::m_i_II(0, 3)))); return _t9[_t10] = _t11; }());
                }
             }
@@ -7294,23 +7294,23 @@ void Game::m_P_V() {
             jint var3 = 0;
             for (; (var3 < Game::dR); (var3++)) {
                if ((((Game::state != 14) && (Game::state != 31)))) {
-                  ((Game::dM)[var3] = ((jshort)((((Game::dM)[var3] + (Game::dN)[var3])))));
-                  ((Game::dI)[var3] = ((jshort)((((Game::dI)[var3] - (Game::dO)[var3])))));
+                  ((Game::dM)[var3] = ((jshort)((jadd32((Game::dM)[var3], (Game::dN)[var3])))));
+                  ((Game::dI)[var3] = ((jshort)((jsub32((Game::dI)[var3], (Game::dO)[var3])))));
                   while ((((Game::dM)[var3] < 0))) {
-                     ((Game::dM)[var3] = ((jshort)((((Game::dM)[var3] + 320)))));
+                     ((Game::dM)[var3] = ((jshort)((jadd32((Game::dM)[var3], 320)))));
                   }
                   while ((((Game::dM)[var3] > 320))) {
-                     ((Game::dM)[var3] = ((jshort)((((Game::dM)[var3] - 320)))));
+                     ((Game::dM)[var3] = ((jshort)((jsub32((Game::dM)[var3], 320)))));
                   }
                   while ((((Game::dI)[var3] > PortConfig::screenWidth))) {
-                     ((Game::dI)[var3] = ((jshort)((((Game::dI)[var3] - PortConfig::screenWidth)))));
+                     ((Game::dI)[var3] = ((jshort)((jsub32((Game::dI)[var3], PortConfig::screenWidth)))));
                   }
                   while ((((Game::dI)[var3] < 0))) {
-                     ((Game::dI)[var3] = ((jshort)((((Game::dI)[var3] + PortConfig::screenWidth)))));
+                     ((Game::dI)[var3] = ((jshort)((jadd32((Game::dI)[var3], PortConfig::screenWidth)))));
                   }
                }
                Game::m_b_I((Game::dX)[(Game::dJ)[var3]]);
-               Game::m_d_IIII((Game::dI)[var3], (Game::dM)[var3], ((Game::dI)[var3] - 7), ((Game::dM)[var3] + 13));
+               Game::m_d_IIII((Game::dI)[var3], (Game::dM)[var3], jsub32((Game::dI)[var3], 7), jadd32((Game::dM)[var3], 13));
             }
          }
          if ((((Game::m_i_II(0, 500) == 40) && (!Game::dT)))) {
@@ -7345,70 +7345,70 @@ void Game::m_a_ZI(jboolean var0, jint var1) {
       {
          jint var11 = 0;
          for (; (var11 < 3); (var11++)) {
-            (var3 = (((Game::ea + (var11 * 15))) % 180));
+            (var3 = ((jadd32(Game::ea, jmul32(var11, 15))) % 180));
             if ((var0)) {
                if (((var3 < 90))) {
-                  (Game::dY = ((var3 * 70) / 90));
+                  (Game::dY = (jmul32(var3, 70) / 90));
                   (var2 = 270);
                } else {
-                  (Game::dY = ((((180 - var3)) * 70) / 90));
+                  (Game::dY = (jmul32((jsub32(180, var3)), 70) / 90));
                   (var2 = 90);
                }
             } else if (((var3 < 90))) {
-               (Game::dY = ((var3 * 70) / 90));
+               (Game::dY = (jmul32(var3, 70) / 90));
                (var2 = 90);
             } else {
-               (Game::dY = ((((180 - var3)) * 70) / 90));
+               (Game::dY = (jmul32((jsub32(180, var3)), 70) / 90));
                (var2 = 270);
             }
             Game::m_b_I((Game::ec)[var11]);
-            Game::m_c_IIIIII((((Game::player)->positionX - (Game::dY / 2)) - Game::cameraX), ((((Game::player)->positionY - 30) - 35) - Game::cameraY), Game::dY, 70, var2, 180);
-            Game::m_c_IIIIII(((((Game::player)->positionX - (Game::dY / 2)) + 1) - Game::cameraX), ((((Game::player)->positionY - 30) - 35) - Game::cameraY), Game::dY, 70, var2, 180);
+            Game::m_c_IIIIII(jsub32(jsub32((Game::player)->positionX, (Game::dY / 2)), Game::cameraX), jsub32(jsub32(jsub32((Game::player)->positionY, 30), 35), Game::cameraY), Game::dY, 70, var2, 180);
+            Game::m_c_IIIIII(jsub32(jadd32(jsub32((Game::player)->positionX, (Game::dY / 2)), 1), Game::cameraX), jsub32(jsub32(jsub32((Game::player)->positionY, 30), 35), Game::cameraY), Game::dY, 70, var2, 180);
          }
       }
-      (Game::ea = (((Game::ea + 3)) % 180));
+      (Game::ea = ((jadd32(Game::ea, 3)) % 180));
    } else if (((var1 == 1))) {
       {
          jint var10 = 0;
          for (; (var10 < 3); (var10++)) {
-            (var3 = (((Game::eb + (var10 * 15))) % 180));
+            (var3 = ((jadd32(Game::eb, jmul32(var10, 15))) % 180));
             if ((var0)) {
                if (((var3 < 90))) {
-                  (Game::dZ = ((var3 * 70) / 90));
+                  (Game::dZ = (jmul32(var3, 70) / 90));
                   (var2 = 180);
                } else {
-                  (Game::dZ = ((((180 - var3)) * 70) / 90));
+                  (Game::dZ = (jmul32((jsub32(180, var3)), 70) / 90));
                   (var2 = 0);
                }
             } else if (((var3 < 90))) {
-               (Game::dZ = ((var3 * 70) / 90));
+               (Game::dZ = (jmul32(var3, 70) / 90));
                (var2 = 0);
             } else {
-               (Game::dZ = ((((180 - var3)) * 70) / 90));
+               (Game::dZ = (jmul32((jsub32(180, var3)), 70) / 90));
                (var2 = 180);
             }
             Game::m_b_I((Game::ec)[var10]);
-            Game::m_c_IIIIII((((Game::player)->positionX - 35) - Game::cameraX), ((((Game::player)->positionY - 30) - (Game::dZ / 2)) - Game::cameraY), 70, Game::dZ, var2, 180);
-            Game::m_c_IIIIII((((Game::player)->positionX - 35) - Game::cameraX), (((((Game::player)->positionY - 30) - (Game::dZ / 2)) + 1) - Game::cameraY), 70, Game::dZ, var2, 180);
+            Game::m_c_IIIIII(jsub32(jsub32((Game::player)->positionX, 35), Game::cameraX), jsub32(jsub32(jsub32((Game::player)->positionY, 30), (Game::dZ / 2)), Game::cameraY), 70, Game::dZ, var2, 180);
+            Game::m_c_IIIIII(jsub32(jsub32((Game::player)->positionX, 35), Game::cameraX), jsub32(jadd32(jsub32(jsub32((Game::player)->positionY, 30), (Game::dZ / 2)), 1), Game::cameraY), 70, Game::dZ, var2, 180);
          }
       }
-      (Game::eb = (((Game::eb + 4)) % 180));
+      (Game::eb = ((jadd32(Game::eb, 4)) % 180));
    } else {
       if (((var1 == 888))) {
          if (((((Game::eb == 0) || (Game::eb == 180)) || (Game::m_m_I(Game::eb) == 0)))) {
-            (Game::eb = (((Game::eb + 1)) % 45));
+            (Game::eb = ((jadd32(Game::eb, 1)) % 45));
             return;
          }
          jint var4 = jdiv32(8960, Game::m_m_I(Game::eb));
-         jint var5 = jshr32((jint)(([&]{ auto _t2 = ([&]{ auto _t0 = (35 * Game::m_l_I(Game::eb)); auto _t1 = Game::m_m_I(45); return (_t0 * _t1); }()); auto _t3 = Game::m_m_I(Game::eb); return jdiv32(_t2, _t3); }())), (jint)(8));
+         jint var5 = jshr32((jint)(([&]{ auto _t2 = ([&]{ auto _t0 = jmul32(35, Game::m_l_I(Game::eb)); auto _t1 = Game::m_m_I(45); return jmul32(_t0, _t1); }()); auto _t3 = Game::m_m_I(Game::eb); return jdiv32(_t2, _t3); }())), (jint)(8));
          (System::out)->println(jcat(jstr(jlit(u"r2  ")), jstr(var4)));
          (System::out)->println(jcat(jstr(jlit(u"r3  ")), jstr(var5)));
          if ((var0)) {
-            Game::m_c_IIIIII(((((Game::player)->positionX + var5) - var4) - Game::cameraX), (((((Game::player)->positionY - 30) + var5) - var4) - Game::cameraY), (var4 * 2), (var4 * 2), (135 - Game::eb), (Game::eb * 2));
+            Game::m_c_IIIIII(jsub32(jsub32(jadd32((Game::player)->positionX, var5), var4), Game::cameraX), jsub32(jsub32(jadd32(jsub32((Game::player)->positionY, 30), var5), var4), Game::cameraY), jmul32(var4, 2), jmul32(var4, 2), jsub32(135, Game::eb), jmul32(Game::eb, 2));
          } else {
-            Game::m_c_IIIIII(((((Game::player)->positionX - var5) - var4) - Game::cameraX), (((((Game::player)->positionY - 30) - var5) - var4) - Game::cameraY), (var4 * 2), (var4 * 2), (315 - Game::eb), (Game::eb * 2));
+            Game::m_c_IIIIII(jsub32(jsub32(jsub32((Game::player)->positionX, var5), var4), Game::cameraX), jsub32(jsub32(jsub32(jsub32((Game::player)->positionY, 30), var5), var4), Game::cameraY), jmul32(var4, 2), jmul32(var4, 2), jsub32(315, Game::eb), jmul32(Game::eb, 2));
          }
-         (Game::eb = (((Game::eb + 1)) % 45));
+         (Game::eb = ((jadd32(Game::eb, 1)) % 45));
       }
    }
 }
@@ -7441,9 +7441,9 @@ void Game::m_h_III(jint var0, jint var1, jint var2) {
       jint var3 = 0;
       for (; (var3 < var0); (var3++)) {
          if ((((var3 % 2) == 0))) {
-            Game::m_d_IIII(0, (var3 + var2), (var1 * 24), (var3 + var2));
+            Game::m_d_IIII(0, jadd32(var3, var2), jmul32(var1, 24), jadd32(var3, var2));
          } else {
-            Game::m_d_IIII((240 - (var1 * 24)), (var3 + var2), 240, (var3 + var2));
+            Game::m_d_IIII(jsub32(240, jmul32(var1, 24)), jadd32(var3, var2), 240, jadd32(var3, var2));
          }
       }
    }
@@ -7452,13 +7452,13 @@ void Game::m_h_III(jint var0, jint var1, jint var2) {
 void Game::m_a_IIIIZII(jint var0, jint var1, jint var2, jint var3, jboolean var4, jint var5, jint var6) {
    if ((var4)) {
       Game::m_b_I(var6);
-      Game::m_b_IIII(var0, var1, (var2 + 1), (var3 + 2));
+      Game::m_b_IIII(var0, var1, jadd32(var2, 1), jadd32(var3, 2));
    }
    Game::m_b_I(var5);
-   Game::m_d_IIII(var0, var1, (var0 + var2), var1);
-   Game::m_d_IIII((var0 - 1), (var1 + 1), (var0 - 1), ((var1 + 1) + var3));
-   Game::m_d_IIII(var0, ((var1 + var3) + 2), (var0 + var2), ((var1 + var3) + 2));
-   Game::m_d_IIII(((var0 + var2) + 1), (var1 + 1), ((var0 + var2) + 1), ((var1 + 1) + var3));
+   Game::m_d_IIII(var0, var1, jadd32(var0, var2), var1);
+   Game::m_d_IIII(jsub32(var0, 1), jadd32(var1, 1), jsub32(var0, 1), jadd32(jadd32(var1, 1), var3));
+   Game::m_d_IIII(var0, jadd32(jadd32(var1, var3), 2), jadd32(var0, var2), jadd32(jadd32(var1, var3), 2));
+   Game::m_d_IIII(jadd32(jadd32(var0, var2), 1), jadd32(var1, 1), jadd32(jadd32(var0, var2), 1), jadd32(jadd32(var1, 1), var3));
 }
 
 void Game::m_h_Z(jboolean var0) {
@@ -7522,9 +7522,9 @@ void Game::m_h_Z(jboolean var0) {
          }
       }
       ((Game::a)->z = 5);
-      ([&]{ auto _t24 = Game::a; auto _t25 = Game::graphics; auto _t26 = ([&]{ auto _t22 = jstr(jcat(jstr(Game::m_k_II(0, 43)), jstr(jlit(u" ")))); auto _t23 = jstr(((Game::ei + 1))); return jcat(_t22, _t23); }()); auto _t27 = 120; auto _t28 = 250; auto _t29 = 3; return _t24->m_a_GraphicsStringIII(_t25, _t26, _t27, _t28, _t29); }());
+      ([&]{ auto _t24 = Game::a; auto _t25 = Game::graphics; auto _t26 = ([&]{ auto _t22 = jstr(jcat(jstr(Game::m_k_II(0, 43)), jstr(jlit(u" ")))); auto _t23 = jstr((jadd32(Game::ei, 1))); return jcat(_t22, _t23); }()); auto _t27 = 120; auto _t28 = 250; auto _t29 = 3; return _t24->m_a_GraphicsStringIII(_t25, _t26, _t27, _t28, _t29); }());
    }
-   ([&]{ auto _t30 = Game::a; auto _t31 = Game::graphics; auto _t32 = Game::m_k_II(0, ((!var0) ? 41 : (44 + Game::ei))); auto _t33 = 120; auto _t34 = ((!var0) ? 260 : 283); auto _t35 = 3; return _t30->m_a_GraphicsStringIII(_t31, _t32, _t33, _t34, _t35); }());
+   ([&]{ auto _t30 = Game::a; auto _t31 = Game::graphics; auto _t32 = Game::m_k_II(0, ((!var0) ? 41 : jadd32(44, Game::ei))); auto _t33 = 120; auto _t34 = ((!var0) ? 260 : 283); auto _t35 = 3; return _t30->m_a_GraphicsStringIII(_t31, _t32, _t33, _t34, _t35); }());
    if (((Game::ee == 1))) {
       Game::m_h_III((var0 ? 123 : 162), Game::U, 71);
       (Game::U++);
@@ -7540,18 +7540,18 @@ void Game::m_h_Z(jboolean var0) {
          (Game::ee = 0);
       }
    } else if ((((Game::ee == 2) || ((Game::ee == 1) && (Game::U >= 9))))) {
-      Game::m_b_IIII(0, 71, 240, (123 + ((var0 ? 0 : 33))));
-      Actor::m_a_IIIIIIIZ(120, (var0 ? 120 : 145), 120, (var0 ? 120 : 145), 40, 35, (3 * Game::stateFrame), true);
+      Game::m_b_IIII(0, 71, 240, jadd32(123, ((var0 ? 0 : 33))));
+      Actor::m_a_IIIIIIIZ(120, (var0 ? 120 : 145), 120, (var0 ? 120 : 145), 40, 35, jmul32(3, Game::stateFrame), true);
       ((Game::a)->z = 5);
-      ([&]{ auto _t36 = Game::a; auto _t37 = Game::graphics; auto _t38 = Game::m_k_II(0, 26); auto _t39 = 120; auto _t40 = (180 + ((var0 ? 0 : 25))); auto _t41 = 17; return _t36->m_a_GraphicsStringIII(_t37, _t38, _t39, _t40, _t41); }());
+      ([&]{ auto _t36 = Game::a; auto _t37 = Game::graphics; auto _t38 = Game::m_k_II(0, 26); auto _t39 = 120; auto _t40 = jadd32(180, ((var0 ? 0 : 25))); auto _t41 = 17; return _t36->m_a_GraphicsStringIII(_t37, _t38, _t39, _t40, _t41); }());
    }
    if ((var0)) {
       jbyte var1 = -1;
-      jint var2 = (Game::eg - 11);
+      jint var2 = jsub32(Game::eg, 11);
       Arr<jbyte> var3 = (Game::ek)[var2];
       Arr<jbyte> var4 = (Game::fG)[var2];
-      if (((((Game::eh)[(var2 + 1)] - 1) >= Game::maxUnlockedLevel))) {
-         jint var5 = (Game::maxUnlockedLevel - (Game::eh)[var2]);
+      if (((jsub32((Game::eh)[jadd32(var2, 1)], 1) >= Game::maxUnlockedLevel))) {
+         jint var5 = jsub32(Game::maxUnlockedLevel, (Game::eh)[var2]);
          (var1 = (var3)[var5]);
       }
       jint var8 = 0;
@@ -7560,23 +7560,23 @@ void Game::m_h_Z(jboolean var0) {
       }
       {
          for (; ((var8 < jshr32((jint)((var4).length()), (jint)(1))) && (((var1 <= 0) || (var8 < var1)))); (var8++)) {
-            jint var6 = (120 + (var4)[jshl32((jint)(var8), (jint)(1))]);
-            jint var7 = (235 + (var4)[((jshl32((jint)(var8), (jint)(1))) + 1)]);
+            jint var6 = jadd32(120, (var4)[jshl32((jint)(var8), (jint)(1))]);
+            jint var7 = jadd32(235, (var4)[jadd32((jshl32((jint)(var8), (jint)(1))), 1)]);
             if ((((Game::fJ != 2) && (Game::fH == var8)))) {
-               Game::m_a_IIIIZII((var6 - 2), (var7 - 2), 4, 4, true, 15395562, 15480832);
+               Game::m_a_IIIIZII(jsub32(var6, 2), jsub32(var7, 2), 4, 4, true, 15395562, 15480832);
             } else {
-               Game::m_a_IIIIZII((var6 - 1), (var7 - 1), 2, 2, true, 13079364, 4196354);
+               Game::m_a_IIIIZII(jsub32(var6, 1), jsub32(var7, 1), 2, 2, true, 13079364, 4196354);
             }
          }
       }
       {
          jint var9 = 0;
-         for (; (var9 < ((var3).length() - 1)); (var9++)) {
-            ((Game::b)[33])->m_a_GraphicsIIIIII(Game::graphics, 40, (120 + (var4)[jshl32((jint)((var3)[var9]), (jint)(1))]), (235 + (var4)[((jshl32((jint)((var3)[var9]), (jint)(1))) + 1)]), 0, 0, 0);
+         for (; (var9 < jsub32((var3).length(), 1)); (var9++)) {
+            ((Game::b)[33])->m_a_GraphicsIIIIII(Game::graphics, 40, jadd32(120, (var4)[jshl32((jint)((var3)[var9]), (jint)(1))]), jadd32(235, (var4)[jadd32((jshl32((jint)((var3)[var9]), (jint)(1))), 1)]), 0, 0, 0);
          }
       }
       if (((Game::fJ == 2))) {
-         ((Game::b)[33])->m_a_GraphicsIIIIIII(Game::graphics, 2, (Game::ed % 8), (120 + (Game::ej)[jshl32((jint)(Game::ei), (jint)(1))]), ((239 + (Game::ej)[((jshl32((jint)(Game::ei), (jint)(1))) + 1)]) - 4), 0, 0, 0);
+         ((Game::b)[33])->m_a_GraphicsIIIIIII(Game::graphics, 2, (Game::ed % 8), jadd32(120, (Game::ej)[jshl32((jint)(Game::ei), (jint)(1))]), jsub32(jadd32(239, (Game::ej)[jadd32((jshl32((jint)(Game::ei), (jint)(1))), 1)]), 4), 0, 0, 0);
       }
    }
    if ((((Game::ee == 0) || (!var0)))) {
@@ -7586,32 +7586,32 @@ void Game::m_h_Z(jboolean var0) {
 
 void Game::m_aN_V() {
    jint var0 = 0;
-   jint var1 = (Game::eg - 11);
+   jint var1 = jsub32(Game::eg, 11);
    {
       jint var2 = 0;
       for (; (var2 < var1); (var2++)) {
          if ((((var2 != 0) && (var2 != 2)))) {
-            (var0 = (jint)((var0 + 3)));
+            (var0 = (jint)(jadd32(var0, 3)));
          } else {
-            (var0 = (jint)((var0 + 2)));
+            (var0 = (jint)(jadd32(var0, 2)));
          }
       }
    }
-   jint var3 = (Game::ei - var0);
+   jint var3 = jsub32(Game::ei, var0);
    (Game::fH = ((Game::ek)[var1])[var3]);
    if ((((var3 == 0) && Game::fK))) {
       (Game::fI = 0);
    } else if ((Game::fK)) {
-      (Game::fI = ((Game::ek)[var1])[(var3 - 1)]);
+      (Game::fI = ((Game::ek)[var1])[jsub32(var3, 1)]);
    } else {
-      (Game::fI = ((Game::ek)[var1])[(var3 + 1)]);
+      (Game::fI = ((Game::ek)[var1])[jadd32(var3, 1)]);
    }
 }
 
 void Game::m_i_Z(jboolean var0) {
    if ((var0)) {
       (Game::ei--);
-      if (((Game::ei < (Game::eh)[(Game::eg - 11)]))) {
+      if (((Game::ei < (Game::eh)[jsub32(Game::eg, 11)]))) {
          (Game::eg--);
          if (((Game::eg < 11))) {
             (Game::eg = 15);
@@ -7630,7 +7630,7 @@ void Game::m_i_Z(jboolean var0) {
       }
    } else {
       (Game::ei++);
-      if (((Game::ei >= (Game::eh)[((Game::eg - 11) + 1)]))) {
+      if (((Game::ei >= (Game::eh)[jadd32(jsub32(Game::eg, 11), 1)]))) {
          (Game::eg++);
          if (((Game::eg > 15))) {
             (Game::eg = 11);
@@ -7670,12 +7670,12 @@ void Game::m_aO_V() {
             }
             if (((Game::ee == 1))) {
                if ((Game::fK)) {
-                  jint var0 = ((Game::ek)[(Game::eg - 11)]).length();
-                  (Game::fI = ((Game::ek)[(Game::eg - 11)])[(var0 - 2)]);
-                  (Game::fH = ((Game::ek)[(Game::eg - 11)])[(var0 - 1)]);
+                  jint var0 = ((Game::ek)[jsub32(Game::eg, 11)]).length();
+                  (Game::fI = ((Game::ek)[jsub32(Game::eg, 11)])[jsub32(var0, 2)]);
+                  (Game::fH = ((Game::ek)[jsub32(Game::eg, 11)])[jsub32(var0, 1)]);
                } else {
                   (Game::fH = 0);
-                  (Game::fI = ((Game::ek)[(Game::eg - 11)])[0]);
+                  (Game::fI = ((Game::ek)[jsub32(Game::eg, 11)])[0]);
                }
             } else {
                (Game::fJ = 2);
@@ -7732,7 +7732,7 @@ void Game::m_aP_V() {
    if (((Game::ee == 2))) {
       try {
          if (((Game::ef >= 3))) {
-            Game::m_t_II(Game::eg, (Game::ef - 3));
+            Game::m_t_II(Game::eg, jsub32(Game::ef, 3));
          }
          if (((Game::ef == 11))) {
             Game::m_c_IZ(Game::eg, false);
@@ -7793,7 +7793,7 @@ void Game::m_aQ_V() {
       (Game::eg = 11);
    }
    if (((Game::m_F_I(65568) || Game::m_F_I(33024)))) {
-      (Game::fL = (jint)((Game::fL - 4)));
+      (Game::fL = (jint)(jsub32(Game::fL, 4)));
    }
    if ((Game::m_G_I(131072))) {
       if ((Game::cT)) {
@@ -7924,9 +7924,9 @@ void Game::m_a_ABIABI(Arr<jbyte> var0, jint var1, Arr<jbyte> var2, jint var3) {
 
 Arr<jbyte> Game::m_J_I(jint var0) {
    jint var2{};
-   Arr<jbyte> var1 = jnewarray<Arr<jbyte>>((var2 = (var0 + 44)));
+   Arr<jbyte> var1 = jnewarray<Arr<jbyte>>((var2 = jadd32(var0, 44)));
    Game::m_a_ABIABI(Game::eo, 4, var1, 0);
-   (var2 = (jint)((var2 - 8)));
+   (var2 = (jint)(jsub32(var2, 8)));
    ((var1)[4] = ((jbyte)(var2)));
    ((var1)[5] = ((jbyte)((jshr32((jint)(var2), (jint)(8))))));
    ((var1)[6] = ((jbyte)((jshr32((jint)(var2), (jint)(16))))));
@@ -7950,11 +7950,11 @@ Arr<jbyte> Game::m_J_I(jint var0) {
 }
 
 void Game::m_a_ABABII(Arr<jbyte> var0, Arr<jbyte> var1, jint var2, jint var3) {
-   jint var7 = (((var0)[var2] & 255) | jshl32((jint)((var0)[(var2 + 1)]), (jint)(8)));
-   jint var9 = (var0)[(var2 + 2)];
+   jint var7 = (((var0)[var2] & 255) | jshl32((jint)((var0)[jadd32(var2, 1)]), (jint)(8)));
+   jint var9 = (var0)[jadd32(var2, 2)];
    ((var1)[(var3++)] = ((jbyte)(((var7 & 255)))));
    ((var1)[(var3++)] = ((jbyte)((jshr32((jint)(var7), (jint)(8))))));
-   (var2 = (jint)((var2 + 4)));
+   (var2 = (jint)(jadd32(var2, 4)));
    jboolean var11 = false;
    jbyte var10 = 0;
    jshort var6 = (Game::en)[var9];
@@ -7968,7 +7968,7 @@ void Game::m_a_ABABII(Arr<jbyte> var0, Arr<jbyte> var1, jint var2, jint var3) {
             (var5 = (jshr32((jint)(((var10 = (var0)[(var2++)]))), (jint)(4)) & 15));
          }
          (var11 = (!var11));
-         if (((((var9 = (jint)((var9 + (Game::em)[var5])))) < 0))) {
+         if (((((var9 = (jint)(jadd32(var9, (Game::em)[var5])))) < 0))) {
             (var9 = 0);
          }
          if (((var9 > 88))) {
@@ -7978,18 +7978,18 @@ void Game::m_a_ABABII(Arr<jbyte> var0, Arr<jbyte> var1, jint var2, jint var3) {
          (var5 = (jint)((var5 & 7)));
          jint var8 = jshr32((jint)(var6), (jint)(3));
          if (((((var5 & 4)) != 0))) {
-            (var8 = (jint)((var8 + var6)));
+            (var8 = (jint)(jadd32(var8, var6)));
          }
          if (((((var5 & 2)) != 0))) {
-            (var8 = (jint)((var8 + jshr32((jint)(var6), (jint)(1)))));
+            (var8 = (jint)(jadd32(var8, jshr32((jint)(var6), (jint)(1)))));
          }
          if (((((var5 & 1)) != 0))) {
-            (var8 = (jint)((var8 + jshr32((jint)(var6), (jint)(2)))));
+            (var8 = (jint)(jadd32(var8, jshr32((jint)(var6), (jint)(2)))));
          }
          if (((var4 != 0))) {
-            (var7 = (jint)((var7 - var8)));
+            (var7 = (jint)(jsub32(var7, var8)));
          } else {
-            (var7 = (jint)((var7 + var8)));
+            (var7 = (jint)(jadd32(var7, var8)));
          }
          if (((var7 > 32767))) {
             (var7 = 32767);
@@ -8006,29 +8006,29 @@ void Game::m_a_ABABII(Arr<jbyte> var0, Arr<jbyte> var1, jint var2, jint var3) {
 Arr<jbyte> Game::m_c_AB(Arr<jbyte> var0) {
    jint var7 = 0;
    jint var8 = Game::m_e_ABI(var0, 16);
-   (var7 = ((16 + var8) + 4));
-   (var7 = (jint)((var7 + 4)));
+   (var7 = jadd32(jadd32(16, var8), 4));
+   (var7 = (jint)(jadd32(var7, 4)));
    (var8 = Game::m_e_ABI(var0, var7));
    jint var12{};
-   jint var2 = (((var12 = ((var7 + var8) + 4))) + 8);
-   (var7 = (var12 + 4));
+   jint var2 = jadd32(((var12 = jadd32(jadd32(var7, var8), 4))), 8);
+   (var7 = jadd32(var12, 4));
    jint var6 = jshr32((jint)(Game::m_e_ABI(var0, var7)), (jint)(8));
    jint var5{};
-   Arr<jbyte> var1 = Game::m_J_I((var5 = (1010 * var6)));
+   Arr<jbyte> var1 = Game::m_J_I((var5 = jmul32(1010, var6)));
    jint var4 = 44;
    {
       jint var9 = 0;
       for (; (var9 < var6); (var9++)) {
          Game::m_a_ABABII(var0, var1, var2, var4);
-         (var2 = (jint)((var2 + 256)));
-         (var4 = (jint)((var4 + 1010)));
+         (var2 = (jint)(jadd32(var2, 256)));
+         (var4 = (jint)(jadd32(var4, 1010)));
       }
    }
    return var1;
 }
 
 jint Game::m_e_ABI(Arr<jbyte> var0, jint var1) {
-   return (((((var0)[var1] & 255) | jshl32((jint)((((var0)[(var1 + 1)] & 255))), (jint)(8))) | jshl32((jint)((((var0)[(var1 + 2)] & 255))), (jint)(16))) | jshl32((jint)((((var0)[(var1 + 3)] & 255))), (jint)(24)));
+   return (((((var0)[var1] & 255) | jshl32((jint)((((var0)[jadd32(var1, 1)] & 255))), (jint)(8))) | jshl32((jint)((((var0)[jadd32(var1, 2)] & 255))), (jint)(16))) | jshl32((jint)((((var0)[jadd32(var1, 3)] & 255))), (jint)(24)));
 }
 
 jint Game::m_K_I(jint var0) {
@@ -8127,14 +8127,14 @@ void Game::m_V_V() {
 }
 
 void Game::m_a_IIIIIIIIAIII(jint var0, jint var1, jint var2, jint var3, jint var4, jint var5, jint var6, jint var7, Arr<jint> var8, jint var9, jint var10) {
-   jint var11 = (var2 - var0);
-   jint var12 = (var3 - var1);
-   jint var13 = (var7 - var6);
+   jint var11 = jsub32(var2, var0);
+   jint var12 = jsub32(var3, var1);
+   jint var13 = jsub32(var7, var6);
    if (((var11 == 0))) {
-      jint var14 = ((var1 * var9) + var0);
+      jint var14 = jadd32(jmul32(var1, var9), var0);
       (var4 = (jint)(jshl32((jint)(var4), (jint)(8))));
       jint var26{};
-      jint var15 = jdiv32(((((var26 = jshl32((jint)(var5), (jint)(8)))) - var4)), var12);
+      jint var15 = jdiv32((jsub32(((var26 = jshl32((jint)(var5), (jint)(8)))), var4)), var12);
       {
          jint var16 = 0;
          for (; (var16 < var12); (var16++)) {
@@ -8143,39 +8143,39 @@ void Game::m_a_IIIIIIIIAIII(jint var0, jint var1, jint var2, jint var3, jint var
             {
                (var18 = 0);
                for (; (var18 < 4); (var18++)) {
-                  jint var19 = (jshl32((jint)(((((var4 / 5) * ((var18 + 1))) & 65280))), (jint)(16)) | var10);
+                  jint var19 = (jshl32((jint)(((jmul32((var4 / 5), (jadd32(var18, 1))) & 65280))), (jint)(16)) | var10);
                   ((var8)[var17] = var19);
                   (var17++);
                }
             }
             jint var34 = (jshl32((jint)(((var4 & 65280))), (jint)(16)) | var10);
-            while (((var18 < (var6 - 4)))) {
+            while (((var18 < jsub32(var6, 4)))) {
                ((var8)[var17] = var34);
                (var17++);
                (var18++);
             }
             while (((var18 < var6))) {
-               (var34 = (jshl32((jint)(((((var4 / 5) * ((var6 - var18))) & 65280))), (jint)(16)) | var10));
+               (var34 = (jshl32((jint)(((jmul32((var4 / 5), (jsub32(var6, var18))) & 65280))), (jint)(16)) | var10));
                ((var8)[var17] = var34);
                (var17++);
                (var18++);
             }
-            if (((var16 > ((var12 * 2) / 3)))) {
-               (var4 = (jint)((var4 - (2 * var15))));
+            if (((var16 > (jmul32(var12, 2) / 3)))) {
+               (var4 = (jint)(jsub32(var4, jmul32(2, var15))));
             } else {
-               (var4 = (jint)((var4 + var15)));
+               (var4 = (jint)(jadd32(var4, var15)));
             }
-            (var14 = (jint)((var14 + var9)));
+            (var14 = (jint)(jadd32(var14, var9)));
          }
       }
    } else {
       jint var28 = jdiv32((jshl32((jint)(var12), (jint)(8))), var11);
       jint var29 = jdiv32((jshl32((jint)(var13), (jint)(8))), var11);
-      jint var30 = ((var1 * var9) + var0);
+      jint var30 = jadd32(jmul32(var1, var9), var0);
       jboolean var31 = false;
       (var4 = (jint)(jshl32((jint)(var4), (jint)(8))));
       jint var27{};
-      jint var33 = jdiv32(((((var27 = jshl32((jint)(var5), (jint)(8)))) - var4)), var11);
+      jint var33 = jdiv32((jsub32(((var27 = jshl32((jint)(var5), (jint)(8)))), var4)), var11);
       {
          jint var36 = 0;
          for (; (var36 < var11); (var36++)) {
@@ -8187,21 +8187,21 @@ void Game::m_a_IIIIIIIIAIII(jint var0, jint var1, jint var2, jint var3, jint var
             jint var22 = ((jshl32((jint)(var20), (jint)(16)) & -16777216) | var10);
             jint var23 = 0;
             {
-               jint var32 = jshr32((jint)(((jshl32((jint)(var6), (jint)(8))) + (var29 * var36))), (jint)(8));
+               jint var32 = jshr32((jint)(jadd32((jshl32((jint)(var6), (jint)(8))), jmul32(var29, var36))), (jint)(8));
                for (; (var23 < var32); (var23++)) {
                   ((var8)[var21] = var22);
-                  (var21 = (jint)((var21 + var9)));
+                  (var21 = (jint)(jadd32(var21, var9)));
                }
             }
-            (var4 = (jint)((var4 + var33)));
-            (var30 = ((var0 + var36) + ((jshr32((jint)(((jshl32((jint)(var1), (jint)(8))) + (var28 * var36))), (jint)(8))) * var9)));
+            (var4 = (jint)(jadd32(var4, var33)));
+            (var30 = jadd32(jadd32(var0, var36), jmul32((jshr32((jint)(jadd32((jshl32((jint)(var1), (jint)(8))), jmul32(var28, var36))), (jint)(8))), var9)));
          }
       }
    }
 }
 
 jint Game::m_p_II(jint var0, jint var1) {
-   return ((jint)((jshr64((jlong)(((((jlong)(var0)) * var1) + INT64_C(128))), (jint)(8)))));
+   return ((jint)((jshr64((jlong)(jadd64(jmul64(((jlong)(var0)), var1), INT64_C(128))), (jint)(8)))));
 }
 
 Ref<String> Game::m_a_StringStringString(Ref<String> var0, Ref<String> var1, Ref<String> var2) {
@@ -8223,7 +8223,7 @@ Ref<String> Game::m_a_StringStringString(Ref<String> var0, Ref<String> var1, Ref
    while ((((var5)[var8] != -1))) {
       ((var3)->insert((var5)[(var8++)], var2))->toString();
       if ((((var5)[var8] != -1))) {
-         ((var5)[var8] = (jint)(((var5)[var8] + ((var2)->length() * var8))));
+         ((var5)[var8] = (jint)(jadd32((var5)[var8], jmul32((var2)->length(), var8))));
       }
    }
    return (((var5)[0] != -1) ? Ref<String>((var3)->toString()) : Ref<String>(var0));

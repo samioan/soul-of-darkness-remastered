@@ -36,7 +36,11 @@ def methods(javap: Path, classpath: Path, cls: str):
     for line in out.splitlines():
         m = re.match(r"^  (?:[\w.$\[\]<>, ]+ )?([\w$<>]+)\((.*)\)(?: throws .*)?;$", line)
         if m:
-            pending = m.group(1)
+            # javap prints constructors under the class name; key them as <init> so the original and the
+            # renamed class line up.
+            prefix = line[:m.start(1)].split()
+            ctor = m.group(1) == cls and all(w in ("public", "protected", "private") for w in prefix)
+            pending = "<init>" if ctor else m.group(1)
             continue
         m = re.match(r"^    descriptor: (\S+)$", line)
         if m and pending:
@@ -91,7 +95,8 @@ def main() -> None:
                 if owner == old:
                     renamed.setdefault(name, []).append(target)
             for (name, desc), counts in sorted(original.items()):
-                candidates = [name] + renamed.get(name, [])
+                # Vineflower appends _ to members whose obfuscated name is a Java keyword (do -> do_).
+                candidates = [name] + renamed.get(name, []) + [name + "_"]
                 found = None
                 for c in candidates:
                     if (c, rename_desc(desc)) in rebuilt:

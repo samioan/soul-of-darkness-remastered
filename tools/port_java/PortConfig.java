@@ -1,37 +1,37 @@
 import javax.microedition.lcdui.Graphics;
+import javax.microedition.lcdui.Image;
 
 /**
- * Desktop-port state that the patched reference sources consult (see tools/port_patches.py).
+ * Desktop-port state, consulted by tools/port_patches.py.
  *
- * Everything here is a no-op at screenWidth == 240 with english == false: in that configuration the
- * translated game must stay field-for-field identical to the original bytecode (tools/check_engine.py
- * verifies it), so no helper may touch game state, clips or translation unless the view is wide.
+ * Everything here is a no-op at screenWidth == 240 with directTiles off: in that configuration the
+ * translated game must stay field-for-field identical to the original bytecode
+ * (tools/check_engine.py), so no helper may touch game state, clips or translation unless the
+ * view is wide or render recording is on.
  *
- * Widescreen model: the game's own camera (Game.cameraX) keeps its original meaning, the left edge
- * of a 240 pixel window, and all original camera/region logic runs unchanged. The wide view is a
- * function of that camera: centred on the 240 window, clamped to the same room bounds the camera
- * obeys (Game.R/S), and centred with black bars when the room is narrower than the screen. World
- * drawing is translated by (cameraX - viewX), so the original "world - cameraX" draw code lands in
- * the right place without touching each call. Game.viewBounds, which the game uses for visibility,
- * edge spawns and off-screen removal, is widened to the visible range.
+ * Widescreen model: the game's camera (Game.cameraX) keeps its original
+ * meaning, the left edge of a 240 pixel window, and all original camera/region logic runs
+ * unchanged. The wide view is derived from it: centred on that window, clamped to the room bounds
+ * the camera obeys (Game.regionLeft/regionRight), centred with black bars when the room is narrower
+ * than the screen. World drawing is translated by (cameraX - viewX), so "world - cameraX" draw code
+ * is untouched; the three tile layers draw the extra columns. After the world, everything the game
+ * draws in its 240-wide interface layout is centred.
  */
 final class PortConfig {
    static int screenWidth = 240;
-   static boolean english = false;
+   /** Draw tile cells directly and with a one-cell margin (set while render interpolation is on). */
+   static boolean directTiles;
 
-   /** World x at the left edge of the screen (wide mode only). */
+   /** Use desktop key names in the few strings that mention phone softkeys (set with the options menu). */
+   static boolean desktopText;
+
    static int viewX;
    static boolean viewValid;
-   /** Visible world range [clipLeft, clipRight): the current room, or two rooms while scrolling between them. */
    static int clipLeft;
    static int clipRight;
    static int viewCameraX;
    /** Translation currently applied for world drawing; 0 outside a world segment. */
    static int worldTx;
-   static boolean uiFrame;
-
-   /** Draw visible tile cells directly even at 240 (set while render interpolation is on). */
-   static boolean directTiles;
 
    static boolean wide() {
       return screenWidth > 240;
@@ -43,8 +43,8 @@ final class PortConfig {
 
    private static void computeView() {
       int w = screenWidth;
-      int lo = Game.R > 0 ? Game.R : 0;
-      int hi = Game.S > 0 ? Game.S : Game.levelPixelWidth;
+      int lo = Game.regionLeft > 0 ? Game.regionLeft : 0;
+      int hi = Game.regionRight > 0 ? Game.regionRight : Game.levelPixelWidth;
       if (hi < lo + 240) {
          lo = 0;
          hi = Game.levelPixelWidth;
@@ -133,7 +133,6 @@ final class PortConfig {
       Game.viewBounds[2] = visibleRight();
    }
 
-   /** A level was loaded or the display width changed: forget the smoothed view. */
    static void resetView() {
       viewValid = false;
       worldTx = 0;
@@ -173,10 +172,23 @@ final class PortConfig {
       return visibleRight() - Game.cameraX;
    }
 
-   // ---------------------------------------------------------------- drawing segments
+   /** Screen x of the left edge in the current drawing coordinates (0 unless a translation is active). */
+   static int screenLeft(Graphics g) {
+      return screenWidth <= 240 ? 0 : -g.getTranslateX();
+   }
+
+   // ---------------------------------------------------------------- frame and segments
+
+   private static void untranslate(Graphics g) {
+      int tx = g.getTranslateX();
+      if (tx != 0) {
+         g.translate(-tx, 0);
+      }
+
+      worldTx = 0;
+   }
 
    static void beginFrame(Graphics g, int state) {
-      uiFrame = false;
       worldTx = 0;
       if (screenWidth <= 240) {
          return;
@@ -185,44 +197,44 @@ final class PortConfig {
       boolean world = state == 8 || state == 12 || state == 14 || state == 15 || state == 32;
       if (!world) {
          int m = margin();
-         g.setClip(0, 0, screenWidth, 320);
-         g.setColor(0);
-         g.fillRect(0, 0, m, 320);
-         g.fillRect(m + 240, 0, screenWidth - m - 240, 320);
+         // State 31 (weapon upgrade) is drawn over the last gameplay frame, which stays on screen.
+         if (state != 31) {
+            g.setClip(0, 0, screenWidth, 320);
+            g.setColor(0);
+            g.fillRect(0, 0, m, 320);
+            g.fillRect(m + 240, 0, screenWidth - m - 240, 320);
+         }
+
          g.translate(m, 0);
          g.setClip(0, 0, 240, 320);
-         uiFrame = true;
       }
    }
 
    static void endFrame(Graphics g) {
-      if (uiFrame) {
-         g.translate(-margin(), 0);
-         uiFrame = false;
+      if (screenWidth > 240) {
+         untranslate(g);
       }
    }
 
    /** Start of the world layer: black out what lies outside the room, then translate and clip. */
    static void beginWorld(Graphics g) {
-      if (screenWidth <= 240) {
-         pushWorld(g);
-         return;
-      }
+      if (screenWidth > 240) {
+         untranslate(g);
+         if (!viewValid || viewCameraX != Game.cameraX) {
+            computeView();
+         }
 
-      if (!viewValid || viewCameraX != Game.cameraX) {
-         computeView();
-      }
+         g.setClip(0, 0, screenWidth, 320);
+         g.setColor(0);
+         int left = visibleLeft() - viewX;
+         int right = visibleRight() - viewX;
+         if (left > 0) {
+            g.fillRect(0, 0, left, 320);
+         }
 
-      g.setClip(0, 0, screenWidth, 320);
-      g.setColor(0);
-      int left = visibleLeft() - viewX;
-      int right = visibleRight() - viewX;
-      if (left > 0) {
-         g.fillRect(0, 0, left, 320);
-      }
-
-      if (right < screenWidth) {
-         g.fillRect(right, 0, screenWidth - right, 320);
+         if (right < screenWidth) {
+            g.fillRect(right, 0, screenWidth - right, 320);
+         }
       }
 
       pushWorld(g);
@@ -230,6 +242,7 @@ final class PortConfig {
 
    static void pushWorld(Graphics g) {
       if (screenWidth > 240) {
+         untranslate(g);
          worldTx = Game.cameraX - viewX;
          g.translate(worldTx, 0);
          clipWorld(g);
@@ -244,9 +257,41 @@ final class PortConfig {
          return;
       }
 
-      g.translate(-worldTx, 0);
-      worldTx = 0;
+      untranslate(g);
       g.setClip(0, 0, screenWidth, 320);
+   }
+
+   /** End of the world layer before the weather: rain, snow and embers stay inside the visible room. */
+   static void endWorldForWeather(Graphics g) {
+      PortNative.layerScreen();
+      if (screenWidth <= 240) {
+         return;
+      }
+
+      untranslate(g);
+      g.setClip(visibleLeft() - viewX, 0, visibleRight() - visibleLeft(), 320);
+   }
+
+   /**
+    * Tutorial text names "the right soft key" (weapon upgrade). When the options menu is installed the
+    * host supplies the key currently bound to that action instead.
+    */
+   static String softKeyName(String original) {
+      if (!desktopText) {
+         return original;
+      }
+
+      String key = PortNative.settingValue(2, 10);
+      if (key == null || key.length() == 0 || key.equals("-")) {
+         return original;
+      }
+
+      int space = key.indexOf(" ");
+      if (space > 0) {
+         key = key.substring(0, space);
+      }
+
+      return "{" + key + "} {KEY}";
    }
 
    /** Replaces the original full-screen clip inside world drawing. */
@@ -261,24 +306,27 @@ final class PortConfig {
       g.setClip(left - worldTx, 0, right - left, 320);
    }
 
-   /** Panels, dialogue boxes and prompts keep their 240 pixel layout, centred on the wide screen. */
+   /** Panels, dialogue, the icon bar and prompts keep their 240 pixel layout, centred on the wide screen. */
    static void beginUi(Graphics g) {
+      PortNative.layerScreen();
       if (screenWidth <= 240) {
          return;
       }
 
+      untranslate(g);
       g.translate(margin(), 0);
       g.setClip(0, 0, 240, 320);
    }
 
-   static void beginUiOpaque(Graphics g) {
-      if (screenWidth <= 240) {
-         return;
+   /** The bottom icon bar: its black strip spans the screen, the icons stay centred. */
+   static void beginUiBar(Graphics g) {
+      if (screenWidth > 240) {
+         untranslate(g);
+         g.setClip(0, 0, screenWidth, 320);
+         g.setColor(0);
+         g.fillRect(0, 293, screenWidth, 28);
       }
 
-      g.setClip(0, 0, screenWidth, 320);
-      g.setColor(0);
-      g.fillRect(0, 0, screenWidth, 320);
       beginUi(g);
    }
 
@@ -287,40 +335,83 @@ final class PortConfig {
          return;
       }
 
-      g.translate(-margin(), 0);
+      untranslate(g);
       g.setClip(0, 0, screenWidth, 320);
    }
 
-   /** Wide replacement for the original 260x340 scrolling tile buffer: draw the visible cells directly. */
-   static void drawTiles(Graphics g, int cameraX, int cameraY) {
-      // Local drawing coordinates are (world - Game.cameraX); cameraX here may carry a scroll offset.
+   // ---------------------------------------------------------------- tile layers
+
+   /** Extra cells drawn around each tile layer so interpolated frames can slide them into view. */
+   static int tileMargin() {
+      return directTiles ? 1 : 0;
+   }
+
+   static int firstColumn(int origin) {
+      if (screenWidth <= 240 && !directTiles) {
+         return origin / 20;
+      }
+
+      return floorDiv(origin + worldLeft(), 20) - tileMargin();
+   }
+
+   static int lastColumn(int origin) {
+      if (screenWidth <= 240 && !directTiles) {
+         return (origin + 240 - 1) / 20;
+      }
+
+      return floorDiv(origin + worldRight() - 1, 20) + tileMargin();
+   }
+
+   /** Column index into a layer that repeats every `width` cells; the original only wrapped upwards. */
+   static int wrapColumn(int column, int width) {
+      int c = column % width;
+      return c < 0 ? c + width : c;
+   }
+
+   /** Margin rows may fall outside the layer; the original rows never do. */
+   static boolean rowInside(int row, int cells, int width) {
+      return row >= 0 && (row + 1) * width <= cells;
+   }
+
+   /** Far background: wide replacement for the original 260x340 scroll buffer. */
+   static void drawFar(Graphics g, int originX, int originY) {
       int left = worldLeft();
       int right = worldRight();
+      PortNative.layerTiles(0, worldTx - originX, -originY);
       g.setColor(0);
       g.fillRect(left, 0, right - left, 320);
-      PortNative.layerTiles(worldTx - cameraX, -cameraY);
-      // One extra cell on every side: the clip hides it now, interpolated frames may slide it into view.
-      int firstColumn = floorDiv(left + cameraX, 20) - 1;
-      int lastColumn = floorDiv(right - 1 + cameraX, 20) + 1;
-      int firstRow = floorDiv(cameraY, 20) - 1;
-      int lastRow = floorDiv(cameraY + 319, 20) + 1;
+      int firstColumn = floorDiv(originX + left, 20) - tileMargin();
+      int lastColumn = floorDiv(originX + right - 1, 20) + tileMargin();
+      int firstRow = floorDiv(originY, 20) - tileMargin();
+      int lastRow = floorDiv(originY + 319, 20) + tileMargin();
       if (firstRow < 0) {
          firstRow = 0;
       }
 
-      if (lastRow > Game.bW - 1) {
-         lastRow = Game.bW - 1;
+      if (lastRow > Game.cE - 1) {
+         lastRow = Game.cE - 1;
       }
 
       for (int row = firstRow; row <= lastRow; row++) {
          for (int column = firstColumn; column <= lastColumn; column++) {
-            int wrapped = column % Game.bU;
-            if (wrapped < 0) {
-               wrapped += Game.bU;
-            }
-
-            Game.portTile(g, column * 20 - cameraX, row * 20 - cameraY, wrapped + row * Game.bU);
+            Game.portTile(g, column * 20 - originX, row * 20 - originY, wrapColumn(column, Game.cC) + row * Game.cC);
          }
+      }
+   }
+
+   /** The water tint image is 120x160 and was drawn four times to cover 240x320. */
+   static void tileOverlay(Image image) {
+      if (screenWidth <= 240 || !viewValid) {
+         Game.a(image, 0, 0, 20);
+         Game.a(image, 120, 160, 20);
+         Game.a(image, 120, 0, 20);
+         Game.a(image, 0, 160, 20);
+         return;
+      }
+
+      for (int x = floorDiv(worldLeft(), 120) * 120; x < worldRight(); x += 120) {
+         Game.a(image, x, 0, 20);
+         Game.a(image, x, 160, 20);
       }
    }
 
@@ -331,16 +422,5 @@ final class PortConfig {
       }
 
       return q;
-   }
-
-   // ---------------------------------------------------------------- text
-
-   static String text(int table, int index, String original) {
-      if (!english) {
-         return original;
-      }
-
-      String s = PortEnglish.get(table, index, original);
-      return s != null ? s : original;
    }
 }

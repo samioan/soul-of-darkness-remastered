@@ -21,17 +21,17 @@ public class GloftSOFD extends MIDlet {
          new Thread(b).start();
       } else {
          c.setCurrent(b);
-         b.b();
+         b.d();
       }
    }
 
    public final void pauseApp() {
       this.notifyPaused();
-      b.c();
+      b.e();
    }
 
    public final void destroyApp(boolean var1) {
-      if (b != null && e.cx) {
+      if (b != null && e.du) {
          e.b(true);
       }
 

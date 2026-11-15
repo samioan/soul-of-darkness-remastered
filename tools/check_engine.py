@@ -25,11 +25,10 @@ sys.path.insert(0, str(Path(__file__).resolve().parent))
 from decompile import find_java  # noqa: E402
 
 ROOT = Path(__file__).resolve().parent.parent
-# game key -> (extracted data, default headless driver, number of levels, boot key spacing in ticks)
-GAMES = {
-    "full": (ROOT / "soul_full" / "extracted", ROOT / "soul/port/build/Release/soul_engine_check.exe", 11, 40),
-    "v137": (ROOT / "soul" / "extracted", ROOT / "soul/port/build/Release/soul_engine_check_v137.exe", 9, 20),
-}
+EXTRACTED = ROOT / "soul" / "extracted"
+DEFAULT_EXE = ROOT / "soul/port/build/Release/soul_engine_check.exe"
+LEVELS = 11
+STEP = 40  # boot key spacing in ticks
 STUBS = ROOT / "tools" / "midp-stubs"
 CHECKS = ROOT / "tools" / "reference_checks"
 ANALYSIS = ROOT / "soul" / "analysis"
@@ -44,7 +43,7 @@ def tap(events, tick, key, hold=1):
     events.append((tick + hold, "-", key))
 
 
-def boot_to_level(events, level=0, start=60, step=20):
+def boot_to_level(events, level, start, step):
     """Sound prompt -> menu -> New Game -> prologue -> level map -> chosen level. Returns the next free tick.
 
     Later levels are reached by setting Game.maxUnlockedLevel on both sides ("!" script lines) and
@@ -82,10 +81,10 @@ def fuzz(events, rng, start, end, keys, cheat=False):
         t += rng.choice((1, 1, 2, 3, 4, 6, 9))
 
 
-def scenario(seed, ticks, cheat, level=0, step=20):
+def scenario(seed, ticks, cheat, level):
     rng = random.Random(seed)
     events = []
-    t = boot_to_level(events, level, 60 if step == 20 else 100, step)
+    t = boot_to_level(events, level, 100, STEP)
     move = [LEFT, RIGHT, RIGHT, RIGHT, UP, UP, DOWN, FIRE, FIRE, FIRE, NUM[0], NUM[9], NUM[1], NUM[3], NUM[7], NUM[5]]
     fuzz(events, rng, t, ticks, move + ([SOFT_L, SOFT_R] if seed % 3 == 0 else []), cheat)
     return events
@@ -97,17 +96,13 @@ def write_script(path, events):
 
 def main() -> None:
     ap = argparse.ArgumentParser()
-    ap.add_argument("--game", choices=sorted(GAMES), default="full", help="full = 1.0.1 (shipped), v137 = cut-down 1.3.7")
-    ap.add_argument("--exe", type=Path, help="headless driver to test (default: the game's Release soul_engine_check)")
+    ap.add_argument("--exe", type=Path, default=DEFAULT_EXE, help="headless driver to test (default: the Release soul_engine_check)")
     ap.add_argument("--ticks", type=int, default=2500)
     ap.add_argument("--seeds", type=int, nargs="*", default=[1, 2, 3, 4, 5, 6])
     ap.add_argument("--level", type=int, default=-1, help="level index for every scenario (default: seed modulo the level count)")
     ap.add_argument("--save", type=Path, help="RMS record to preload on both sides")
     ap.add_argument("--script", type=Path, help="use this key script instead of generated fuzz")
     args = ap.parse_args()
-    EXTRACTED, default_exe, levels, step = GAMES[args.game]
-    if args.exe is None:
-        args.exe = default_exe
 
     java = Path(find_java())
     javac = java.with_name("javac.exe" if java.suffix == ".exe" else "javac")
@@ -137,11 +132,11 @@ def main() -> None:
             if args.script:
                 script = args.script
             else:
-                write_script(script, scenario(seed, args.ticks, cheat, args.level if args.level >= 0 else seed % levels, step))
+                write_script(script, scenario(seed, args.ticks, cheat, args.level if args.level >= 0 else seed % LEVELS))
             java_trace, cpp_trace = ANALYSIS / f"engine-oracle-{seed}.txt", ANALYSIS / f"engine-native-{seed}.txt"
 
             def run_java(extra=()):
-                cmd = [str(java), "-Djava.awt.headless=true", f"-Doracle.game={args.game}", f"-Xbootclasspath/a:{boot}",
+                cmd = [str(java), "-Djava.awt.headless=true", f"-Xbootclasspath/a:{boot}",
                        f"--patch-module=java.base={data}", "EngineOracle",
                        str(script), str(args.ticks), str(seed), str(java_trace), *extra]
                 if args.save:

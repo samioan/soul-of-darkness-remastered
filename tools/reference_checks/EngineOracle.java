@@ -20,8 +20,8 @@ import java.util.Random;
  * "".getClass().getResourceAsStream, i.e. through the bootstrap loader.
  *
  * usage: EngineOracle <script|-> <ticks> <seed> <trace> [dumpTick dumpFile] [saveIn]
- * -Doracle.game=full selects the 1.0.1 build's obfuscated member names and its loop inputs
- * (frame time M = 50/66 ms, wall-clock watchdog k held at 0); the default is the 1.3.7 build.
+ * Game.run()'s loop inputs are fed as the native glue feeds them: frame time M = 50 ms (66 ms while a
+ * cutscene script runs), wall-clock stall watchdog k held at 0.
  */
 public final class EngineOracle {
     static final long SEED = 1469598103934665603L, PRIME = 1099511628211L;
@@ -114,12 +114,9 @@ public final class EngineOracle {
         Field f;
         (f = midlet.getDeclaredField("a")).setAccessible(true); f.set(null, midletInstance);
         (f = midlet.getDeclaredField("b")).setAccessible(true); f.set(null, canvas);
-        final boolean full = "full".equals(System.getProperty("oracle.game"));
         // obfuscated names: suspended, state, previousState, stateFrame, modal flag, soundResumeFrames,
         // resumeSoundId, actors, maxUnlockedLevel, playSound
-        final String[] n = full
-            ? new String[]{"O", "F", "G", "I", "bx", "fP", "fO", "cf", "bg", "o"}
-            : new String[]{"D", "x", "y", "z", "aS", "en", "em", "bs", "aH", "i"};
+        final String[] n = {"O", "F", "G", "I", "bx", "fP", "fO", "cf", "bg", "o"};
         (f = game.getDeclaredField(n[0])).setAccessible(true); f.setBoolean(null, false);
         (f = game.getDeclaredField("c")).setAccessible(true); f.set(null, new Random(seed));
         (f = game.getDeclaredField(n[1])).setAccessible(true); f.setInt(null, 0);
@@ -134,13 +131,9 @@ public final class EngineOracle {
         Field actors = game.getDeclaredField(n[7]); actors.setAccessible(true);
         Field maxUnlocked = game.getDeclaredField(n[8]); maxUnlocked.setAccessible(true);
         Method playSound = game.getDeclaredMethod(n[9], int.class, int.class); playSound.setAccessible(true);
-        Field frameDelta = null, lastPaint = null;
-        Method scriptActive = null;
-        if (full) {
-            frameDelta = game.getDeclaredField("M"); frameDelta.setAccessible(true);
-            lastPaint = game.getDeclaredField("k"); lastPaint.setAccessible(true);
-            scriptActive = game.getDeclaredMethod("K"); scriptActive.setAccessible(true);
-        }
+        Field frameDelta = game.getDeclaredField("M"); frameDelta.setAccessible(true);
+        Field lastPaint = game.getDeclaredField("k"); lastPaint.setAccessible(true);
+        Method scriptActive = game.getDeclaredMethod("K"); scriptActive.setAccessible(true);
         Method paint = game.getDeclaredMethod("paint", javax.microedition.lcdui.Graphics.class); paint.setAccessible(true);
         Method keyPressed = game.getDeclaredMethod("keyPressed", int.class); keyPressed.setAccessible(true);
         Method keyReleased = game.getDeclaredMethod("keyReleased", int.class); keyReleased.setAccessible(true);
@@ -166,13 +159,11 @@ public final class EngineOracle {
                             playSound.invoke(null, resumeSoundId.getInt(null), -1);
                         }
                     }
-                    if (full) {
-                        frameDelta.setInt(null, ((Boolean) scriptActive.invoke(null)) ? 66 : 50);
-                        lastPaint.setLong(null, 0L);
-                    }
+                    frameDelta.setInt(null, ((Boolean) scriptActive.invoke(null)) ? 66 : 50);
+                    lastPaint.setLong(null, 0L);
                     paint.invoke(canvas, new javax.microedition.lcdui.Graphics(240, 320));
                 }
-                if (full) lastPaint.setLong(null, 0L);
+                lastPaint.setLong(null, 0L);
                 boolean dump = t == dumpTick;
                 if (dump) lines = new PrintWriter(Files.newBufferedWriter(Paths.get(dumpFile), StandardCharsets.UTF_8));
                 hash = SEED;

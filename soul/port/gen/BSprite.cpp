@@ -4,154 +4,146 @@
 namespace sod {
 
 void BSprite::clinit() {
-   BSprite::scratchPixels = jnewarray<Arr<jint>>(12288);
-   BSprite::registeredCacheSprites = jnewarray<Arr<Ref<BSprite>>>(23);
-   BSprite::imageCaches = jnewarray<Arr<Arr<Ref<Image>>>>(4);
-   BSprite::cacheEvictionSlots = jnewarray<Arr<Arr<jshort>>>(4);
-   BSprite::cacheImageCounts = jnewarray<Arr<jint>>(4);
-   BSprite::cacheNextEviction = jnewarray<Arr<jint>>(4);
-   BSprite::cacheCapacity = jnewarray<Arr<jint>>(4);
-   BSprite::textStart = -1;
-   BSprite::textEnd = -1;
-   BSprite::inlineIconMetrics = Arr<jint>::of({(jint)(3), (jint)(3), (jint)(6), (jint)(16), (jint)(3), (jint)(3), (jint)(6), (jint)(16), (jint)(3), (jint)(2)});
-   BSprite::inlineIconFrameCounts = Arr<jint>::of({(jint)(5), (jint)(1), (jint)(16), (jint)(1), (jint)(6)});
-   BSprite::inlineIconXOffsets = Arr<jint>::of({(jint)(0), (jint)(5), (jint)(0), (jint)(8), (jint)(0)});
-   BSprite::wrappedLineEnds = jnewarray<Arr<jint>>(200);
+   BSprite::a = jnewarray<Arr<jint>>(12288);
+   BSprite::J = Arr<jint>::of({(jint)(6), (jint)(7), (jint)(8), (jint)(9), (jint)(12), (jint)(14)});
+   BSprite::U = -1;
+   BSprite::V = -1;
+   BSprite::W = Arr<jint>::of({(jint)(3), (jint)(3), (jint)(6), (jint)(9), (jint)(3), (jint)(3), (jint)(6), (jint)(9), (jint)(3), (jint)(2)});
+   BSprite::X = Arr<jint>::of({(jint)(5), (jint)(1), (jint)(16), (jint)(1), (jint)(6)});
+   BSprite::Y = Arr<jint>::of({(jint)(0), (jint)(5), (jint)(0), (jint)(8), (jint)(0)});
+   BSprite::aa = jnewarray<Arr<jint>>(200);
    {
       (jlit(u" !\"#$%&'*+,_./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ()-\u00c4" u"\u00d6" u"\u00dc" u"\u00df" u"\u00a1" u"\u00bf" u"\u00c1" u"\u00c0" u"\u00c3" u"\u00c8" u"\u00c9" u"\u00ca" u"\u00ce" u"\u00cf" u"\u00cd" u"\u00d3" u"\u00d4" u"\u00d5" u"\u00da" u"\u00d9" u"\u00d1" u"\u00c7" u"\u00d2" u"\u00a9" u"\u011e" u"\u00c2" u"\u00cc" u"\u015e" u"\u0130" u""))->length();
    }
 }
 
 BSprite::BSprite() {
-   this->boundaryClipMask = -1;
-   this->boundaryClipX = -1;
-   this->boundaryClipY = -1;
-   this->moduleMaskEnabled = false;
-   this->cacheIndex = -1;
-   this->lineSpacing = 5;
+   this->p = -1;
+   this->q = -1;
+   this->r = -1;
+   this->s = false;
+   this->t = false;
+   this->ad = 4;
 }
 
-void BSprite::load(Arr<jbyte> var1, jint var2) {
+void BSprite::m_a_ABI(Arr<jbyte> var1, jint var2) {
    Ref<BSprite> _self(this);
    try {
       System::gc();
       if (((((jshort)((([&]{ auto _t0 = (((var1)[(var2++)] & 255)); auto _t1 = (jshl32((jint)((((var1)[(var2++)] & 255))), (jint)(8))); return (_t0 + _t1); }())))) != 991))) {
          (System::out)->println(jlit(u"ERROR: Invalid BSprite version !"));
       }
-      ((this)->featureFlags = ([&]{ auto _t6 = ([&]{ auto _t4 = ([&]{ auto _t2 = (((var1)[(var2++)] & 255)); auto _t3 = (jshl32((jint)((((var1)[(var2++)] & 255))), (jint)(8))); return (_t2 + _t3); }()); auto _t5 = (jshl32((jint)((((var1)[(var2++)] & 255))), (jint)(16))); return (_t4 + _t5); }()); auto _t7 = (jshl32((jint)((((var1)[(var2++)] & 255))), (jint)(24))); return (_t6 + _t7); }()));
+      ((this)->B = ([&]{ auto _t6 = ([&]{ auto _t4 = ([&]{ auto _t2 = (((var1)[(var2++)] & 255)); auto _t3 = (jshl32((jint)((((var1)[(var2++)] & 255))), (jint)(8))); return (_t2 + _t3); }()); auto _t5 = (jshl32((jint)((((var1)[(var2++)] & 255))), (jint)(16))); return (_t4 + _t5); }()); auto _t7 = (jshl32((jint)((((var1)[(var2++)] & 255))), (jint)(24))); return (_t6 + _t7); }()));
       jint var4 = 0;
-      if ((((((this)->featureFlags & 1)) != 0))) {
-         ((this)->moduleCount = ([&]{ auto _t8 = (((var1)[(var2++)] & 255)); auto _t9 = (jshl32((jint)((((var1)[(var2++)] & 255))), (jint)(8))); return (_t8 + _t9); }()));
-         if ((((this)->moduleCount > 0))) {
-            if ((((((this)->featureFlags & 4)) != 0))) {
-               ((this)->moduleImageIndex = jnewarray<Arr<jbyte>>((this)->moduleCount));
+      if ((((((this)->B & 1)) != 0))) {
+         ((this)->b = ([&]{ auto _t8 = (((var1)[(var2++)] & 255)); auto _t9 = (jshl32((jint)((((var1)[(var2++)] & 255))), (jint)(8))); return (_t8 + _t9); }()));
+         if ((((this)->b > 0))) {
+            if ((((((this)->B & 4)) != 0))) {
+               ((this)->e = jnewarray<Arr<jbyte>>((this)->b));
             }
-            if (((((((this)->featureFlags & 2)) != 0) || ((((this)->featureFlags & 4)) != 0)))) {
-               ((this)->moduleX = jnewarray<Arr<jbyte>>((this)->moduleCount));
-               ((this)->moduleY = jnewarray<Arr<jbyte>>((this)->moduleCount));
+            if (((((((this)->B & 2)) != 0) || ((((this)->B & 4)) != 0)))) {
+               ((this)->c = jnewarray<Arr<jbyte>>((this)->b));
+               ((this)->d = jnewarray<Arr<jbyte>>((this)->b));
             }
-            ((this)->moduleWidth = jnewarray<Arr<jbyte>>((this)->moduleCount));
-            ((this)->moduleHeight = jnewarray<Arr<jbyte>>((this)->moduleCount));
+            ((this)->f = jnewarray<Arr<jbyte>>((this)->b));
+            ((this)->g = jnewarray<Arr<jbyte>>((this)->b));
             {
                jint var5 = 0;
-               for (; (var5 < (this)->moduleCount); (var5++)) {
-                  if ((((((this)->featureFlags & 4)) != 0))) {
-                     (((this)->moduleImageIndex)[var5] = (var1)[(var2++)]);
-                     if (((((this)->moduleImageIndex)[var5] > var4))) {
-                        (var4 = ((this)->moduleImageIndex)[var5]);
+               for (; (var5 < (this)->b); (var5++)) {
+                  if ((((((this)->B & 4)) != 0))) {
+                     (((this)->e)[var5] = (var1)[(var2++)]);
+                     if (((((this)->e)[var5] > var4))) {
+                        (var4 = ((this)->e)[var5]);
                      }
                   }
-                  if ((((((this)->featureFlags & 2)) != 0))) {
-                     (((this)->moduleX)[var5] = (var1)[(var2++)]);
-                     (((this)->moduleY)[var5] = (var1)[(var2++)]);
+                  if ((((((this)->B & 2)) != 0))) {
+                     (((this)->c)[var5] = (var1)[(var2++)]);
+                     (((this)->d)[var5] = (var1)[(var2++)]);
                   }
-                  (((this)->moduleWidth)[var5] = (var1)[(var2++)]);
-                  (((this)->moduleHeight)[var5] = (var1)[(var2++)]);
+                  (((this)->f)[var5] = (var1)[(var2++)]);
+                  (((this)->g)[var5] = (var1)[(var2++)]);
                }
             }
          }
          (var4++);
       }
-      if ((((((this)->featureFlags & 256)) != 0))) {
+      if ((((((this)->B & 256)) != 0))) {
          jint var63{};
          if (((((var63 = ([&]{ auto _t10 = (((var1)[(var2++)] & 255)); auto _t11 = (jshl32((jint)((((var1)[(var2++)] & 255))), (jint)(8))); return (_t10 + _t11); }()))) > 0))) {
-            ((this)->frameModules = jnewarray<Arr<jshort>>(jshl32((jint)(var63), (jint)(2))));
+            ((this)->l = jnewarray<Arr<jshort>>(jshl32((jint)(var63), (jint)(2))));
             {
                jint var6 = 0;
                for (; (var6 < var63); (var6++)) {
-                  (((this)->frameModules)[(var6 * 4)] = (var1)[(var2++)]);
-                  if ((((((this)->featureFlags & 1024)) != 0))) {
-                     (((this)->frameModules)[((var6 * 4) + 1)] = ((jshort)((([&]{ auto _t12 = (((var1)[(var2++)] & 255)); auto _t13 = (jshl32((jint)((((var1)[(var2++)] & 255))), (jint)(8))); return (_t12 + _t13); }())))));
-                     (((this)->frameModules)[((var6 * 4) + 2)] = ((jshort)((([&]{ auto _t14 = (((var1)[(var2++)] & 255)); auto _t15 = (jshl32((jint)((((var1)[(var2++)] & 255))), (jint)(8))); return (_t14 + _t15); }())))));
+                  (((this)->l)[(var6 * 4)] = (var1)[(var2++)]);
+                  if ((((((this)->B & 1024)) != 0))) {
+                     (((this)->l)[((var6 * 4) + 1)] = ((jshort)((([&]{ auto _t12 = (((var1)[(var2++)] & 255)); auto _t13 = (jshl32((jint)((((var1)[(var2++)] & 255))), (jint)(8))); return (_t12 + _t13); }())))));
+                     (((this)->l)[((var6 * 4) + 2)] = ((jshort)((([&]{ auto _t14 = (((var1)[(var2++)] & 255)); auto _t15 = (jshl32((jint)((((var1)[(var2++)] & 255))), (jint)(8))); return (_t14 + _t15); }())))));
                   } else {
-                     (((this)->frameModules)[((var6 * 4) + 1)] = (var1)[(var2++)]);
-                     (((this)->frameModules)[((var6 * 4) + 2)] = (var1)[(var2++)]);
+                     (((this)->l)[((var6 * 4) + 1)] = (var1)[(var2++)]);
+                     (((this)->l)[((var6 * 4) + 2)] = (var1)[(var2++)]);
                   }
-                  (((this)->frameModules)[((var6 * 4) + 3)] = (var1)[(var2++)]);
+                  (((this)->l)[((var6 * 4) + 3)] = (var1)[(var2++)]);
                }
             }
          }
          jint var68{};
          if (((((var68 = ([&]{ auto _t16 = (((var1)[(var2++)] & 255)); auto _t17 = (jshl32((jint)((((var1)[(var2++)] & 255))), (jint)(8))); return (_t16 + _t17); }()))) > 0))) {
-            ((this)->collisionRects = jnewarray<Arr<jbyte>>(jshl32((jint)(var68), (jint)(2))));
-            System::arraycopy(var1, var2, (this)->collisionRects, 0, ((this)->collisionRects).length());
-            (var2 = (jint)((var2 + ((this)->collisionRects).length())));
+            ((this)->k = jnewarray<Arr<jbyte>>(jshl32((jint)(var68), (jint)(2))));
+            System::arraycopy(var1, var2, (this)->k, 0, ((this)->k).length());
+            (var2 = (jint)((var2 + ((this)->k).length())));
          }
          if (((((var68 = ([&]{ auto _t18 = (((var1)[(var2++)] & 255)); auto _t19 = (jshl32((jint)((((var1)[(var2++)] & 255))), (jint)(8))); return (_t18 + _t19); }()))) > 0))) {
-            ((this)->frameModuleCount = jnewarray<Arr<jbyte>>(var68));
-            ((this)->frameModuleStart = jnewarray<Arr<jshort>>(var68));
+            ((this)->h = jnewarray<Arr<jbyte>>(var68));
+            ((this)->i = jnewarray<Arr<jshort>>(var68));
             jshort var7 = 0;
-            ((this)->frameCollisionStart = jnewarray<Arr<jshort>>((var68 + 1)));
-            (((this)->frameCollisionStart)[0] = 0);
+            ((this)->j = jnewarray<Arr<jshort>>((var68 + 1)));
+            (((this)->j)[0] = 0);
             {
                jint var8 = 0;
                for (; (var8 < var68); (var8++)) {
-                  (((this)->frameModuleCount)[var8] = (var1)[(var2++)]);
+                  (((this)->h)[var8] = (var1)[(var2++)]);
                   jint var168 = (++var2);
                   (var2++);
-                  (((this)->frameModuleStart)[var8] = ((jshort)((((((var1)[var168] & 255)) + (jshl32((jint)((((var1)[(var2++)] & 255))), (jint)(8))))))));
+                  (((this)->i)[var8] = ((jshort)((((((var1)[var168] & 255)) + (jshl32((jint)((((var1)[(var2++)] & 255))), (jint)(8))))))));
                   (var7 = ((jshort)(((var7 + (var1)[(var2++)])))));
-                  (((this)->frameCollisionStart)[(var8 + 1)] = var7);
+                  (((this)->j)[(var8 + 1)] = var7);
                }
             }
-            ((this)->frameRects = jnewarray<Arr<jbyte>>(jshl32((jint)(var68), (jint)(2))));
-            System::arraycopy(var1, var2, (this)->frameRects, 0, ((this)->frameRects).length());
-            (var2 = (jint)((var2 + ((this)->frameRects).length())));
          }
       }
-      if ((((((this)->featureFlags & 65536)) != 0))) {
+      if ((((((this)->B & 65536)) != 0))) {
          jint var64{};
          if (((((var64 = ([&]{ auto _t20 = (((var1)[(var2++)] & 255)); auto _t21 = (jshl32((jint)((((var1)[(var2++)] & 255))), (jint)(8))); return (_t20 + _t21); }()))) > 0))) {
-            ((this)->animationFrames = jnewarray<Arr<jbyte>>((var64 * 5)));
-            System::arraycopy(var1, var2, (this)->animationFrames, 0, ((this)->animationFrames).length());
-            (var2 = (jint)((var2 + ((this)->animationFrames).length())));
+            ((this)->o = jnewarray<Arr<jbyte>>((var64 * 5)));
+            System::arraycopy(var1, var2, (this)->o, 0, ((this)->o).length());
+            (var2 = (jint)((var2 + ((this)->o).length())));
          }
          jint var70{};
          if (((((var70 = ([&]{ auto _t22 = (((var1)[(var2++)] & 255)); auto _t23 = (jshl32((jint)((((var1)[(var2++)] & 255))), (jint)(8))); return (_t22 + _t23); }()))) > 0))) {
-            ((this)->animationFrameCount = jnewarray<Arr<jbyte>>(var70));
-            ((this)->animationFrameStart = jnewarray<Arr<jshort>>(var70));
+            ((this)->m = jnewarray<Arr<jbyte>>(var70));
+            ((this)->n = jnewarray<Arr<jshort>>(var70));
             {
                jint var74 = 0;
                for (; (var74 < var70); (var74++)) {
-                  (((this)->animationFrameCount)[var74] = (var1)[(var2++)]);
+                  (((this)->m)[var74] = (var1)[(var2++)]);
                   jint var170 = (++var2);
                   (var2++);
-                  (((this)->animationFrameStart)[var74] = ((jshort)((((((var1)[var170] & 255)) + (jshl32((jint)((((var1)[(var2++)] & 255))), (jint)(8))))))));
+                  (((this)->n)[var74] = ((jshort)((((((var1)[var170] & 255)) + (jshl32((jint)((((var1)[(var2++)] & 255))), (jint)(8))))))));
                }
             }
          }
       }
-      if ((((((this)->featureFlags & 16777216)) != 0))) {
+      if ((((((this)->B & 16777216)) != 0))) {
          jshort var65 = ((jshort)((([&]{ auto _t24 = (((var1)[(var2++)] & 255)); auto _t25 = (jshl32((jint)((((var1)[(var2++)] & 255))), (jint)(8))); return (_t24 + _t25); }()))));
-         ((this)->palettes = jnewarray<Arr<Arr<Arr<jint>>>>(var4, (this)->paletteCount));
+         ((this)->v = jnewarray<Arr<Arr<Arr<jint>>>>(var4, (this)->x));
          Arr<jint> var71 = jnewarray<Arr<jint>>(var4);
          {
             jint var75 = 0;
             for (; (var75 < var4); (var75++)) {
                jint var79 = ((var1)[(var2++)] & 255);
-               (((this)->palettes)[var75] = jnewarray<Arr<Arr<jint>>>(var79));
-               if ((((this)->paletteCount < var79))) {
-                  ((this)->paletteCount = var79);
+               (((this)->v)[var75] = jnewarray<Arr<Arr<jint>>>(var79));
+               if ((((this)->x < var79))) {
+                  ((this)->x = var79);
                }
                jint var9{};
                if (((((var9 = ((var1)[(var2++)] & 255))) == 0))) {
@@ -161,7 +153,7 @@ void BSprite::load(Arr<jbyte> var1, jint var2) {
                {
                   jint var10 = 0;
                   for (; (var10 < var79); (var10++)) {
-                     ((((this)->palettes)[var75])[var10] = jnewarray<Arr<jint>>(var9));
+                     ((((this)->v)[var75])[var10] = jnewarray<Arr<jint>>(var9));
                      if (((var65 == 21781))) {
                         {
                            jint var11 = 0;
@@ -170,79 +162,80 @@ void BSprite::load(Arr<jbyte> var1, jint var2) {
                               jint var13 = -16777216;
                               if (((((var12 & 32768)) != 32768))) {
                                  (var13 = 0);
-                                 ((this)->hasAlpha = true);
+                                 ((this)->A = true);
                               }
-                              (((((this)->palettes)[var75])[var10])[var11] = (((var13 | jshl32((jint)(((var12 & 31744))), (jint)(9))) | jshl32((jint)(((var12 & 992))), (jint)(6))) | jshl32((jint)(((var12 & 31))), (jint)(3))));
+                              (((((this)->v)[var75])[var10])[var11] = (((var13 | jshl32((jint)(((var12 & 31744))), (jint)(9))) | jshl32((jint)(((var12 & 992))), (jint)(6))) | jshl32((jint)(((var12 & 31))), (jint)(3))));
                            }
                         }
+                        ((this)->O = 16253176);
                      }
                   }
                }
             }
          }
-         ((this)->pixelCodec = ((jshort)((([&]{ auto _t28 = (((var1)[(var2++)] & 255)); auto _t29 = (jshl32((jint)((((var1)[(var2++)] & 255))), (jint)(8))); return (_t28 + _t29); }())))));
-         if ((((this)->pixelCodec == 25840))) {
-            ((this)->packedColorMask = jnewarray<Arr<jint>>(var4));
-            ((this)->packedColorBits = jnewarray<Arr<jint>>(var4));
+         ((this)->C = ((jshort)((([&]{ auto _t28 = (((var1)[(var2++)] & 255)); auto _t29 = (jshl32((jint)((((var1)[(var2++)] & 255))), (jint)(8))); return (_t28 + _t29); }())))));
+         if ((((this)->C == 25840))) {
+            ((this)->D = jnewarray<Arr<jint>>(var4));
+            ((this)->E = jnewarray<Arr<jint>>(var4));
             {
                jint var76 = 0;
                for (; (var76 < var4); (var76++)) {
                   jint var80 = ((var71)[var76] - 1);
-                  (((this)->packedColorMask)[var76] = 1);
+                  (((this)->D)[var76] = 1);
                   {
-                     (((this)->packedColorBits)[var76] = 0);
-                     for (; (var80 != 0); (((this)->packedColorBits)[var76]++)) {
+                     (((this)->E)[var76] = 0);
+                     for (; (var80 != 0); (((this)->E)[var76]++)) {
                         (var80 = (jint)(jshr32((jint)(var80), (jint)(1))));
-                        (((this)->packedColorMask)[var76] = jshl32((jint)(((this)->packedColorMask)[var76]), (jint)(1)));
+                        (((this)->D)[var76] = jshl32((jint)(((this)->D)[var76]), (jint)(1)));
                      }
                   }
-                  (((this)->packedColorMask)[var76]--);
+                  (((this)->D)[var76]--);
                }
             }
          }
-         if ((((this)->moduleCount > 0))) {
-            ((this)->moduleDataOffset = jnewarray<Arr<jint>>((this)->moduleCount));
+         if ((((this)->b > 0))) {
+            ((this)->G = jnewarray<Arr<jint>>((this)->b));
             jint var77 = 0;
             jint var81 = var2;
             {
                jint var85 = 0;
-               for (; (var85 < (this)->moduleCount); (var85++)) {
+               for (; (var85 < (this)->b); (var85++)) {
                   jint var88 = ([&]{ auto _t30 = (((var1)[(var81++)] & 255)); auto _t31 = (jshl32((jint)((((var1)[(var81++)] & 255))), (jint)(8))); return (_t30 + _t31); }());
-                  (((this)->moduleDataOffset)[var85] = var77);
+                  (((this)->G)[var85] = var77);
                   (var81 = (jint)((var81 + var88)));
                   (var77 = (jint)((var77 + var88)));
                }
             }
-            ((this)->imageData = jnewarray<Arr<jbyte>>(var77));
+            ((this)->F = jnewarray<Arr<jbyte>>(var77));
             {
                jint var86 = 0;
-               for (; (var86 < (this)->moduleCount); (var86++)) {
+               for (; (var86 < (this)->b); (var86++)) {
                   jint var89 = ([&]{ auto _t32 = (((var1)[(var2++)] & 255)); auto _t33 = (jshl32((jint)((((var1)[(var2++)] & 255))), (jint)(8))); return (_t32 + _t33); }());
-                  System::arraycopy(var1, var2, (this)->imageData, ((this)->moduleDataOffset)[var86], var89);
+                  System::arraycopy(var1, var2, (this)->F, ((this)->G)[var86], var89);
                   (var2 = (jint)((var2 + var89)));
                }
             }
          }
       }
-      if (((((((this)->featureFlags & 536870912)) != 0) && ((((this)->featureFlags & 4)) == 0)))) {
+      if (((((((this)->B & 536870912)) != 0) && ((((this)->B & 4)) == 0)))) {
          jint var66 = ([&]{ auto _t34 = (((var1)[(var2++)] & 255)); auto _t35 = (jshl32((jint)((((var1)[(var2++)] & 255))), (jint)(8))); return (_t34 + _t35); }());
-         ((this)->imageData = jnewarray<Arr<jbyte>>(var66));
-         System::arraycopy(var1, var2, (this)->imageData, 0, var66);
+         ((this)->F = jnewarray<Arr<jbyte>>(var66));
+         System::arraycopy(var1, var2, (this)->F, 0, var66);
          (var2 = (jint)((var2 + var66)));
-         ((this)->paletteCount = ((var1)[(var2++)] & 255));
-         ((this)->pngColorCount = ((var1)[(var2++)] & 255));
-         if ((((this)->pngColorCount == 0))) {
-            ((this)->pngColorCount = 256);
+         ((this)->x = ((var1)[(var2++)] & 255));
+         ((this)->y = ((var1)[(var2++)] & 255));
+         if ((((this)->y == 0))) {
+            ((this)->y = 256);
          }
-         jint var72 = (((((this)->pngColorCount * 3) + 4) + (this)->pngColorCount) + 4);
-         ((this)->pngPaletteChunks = jnewarray<Arr<jbyte>>(((this)->paletteCount * var72)));
-         System::arraycopy(var1, var2, (this)->pngPaletteChunks, 0, ((this)->paletteCount * var72));
-         (var2 = (jint)((var2 + ((this)->paletteCount * var72))));
+         jint var72 = (((((this)->y * 3) + 4) + (this)->y) + 4);
+         ((this)->w = jnewarray<Arr<jbyte>>(((this)->x * var72)));
+         System::arraycopy(var1, var2, (this)->w, 0, ((this)->x * var72));
+         (var2 = (jint)((var2 + ((this)->x * var72))));
       }
-      if (((((((this)->featureFlags & 4)) != 0) && ((((this)->featureFlags & 16777216)) == 0)))) {
+      if (((((((this)->B & 4)) != 0) && ((((this)->B & 16777216)) == 0)))) {
          jint var67 = ((var1)[(var2++)] & 255);
-         if ((((this)->cachedImages == nullptr))) {
-            ((this)->cachedImages = jnewarray<Arr<Arr<Ref<Image>>>>(var67));
+         if ((((this)->H == nullptr))) {
+            ((this)->H = jnewarray<Arr<Arr<Ref<Image>>>>(var67));
          }
          {
             jint var73 = 0;
@@ -253,11 +246,11 @@ void BSprite::load(Arr<jbyte> var1, jint var2) {
                (var2 = (jint)((var2 + var78)));
                jint var87{};
                if (((((var87 = ((var1)[(var2++)] & 255))) == 0))) {
-                  (((this)->cachedImages)[var73] = jnewarray<Arr<Ref<Image>>>(1));
-                  ([&]{ auto _t38 = ((this)->cachedImages)[var73]; auto _t39 = 0; auto _t40 = (Ref<Image>)(Image::createImage(var84, 0, (var84).length())); return _t38[_t39] = _t40; }());
+                  (((this)->H)[var73] = jnewarray<Arr<Ref<Image>>>(1));
+                  ([&]{ auto _t38 = ((this)->H)[var73]; auto _t39 = 0; auto _t40 = (Ref<Image>)(Image::createImage(var84, 0, (var84).length())); return _t38[_t39] = _t40; }());
                } else {
-                  if (((((this)->cachedImages)[var73] == nullptr))) {
-                     (((this)->cachedImages)[var73] = jnewarray<Arr<Ref<Image>>>(var87));
+                  if (((((this)->H)[var73] == nullptr))) {
+                     (((this)->H)[var73] = jnewarray<Arr<Ref<Image>>>(var87));
                   }
                   jint var90{};
                   if (((((var90 = ((var1)[(var2++)] & 255))) == 0))) {
@@ -276,7 +269,7 @@ void BSprite::load(Arr<jbyte> var1, jint var2) {
                         System::arraycopy(var1, var2, var14, 0, (var90 + 4));
                         (var2 = (jint)((var2 + (var90 + 4))));
                         System::arraycopy(var14, 0, var84, (49 + var92), (var14).length());
-                        ([&]{ auto _t41 = ((this)->cachedImages)[var73]; auto _t42 = var91; auto _t43 = (Ref<Image>)(Image::createImage(var84, 0, (var84).length())); return _t41[_t42] = _t43; }());
+                        ([&]{ auto _t41 = ((this)->H)[var73]; auto _t42 = var91; auto _t43 = (Ref<Image>)(Image::createImage(var84, 0, (var84).length())); return _t41[_t42] = _t43; }());
                      }
                   }
                }
@@ -286,381 +279,396 @@ void BSprite::load(Arr<jbyte> var1, jint var2) {
       System::gc();
    } catch (JavaThrow& _ex44) {
       Ref<Exception> var15 = jcaught<Exception>(_ex44);
-      ErrorReporter::report(var15, jlit(u"ASprite.Load()"));
+      ErrorReporter::m_a_ExceptionString(var15, jlit(u"ASprite.Load()"));
    }
 }
 
-void BSprite::releaseImageData() {
+void BSprite::m_a_V() {
    Ref<BSprite> _self(this);
-   ((this)->imageData = nullptr);
-   ((this)->moduleDataOffset = nullptr);
-   if ((((((this)->featureFlags & 536870912)) != 0))) {
-      ((this)->pngPaletteChunks = nullptr);
+   ((this)->F = nullptr);
+   ((this)->G = nullptr);
+   if ((((((this)->B & 536870912)) != 0))) {
+      ((this)->w = nullptr);
    }
    System::gc();
 }
 
-void BSprite::buildImages(jint var1, jint var2, jint var3, jint var4) {
+void BSprite::m_a_IIII(jint var1, jint var2, jint var3, jint var4) {
    Ref<BSprite> _self(this);
-   this->buildImagesInternal(nullptr, var1, var2, var3, var4);
+   this->m_a_BSpriteIIII(jcast<Ref<BSprite>>(nullptr), var1, var2, var3, var4);
 }
 
-void BSprite::buildImagesInternal(Ref<BSprite> var1, jint var2, jint var3, jint var4, jint var5) {
+void BSprite::m_a_BSpriteIIII(Ref<BSprite> var1, jint var2, jint var3, jint var4, jint var5) {
    Ref<BSprite> _self(this);
    if (((var4 == -1))) {
-      (var4 = ((this)->moduleCount - 1));
+      (var4 = ((this)->b - 1));
    }
-   if ((((this)->cachedImages == nullptr))) {
-      ((this)->cachedImages = jnewarray<Arr<Arr<Ref<Image>>>>((this)->paletteCount));
+   if ((((this)->H == nullptr))) {
+      ((this)->H = jnewarray<Arr<Arr<Ref<Image>>>>((this)->x));
    }
-   if ((((((this)->featureFlags & 16777216)) != 0))) {
-      if (((((this)->cachedImages)[var2] == nullptr))) {
-         (((this)->cachedImages)[var2] = jnewarray<Arr<Ref<Image>>>((this)->moduleCount));
+   if ((((((this)->B & 16777216)) != 0))) {
+      if (((((this)->H)[var2] == nullptr))) {
+         (((this)->H)[var2] = jnewarray<Arr<Ref<Image>>>((this)->b));
       }
       if (((var5 >= 0))) {
          {
             jint var6 = var3;
             for (; (var6 <= var4); (var6++)) {
-               ((((this)->cachedImages)[var2])[var6] = (((this)->cachedImages)[var5])[var6]);
+               ((((this)->H)[var2])[var6] = (((this)->H)[var5])[var6]);
             }
          }
       } else {
-         jint var19 = (this)->currentPalette;
-         ((this)->currentPalette = var2);
+         jint var19 = (this)->z;
+         ((this)->z = var2);
          jboolean var7 = false;
          jboolean var8 = false;
          System::gc();
          (Runtime::getRuntime())->freeMemory();
-         Ref<Object> var11 = nullptr;
+         Arr<jint> var11 = nullptr;
+         if (((var1 != nullptr))) {
+            (var11 = jnewarray<Arr<jint>>(12288));
+         }
          {
             jint var12 = var3;
             for (; (var12 <= var4); (var12++)) {
-               jint var13 = (((this)->moduleWidth)[var12] & 255);
-               jint var14 = (((this)->moduleHeight)[var12] & 255);
-               Arr<jint> var15{};
-               if (((((var13 > 0) && (var14 > 0)) && (((var15 = this->decodeModule(var12, 0))) != nullptr)))) {
-                  jboolean var16 = false;
-                  jint var17 = (var13 * var14);
-                  {
-                     jint var18 = 0;
-                     for (; (var18 < var17); (var18++)) {
-                        if ((((((var15)[var18] & -16777216)) != -16777216))) {
-                           (var16 = true);
-                           break;
+               jint var13 = (((this)->f)[var12] & 255);
+               jint var14 = (((this)->g)[var12] & 255);
+               if ((((var13 > 0) && (var14 > 0)))) {
+                  Arr<jint> var15 = this->m_e_II(var12, 0);
+                  if (((var1 != nullptr))) {
+                     Arr<jint> var16 = (var1)->m_c_AIII(var11, var12, 0);
+                     {
+                        jint var17 = 0;
+                        for (; (var17 < 12288); (var17++)) {
+                           if ((((var15)[var17] != (this)->O))) {
+                              ((var15)[var17] = (((var15)[var17] & 16777215) | jshl32((jint)((var16)[var17]), (jint)(24))));
+                           }
                         }
                      }
                   }
-                  ([&]{ auto _t0 = ((this)->cachedImages)[var2]; auto _t1 = var12; auto _t2 = (Ref<Image>)(Image::createRGBImage(var15, var13, var14, var16)); return _t0[_t1] = _t2; }());
+                  if (((var15 != nullptr))) {
+                     jboolean var22 = false;
+                     jint var23 = (var13 * var14);
+                     {
+                        jint var18 = 0;
+                        for (; (var18 < var23); (var18++)) {
+                           if ((((((var15)[var18] & -16777216)) != -16777216))) {
+                              (var22 = true);
+                              break;
+                           }
+                        }
+                     }
+                     ([&]{ auto _t0 = ((this)->H)[var2]; auto _t1 = var12; auto _t2 = (Ref<Image>)(Image::createRGBImage(var15, var13, var14, var22)); return _t0[_t1] = _t2; }());
+                  }
                }
             }
          }
          if (((var1 != nullptr))) {
-            (var1)->releaseImageData();
+            (var1)->m_a_V();
          }
          System::gc();
-         ((this)->currentPalette = var19);
+         ((this)->z = var19);
       }
    }
-   if ((((((this)->featureFlags & 536870912)) != 0))) {
-      if (((((this)->cachedImages)[var2] == nullptr))) {
-         (((this)->cachedImages)[var2] = jnewarray<Arr<Ref<Image>>>(1));
+   if ((((((this)->B & 536870912)) != 0))) {
+      if (((((this)->H)[var2] == nullptr))) {
+         (((this)->H)[var2] = jnewarray<Arr<Ref<Image>>>(1));
       }
-      jint var20 = (((this)->pngColorCount * 3) + 4);
-      jint var21 = ((this)->pngColorCount + 4);
-      System::arraycopy((this)->pngPaletteChunks, (var2 * ((var20 + var21))), (this)->imageData, 41, var20);
-      System::arraycopy((this)->pngPaletteChunks, ((var2 * ((var20 + var21))) + var20), (this)->imageData, ((41 + var20) + 8), var21);
-      ([&]{ auto _t3 = ((this)->cachedImages)[var2]; auto _t4 = 0; auto _t5 = (Ref<Image>)(Image::createImage((this)->imageData, 0, ((this)->imageData).length())); return _t3[_t4] = _t5; }());
+      jint var20 = (((this)->y * 3) + 4);
+      jint var21 = ((this)->y + 4);
+      System::arraycopy((this)->w, (var2 * ((var20 + var21))), (this)->F, 41, var20);
+      System::arraycopy((this)->w, ((var2 * ((var20 + var21))) + var20), (this)->F, ((41 + var20) + 8), var21);
+      ([&]{ auto _t3 = ((this)->H)[var2]; auto _t4 = 0; auto _t5 = (Ref<Image>)(Image::createImage((this)->F, 0, ((this)->F).length())); return _t3[_t4] = _t5; }());
    }
    System::gc();
 }
 
-jint BSprite::getAnimationFrameDuration(jint var1, jint var2) {
+jint BSprite::m_a_III(jint var1, jint var2, jint var3) {
    Ref<BSprite> _self(this);
-   return (((this)->animationFrames)[((((((this)->animationFrameStart)[var1] + var2)) * 5) + 1)] & 255);
+   return jshl32((jint)(((((this)->o)[((((((this)->n)[var1] + var2)) * 5) + 1)] & 255))), (jint)(var3));
 }
 
-jint BSprite::getAnimationFrameCount(jint var1) {
+jint BSprite::m_a_I(jint var1) {
    Ref<BSprite> _self(this);
-   return (((this)->animationFrameCount)[var1] & 255);
+   return (((this)->m)[var1] & 255);
 }
 
-jint BSprite::getFrameWidth(jint var1) {
+jint BSprite::m_a_II(jint var1, jint var2) {
    Ref<BSprite> _self(this);
-   jint var2 = jshl32((jint)(var1), (jint)(2));
-   return ((this)->frameRects)[(var2 + 2)];
+   jint var3 = jshl32((jint)((((this)->i)[var1] + var2)), (jint)(2));
+   return ((this)->l)[(var3 + 1)];
 }
 
-jint BSprite::getFrameModuleX(jint var1, jint var2) {
+jint BSprite::m_b_II(jint var1, jint var2) {
    Ref<BSprite> _self(this);
-   jint var3 = jshl32((jint)((((this)->frameModuleStart)[var1] + var2)), (jint)(2));
-   return ((this)->frameModules)[(var3 + 1)];
+   jint var3 = jshl32((jint)((((this)->i)[var1] + var2)), (jint)(2));
+   return ((this)->l)[(var3 + 2)];
 }
 
-jint BSprite::getFrameModuleY(jint var1, jint var2) {
+jint BSprite::m_c_II(jint var1, jint var2) {
    Ref<BSprite> _self(this);
-   jint var3 = jshl32((jint)((((this)->frameModuleStart)[var1] + var2)), (jint)(2));
-   return ((this)->frameModules)[(var3 + 2)];
+   jint var3 = jshl32((jint)((((this)->i)[var1] + var2)), (jint)(2));
+   jint var4 = ((((this)->l)[var3] & 255) | jshl32((jint)((((((this)->l)[(var3 + 3)] & 255) & 192))), (jint)(2)));
+   return (((this)->f)[var4] & 255);
 }
 
-jint BSprite::getFrameModuleWidth(jint var1, jint var2) {
+jint BSprite::m_d_II(jint var1, jint var2) {
    Ref<BSprite> _self(this);
-   jint var3 = jshl32((jint)((((this)->frameModuleStart)[var1] + var2)), (jint)(2));
-   jint var4 = ((((this)->frameModules)[var3] & 255) | jshl32((jint)((((((this)->frameModules)[(var3 + 3)] & 255) & 192))), (jint)(2)));
-   return (((this)->moduleWidth)[var4] & 255);
+   jint var3 = jshl32((jint)((((this)->i)[var1] + var2)), (jint)(2));
+   jint var4 = ((((this)->l)[var3] & 255) | jshl32((jint)((((((this)->l)[(var3 + 3)] & 255) & 192))), (jint)(2)));
+   return (((this)->g)[var4] & 255);
 }
 
-jint BSprite::getFrameModuleHeight(jint var1, jint var2) {
+void BSprite::m_a_AIIIIIII(Arr<jint> var1, jint var2, jint var3, jint var4, jint var5, jint var6, jint var7) {
    Ref<BSprite> _self(this);
-   jint var3 = jshl32((jint)((((this)->frameModuleStart)[var1] + var2)), (jint)(2));
-   jint var4 = ((((this)->frameModules)[var3] & 255) | jshl32((jint)((((((this)->frameModules)[(var3 + 3)] & 255) & 192))), (jint)(2)));
-   return (((this)->moduleHeight)[var4] & 255);
-}
-
-void BSprite::getAnimationBounds(Arr<jint> var1, jint var2, jint var3, jint var4, jint var5, jint var6, jint var7) {
-   Ref<BSprite> _self(this);
-   jint var8 = (((((this)->animationFrameStart)[var2] + var3)) * 5);
-   jint var9 = ((((this)->animationFrames)[var8] & 255) | jshl32((jint)(((((this)->animationFrames)[(var8 + 4)] & 192))), (jint)(2)));
+   jint var8 = (((((this)->n)[var2] + var3)) * 5);
+   jint var9 = ((((this)->o)[var8] & 255) | jshl32((jint)(((((this)->o)[(var8 + 4)] & 192))), (jint)(2)));
    if (((((var5 & 1)) != 0))) {
-      (var6 = (jint)((var6 + ((this)->animationFrames)[(var8 + 2)])));
+      (var6 = (jint)((var6 + ((this)->o)[(var8 + 2)])));
    } else {
-      (var6 = (jint)((var6 - ((this)->animationFrames)[(var8 + 2)])));
+      (var6 = (jint)((var6 - ((this)->o)[(var8 + 2)])));
    }
    if (((((var5 & 2)) != 0))) {
-      (var7 = (jint)((var7 + ((this)->animationFrames)[(var8 + 3)])));
+      (var7 = (jint)((var7 + ((this)->o)[(var8 + 3)])));
    } else {
-      (var7 = (jint)((var7 - ((this)->animationFrames)[(var8 + 3)])));
+      (var7 = (jint)((var7 - ((this)->o)[(var8 + 3)])));
    }
-   this->getFrameBounds(var1, var9, var4, (var5 ^ (((this)->animationFrames)[(var8 + 4)] & 15)), var6, var7);
+   this->m_a_AIIIIII(var1, var9, var4, (var5 ^ (((this)->o)[(var8 + 4)] & 15)), var6, var7);
 }
 
-void BSprite::getFrameBounds(Arr<jint> var1, jint var2, jint var3, jint var4, jint var5, jint var6) {
+void BSprite::m_a_AIIIIII(Arr<jint> var1, jint var2, jint var3, jint var4, jint var5, jint var6) {
    Ref<BSprite> _self(this);
    if (((var3 != -1))) {
-      (var3 = (jint)((var3 + ((this)->frameCollisionStart)[var2])));
-      if (((((this)->frameCollisionStart)[(var2 + 1)] <= var3))) {
+      (var3 = (jint)((var3 + ((this)->j)[var2])));
+      if (((((this)->j)[(var2 + 1)] <= var3))) {
          ((var1)[0] = ((var1)[1] = ((var1)[2] = ((var1)[3] = 0))));
       } else {
-         jint var24 = jshl32((jint)(var3), (jint)(2));
-         jbyte var29 = ((this)->collisionRects)[(var24++)];
-         jbyte var31 = ((this)->collisionRects)[(var24++)];
-         jint var33 = (((this)->collisionRects)[(var24++)] & 255);
-         jint var35 = (((this)->collisionRects)[var24] & 255);
+         jint var18 = jshl32((jint)(var3), (jint)(2));
+         jbyte var22 = ((this)->k)[(var18++)];
+         jbyte var23 = ((this)->k)[(var18++)];
+         jint var24 = (((this)->k)[(var18++)] & 255);
+         jint var25 = (((this)->k)[var18] & 255);
          if (((((var4 & 1)) != 0))) {
-            (var5 = (jint)((var5 + (var29 + var33))));
+            (var5 = (jint)((var5 + (var22 + var24))));
          } else {
-            (var5 = (jint)((var5 - var29)));
+            (var5 = (jint)((var5 - var22)));
          }
          if (((((var4 & 2)) != 0))) {
-            (var6 = (jint)((var6 + (var31 + var35))));
+            (var6 = (jint)((var6 + (var23 + var25))));
          } else {
-            (var6 = (jint)((var6 - var31)));
+            (var6 = (jint)((var6 - var23)));
          }
          ((var1)[0] = (-var5));
          ((var1)[1] = (-var6));
-         ((var1)[2] = ((var1)[0] + var33));
-         ((var1)[3] = ((var1)[1] + var35));
+         ((var1)[2] = ((var1)[0] + var24));
+         ((var1)[3] = ((var1)[1] + var25));
       }
-   } else if ((((((this)->featureFlags & 1024)) != 0))) {
-      jint var23 = 0;
-      jint var28 = 0;
-      jint var30 = 0;
-      jint var32 = 0;
-      jint var34 = (((this)->frameModuleCount)[var2] & 255);
+   } else {
+      jint var7 = 0;
+      jint var8 = 0;
+      jint var9 = 0;
+      jint var10 = 0;
+      jint var11 = (((this)->h)[var2] & 255);
       {
          jint var12 = 0;
-         for (; (var12 < var34); (var12++)) {
-            this->getFrameModuleBounds(var1, var2, var12);
-            if ((((var1)[0] < var23))) {
-               (var30 = ((var23 + var30) - (var1)[0]));
-               (var23 = (var1)[0]);
+         for (; (var12 < var11); (var12++)) {
+            this->m_a_AIII(var1, var2, var12);
+            if ((((var1)[0] < var7))) {
+               (var9 = ((var7 + var9) - (var1)[0]));
+               (var7 = (var1)[0]);
             }
-            if ((((var1)[1] < var28))) {
-               (var32 = ((var28 + var32) - (var1)[1]));
-               (var28 = (var1)[1]);
+            if ((((var1)[1] < var8))) {
+               (var10 = ((var8 + var10) - (var1)[1]));
+               (var8 = (var1)[1]);
             }
-            if ((((var1)[2] > (var23 + var30)))) {
-               (var30 = ((var1)[2] - var23));
+            if ((((var1)[2] > (var7 + var9)))) {
+               (var9 = ((var1)[2] - var7));
             }
-            if ((((var1)[3] > (var28 + var32)))) {
-               (var32 = ((var1)[3] - var28));
+            if ((((var1)[3] > (var8 + var10)))) {
+               (var10 = ((var1)[3] - var8));
             }
          }
       }
       if (((((var4 & 1)) != 0))) {
-         (var5 = (jint)((var5 + (var23 + var30))));
+         (var5 = (jint)((var5 + (var7 + var9))));
       } else {
-         (var5 = (jint)((var5 - var23)));
+         (var5 = (jint)((var5 - var7)));
       }
       if (((((var4 & 2)) != 0))) {
-         (var6 = (jint)((var6 + (var28 + var32))));
+         (var6 = (jint)((var6 + (var8 + var10))));
       } else {
-         (var6 = (jint)((var6 - var28)));
+         (var6 = (jint)((var6 - var8)));
       }
       ((var1)[0] = (-var5));
       ((var1)[1] = (-var6));
-      ((var1)[2] = ((var1)[0] + var30));
-      ((var1)[3] = ((var1)[1] + var32));
-   } else {
-      jint var7 = jshl32((jint)(var2), (jint)(2));
-      jbyte var8 = ((this)->frameRects)[(var7++)];
-      jbyte var9 = ((this)->frameRects)[(var7++)];
-      jint var10 = (((this)->frameRects)[(var7++)] & 255);
-      jint var11 = (((this)->frameRects)[var7] & 255);
-      if (((((var4 & 1)) != 0))) {
-         (var5 = (jint)((var5 + (var8 + var10))));
-      } else {
-         (var5 = (jint)((var5 - var8)));
-      }
-      if (((((var4 & 2)) != 0))) {
-         (var6 = (jint)((var6 + (var9 + var11))));
-      } else {
-         (var6 = (jint)((var6 - var9)));
-      }
-      ((var1)[0] = (-var5));
-      ((var1)[1] = (-var6));
-      ((var1)[2] = ((var1)[0] + var10));
-      ((var1)[3] = ((var1)[1] + var11));
+      ((var1)[2] = ((var1)[0] + var9));
+      ((var1)[3] = ((var1)[1] + var10));
    }
 }
 
-void BSprite::getFrameModuleBounds(Arr<jint> var1, jint var2, jint var3) {
+void BSprite::m_a_AIII(Arr<jint> var1, jint var2, jint var3) {
    Ref<BSprite> _self(this);
-   jint var4 = jshl32((jint)((((this)->frameModuleStart)[var2] + var3)), (jint)(2));
-   jint var5 = (((this)->frameModules)[(var4 + 3)] & 255);
-   jint var6 = ((((this)->frameModules)[var4] & 255) | jshl32((jint)(((var5 & 192))), (jint)(2)));
+   jint var4 = jshl32((jint)((((this)->i)[var2] + var3)), (jint)(2));
+   jint var5 = (((this)->l)[(var4 + 3)] & 255);
+   jint var6 = ((((this)->l)[var4] & 255) | jshl32((jint)(((var5 & 192))), (jint)(2)));
    if (((((var5 & 16)) != 0))) {
-      this->getFrameBounds(var1, var6, -1, 0, 0, 0);
+      this->m_a_AIIIIII(var1, var6, -1, 0, 0, 0);
    } else {
-      ((var1)[0] = this->getFrameModuleX(var2, var3));
-      ((var1)[1] = this->getFrameModuleY(var2, var3));
-      ((var1)[2] = ([&]{ auto _t0 = (var1)[0]; auto _t1 = this->getFrameModuleWidth(var2, var3); return (_t0 + _t1); }()));
-      ((var1)[3] = ([&]{ auto _t2 = (var1)[1]; auto _t3 = this->getFrameModuleHeight(var2, var3); return (_t2 + _t3); }()));
+      ((var1)[0] = this->m_a_II(var2, var3));
+      ((var1)[1] = this->m_b_II(var2, var3));
+      ((var1)[2] = ([&]{ auto _t0 = (var1)[0]; auto _t1 = this->m_c_II(var2, var3); return (_t0 + _t1); }()));
+      ((var1)[3] = ([&]{ auto _t2 = (var1)[1]; auto _t3 = this->m_d_II(var2, var3); return (_t2 + _t3); }()));
    }
 }
 
-void BSprite::getModuleBounds(Arr<jint> var1, jint var2, jint var3) {
+void BSprite::m_b_AIII(Arr<jint> var1, jint var2, jint var3) {
    Ref<BSprite> _self(this);
    ((var1)[0] = 0);
    ((var1)[1] = 0);
-   ((var1)[2] = (((this)->moduleWidth)[var2] & 255));
-   ((var1)[3] = (((this)->moduleHeight)[var2] & 255));
+   ((var1)[2] = (((this)->f)[var2] & 255));
+   ((var1)[3] = (((this)->g)[var2] & 255));
 }
 
-void BSprite::drawAnimationFrame(Ref<Graphics> var1, jint var2, jint var3, jint var4, jint var5, jint var6, jint var7, jint var8) {
+void BSprite::m_a_GraphicsIIIIIII(Ref<Graphics> var1, jint var2, jint var3, jint var4, jint var5, jint var6, jint var7, jint var8) {
    Ref<BSprite> _self(this);
-   jint var9 = (((((this)->animationFrameStart)[var2] + var3)) * 5);
-   jint var10 = ((((this)->animationFrames)[var9] & 255) | jshl32((jint)(((((this)->animationFrames)[(var9 + 4)] & 192))), (jint)(2)));
+   jint var9 = (((((this)->n)[var2] + var3)) * 5);
+   jint var10 = ((((this)->o)[var9] & 255) | jshl32((jint)(((((this)->o)[(var9 + 4)] & 192))), (jint)(2)));
    if (((((var6 & 1)) != 0))) {
-      (var7 = (jint)((var7 + ((this)->animationFrames)[(var9 + 2)])));
+      (var7 = (jint)((var7 + ((this)->o)[(var9 + 2)])));
    } else {
-      (var7 = (jint)((var7 - ((this)->animationFrames)[(var9 + 2)])));
+      (var7 = (jint)((var7 - ((this)->o)[(var9 + 2)])));
    }
    if (((((var6 & 2)) != 0))) {
-      (var8 = (jint)((var8 + ((this)->animationFrames)[(var9 + 3)])));
+      (var8 = (jint)((var8 + ((this)->o)[(var9 + 3)])));
    } else {
-      (var8 = (jint)((var8 - ((this)->animationFrames)[(var9 + 3)])));
+      (var8 = (jint)((var8 - ((this)->o)[(var9 + 3)])));
    }
-   this->drawFrame(var1, var10, (var4 - var7), (var5 - var8), (var6 ^ (((this)->animationFrames)[(var9 + 4)] & 15)), var7, var8);
+   this->m_a_GraphicsIIIIII(var1, var10, (var4 - var7), (var5 - var8), (var6 ^ (((this)->o)[(var9 + 4)] & 15)), var7, var8);
 }
 
-void BSprite::drawFrame(Ref<Graphics> var1, jint var2, jint var3, jint var4, jint var5, jint var6, jint var7) {
+void BSprite::m_a_GraphicsIIIIII(Ref<Graphics> var1, jint var2, jint var3, jint var4, jint var5, jint var6, jint var7) {
    Ref<BSprite> _self(this);
-   jint var8 = (((this)->frameModuleCount)[var2] & 255);
+   jint var8 = (((this)->h)[var2] & 255);
    {
       jint var9 = 0;
       for (; (var9 < var8); (var9++)) {
-         if ((((!(this)->moduleMaskEnabled) || (((this)->frameModuleMask)[var9] != 1)))) {
-            this->drawFrameModule(var1, var2, var9, var3, var4, var5, var6, var7);
+         if ((((!(this)->s) || (((this)->u)[var9] != 1)))) {
+            this->m_b_GraphicsIIIIIII(var1, var2, var9, var3, var4, var5, var6, var7);
          }
       }
    }
 }
 
-void BSprite::drawFrameModule(Ref<Graphics> var1, jint var2, jint var3, jint var4, jint var5, jint var6, jint var7, jint var8) {
+void BSprite::m_b_GraphicsIIIIIII(Ref<Graphics> var1, jint var2, jint var3, jint var4, jint var5, jint var6, jint var7, jint var8) {
    Ref<BSprite> _self(this);
-   jint var9 = jshl32((jint)((((this)->frameModuleStart)[var2] + var3)), (jint)(2));
-   jint var10 = (((this)->frameModules)[(var9 + 3)] & 255);
-   jint var11 = ((((this)->frameModules)[var9] & 255) | jshl32((jint)(((var10 & 192))), (jint)(2)));
-   if (((((var6 & 1)) != 0))) {
-      (var4 = (jint)((var4 - ((this)->frameModules)[(var9 + 1)])));
-   } else {
-      (var4 = (jint)((var4 + ((this)->frameModules)[(var9 + 1)])));
-   }
-   if (((((var6 & 2)) != 0))) {
-      (var5 = (jint)((var5 - ((this)->frameModules)[(var9 + 2)])));
-   } else {
-      (var5 = (jint)((var5 + ((this)->frameModules)[(var9 + 2)])));
-   }
-   if (((((var10 & 16)) != 0))) {
-      this->drawFrame(var1, var11, var4, var5, (var6 ^ (var10 & 15)), var7, var8);
+   jint var9 = jshl32((jint)((((this)->i)[var2] + var3)), (jint)(2));
+   jint var10 = (((this)->l)[(var9 + 3)] & 255);
+   jint var11 = ((((this)->l)[var9] & 255) | jshl32((jint)(((var10 & 192))), (jint)(2)));
+   if (((this)->P)) {
+      if (((BSprite::I == nullptr))) {
+         if (((((var6 & 1)) != 0))) {
+            (var4 = (jint)((var4 - jdiv32((((this)->l)[(var9 + 1)] * (this)->Q), (this)->R))));
+         } else {
+            (var4 = (jint)((var4 + jdiv32((((this)->l)[(var9 + 1)] * (this)->Q), (this)->R))));
+         }
+         if (((((var6 & 2)) != 0))) {
+            (var5 = (jint)((var5 - jdiv32((((this)->l)[(var9 + 2)] * (this)->Q), (this)->R))));
+         } else {
+            (var5 = (jint)((var5 + jdiv32((((this)->l)[(var9 + 2)] * (this)->Q), (this)->R))));
+         }
+      } else {
+         if (((((var6 & 1)) != 0))) {
+            (var4 = (jint)((var4 - jdiv32((((this)->l)[(var9 + 1)] * (BSprite::J)[(this)->Q]), (this)->R))));
+         } else {
+            (var4 = (jint)((var4 + jdiv32((((this)->l)[(var9 + 1)] * (BSprite::J)[(this)->Q]), (this)->R))));
+         }
+         if (((((var6 & 2)) != 0))) {
+            (var5 = (jint)((var5 - jdiv32((((this)->l)[(var9 + 2)] * (BSprite::J)[(this)->Q]), (this)->R))));
+         } else {
+            (var5 = (jint)((var5 + jdiv32((((this)->l)[(var9 + 2)] * (BSprite::J)[(this)->Q]), (this)->R))));
+         }
+      }
    } else {
       if (((((var6 & 1)) != 0))) {
-         (var4 = (jint)((var4 - (((this)->moduleWidth)[var11] & 255))));
+         (var4 = (jint)((var4 - ((this)->l)[(var9 + 1)])));
+      } else {
+         (var4 = (jint)((var4 + ((this)->l)[(var9 + 1)])));
       }
       if (((((var6 & 2)) != 0))) {
-         (var5 = (jint)((var5 - (((this)->moduleHeight)[var11] & 255))));
+         (var5 = (jint)((var5 - ((this)->l)[(var9 + 2)])));
+      } else {
+         (var5 = (jint)((var5 + ((this)->l)[(var9 + 2)])));
       }
-      this->drawModule(var1, var11, var4, var5, (var6 ^ (var10 & 15)));
+   }
+   if (((((var10 & 16)) != 0))) {
+      this->m_a_GraphicsIIIIII(var1, var11, var4, var5, (var6 ^ (var10 & 15)), var7, var8);
+   } else {
+      if (((((var6 & 1)) != 0))) {
+         (var4 = (jint)((var4 - (((this)->f)[var11] & 255))));
+      }
+      if (((((var6 & 2)) != 0))) {
+         (var5 = (jint)((var5 - (((this)->g)[var11] & 255))));
+      }
+      this->m_a_GraphicsIIII(var1, var11, var4, var5, (var6 ^ (var10 & 15)));
    }
 }
 
-void BSprite::drawModule(Ref<Graphics> var1, jint var2, jint var3, jint var4, jint var5) {
+void BSprite::m_b_V() {
    Ref<BSprite> _self(this);
-   jint var6 = (((this)->moduleWidth)[var2] & 255);
-   jint var7 = (((this)->moduleHeight)[var2] & 255);
+   Ref<Image> var1 = nullptr;
+   if ((((this)->z >= (((this)->H)[0]).length()))) {
+      ((this)->z = 0);
+   }
+   jint var2 = (((var1 = (((this)->H)[0])[(this)->z])))->getWidth();
+   jint var3 = (var1)->getHeight();
+   (BSprite::I = jnewarray<Arr<Ref<Image>>>((BSprite::J).length()));
+   {
+      jint var4 = 0;
+      for (; (var4 < (BSprite::J).length()); (var4++)) {
+         ([&]{ auto _t0 = BSprite::I; auto _t1 = var4; auto _t2 = (Ref<Image>)(BSprite::m_a_ImageII(var1, jdiv32((var2 * (BSprite::J)[var4]), (this)->R), ((var3 * (BSprite::J)[var4]) / 10))); return _t0[_t1] = _t2; }());
+      }
+   }
+}
+
+void BSprite::m_a_GraphicsIIII(Ref<Graphics> var1, jint var2, jint var3, jint var4, jint var5) {
+   Ref<BSprite> _self(this);
+   jint var6 = (((this)->f)[var2] & 255);
+   jint var7 = (((this)->g)[var2] & 255);
    if ((((var6 > 0) && (var7 > 0)))) {
       Ref<Image> var8 = nullptr;
-      if (((((this)->cachedImages != nullptr) && (((this)->cachedImages)[(this)->currentPalette] != nullptr)))) {
-         if ((((((this)->featureFlags & 4)) != 0))) {
-            if ((((this)->currentPalette >= (((this)->cachedImages)[((this)->moduleImageIndex)[var2]]).length()))) {
-               ((this)->currentPalette = 0);
+      if ((((this)->H != nullptr))) {
+         if ((((((this)->B & 4)) != 0))) {
+            if ((((this)->z >= (((this)->H)[((this)->e)[var2]]).length()))) {
+               ((this)->z = 0);
             }
-            (var8 = (((this)->cachedImages)[((this)->moduleImageIndex)[var2]])[(this)->currentPalette]);
-         } else if ((((((this)->featureFlags & 536870912)) != 0))) {
-            (var8 = (((this)->cachedImages)[(this)->currentPalette])[0]);
-         } else {
-            (var8 = (((this)->cachedImages)[(this)->currentPalette])[var2]);
+            (var8 = (((this)->H)[((this)->e)[var2]])[(this)->z]);
+         } else if (((((this)->H)[(this)->z] != nullptr))) {
+            if ((((((this)->B & 536870912)) != 0))) {
+               (var8 = (((this)->H)[(this)->z])[0]);
+            } else {
+               (var8 = (((this)->H)[(this)->z])[var2]);
+            }
          }
-      } else if ((((this)->cacheIndex >= 0))) {
-         jint var9 = var2;
-         jint var14{};
-         (var2 = (((var14 = (var2 + (this)->cacheBase))) + ((this)->currentPalette * (this)->moduleCount)));
-         if (((((BSprite::imageCaches)[(this)->cacheIndex])[var2] == nullptr))) {
-            jint var10 = (BSprite::cacheNextEviction)[(this)->cacheIndex];
-            jshort var11{};
-            if (((((var11 = ((BSprite::cacheEvictionSlots)[(this)->cacheIndex])[var10])) >= 0))) {
-               (((BSprite::imageCaches)[(this)->cacheIndex])[var11] = nullptr);
-            }
-            (((BSprite::cacheEvictionSlots)[(this)->cacheIndex])[var10] = ((jshort)(var2)));
-            ((BSprite::cacheNextEviction)[(this)->cacheIndex] = jrem32((((BSprite::cacheNextEviction)[(this)->cacheIndex] + 1)), (BSprite::cacheCapacity)[(this)->cacheIndex]));
-            Arr<jint> var12{};
-            if (((((var12 = this->decodeModule(var9, var5))) == nullptr))) {
-               (System::out)->println(jlit(u"DecodeImage() FAILED !"));
-               return;
-            }
-            ([&]{ auto _t0 = (BSprite::imageCaches)[(this)->cacheIndex]; auto _t1 = var2; auto _t2 = (Ref<Image>)(Image::createRGBImage(var12, var6, var7, (this)->hasAlpha)); return _t0[_t1] = _t2; }());
-         }
-         (var8 = ((BSprite::imageCaches)[(this)->cacheIndex])[var2]);
       }
-      if (((((this)->boundaryClipMask == -1) || ((((((((1 & (this)->boundaryClipMask)) == 0) || ((var3 + var6) > (this)->boundaryClipX))) && (((((2 & (this)->boundaryClipMask)) == 0) || (var3 < (this)->boundaryClipX)))) && (((((4 & (this)->boundaryClipMask)) == 0) || ((var4 + var7) > (this)->boundaryClipY)))) && (((((8 & (this)->boundaryClipMask)) == 0) || (var4 < (this)->boundaryClipY))))))) {
-         jint var15 = 0;
-         jint var16 = 0;
-         Arr<jint> var17 = nullptr;
-         jint var18 = 0;
+      if (((((this)->p == -1) || ((((((((1 & (this)->p)) == 0) || ((var3 + var6) > (this)->q))) && (((((2 & (this)->p)) == 0) || (var3 < (this)->q)))) && (((((4 & (this)->p)) == 0) || ((var4 + var7) > (this)->r)))) && (((((8 & (this)->p)) == 0) || (var4 < (this)->r))))))) {
+         jint var9 = 0;
+         jint var10 = 0;
+         Arr<jint> var11 = nullptr;
+         jint var12 = 0;
          jint var13 = var6;
          if (((var8 == nullptr))) {
-            if (((((var17 = this->decodeModule(var2, var5))) == nullptr))) {
+            if (((((var11 = this->m_e_II(var2, var5))) == nullptr))) {
                (System::out)->println(jlit(u"DecodeImage() FAILED !"));
                return;
             }
             if (((((var6 + var3) > 0) && ((var7 + var4) > 0)))) {
                if (((var4 < 0))) {
-                  (var18 = (0 - (var4 * var6)));
+                  (var12 = (0 - (var4 * var6)));
                   (var7 = (jint)((var7 + var4)));
                   (var4 = 0);
                }
                if (((var3 < 0))) {
-                  (var18 = (jint)((var18 - var3)));
+                  (var12 = (jint)((var12 - var3)));
                   (var6 = (jint)((var6 + var3)));
                   (var3 = 0);
                }
@@ -668,130 +676,267 @@ void BSprite::drawModule(Ref<Graphics> var1, jint var2, jint var3, jint var4, ji
          } else {
             (var6 = (var8)->getWidth());
             (var7 = (var8)->getHeight());
-            if ((((((this)->featureFlags & 536870912)) != 0))) {
-               (var15 = (((this)->moduleX)[var2] & 255));
-               (var16 = (((this)->moduleY)[var2] & 255));
-               (var6 = (((this)->moduleWidth)[var2] & 255));
-               (var7 = (((this)->moduleHeight)[var2] & 255));
+            if (((this)->P)) {
+               if (((BSprite::I == nullptr))) {
+                  (var8 = BSprite::m_a_ImageII(var8, jdiv32((var6 * (this)->Q), (this)->R), jdiv32((var7 * (this)->Q), (this)->R)));
+               } else {
+                  (var8 = (BSprite::I)[(this)->Q]);
+               }
+            }
+            if (((((((this)->B & 536870912)) != 0) || ((((this)->B & 4)) != 0)))) {
+               (var9 = (((this)->c)[var2] & 255));
+               (var10 = (((this)->d)[var2] & 255));
+               (var6 = (((this)->f)[var2] & 255));
+               (var7 = (((this)->g)[var2] & 255));
+               if (((this)->P)) {
+                  if (((BSprite::I == nullptr))) {
+                     (var9 = jdiv32((var9 * (this)->Q), (this)->R));
+                     (var10 = jdiv32((var10 * (this)->Q), (this)->R));
+                  } else {
+                     (var9 = jdiv32((var9 * (BSprite::J)[(this)->Q]), (this)->R));
+                     (var10 = jdiv32((var10 * (BSprite::J)[(this)->Q]), (this)->R));
+                  }
+               }
+            }
+            if (((this)->P)) {
+               if (((BSprite::I == nullptr))) {
+                  (var6 = jdiv32((var6 * (this)->Q), (this)->R));
+                  (var7 = jdiv32((var7 * (this)->Q), (this)->R));
+               } else {
+                  (var6 = jdiv32((var6 * (BSprite::J)[(this)->Q]), (this)->R));
+                  (var7 = jdiv32((var7 * (BSprite::J)[(this)->Q]), (this)->R));
+               }
             }
          }
-         if ((((this)->boundaryClipMask != -1))) {
-            if ((((this)->boundaryClipX != -1))) {
-               if (((((((1 & (this)->boundaryClipMask)) != 0) && ((var3 + var6) > (this)->boundaryClipX)) && (var3 < (this)->boundaryClipX)))) {
-                  (var18 = (jint)((var18 + ((this)->boundaryClipX - var3))));
-                  (var6 = ((var3 + var6) - (this)->boundaryClipX));
-                  (var3 = (this)->boundaryClipX);
+         if ((((this)->p != -1))) {
+            if ((((this)->q != -1))) {
+               if (((((((1 & (this)->p)) != 0) && ((var3 + var6) > (this)->q)) && (var3 < (this)->q)))) {
+                  (var12 = (jint)((var12 + ((this)->q - var3))));
+                  (var6 = ((var3 + var6) - (this)->q));
+                  (var3 = (this)->q);
                }
-               if (((((((2 & (this)->boundaryClipMask)) != 0) && ((var3 + var6) > (this)->boundaryClipX)) && (var3 < (this)->boundaryClipX)))) {
-                  (var6 = ((this)->boundaryClipX - var3));
+               if (((((((2 & (this)->p)) != 0) && ((var3 + var6) > (this)->q)) && (var3 < (this)->q)))) {
+                  (var6 = ((this)->q - var3));
                }
             }
-            if ((((this)->boundaryClipY != -1))) {
-               if (((((((8 & (this)->boundaryClipMask)) != 0) && ((var4 + var7) > (this)->boundaryClipY)) && (var4 < (this)->boundaryClipY)))) {
-                  (var7 = ((this)->boundaryClipY - var4));
+            if ((((this)->r != -1))) {
+               if (((((((8 & (this)->p)) != 0) && ((var4 + var7) > (this)->r)) && (var4 < (this)->r)))) {
+                  (var7 = ((this)->r - var4));
                }
-               if (((((((4 & (this)->boundaryClipMask)) != 0) && ((var4 + var7) > (this)->boundaryClipY)) && (var4 < (this)->boundaryClipY)))) {
-                  (var18 = (((((this)->boundaryClipY - var4)) * var13) + ((var13 - var6))));
-                  (var7 = (jint)((var7 - ((this)->boundaryClipY - var4))));
-                  (var4 = (this)->boundaryClipY);
+               if (((((((4 & (this)->p)) != 0) && ((var4 + var7) > (this)->r)) && (var4 < (this)->r)))) {
+                  (var12 = (((((this)->r - var4)) * var13) + ((var13 - var6))));
+                  (var7 = (jint)((var7 - ((this)->r - var4))));
+                  (var4 = (this)->r);
                }
             }
          }
          if (((var8 == nullptr))) {
             if (((((var6 + var3) > 0) && ((var7 + var4) > 0)))) {
-               (var1)->drawRGB(var17, var18, var13, var3, var4, var6, var7, (this)->hasAlpha);
+               (var1)->drawRGB(var11, var12, var13, var3, var4, var6, var7, (this)->A);
             }
          } else if (((((var5 & 1)) != 0))) {
             if (((((var5 & 2)) != 0))) {
-               (var1)->drawRegion(var8, var15, var16, var6, var7, 3, var3, var4, 0);
+               (var1)->drawRegion(var8, var9, var10, var6, var7, 3, var3, var4, 0);
             } else {
-               (var1)->drawRegion(var8, var15, var16, var6, var7, 2, var3, var4, 0);
+               (var1)->drawRegion(var8, var9, var10, var6, var7, 2, var3, var4, 0);
             }
          } else if (((((var5 & 2)) != 0))) {
-            (var1)->drawRegion(var8, var15, var16, var6, var7, 1, var3, var4, 0);
+            (var1)->drawRegion(var8, var9, var10, var6, var7, 1, var3, var4, 0);
          } else {
-            (var1)->drawRegion(var8, var15, var16, var6, var7, 0, var3, var4, 0);
+            (var1)->drawRegion(var8, var9, var10, var6, var7, 0, var3, var4, 0);
          }
       }
    }
 }
 
-Arr<jint> BSprite::decodeModule(jint var1, jint var2) {
+Arr<jint> BSprite::m_e_II(jint var1, jint var2) {
    Ref<BSprite> _self(this);
-   return this->decodeModuleInto(BSprite::scratchPixels, var1, var2);
+   return this->m_c_AIII(BSprite::a, var1, var2);
 }
 
-Arr<jint> BSprite::decodeModuleInto(Arr<jint> var1, jint var2, jint var3) {
+Arr<jint> BSprite::m_c_AIII(Arr<jint> var1, jint var2, jint var3) {
    Ref<BSprite> _self(this);
-   if (((((this)->imageData != nullptr) && ((this)->moduleDataOffset != nullptr)))) {
-      jint var4 = (((this)->moduleWidth)[var2] & 255);
-      jint var5 = (((this)->moduleHeight)[var2] & 255);
-      if ((((var4 * var5) > (BSprite::scratchPixels).length()))) {
-         (System::out)->println(jcat(jstr(jcat(jstr(jcat(jstr(jcat(jstr(jcat(jstr(jcat(jstr(jcat(jstr(jcat(jstr(jlit(u"ERROR: sizeX x sizeY > temp.length (")), jstr(var4))), jstr(jlit(u" x ")))), jstr(var5))), jstr(jlit(u" = ")))), jstr((var4 * var5)))), jstr(jlit(u" > ")))), jstr((BSprite::scratchPixels).length()))), jstr(jlit(u") !!!"))));
+   if (((((this)->F != nullptr) && ((this)->G != nullptr)))) {
+      jint var4 = (((this)->f)[var2] & 255);
+      jint var5 = (((this)->g)[var2] & 255);
+      if ((((var4 * var5) > (BSprite::a).length()))) {
+         (System::out)->println(jcat(jstr(jcat(jstr(jcat(jstr(jcat(jstr(jcat(jstr(jcat(jstr(jcat(jstr(jcat(jstr(jlit(u"ERROR: sizeX x sizeY > temp.length (")), jstr(var4))), jstr(jlit(u" x ")))), jstr(var5))), jstr(jlit(u" = ")))), jstr((var4 * var5)))), jstr(jlit(u" > ")))), jstr((BSprite::a).length()))), jstr(jlit(u") !!!"))));
          return nullptr;
       }
       Arr<jint> var6 = var1;
       jbyte var8 = 0;
       Arr<jint> var7{};
-      if ((((((this)->featureFlags & 4)) != 0))) {
-         (var8 = ((this)->moduleImageIndex)[var2]);
-         (var7 = (((this)->palettes)[var8])[(this)->currentPalette]);
+      if ((((((this)->B & 4)) != 0))) {
+         (var8 = ((this)->e)[var2]);
+         (var7 = (((this)->v)[var8])[(this)->z]);
       } else {
-         (var7 = (((this)->palettes)[0])[(this)->currentPalette]);
+         (var7 = (((this)->v)[0])[(this)->z]);
       }
       if (((var7 == nullptr))) {
          return nullptr;
       }
-      Arr<jbyte> var9 = (this)->imageData;
-      jint var10 = ((this)->moduleDataOffset)[var2];
+      Arr<jbyte> var9 = (this)->F;
+      jint var10 = ((this)->G)[var2];
       jint var11 = 0;
       jint var12 = (var4 * var5);
-      if ((((this)->pixelCodec != 25840))) {
-         if ((((this)->pixelCodec == 10225))) {
-            while (((var11 < var12))) {
-               jint var31{};
-               if (((((var31 = ((var9)[(var10++)] & 255))) > 127))) {
-                  jint var37 = ((var9)[(var10++)] & 255);
-                  jint var15 = (var7)[var37];
-                  (var31 = (jint)((var31 - 128)));
-                  while ((((var31--) > 0))) {
-                     ((var6)[(var11++)] = var15);
-                  }
-               } else {
-                  ((var6)[(var11++)] = (var7)[var31]);
-               }
-            }
-         } else if ((((this)->pixelCodec == 22258))) {
-            while (((var11 < var12))) {
-               jint var29{};
-               if (((((var29 = ((var9)[(var10++)] & 255))) > 127))) {
-                  (var29 = (jint)((var29 - 128)));
-                  while ((((var29--) > 0))) {
-                     jint var36 = (var7)[((var9)[(var10++)] & 255)];
-                     ((var6)[(var11++)] = var36);
-                  }
-               } else {
-                  jint var35 = (var7)[((var9)[(var10++)] & 255)];
-                  while ((((var29--) > 0))) {
-                     ((var6)[(var11++)] = var35);
+      if ((((this)->C == 25840))) {
+         if (((!(this)->t))) {
+            if (((this)->L)) {
+               while (((var11 < var12))) {
+                  jint var36 = ((var9)[(var10++)] & 255);
+                  jint var54 = (var7)[(var36 & ((this)->D)[var8])];
+                  (var36 = (jint)(jshr32((jint)(var36), (jint)(((this)->E)[var8]))));
+                  while ((((var36--) >= 0))) {
+                     if (((var54 != (this)->O))) {
+                        ((var6)[(var11++)] = (((var54 & 65535) | jshl32((jint)((this)->K), (jint)(16))) | jshl32((jint)((this)->K), (jint)(24))));
+                     } else {
+                        ((var6)[(var11++)] = var54);
+                     }
                   }
                }
+            } else if (((this)->M)) {
+               while (((var11 < var12))) {
+                  jint var34 = ((var9)[(var10++)] & 255);
+                  jint var53 = (var7)[(var34 & ((this)->D)[var8])];
+                  (var34 = (jint)(jshr32((jint)(var34), (jint)(((this)->E)[var8]))));
+                  while ((((var34--) >= 0))) {
+                     if (((var53 != (this)->O))) {
+                        ((var6)[(var11++)] = (((var53 & 16777215) | 255) | jshl32((jint)((this)->K), (jint)(24))));
+                     } else {
+                        ((var6)[(var11++)] = var53);
+                     }
+                  }
+               }
+            } else {
+               while (((var11 < var12))) {
+                  jint var32 = ((var9)[(var10++)] & 255);
+                  jint var52 = (var7)[(var32 & ((this)->D)[var8])];
+                  (var32 = (jint)(jshr32((jint)(var32), (jint)(((this)->E)[var8]))));
+                  while ((((var32--) >= 0))) {
+                     ((var6)[(var11++)] = var52);
+                  }
+               }
             }
-         } else if ((((this)->pixelCodec == 5632))) {
+         } else {
+            while (((var11 < var12))) {
+               jint var13 = ((var9)[(var10++)] & 255);
+               jint var14 = (var7)[(var13 & ((this)->D)[var8])];
+               (var13 = (jint)(jshr32((jint)(var13), (jint)(((this)->E)[var8]))));
+               while ((((var13--) >= 0))) {
+                  ((var6)[(var11++)] = (var14 & -1426063361));
+               }
+            }
+         }
+      } else if ((((this)->C != 10225))) {
+         if ((((this)->C == 22258))) {
+            if ((BSprite::N)) {
+               while (((var11 < var12))) {
+                  jint var44{};
+                  if (((((var44 = ((var9)[(var10++)] & 255))) > 127))) {
+                     (var44 = (jint)((var44 - 128)));
+                     while ((((var44--) > 0))) {
+                        jint var61{};
+                        if (((((var61 = (var7)[((var9)[(var10++)] & 255)])) != (this)->O))) {
+                           ((var6)[(var11++)] = (((var61 & 65535) | jshl32((jint)((this)->K), (jint)(16))) | jshl32((jint)((this)->K), (jint)(24))));
+                        } else {
+                           ((var6)[(var11++)] = var61);
+                        }
+                     }
+                  } else {
+                     jint var60 = (var7)[((var9)[(var10++)] & 255)];
+                     while ((((var44--) > 0))) {
+                        if (((var60 != (this)->O))) {
+                           ((var6)[(var11++)] = (((var60 & 65535) | jshl32((jint)((this)->K), (jint)(16))) | jshl32((jint)((this)->K), (jint)(24))));
+                        } else {
+                           ((var6)[(var11++)] = var60);
+                        }
+                     }
+                  }
+               }
+            } else if (((this)->L)) {
+               while (((var11 < var12))) {
+                  jint var42{};
+                  if (((((var42 = ((var9)[(var10++)] & 255))) > 127))) {
+                     (var42 = (jint)((var42 - 128)));
+                     while ((((var42--) > 0))) {
+                        jint var59{};
+                        if (((((var59 = (var7)[((var9)[(var10++)] & 255)])) != (this)->O))) {
+                           ((var6)[(var11++)] = (((var59 & 16777215) | (this)->K) | jshl32((jint)((this)->K), (jint)(24))));
+                        } else {
+                           ((var6)[(var11++)] = var59);
+                        }
+                     }
+                  } else {
+                     jint var58 = (var7)[((var9)[(var10++)] & 255)];
+                     while ((((var42--) > 0))) {
+                        if (((var58 != (this)->O))) {
+                           ((var6)[(var11++)] = (((var58 & 16777215) | (this)->K) | jshl32((jint)((this)->K), (jint)(24))));
+                        } else {
+                           ((var6)[(var11++)] = var58);
+                        }
+                     }
+                  }
+               }
+            } else {
+               while (((var11 < var12))) {
+                  jint var40{};
+                  if (((((var40 = ((var9)[(var10++)] & 255))) > 127))) {
+                     (var40 = (jint)((var40 - 128)));
+                     while ((((var40--) > 0))) {
+                        jint var57 = (var7)[((var9)[(var10++)] & 255)];
+                        ((var6)[(var11++)] = var57);
+                     }
+                  } else {
+                     jint var56 = (var7)[((var9)[(var10++)] & 255)];
+                     while ((((var40--) > 0))) {
+                        ((var6)[(var11++)] = var56);
+                     }
+                  }
+               }
+            }
+         } else if ((((this)->C == 5632))) {
             while (((var11 < var12))) {
                ((var6)[(var11++)] = (var7)[(jshr32((jint)((var9)[var10]), (jint)(4)) & 15)]);
                ((var6)[(var11++)] = (var7)[((var9)[var10] & 15)]);
                (var10++);
             }
-         } else if ((((this)->pixelCodec == 1024))) {
-            while (((var11 < var12))) {
-               ((var6)[(var11++)] = (var7)[(jshr32((jint)((var9)[var10]), (jint)(6)) & 3)]);
-               ((var6)[(var11++)] = (var7)[(jshr32((jint)((var9)[var10]), (jint)(4)) & 3)]);
-               ((var6)[(var11++)] = (var7)[(jshr32((jint)((var9)[var10]), (jint)(2)) & 3)]);
-               ((var6)[(var11++)] = (var7)[((var9)[var10] & 3)]);
-               (var10++);
+         } else if ((((this)->C == 1024))) {
+            if (((this)->t)) {
+               {
+                  for (; (var11 < var12); (var10++)) {
+                     jint var46{};
+                     if (((((var46 = (var7)[(jshr32((jint)((var9)[var10]), (jint)(6)) & 3)])) == (this)->O))) {
+                        ((var6)[(var11++)] = var46);
+                     } else {
+                        ((var6)[(var11++)] = ((var46 & 16777215) | jshl32((jint)((this)->K), (jint)(24))));
+                     }
+                     if (((((var46 = (var7)[(jshr32((jint)((var9)[var10]), (jint)(4)) & 3)])) == (this)->O))) {
+                        ((var6)[(var11++)] = var46);
+                     } else {
+                        ((var6)[(var11++)] = ((var46 & 16777215) | jshl32((jint)((this)->K), (jint)(24))));
+                     }
+                     if (((((var46 = (var7)[(jshr32((jint)((var9)[var10]), (jint)(2)) & 3)])) == (this)->O))) {
+                        ((var6)[(var11++)] = var46);
+                     } else {
+                        ((var6)[(var11++)] = ((var46 & 16777215) | jshl32((jint)((this)->K), (jint)(24))));
+                     }
+                     if (((((var46 = (var7)[((var9)[var10] & 3)])) == (this)->O))) {
+                        ((var6)[(var11++)] = var46);
+                     } else {
+                        ((var6)[(var11++)] = ((var46 & 16777215) | jshl32((jint)((this)->K), (jint)(24))));
+                     }
+                  }
+               }
+            } else {
+               while (((var11 < var12))) {
+                  ((var6)[(var11++)] = (var7)[(jshr32((jint)((var9)[var10]), (jint)(6)) & 3)]);
+                  ((var6)[(var11++)] = (var7)[(jshr32((jint)((var9)[var10]), (jint)(4)) & 3)]);
+                  ((var6)[(var11++)] = (var7)[(jshr32((jint)((var9)[var10]), (jint)(2)) & 3)]);
+                  ((var6)[(var11++)] = (var7)[((var9)[var10] & 3)]);
+                  (var10++);
+               }
             }
-         } else if ((((this)->pixelCodec == 512))) {
+         } else if ((((this)->C == 512))) {
             while (((var11 < var12))) {
                ((var6)[(var11++)] = (var7)[(jshr32((jint)((var9)[var10]), (jint)(7)) & 1)]);
                ((var6)[(var11++)] = (var7)[(jshr32((jint)((var9)[var10]), (jint)(6)) & 1)]);
@@ -803,54 +948,57 @@ Arr<jint> BSprite::decodeModuleInto(Arr<jint> var1, jint var2, jint var3) {
                ((var6)[(var11++)] = (var7)[((var9)[var10] & 1)]);
                (var10++);
             }
-         } else if ((((this)->pixelCodec == 22018))) {
+         } else if ((((this)->C == 22018))) {
             while (((var11 < var12))) {
                ((var6)[(var11++)] = (var7)[((var9)[(var10++)] & 255)]);
             }
          }
       } else {
          while (((var11 < var12))) {
-            jint var13 = ((var9)[(var10++)] & 255);
-            jint var14 = (var7)[(var13 & ((this)->packedColorMask)[var8])];
-            (var13 = (jint)(jshr32((jint)(var13), (jint)(((this)->packedColorBits)[var8]))));
-            while ((((var13--) >= 0))) {
-               ((var6)[(var11++)] = var14);
+            jint var38{};
+            if (((((var38 = ((var9)[(var10++)] & 255))) > 127))) {
+               jint var55 = ((var9)[(var10++)] & 255);
+               jint var15 = (var7)[var55];
+               (var38 = (jint)((var38 - 128)));
+               while ((((var38--) > 0))) {
+                  ((var6)[(var11++)] = var15);
+               }
+            } else {
+               ((var6)[(var11++)] = (var7)[var38]);
             }
          }
       }
-      if ((((this)->cacheIndex < 0))) {
-         if (((((var3 & 1)) != 0))) {
-            jint var38 = 0;
-            {
-               jint var40 = (var4 - 1);
-               for (; (var38 < var40); (var40--)) {
-                  {
-                     jint var16 = 0;
-                     for (; (var16 < var12); (var16 = (jint)((var16 + var4)))) {
-                        jint var33 = (var6)[(var16 + var38)];
-                        ((var6)[(var16 + var38)] = (var6)[(var16 + var40)]);
-                        ((var6)[(var16 + var40)] = var33);
-                     }
+      if (((((var3 & 1)) != 0))) {
+         jint var62 = 0;
+         {
+            jint var64 = (var4 - 1);
+            for (; (var62 < var64); (var64--)) {
+               {
+                  jint var16 = 0;
+                  for (; (var16 < var12); (var16 = (jint)((var16 + var4)))) {
+                     jint var50 = (var6)[(var16 + var62)];
+                     ((var6)[(var16 + var62)] = (var6)[(var16 + var64)]);
+                     ((var6)[(var16 + var64)] = var50);
                   }
-                  (var38++);
                }
+               (var62++);
             }
          }
-         if (((((var3 & 2)) != 0))) {
-            jint var39 = 0;
-            {
-               jint var41 = (((var5 - 1)) * var4);
-               for (; (var39 < var41); (var41 = (jint)((var41 - var4)))) {
-                  {
-                     jint var42 = 0;
-                     for (; (var42 < var4); (var42++)) {
-                        jint var34 = (var6)[(var39 + var42)];
-                        ((var6)[(var39 + var42)] = (var6)[(var41 + var42)]);
-                        ((var6)[(var41 + var42)] = var34);
-                     }
+      }
+      if (((((var3 & 2)) != 0))) {
+         jint var63 = 0;
+         {
+            jint var65 = (((var5 - 1)) * var4);
+            for (; (var63 < var65); (var65 = (jint)((var65 - var4)))) {
+               {
+                  jint var66 = 0;
+                  for (; (var66 < var4); (var66++)) {
+                     jint var51 = (var6)[(var63 + var66)];
+                     ((var6)[(var63 + var66)] = (var6)[(var65 + var66)]);
+                     ((var6)[(var65 + var66)] = var51);
                   }
-                  (var39 = (jint)((var39 + var4)));
                }
+               (var63 = (jint)((var63 + var4)));
             }
          }
       }
@@ -860,43 +1008,80 @@ Arr<jint> BSprite::decodeModuleInto(Arr<jint> var1, jint var2, jint var3) {
    }
 }
 
-void BSprite::createImageCache(jint var0, jint var1) {
-   if (((var1 < 0))) {
-      (var1 = (BSprite::cacheImageCounts)[var0]);
+jint BSprite::m_b_III(jint var0, jint var1, jint var2) {
+   return jdiv32((((var0 * var1) + (jshr32((jint)(var2), (jint)(1))))), var2);
+}
+
+Ref<Image> BSprite::m_a_ImageII(Ref<Image> var0, jint var1, jint var2) {
+   if (((((var1 | var2)) < 0))) {
+      return Image::createImage(0, 0);
    }
-   ((BSprite::cacheCapacity)[var0] = var1);
-   ((BSprite::cacheEvictionSlots)[var0] = jnewarray<Arr<jshort>>(var1));
+   jint var3 = (var0)->getWidth();
+   jint var4 = (var0)->getHeight();
+   Arr<jint> var5 = jnewarray<Arr<jint>>((var3 * var4));
+   Arr<jint> var6 = jnewarray<Arr<jint>>((var1 * var2));
+   (var0)->getRGB(var5, 0, var3, 0, 0, var3, var4);
+   jint var7 = 0;
+   jint var8 = 0;
    {
-      jint var2 = 0;
-      for (; (var2 < ((BSprite::cacheEvictionSlots)[var0]).length()); (var2++)) {
-         (((BSprite::cacheEvictionSlots)[var0])[var2] = -1);
+      jint var9 = 0;
+      for (; (var9 < var1); (var9++)) {
+         {
+            jint var10 = 0;
+            for (; (var10 < var2); (var10++)) {
+               if (((((var7 = BSprite::m_b_III(var10, var4, var2))) >= var4))) {
+                  (var7 = (var4 - 1));
+               }
+               if (((((var8 = BSprite::m_b_III(var9, var3, var1))) >= var3))) {
+                  (var8 = (var3 - 1));
+               }
+               ((var6)[((var10 * var1) + var9)] = (var5)[((var7 * var3) + var8)]);
+            }
+         }
       }
    }
-   ((BSprite::imageCaches)[var0] = jnewarray<Arr<Ref<Image>>>((BSprite::cacheImageCounts)[var0]));
+   return Image::createRGBImage(var6, var1, var2, true);
 }
 
-void BSprite::destroyImageCache(jint var0) {
-   ((BSprite::cacheEvictionSlots)[var0] = nullptr);
-   ((BSprite::cacheNextEviction)[var0] = 0);
-   ((BSprite::cacheCapacity)[var0] = 0);
-   ((BSprite::imageCaches)[var0] = nullptr);
-   ((BSprite::cacheImageCounts)[var0] = 0);
-}
-
-void BSprite::registerImageCache(jint var1) {
+void BSprite::m_f_II(jint var1, jint var2) {
    Ref<BSprite> _self(this);
-   ((this)->cacheBase = (BSprite::cacheImageCounts)[var1]);
-   ((BSprite::cacheImageCounts)[var1] = ((BSprite::cacheImageCounts)[var1] + ((this)->paletteCount * (this)->moduleCount)));
-   ((this)->cacheIndex = var1);
+   ((this)->Q = var1);
+   ((this)->R = var2);
+   ((this)->P = true);
 }
 
-jint BSprite::measureText(Ref<String> var1) {
+void BSprite::m_c_V() {
    Ref<BSprite> _self(this);
-   (BSprite::textWidth = 0);
-   (BSprite::textHeight = (((this)->moduleHeight)[1] & 255));
-   jint var9 = 0;
-   jint var3 = ((BSprite::textStart >= 0) ? BSprite::textStart : 0);
-   jint var4 = ((BSprite::textEnd >= 0) ? BSprite::textEnd : (var1)->length());
+   ((this)->P = false);
+}
+
+jint BSprite::m_a_C(jchar var0) {
+   jint var1{};
+   if ((((var0 >= ((jchar)65)) && (var0 <= ((jchar)90))))) {
+      (var1 = ((var0 - ((jchar)65)) + 31));
+   } else if ((((var0 >= ((jchar)97)) && (var0 <= ((jchar)122))))) {
+      (var1 = ((var0 - ((jchar)97)) + 31));
+   } else if ((((var0 >= ((jchar)48)) && (var0 <= ((jchar)57))))) {
+      (var1 = ((var0 - ((jchar)48)) + 14));
+   } else {
+      (var1 = (jlit(u" !\"#$%&'*+,_./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ()-\u00c4" u"\u00d6" u"\u00dc" u"\u00df" u"\u00a1" u"\u00bf" u"\u00c1" u"\u00c0" u"\u00c3" u"\u00c8" u"\u00c9" u"\u00ca" u"\u00ce" u"\u00cf" u"\u00cd" u"\u00d3" u"\u00d4" u"\u00d5" u"\u00da" u"\u00d9" u"\u00d1" u"\u00c7" u"\u00d2" u"\u00a9" u"\u011e" u"\u00c2" u"\u00cc" u"\u015e" u"\u0130" u""))->indexOf((jint)(var0)));
+   }
+   if (((var1 == -1))) {
+      (var1 = (jlit(u" !\"#$%&'*+,_./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ()-\u00c4" u"\u00d6" u"\u00dc" u"\u00df" u"\u00a1" u"\u00bf" u"\u00c1" u"\u00c0" u"\u00c3" u"\u00c8" u"\u00c9" u"\u00ca" u"\u00ce" u"\u00cf" u"\u00cd" u"\u00d3" u"\u00d4" u"\u00d5" u"\u00da" u"\u00d9" u"\u00d1" u"\u00c7" u"\u00d2" u"\u00a9" u"\u011e" u"\u00c2" u"\u00cc" u"\u015e" u"\u0130" u""))->indexOf((var0 - ((jchar)32))));
+   }
+   if (((var1 == -1))) {
+      (var1 = (jlit(u" !\"#$%&'*+,_./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ()-\u00c4" u"\u00d6" u"\u00dc" u"\u00df" u"\u00a1" u"\u00bf" u"\u00c1" u"\u00c0" u"\u00c3" u"\u00c8" u"\u00c9" u"\u00ca" u"\u00ce" u"\u00cf" u"\u00cd" u"\u00d3" u"\u00d4" u"\u00d5" u"\u00da" u"\u00d9" u"\u00d1" u"\u00c7" u"\u00d2" u"\u00a9" u"\u011e" u"\u00c2" u"\u00cc" u"\u015e" u"\u0130" u""))->indexOf((var0 - 1)));
+   }
+   return var1;
+}
+
+jint BSprite::m_a_String(Ref<String> var1) {
+   Ref<BSprite> _self(this);
+   (BSprite::S = 0);
+   (BSprite::T = (((this)->g)[1] & 255));
+   jint var2 = 0;
+   jint var3 = ((BSprite::U >= 0) ? BSprite::U : 0);
+   jint var4 = ((BSprite::V >= 0) ? BSprite::V : (var1)->length());
    {
       jint var5 = var3;
       for (; (var5 < var4); (var5++)) {
@@ -904,247 +1089,295 @@ jint BSprite::measureText(Ref<String> var1) {
          if ((((((var6 = (var1)->charAt(var5))) != ((jchar)123)) && (var6 != ((jchar)125))))) {
             if (((var6 == ((jchar)126)))) {
                (var5++);
-               (var9 = (jint)((var9 + (((this)->moduleWidth)[0] * 2))));
+               (var2 = (jint)((var2 + (((this)->f)[0] * 2))));
             } else {
                jint var7{};
-               if (((((var7 = this->getGlyphFrame(var6))) == -1))) {
-                  (var9 = (jint)((var9 + (((this)->moduleWidth)[0] & 255))));
+               if (((((var7 = BSprite::m_a_C(var6))) == -1))) {
+                  (var2 = (jint)((var2 + (((this)->f)[0] & 255))));
                } else {
-                  jint var8 = (Game::font)->getFrameWidth(var7);
-                  (var9 = (jint)((var9 + var8)));
+                  jint var8 = (((this)->l)[jshl32((jint)(var7), (jint)(2))] & 255);
+                  (var2 = (jint)((var2 + (((((this)->f)[var8] & 255)) + ((this)->l)[1]))));
                }
-               (var9--);
             }
          }
       }
    }
-   if (((var9 > BSprite::textWidth))) {
-      (BSprite::textWidth = var9);
+   if (((var2 > BSprite::S))) {
+      (BSprite::S = var2);
    }
-   return var9;
+   return var2;
 }
 
-jint BSprite::getGlyphFrame(jchar var1) {
+void BSprite::m_a_GraphicsStringIII(Ref<Graphics> var1, Ref<String> var2, jint var3, jint var4, jint var5) {
    Ref<BSprite> _self(this);
-   try {
-      jint var2{};
-      if (((((var2 = (jlit(u" !\"#$%&'()*+,-./0123456789:;<=>?\u00a9" u"@ABCDEFGHIJKLMNOPQRSTUVWXYZ_\u00c1" u"\u00c9" u"\u00cd" u"\u00d3" u"\u00da" u"\u00dd" u"\u00c7" u"\u00d0" u"\u00ca" u"\u00d1" u"\u00ae" u"\u00dc" u"\u00a6" u"\u00db" u"\u00a3" u""))->indexOf((jint)(var1)))) == -1))) {
-         (var2 = 31);
-         (System::out)->println(jcat(jstr(jlit(u".... unknown char: ")), jstr(var1)));
-      }
-      return var2;
-   } catch (JavaThrow& _ex0) {
-      Ref<Exception> var3 = jcaught<Exception>(_ex0);
-      ([&]{ auto _t1 = System::out; auto _t2 = jcat(jstr((var3)->getMessage()), jstr(jlit(u" getModule char"))); return _t1->println(_t2); }());
-      return 31;
-   }
-}
-
-void BSprite::drawText(Ref<Graphics> var1, Ref<String> var2, jint var3, jint var4, jint var5) {
-   Ref<BSprite> _self(this);
-   jint var6{};
-   jint var7 = ([&]{ auto _t0 = ((var6 = (var1)->getClipY())); auto _t1 = (var1)->getClipHeight(); return (_t0 + _t1); }());
-   if ((((var4 >= (var6 - 20)) && (var4 <= var7)))) {
-      (var2 = (var2)->toUpperCase());
+   if ((((var4 >= -20) && (var4 <= 320)))) {
       if (((((var5 & 43)) != 0))) {
-         this->measureText(var2);
+         this->m_a_String(var2);
          if (((((var5 & 8)) != 0))) {
-            (var3 = (jint)((var3 - BSprite::textWidth)));
+            (var3 = (jint)((var3 - BSprite::S)));
          } else if (((((var5 & 1)) != 0))) {
-            (var3 = (jint)((var3 - jshr32((jint)(BSprite::textWidth), (jint)(1)))));
+            (var3 = (jint)((var3 - jshr32((jint)(BSprite::S), (jint)(1)))));
          }
          if (((((var5 & 32)) != 0))) {
-            (var4 = (jint)((var4 - BSprite::textHeight)));
+            (var4 = (jint)((var4 - BSprite::T)));
          } else if (((((var5 & 2)) != 0))) {
-            (var4 = (jint)((var4 - jshr32((jint)(BSprite::textHeight), (jint)(1)))));
+            (var4 = (jint)((var4 - jshr32((jint)(BSprite::T), (jint)(1)))));
          }
       }
-      jint var18 = var3;
-      jint var9 = var4;
-      jint var10 = ((BSprite::textStart >= 0) ? BSprite::textStart : 0);
-      jint var11 = ((BSprite::textEnd >= 0) ? BSprite::textEnd : (var2)->length());
-      jboolean var12 = false;
+      jint var6 = var3;
+      jint var7 = var4;
+      jint var8 = ((BSprite::U >= 0) ? BSprite::U : 0);
+      jint var9 = ((BSprite::V >= 0) ? BSprite::V : (var2)->length());
       {
-         jint var13 = var10;
-         for (; (var13 < var11); (var13++)) {
-            jchar var14{};
-            if (((((var14 = (var2)->charAt(var13))) == ((jchar)123)))) {
-               ((this)->currentPalette = 1);
-               ((this)->textLastPalette = (this)->currentPalette);
-            } else if (((var14 == ((jchar)125)))) {
-               ((this)->currentPalette = (this)->textBasePalette);
-               ((this)->textLastPalette = (this)->textBasePalette);
-            } else if (((var14 == ((jchar)126)))) {
-               (var13++);
-               jint var15 = ((var2)->charAt(var13) - ((jchar)48));
-               ((Game::sprites)[33])->drawAnimationFrame(var1, var15, jrem32(Game::stateFrame, (BSprite::inlineIconFrameCounts)[var15]), (var18 + (BSprite::inlineIconXOffsets)[var15]), ((var9 + ((((this)->moduleHeight)[1] & 255))) - (BSprite::inlineIconMetrics)[((jshl32((jint)(var15), (jint)(1))) + 1)]), 0, 0, 0);
-               (var18 = (jint)((var18 + ((((this)->moduleWidth)[0] + (BSprite::inlineIconMetrics)[jshl32((jint)(var15), (jint)(1))]) + ((BSprite::inlineIconXOffsets)[var15] / 2)))));
-            } else {
-               jint var19{};
-               if (((((var19 = this->getGlyphFrame(var14))) == -1))) {
-                  (var18 = (jint)((var18 + (((this)->moduleWidth)[0] & 255))));
+         jint var10 = var8;
+         for (; (var10 < var9); (var10++)) {
+            jchar var11{};
+            if (((((var11 = (var2)->charAt(var10))) == ((jchar)123)))) {
+               if (((((Game::state == 8) || (Game::state == 6)) || (Game::state == 31)))) {
+                  ((this)->z = 2);
                }
-               this->drawFrame(var1, var19, var18, var9, 0, 0, 0);
-               jint var16 = (Game::font)->getFrameWidth(var19);
-               (var18 = (jint)((var18 + (var16 & 255))));
-               (var18--);
+            } else if (((var11 == ((jchar)125)))) {
+               ((this)->z = BSprite::Z);
+            } else if (((var11 == ((jchar)126)))) {
+               (var10++);
+               jint var12 = ((var2)->charAt(var10) - ((jchar)48));
+               ((Game::b)[31])->m_a_GraphicsIIIIIII(var1, var12, jrem32(Game::stateFrame, (BSprite::X)[var12]), (var6 + (BSprite::Y)[var12]), ((var7 + ((((this)->g)[1] & 255))) - (BSprite::W)[((jshl32((jint)(var12), (jint)(1))) + 1)]), 0, 0, 0);
+               (var6 = (jint)((var6 + ((((this)->f)[0] + (BSprite::W)[jshl32((jint)(var12), (jint)(1))]) + ((BSprite::Y)[var12] / 2)))));
+            } else if (((var11 == ((jchar)36)))) {
+               jint var14{};
+               if (((((var14 = ((var2)->charAt((++var10)) - ((jchar)48)))) == 1))) {
+                  ((Game::b)[16])->m_a_GraphicsIIIIIII(var1, 35, (Game::stateFrame % 3), var6, (var7 - 7), 0, 0, 0);
+                  (var6 = (jint)((var6 + 40)));
+               }
+               if (((var14 == 2))) {
+                  ((Game::b)[16])->m_a_GraphicsIIIIIII(var1, 36, (Game::stateFrame % 3), (var6 - 30), (var7 - 7), 0, 0, 0);
+                  (var6 = (jint)((var6 + 10)));
+               }
+               if (((var14 == 3))) {
+                  ([&]{ auto _t0 = (Game::b)[16]; auto _t1 = var1; auto _t2 = 41; auto _t3 = Game::m_b_II(Game::aX, 2); auto _t4 = (var6 - 30); auto _t5 = (var7 - 7); auto _t6 = 0; auto _t7 = 0; auto _t8 = 0; return _t0->m_a_GraphicsIIIIIII(_t1, _t2, _t3, _t4, _t5, _t6, _t7, _t8); }());
+                  (var7 = (jint)((var7 + 10)));
+                  (var6 = (jint)((var6 + 5)));
+                  (Game::aX++);
+               }
+            } else {
+               jint var15{};
+               if (((((var15 = BSprite::m_a_C(var11))) == -1))) {
+                  (var6 = (jint)((var6 + (((this)->f)[0] & 255))));
+               } else {
+                  this->m_b_GraphicsIIIIIII(var1, 0, var15, var6, var7, 0, 0, 0);
+                  jint var13 = (((this)->l)[jshl32((jint)(var15), (jint)(2))] & 255);
+                  (var6 = (jint)((var6 + (((this)->f)[var13] & 255))));
+               }
             }
          }
       }
    }
 }
 
-void BSprite::wrapText(Ref<String> var1, jint var2) {
+void BSprite::m_a_StringI(Ref<String> var1, jint var2) {
    Ref<BSprite> _self(this);
-   if ((((BSprite::wrappedText == nullptr) || (!(BSprite::wrappedText)->equals(var1))))) {
-      (BSprite::wrappedText = var1);
-      (BSprite::wrappedLineCount = 0);
-      jint var3 = 0;
+   if ((((BSprite::ac == nullptr) || (!(BSprite::ac)->equals(var1))))) {
+      jint var3 = var2;
+      (BSprite::ac = var1);
+      (BSprite::ab = 0);
       jint var4 = 0;
-      jint var12 = 0;
-      jint var6 = (var1)->length();
+      jint var5 = 0;
+      jint var6 = 0;
+      jint var7 = (var1)->length();
       {
-         jint var7 = 0;
-         for (; (var7 < var6); (var7++)) {
-            jchar var8{};
-            if ((((((var8 = (var1)->charAt(var7))) == ((jchar)94)) && (var12 <= var2)))) {
-               ((BSprite::wrappedLineEnds)[(var3++)] = var7);
-               (var12 = 0);
-               (var4 = 0);
-            } else if (((((var2 > 0) && ((((var8 == ((jchar)94)) || (var8 == ((jchar)32))) || (var7 == (var6 - 1))))) && (var12 > var2)))) {
+         jint var8 = 0;
+         for (; (var8 <= var7); (var8++)) {
+            jchar var9 = ((jchar)32);
+            if (((var8 < var7))) {
+               (var9 = (var1)->charAt(var8));
+            }
+            if ((((var9 == ((jchar)94)) && (var6 <= var3)))) {
+               ((BSprite::aa)[(var4++)] = var8);
+               (var6 = 0);
+               (var5 = 0);
+            } else if (((((var3 > 0) && ((((var9 == ((jchar)94)) || (var9 == ((jchar)32))) || (var8 == (var7 - 1))))) && (var6 > var3)))) {
                do {
-                  (var7--);
-               } while (((((var1)->charAt(var7) != ((jchar)32)) && (var7 > (((var3 > 0) ? (BSprite::wrappedLineEnds)[(var3 - 1)] : 0))))));
-               if (((var7 == (((var3 > 0) ? (BSprite::wrappedLineEnds)[(var3 - 1)] : 0))))) {
-                  (var7 = ((((var3 > 0) ? (BSprite::wrappedLineEnds)[(var3 - 1)] : 0)) + var4));
+                  (var8--);
+               } while (((((var1)->charAt(var8) != ((jchar)32)) && (var8 > (((var4 > 0) ? (BSprite::aa)[(var4 - 1)] : 0))))));
+               if (((var8 == (((var4 > 0) ? (BSprite::aa)[(var4 - 1)] : 0))))) {
+                  (var8 = ((((var4 > 0) ? (BSprite::aa)[(var4 - 1)] : 0)) + var5));
                }
-               ((BSprite::wrappedLineEnds)[(var3++)] = var7);
-               (BSprite::wrappedLineCount = var3);
-               (var4 = 0);
-               (var12 = 0);
+               ((BSprite::aa)[(var4++)] = var8);
+               (BSprite::ab = var4);
+               (var5 = 0);
+               (var6 = 0);
             } else {
-               (var4++);
-               if ((((var8 != ((jchar)123)) && (var8 != ((jchar)125))))) {
-                  if (((var8 == ((jchar)126)))) {
-                     (var7++);
-                     (var12 = (jint)((var12 + (((this)->moduleWidth)[0] * 2))));
+               (var5++);
+               if ((((var9 != ((jchar)123)) && (var9 != ((jchar)125))))) {
+                  if (((var9 == ((jchar)126)))) {
+                     (var8++);
+                     (var6 = (jint)((var6 + (((this)->f)[0] * 2))));
                   } else {
-                     jint var9{};
-                     if (((((var9 = this->getGlyphFrame(var8))) == -1))) {
-                        (var12 = (jint)((var12 + (((this)->moduleWidth)[0] & 255))));
+                     jint var10{};
+                     if (((((var10 = BSprite::m_a_C(var9))) == -1))) {
+                        (var6 = (jint)((var6 + (((this)->f)[0] & 255))));
                      } else {
-                        jint var10 = (((this)->frameModules)[jshl32((jint)(var9), (jint)(2))] & 255);
-                        (var12 = (jint)((var12 + (((((this)->moduleWidth)[var10] & 255)) + ((this)->frameModules)[1]))));
-                     }
-                     if ((((this)->currentPalette == 5))) {
-                        (var12 = (jint)((var12 - 2)));
-                     } else {
-                        (var12--);
+                        jint var11 = (((this)->l)[jshl32((jint)(var10), (jint)(2))] & 255);
+                        (var6 = (jint)((var6 + (((this)->f)[var11] & 255))));
                      }
                   }
                }
             }
          }
       }
-      ((BSprite::wrappedLineEnds)[(var3++)] = var6);
-      (BSprite::wrappedLineCount = var3);
-      (Game::bb = BSprite::wrappedLineCount);
+      ((BSprite::aa)[(var4++)] = var7);
+      (BSprite::ab = var4);
+      (Game::bI = BSprite::ab);
    }
 }
 
-jint BSprite::drawWrappedText(Ref<Graphics> var1, Ref<String> var2, jint var3, jint var4, jint var5, jint var6, jint var7, jint var8) {
+jint BSprite::m_a_GraphicsStringIIIIII(Ref<Graphics> var1, Ref<String> var2, jint var3, jint var4, jint var5, jint var6, jint var7, jint var8) {
    Ref<BSprite> _self(this);
-   ((this)->textLastPalette = (this)->currentPalette);
-   ((this)->textBasePalette = (this)->currentPalette);
    (var2 = jcat(jstr(((jchar)125)), jstr(var2)));
-   this->wrapText(var2, var6);
-   jint var9 = ((this)->lineSpacing + ((((this)->moduleHeight)[1] & 255)));
+   this->m_a_StringI(var2, var6);
+   jint var9 = ((this)->ad + ((((this)->g)[1] & 255)));
    if (((Game::state == 20))) {
       (var9 = (jint)((var9 + 3)));
    }
    if (((((var5 & 32)) != 0))) {
-      (var4 = (jint)((var4 - (var9 * ((BSprite::wrappedLineCount - 1))))));
+      (var4 = (jint)((var4 - (var9 * ((BSprite::ab - 1))))));
    } else if (((((var5 & 2)) != 0))) {
-      (var4 = (jint)((var4 - jshr32((jint)((var9 * ((BSprite::wrappedLineCount - 1)))), (jint)(1)))));
+      (var4 = (jint)((var4 - jshr32((jint)((var9 * ((BSprite::ab - 1)))), (jint)(1)))));
    }
-   {
-      jint var10 = var7;
-      for (; (var10 < BSprite::wrappedLineCount); (var10++)) {
-         (BSprite::textStart = ((var10 > 0) ? ((BSprite::wrappedLineEnds)[(var10 - 1)] + 1) : 0));
-         (BSprite::textEnd = (BSprite::wrappedLineEnds)[var10]);
-         this->drawText(var1, var2, var3, (var4 + (((var10 - var7)) * var9)), var5);
-         if ((((var8 != -1) && ((var10 - var7) >= (var8 - 1))))) {
-            (BSprite::textStart = -1);
-            (BSprite::textEnd = -1);
-            return (var4 + (var10 * var9));
+   (BSprite::Z = (this)->z);
+   if (((var7 > 0))) {
+      {
+         jint var10 = 0;
+         for (; (var10 < (BSprite::aa)[(var7 - 1)]); (var10++)) {
+            jchar var11{};
+            if (((((var11 = (var2)->charAt(var10))) == ((jchar)123)))) {
+               ((this)->z = 2);
+            } else if (((var11 == ((jchar)125)))) {
+               ((this)->z = BSprite::Z);
+            }
          }
       }
    }
-   ((this)->currentPalette = (this)->textBasePalette);
-   (BSprite::textStart = -1);
-   (BSprite::textEnd = -1);
-   return (var4 + (BSprite::wrappedLineCount * var9));
+   {
+      jint var15 = var7;
+      for (; (var15 < BSprite::ab); (var15++)) {
+         (BSprite::U = ((var15 > 0) ? ((BSprite::aa)[(var15 - 1)] + 1) : 0));
+         (BSprite::V = (BSprite::aa)[var15]);
+         jint var16 = (var4 + (((var15 - var7)) * var9));
+         if (((Game::state == 20))) {
+            if ((((var16 < 100) && (var16 >= 68)))) {
+               ((Game::a)->t = true);
+               jint var17{};
+               jint var18 = ((jshl32((jint)(((var17 = (var16 - 68)))), (jint)(8))) / 32);
+               ((Game::a)->K = jshr32((jint)((255 * var18)), (jint)(8)));
+            } else if ((((var16 < 244) && (var16 >= 210)))) {
+               ((Game::a)->t = true);
+               jint var12{};
+               jint var13 = ((jshl32((jint)(((var12 = (var16 - 210)))), (jint)(8))) / 34);
+               ((Game::a)->K = jshr32((jint)((65280 - (255 * var13))), (jint)(8)));
+            }
+         }
+         this->m_a_GraphicsStringIII(var1, var2, var3, var16, var5);
+         if (((Game::state == 20))) {
+            ((Game::a)->t = false);
+         }
+         if ((((var8 != -1) && ((var15 - var7) >= (var8 - 1))))) {
+            (BSprite::U = -1);
+            (BSprite::V = -1);
+            return (var4 + (var15 * var9));
+         }
+      }
+   }
+   (BSprite::U = -1);
+   (BSprite::V = -1);
+   return (var4 + (BSprite::ab * var9));
+}
+
+void BSprite::m_a_BSpriteII(Ref<BSprite> var0, jint var1, jint var2) {
+   ((var0)->A = true);
+   (var2 = (jint)((var2 & 16777215)));
+   {
+      jint var3 = 0;
+      for (; (var3 < ((((var0)->v)[0])[var1]).length()); (var3++)) {
+         if (((((((((var0)->v)[0])[var1])[var3] & 16777215)) != 16711935))) {
+            (((((var0)->v)[0])[var1])[var3] = (jshl32((jint)(((((var0)->v)[0])[var1])[var3]), (jint)(24)) | var2));
+         }
+      }
+   }
+}
+
+void BSprite::m_b_BSpriteII(Ref<BSprite> var0, jint var1, jint var2) {
+   ((var0)->A = true);
+   {
+      jint var3 = 0;
+      for (; (var3 < ((((var0)->v)[0])[var1]).length()); (var3++)) {
+         if (((((((((var0)->v)[0])[var1])[var3] & 16777215)) != 16711935))) {
+            (((((var0)->v)[0])[var1])[var3] = (((((var0)->v)[0])[var1])[var3] & ((jshl32((jint)(var2), (jint)(24)) | 16777215))));
+         }
+      }
+   }
 }
 
 void BSprite::portDumpStatics(StateSink& sink) {
-   sink.put("scratchPixels", BSprite::scratchPixels);
-   sink.put("registeredCacheSprites", BSprite::registeredCacheSprites);
-   sink.put("imageCaches", BSprite::imageCaches);
-   sink.put("cacheEvictionSlots", BSprite::cacheEvictionSlots);
-   sink.put("cacheImageCounts", BSprite::cacheImageCounts);
-   sink.put("cacheNextEviction", BSprite::cacheNextEviction);
-   sink.put("cacheCapacity", BSprite::cacheCapacity);
-   sink.put("textWidth", BSprite::textWidth);
-   sink.put("textHeight", BSprite::textHeight);
-   sink.put("textStart", BSprite::textStart);
-   sink.put("textEnd", BSprite::textEnd);
-   sink.put("inlineIconMetrics", BSprite::inlineIconMetrics);
-   sink.put("inlineIconFrameCounts", BSprite::inlineIconFrameCounts);
-   sink.put("inlineIconXOffsets", BSprite::inlineIconXOffsets);
-   sink.put("wrappedLineEnds", BSprite::wrappedLineEnds);
-   sink.put("wrappedLineCount", BSprite::wrappedLineCount);
-   sink.put("wrappedText", BSprite::wrappedText);
+   sink.put("a", BSprite::a);
+   sink.put("I", BSprite::I);
+   sink.put("J", BSprite::J);
+   sink.put("N", BSprite::N);
+   sink.put("S", BSprite::S);
+   sink.put("T", BSprite::T);
+   sink.put("U", BSprite::U);
+   sink.put("V", BSprite::V);
+   sink.put("W", BSprite::W);
+   sink.put("X", BSprite::X);
+   sink.put("Y", BSprite::Y);
+   sink.put("Z", BSprite::Z);
+   sink.put("aa", BSprite::aa);
+   sink.put("ab", BSprite::ab);
+   sink.put("ac", BSprite::ac);
 }
 
 void BSprite::portDumpFields(StateSink& sink) {
-   sink.put("moduleCount", this->moduleCount);
-   sink.put("moduleX", this->moduleX);
-   sink.put("moduleY", this->moduleY);
-   sink.put("moduleImageIndex", this->moduleImageIndex);
-   sink.put("moduleWidth", this->moduleWidth);
-   sink.put("moduleHeight", this->moduleHeight);
-   sink.put("frameModuleCount", this->frameModuleCount);
-   sink.put("frameModuleStart", this->frameModuleStart);
-   sink.put("frameCollisionStart", this->frameCollisionStart);
-   sink.put("collisionRects", this->collisionRects);
-   sink.put("frameRects", this->frameRects);
-   sink.put("frameModules", this->frameModules);
-   sink.put("animationFrameCount", this->animationFrameCount);
-   sink.put("animationFrameStart", this->animationFrameStart);
-   sink.put("animationFrames", this->animationFrames);
-   sink.put("boundaryClipMask", this->boundaryClipMask);
-   sink.put("boundaryClipX", this->boundaryClipX);
-   sink.put("boundaryClipY", this->boundaryClipY);
-   sink.put("moduleMaskEnabled", this->moduleMaskEnabled);
-   sink.put("frameModuleMask", this->frameModuleMask);
-   sink.put("palettes", this->palettes);
-   sink.put("pngPaletteChunks", this->pngPaletteChunks);
-   sink.put("paletteCount", this->paletteCount);
-   sink.put("pngColorCount", this->pngColorCount);
-   sink.put("currentPalette", this->currentPalette);
-   sink.put("hasAlpha", this->hasAlpha);
-   sink.put("featureFlags", this->featureFlags);
-   sink.put("pixelCodec", this->pixelCodec);
-   sink.put("packedColorMask", this->packedColorMask);
-   sink.put("packedColorBits", this->packedColorBits);
-   sink.put("imageData", this->imageData);
-   sink.put("moduleDataOffset", this->moduleDataOffset);
-   sink.put("cachedImages", this->cachedImages);
-   sink.put("cacheBase", this->cacheBase);
-   sink.put("cacheIndex", this->cacheIndex);
-   sink.put("lineSpacing", this->lineSpacing);
-   sink.put("textBasePalette", this->textBasePalette);
-   sink.put("textLastPalette", this->textLastPalette);
+   sink.put("b", this->b);
+   sink.put("c", this->c);
+   sink.put("d", this->d);
+   sink.put("e", this->e);
+   sink.put("f", this->f);
+   sink.put("g", this->g);
+   sink.put("h", this->h);
+   sink.put("i", this->i);
+   sink.put("j", this->j);
+   sink.put("k", this->k);
+   sink.put("l", this->l);
+   sink.put("m", this->m);
+   sink.put("n", this->n);
+   sink.put("o", this->o);
+   sink.put("p", this->p);
+   sink.put("q", this->q);
+   sink.put("r", this->r);
+   sink.put("s", this->s);
+   sink.put("t", this->t);
+   sink.put("u", this->u);
+   sink.put("v", this->v);
+   sink.put("w", this->w);
+   sink.put("x", this->x);
+   sink.put("y", this->y);
+   sink.put("z", this->z);
+   sink.put("A", this->A);
+   sink.put("B", this->B);
+   sink.put("C", this->C);
+   sink.put("D", this->D);
+   sink.put("E", this->E);
+   sink.put("F", this->F);
+   sink.put("G", this->G);
+   sink.put("H", this->H);
+   sink.put("K", this->K);
+   sink.put("L", this->L);
+   sink.put("M", this->M);
+   sink.put("O", this->O);
+   sink.put("P", this->P);
+   sink.put("Q", this->Q);
+   sink.put("R", this->R);
+   sink.put("ad", this->ad);
 }
 
 } // namespace sod

@@ -1,10 +1,9 @@
-import com.nokia.mid.ui.DirectGraphics;
-import com.nokia.mid.ui.DirectUtils;
-import com.nokia.mid.ui.FullCanvas;
 import java.io.ByteArrayInputStream;
 import java.io.DataInputStream;
 import java.io.InputStream;
 import java.util.Random;
+import javax.microedition.lcdui.Canvas;
+import javax.microedition.lcdui.Font;
 import javax.microedition.lcdui.Graphics;
 import javax.microedition.lcdui.Image;
 import javax.microedition.media.Manager;
@@ -12,506 +11,832 @@ import javax.microedition.media.Player;
 import javax.microedition.rms.RecordStore;
 
 // $VF: renamed from: e
-final class Game extends FullCanvas implements Runnable {
-   // $VF: renamed from: a d
-   static BSprite font;
-   private static BSprite dl;
-   private static BSprite dm;
-   // $VF: renamed from: b d[]
-   public static BSprite[] sprites;
-   // $VF: renamed from: dn javax.microedition.lcdui.Image
-   private static Image titleImage;
-   // $VF: renamed from: do javax.microedition.lcdui.Image
-   private static Image menuNewBadge;
+final class Game extends Canvas implements Runnable {
+   static BSprite a;
+   private static BSprite eA;
+   private static BSprite eB;
+   private static BSprite eC;
+   private static BSprite eD;
+   public static BSprite[] b;
+   private static Image eE;
+   private static Image eF;
+   private static Image eG;
    // $VF: renamed from: c java.util.Random
    public static Random random;
    // $VF: renamed from: d javax.microedition.lcdui.Graphics
    public static Graphics graphics;
-   // $VF: renamed from: e com.nokia.mid.ui.DirectGraphics
-   public static DirectGraphics directGraphics;
-   // $VF: renamed from: f boolean
+   // $VF: renamed from: e boolean
    public static boolean paintComplete;
-   // $VF: renamed from: g int
-   static int tickDeltaMs;
-   public static final int[] h = new int[]{-16711936, -16733696, -16261377, -16759862};
-   public static int[] i = new int[]{
+   static int f;
+   static int g;
+   static int h;
+   public static int[] i;
+   public static Image j;
+   // $VF: renamed from: k long
+   public static long lastPaintMs;
+   static boolean l = false;
+   public static int m = 0;
+   public static int n = 0;
+   public static int o = -256;
+   static boolean p = false;
+   public static final int[] q = new int[]{-16711936, -16733696, -16261377, -16759862};
+   public static int[] r = new int[]{
       73, 120, 120, 73, 167, 120, 120, 167, 73, 120, 74, 120, 120, 74, 166, 120, 120, 166, 74, 120, 75, 120, 120, 75, 165, 120, 120, 165, 75, 120
    };
-   public static int[] j = new int[]{64, 120, 120, 64, 176, 120, 120, 176};
-   public static boolean k = true;
-   public static boolean l = false;
-   public static int m = -41;
-   public static int n;
-   public static int o = 5;
-   // $VF: renamed from: p int
-   public static int health = 60;
-   // $VF: renamed from: q int
-   public static int maxHealth = 60;
-   public static int r = 0;
-   // $VF: renamed from: s int
-   public static int magic = 60;
-   // $VF: renamed from: t int
-   public static int maxMagic = 60;
-   public static int u = 0;
-   public static int v = 0;
-   public static long w = 0L;
-   private static int dp;
-   private static int dq;
-   private static boolean dr;
+   public static int[] s = new int[]{64, 120, 120, 64, 176, 120, 120, 176};
+   public static boolean t = false;
+   public static int u = -41;
+   public static int v;
+   public static int w = 5;
    // $VF: renamed from: x int
-   public static int state;
+   public static int health = 60;
    // $VF: renamed from: y int
+   public static int maxHealth = 60;
+   public static int z = 0;
+   // $VF: renamed from: A int
+   public static int magic = 60;
+   // $VF: renamed from: B int
+   public static int maxMagic = 60;
+   public static int C = 0;
+   public static int D = 0;
+   public static long E = 0L;
+   private static int eH;
+   private static int eI;
+   private static boolean eJ;
+   private static int eK = 0;
+   private static int eL = 0;
+   private static int eM = 5;
+   // $VF: renamed from: F int
+   public static int state;
+   // $VF: renamed from: G int
    public static int previousState;
-   // $VF: renamed from: z int
+   public static final int[] H = new int[]{636, 420, 660, 480};
+   // $VF: renamed from: I int
    public static int stateFrame;
-   // $VF: renamed from: A long
-   public static long frameElapsedMs;
-   // $VF: renamed from: B long
-   public static long frameStartMs;
-   // $VF: renamed from: C boolean
-   public static boolean bloodCensored = false;
-   // $VF: renamed from: D boolean
-   public static boolean suspended;
-   static int E = -1;
-   static int F;
-   static int G;
-   public static int H = 0;
-   static final int[] I = new int[]{-1996488960, -2013224961, -1996554240};
-   static final int[] J = new int[]{1157627648, 1149292543, 1157562368};
-   public static int K = 0;
-   // $VF: renamed from: L int
-   public static int cameraX;
+   public static long J;
+   public static long K;
+   public static long L;
    // $VF: renamed from: M int
-   public static int cameraY;
-   // $VF: renamed from: N int
-   public static int cameraTargetX;
-   // $VF: renamed from: O int
-   public static int cameraTargetY;
-   public static int P;
-   public static int Q;
-   public static int R;
-   public static int S;
-   public static int T;
-   public static int U;
-   public static int V;
-   public static int W = 0;
+   public static int frameDeltaMs;
+   public static boolean N = false;
+   // $VF: renamed from: O boolean
+   public static boolean suspended;
+   static int P = -1;
+   static int Q;
+   static int R;
+   public static int S = 120;
+   public static int T = 160;
+   public static int U = 0;
+   static final int[] V = new int[]{16744192, 255, 65280};
+   static final int[] W = new int[]{16760187, 8355839, 8388479};
    public static int X = 0;
-   public static int Y = 0;
-   public static boolean Z;
-   // $VF: renamed from: aa int[]
+   public static int Y;
+   static final int[] Z = new int[]{-297151236, -297479947, -582956048, -868497173, -1153907488};
+   // $VF: renamed from: aa int
+   public static int cameraX;
+   // $VF: renamed from: ab int
+   public static int cameraY;
+   public static int ac;
+   public static int ad;
+   public static int ae;
+   public static int af;
+   // $VF: renamed from: ag int
+   public static int regionLeft;
+   // $VF: renamed from: ah int
+   public static int regionRight;
+   public static int ai;
+   public static int aj;
+   public static int ak;
+   public static int al = 0;
+   public static int am = 0;
+   public static int an = 0;
+   public static boolean ao;
+   // $VF: renamed from: ap int[]
    public static int[] viewBounds = new int[4];
-   public static boolean ab = false;
-   public static boolean ac;
-   public static boolean ad;
-   public static boolean ae;
-   public static boolean af;
-   public static boolean ag;
-   public static boolean ah;
-   public static boolean ai;
-   // $VF: renamed from: aj boolean
-   public static boolean cameraControllerActive;
-   // $VF: renamed from: ak int
-   public static int cameraControllerMode;
-   public static boolean al;
-   // $VF: renamed from: am int
-   public static int activeCameraControllerUid = -1;
-   // $VF: renamed from: an int
-   public static int hazardCameraOffsetY = -1;
-   // $VF: renamed from: ao boolean
-   public static boolean cameraScrollHorizontal = true;
-   public static int ap;
-   public static int aq = -1;
-   public static int ar = -1;
-   public static int as;
-   public static final int[] at = new int[]{4, 12, 12, 1, 4, 4};
-   public static Actor au;
-   public static Actor av;
-   public static int aw = 0;
-   public static int ax = 0;
-   public static int ay = 0;
-   static int[] az = new int[500];
-   static int aA = -1;
-   // $VF: renamed from: aB int
-   static int shakeYTicks;
-   // $VF: renamed from: aC int
-   static int shakeXTicks;
-   // $VF: renamed from: ds boolean
-   private static boolean confirmationOpen;
-   // $VF: renamed from: dt javax.microedition.lcdui.Image
-   private static Image logoImage;
-   // $VF: renamed from: du d
-   private static BSprite titleSprite;
-   static boolean aD;
-   // $VF: renamed from: aE int
-   public static int confirmationKind;
-   // $VF: renamed from: aF int[]
-   static final int[] levelModes = new int[]{0, 0, 0, 3, 0, 2, 0, 0, 0};
-   // $VF: renamed from: aG int
-   public static int levelIndex;
-   // $VF: renamed from: aH int
-   public static int maxUnlockedLevel = 0;
-   // $VF: renamed from: aI boolean
-   public static boolean levelCompleted;
-   public static boolean aJ;
-   public static final int[] aK = new int[]{15488768, 16746240, 16760953, -19877, 16746240, 16736768};
-   private static int dv;
-   public static boolean aL;
-   private static boolean dw;
-   public static int aM;
-   public static int aN;
-   public static boolean aO;
+   public static boolean aq = false;
+   public static boolean ar;
+   public static boolean as;
+   public static boolean at;
+   public static boolean au;
+   public static boolean av;
+   public static boolean aw;
+   public static boolean ax;
+   public static boolean ay;
+   public static int az;
+   public static boolean aA;
+   public static int aB = -1;
+   public static int aC = -1;
+   public static boolean aD = true;
+   public static int aE;
+   public static int aF = -1;
+   public static int aG = -1;
+   public static int aH;
+   public static final int[] aI = new int[]{4, 12, 12, 1, 4, 4};
+   public static Actor aJ;
+   public static Actor aK;
+   static int[] aL = new int[500];
+   static int aM = -1;
+   static int aN;
+   static int aO;
+   private static boolean eN;
+   private static boolean eO = false;
+   private static Image eP;
+   private static BSprite eQ;
    public static boolean aP = false;
-   public static int aQ = 2;
+   public static boolean aQ = false;
    public static boolean aR = false;
    public static boolean aS = false;
-   public static int aT;
-   public static String aU;
-   public static String aV;
+   static boolean aT;
+   public static int aU;
+   public static int aV;
    public static int aW;
-   public static int aX;
-   public static int aY;
+   public static int aX = 0;
+   public static int[] aY = new int[8];
    public static int aZ;
-   public static int ba;
-   public static int bb;
-   public static int bc;
-   public static Actor bd;
-   public static final int[] be = new int[]{2631720, 6710886, 10066329, 9276813, 4737096, 3750201};
-   public static final int[] bf = new int[]{41472, 63488, 4783944, 6029147, 33617920, 41472};
-   public static final int[] bg = new int[]{15305728, 13930240, 15269753, 14942043, 13930240, 15305728};
-   public static final int[] bh = new int[]{15466503, 16720128, 16747129, 16740443, 16720128, 16711684};
-   private static int[] dx = new int[]{300, 350, 400, 500, 600, 700, 800, 900, 1000, 1200};
-   private static int[] dy = new int[]{-65536, -570425345, -576192496};
-   private static Image dz;
-   private static Image dA;
-   static byte[] bi = new byte[]{
-      -1,
-      -1,
-      3,
-      4,
-      -1,
-      -1,
-      3,
-      4,
-      -1,
-      -1,
-      7,
-      8,
-      -1,
-      -1,
-      7,
-      8,
-      -1,
-      -1,
-      7,
-      8,
-      -1,
-      -1,
-      3,
-      4,
-      -1,
-      -1,
-      11,
-      12,
-      -1,
-      -1,
-      11,
-      12,
-      -1,
-      -1,
-      3,
-      4,
-      -1,
-      -1,
-      3,
-      4,
-      -1,
-      -1,
-      7,
-      8,
-      -1,
-      -1,
-      11,
-      12
+   public static final int[] ba = new int[]{
+      500, 1000, 2500, 500, 1000, 3000, 500, 1000, 2500, 800, 2500, 2000, 500, 1000, 2500, 500, 1000, 3000, 500, 1000, 2500, 800, 2500, 2000
    };
-   static byte[] bj = new byte[]{
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0
-   };
-   private static Image dB;
-   private static Graphics dC;
-   private static boolean dD;
-   private static int dE;
-   private static int dF;
-   private static int dG;
-   private static int dH;
-   // $VF: renamed from: bk b
-   public static Actor player;
-   public static Actor bl;
-   public static Actor bm;
-   public static Actor bn;
-   public static Actor bo;
-   public static int bp = 250;
-   public static int bq = 50;
-   public static int br = 70;
-   // $VF: renamed from: bs b[]
-   public static Actor[] actors = new Actor[bp];
-   // $VF: renamed from: bt int
-   public static int actorCount;
-   // $VF: renamed from: bu b[]
-   public static Actor[] paintActors = new Actor[bq];
-   // $VF: renamed from: bv int
-   public static int paintActorCount;
-   // $VF: renamed from: bw b[]
-   public static Actor[] updateActors = new Actor[br];
-   // $VF: renamed from: bx int
-   public static int updateActorCount;
-   public static int[] by = new int[bp];
-   public static int bz = 0;
-   public static int bA = 20;
-   public static Actor[] bB = new Actor[bA];
+   public static boolean bb;
+   public static final int[] bc = new int[]{2631720, 6710886, 10066329, 9276813, 4737096, 3750201};
+   public static final int[] bd = new int[]{12910828, 16711935, 16742911, 16735231, 16711935, 14221567};
+   private static boolean eR;
+   static final int[] be = new int[]{0, 0, 0, 0, 3, 0, 2, 0, 0, 3, 0, 3, 2, 2, 2, 0, 0};
+   // $VF: renamed from: bf int
+   public static int levelIndex;
+   // $VF: renamed from: bg int
+   public static int maxUnlockedLevel = 0;
+   public static boolean bh;
+   public static boolean bi;
+   public static int[] bj = new int[12];
+   public static int[] bk = new int[12];
+   static boolean bl = false;
+   static byte bm;
+   static boolean bn = true;
+   public static int bo = 0;
+   public static final int[] bp = new int[]{15488768, 16746240, 16760953, -19877, 16746240, 16736768};
+   private static int eS;
+   public static boolean bq;
+   public static int br;
+   public static int bs;
+   public static int bt = 2;
+   public static boolean bu = false;
+   public static boolean bv = false;
+   public static boolean bw = false;
+   // $VF: renamed from: bx boolean
+   public static boolean modalActive = false;
+   public static int by;
+   // $VF: renamed from: bz java.lang.String
+   public static String dialogText;
+   public static String bA;
+   public static int bB;
    public static int bC;
-   public static byte[] bD = new byte[bp];
-   static short[] bE = new short[20];
-   public static byte[] bF;
-   // $VF: renamed from: dI java.lang.String[]
-   private static String[] levelPackPaths = new String[]{"/3", "/4", "/5", "/6", "/7", "/8", "/9", "/10", "/11", "/12", "/13", "/14"};
-   private static int[] dJ = new int[53];
-   public static short[][] bG = new short[9][30];
-   public static short[] bH;
+   public static int bD;
+   public static int bE;
+   public static int bF;
+   public static int bG;
+   public static int bH;
    public static int bI;
-   public static short[] bJ = new short[9];
-   public static int[] bK = new int[]{0};
-   public static int[] bL = new int[]{0, 1, 2, 3, 4, 5, 6, 7, 8};
-   public static int[] bM = new int[]{0, 1, 2, 3, 4, 5, 6, 7};
-   public static int[] bN = new int[]{2, 4};
-   public static int[] bO = new int[]{6, 7, 5, 8};
-   // $VF: renamed from: dK boolean
-   private static boolean continueFromCheckpoint;
-   // $VF: renamed from: bP boolean
-   public static boolean skipCheckpointPosition;
-   // $VF: renamed from: bQ int
-   public static int mapWidthTiles;
-   // $VF: renamed from: bR int
-   public static int mapHeightTiles;
-   // $VF: renamed from: bS int
-   public static int levelPixelWidth;
-   // $VF: renamed from: bT int
-   public static int levelPixelHeight;
-   // $VF: renamed from: dL byte[]
-   private static byte[] collisionTiles;
-   // $VF: renamed from: dM byte[]
-   private static byte[] tileLayer0;
-   // $VF: renamed from: dN byte[]
-   private static byte[] tileLayer0Transforms;
-   // $VF: renamed from: dO byte[]
-   private static byte[] tileLayer1;
-   // $VF: renamed from: dP byte[]
-   private static byte[] tileLayer1Transforms;
-   public static int bU;
-   public static int bV;
-   public static int bW;
-   // $VF: renamed from: bX int[]
-   static int[] trigTable256;
-   // $VF: renamed from: bY int[][]
-   public static int[][] actorStatTables;
-   // $VF: renamed from: dQ java.lang.String[][]
-   private static String[][] stringTables = new String[11][];
-   public static final int[] bZ = new int[]{31, 61, 64, 62};
-   // $VF: renamed from: dR java.lang.String
-   private static String packPath;
-   // $VF: renamed from: dS java.io.InputStream
-   private static InputStream packStream;
-   // $VF: renamed from: dT int
-   private static int packPosition;
-   // $VF: renamed from: dU short
-   private static short packResourceCount;
-   // $VF: renamed from: dV int[]
-   private static int[] packOffsets;
-   // $VF: renamed from: dW short
-   private static short packPartCount;
-   // $VF: renamed from: dX short[]
-   private static short[] packPartFirstResource;
-   // $VF: renamed from: dY int
-   private static int packPartIndex;
-   // $VF: renamed from: dZ byte[]
-   private static byte[] packSkipBuffer;
-   // $VF: renamed from: ea int
-   private static int menuDefinition = 0;
-   // $VF: renamed from: ca int
-   public static int selectedMenuItem;
-   // $VF: renamed from: eb byte[][]
-   private static byte[][] menuItems = new byte[][]{{1, 4, 5, 6, 7, 8, 9}, {12, 13, 6, 7, 0, 9}, {1, 2, 3, 4, 5, 6, 7, 8, 9}};
-   // $VF: renamed from: cb byte[][][]
-   public static byte[][][] scriptTracks;
-   // $VF: renamed from: cc short[]
-   public static short[] scriptIds;
-   // $VF: renamed from: cd short[]
-   public static short[] scriptTicks;
-   // $VF: renamed from: ce int[][]
-   public static int[][] scriptTrackOffsets;
-   // $VF: renamed from: cf boolean
-   public static boolean scriptsPaused;
-   public static boolean cg;
-   public static boolean ch = true;
-   public static boolean ci = false;
-   public static int cj;
-   public static int[] ck = new int[3];
-   public static byte[] cl = new byte[3];
-   public static boolean cm = true;
-   // $VF: renamed from: cn int[]
-   static final int[] scriptOpcodeSizes = new int[]{6, 2, 3, 0, 2, 1, 1, 4, 4, 0, 0, 8, 1, 0, 4, 0, 4, 2, 0, 0, 1, 0};
-   static int co = 0;
-   static boolean cp = false;
-   static boolean cq = false;
-   static int cr = 0;
-   static int cs = 0;
-   static final int[] ct = new int[]{25, 22, 28, 31, 19};
-   static boolean cu;
-   // $VF: renamed from: cv int
-   static final int saveBufferSize = 999 + bp + 64;
-   // $VF: renamed from: cw byte[]
-   static byte[] saveBuffer = new byte[saveBufferSize];
-   // $VF: renamed from: cx boolean
-   public static boolean saveLoaded = false;
-   public static int cy;
-   // $VF: renamed from: cz int
-   static int pressedMask;
-   // $VF: renamed from: cA int
-   static int pendingPressMask;
-   // $VF: renamed from: cB int
-   static int heldMask;
-   // $VF: renamed from: cC int
-   static int frameHeldMask;
-   // $VF: renamed from: cD int
-   static int heldFrameCount;
-   // $VF: renamed from: cE int
-   static int releasedMask;
-   // $VF: renamed from: cF int
-   static int pendingReleaseMask;
-   // $VF: renamed from: cG int
-   static int framesSincePress;
-   // $VF: renamed from: cH int
-   static int cheatProgress = 0;
-   // $VF: renamed from: cI boolean
-   static boolean cheatsUnlocked = false;
-   // $VF: renamed from: cJ int[]
-   static final int[] cheatSequence = new int[]{2, 1, 1, 32};
-   static short[] cK = new short[30];
-   static byte[] cL = new byte[30];
-   static short[] cM = new short[30];
-   static byte[] cN = new byte[30];
-   static byte[] cO = new byte[30];
-   static boolean cP = false;
-   static int cQ = 20;
-   static boolean cR = false;
-   static boolean cS = false;
-   static int cT;
-   static boolean cU = false;
-   static final int[] cV = new int[]{-1996488705, -1426063361};
-   public static final int[] cW = new int[]{-1428431909, -1145324613, 2004318071};
-   public static int cX = 70;
-   public static int cY = 70;
-   public static int cZ = 0;
-   public static int da = 180;
-   public static int[] db = new int[]{872414976, 1728052992, -1711276288};
-   public static int dc = 0;
-   public static int dd = 0;
-   public static int de = 0;
-   private static int ec = 0;
-   private static boolean ed = false;
-   public static int df = 9;
-   public static final int[] dg = new int[]{0, 2, 5, 6, 8, 9, 11};
-   public static int dh;
-   public static final byte[] di = new byte[]{-30, 0, 30, 0, -43, 0, 6, 0, 54, 0, 1, 0, -29, 0, 37, 0, 1, 0};
-   public static final byte[][] dj = new byte[][]{{2, 6, 8}, {1, 4, 7, 9}, {4, 8}, {2, 6, 8}, {4, 8}};
-   private static final byte[][] ee = new byte[][]{
-      {-61, 0, -46, 0, -30, 0, -15, 0, 1, 0, 15, 0, 30, 0, 45, 0, 60, 0},
-      {-58, 0, -43, 0, -29, 0, -8, 0, 6, 0, 22, 0, 37, 0, 54, 0, 62, 0},
-      {-61, 0, -46, 0, -30, 0, -15, 0, 1, 0, 15, 0, 30, 0, 45, 0, 60, 0},
-      {-58, 0, -43, 0, -29, 0, -8, 0, 6, 0, 22, 0, 37, 0, 54, 0, 62, 0},
-      {-61, 0, -46, 0, -30, 0, -15, 0, 1, 0, 15, 0, 30, 0, 45, 0, 60, 0}
+   public static int bJ;
+   public static Actor bK;
+   public static int[] bL = new int[80];
+   public static int[] bM = new int[400];
+   public static int bN;
+   public static int[] bO = new int[60];
+   public static int bP;
+   public static Actor[] bQ = new Actor[40];
+   public static final int[] bR = new int[]{2631720, 6710886, 10066329, 9276813, 4737096, 3750201};
+   public static final int[] bS = new int[]{41472, 63488, 4783944, 6029147, 33617920, 41472};
+   public static final int[] bT = new int[]{15305728, 13930240, 15269753, 14942043, 13930240, 15305728};
+   public static final int[] bU = new int[]{15466503, 16720128, 16747129, 16740443, 16720128, 16711684};
+   private static int[] eT = new int[]{300, 350, 400, 500, 600, 700, 800, 900, 1000, 1200};
+   private static int[] eU = new int[]{16711680, 16777215, 11010064};
+   private static Image eV;
+   static byte[] bV = new byte[]{
+      1,
+      2,
+      3,
+      4,
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      5,
+      6,
+      7,
+      8,
+      5,
+      6,
+      7,
+      8,
+      1,
+      2,
+      15,
+      16,
+      1,
+      2,
+      15,
+      16,
+      9,
+      10,
+      11,
+      12,
+      9,
+      10,
+      11,
+      12,
+      9,
+      10,
+      11,
+      12,
+      -1,
+      -1,
+      19,
+      20,
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      1,
+      2,
+      15,
+      16,
+      9,
+      10,
+      11,
+      12,
+      -1,
+      -1,
+      19,
+      20,
+      5,
+      6,
+      7,
+      8
    };
-   private static int ef = 0;
-   private static int eg = 0;
-   private static int eh = 2;
-   private static boolean ei;
-   // $VF: renamed from: ej int
-   private static int scrollingTextY;
-   // $VF: renamed from: ek javax.microedition.media.Player
-   private static Player soundPlayer;
-   // $VF: renamed from: dk boolean
-   public static boolean soundEnabled = true;
-   // $VF: renamed from: el int
-   private static int rememberedMusicId;
-   // $VF: renamed from: em int
+   static byte[] bW = new byte[]{
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      1,
+      1,
+      1,
+      1,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      1,
+      1,
+      1,
+      1
+   };
+   private static Image eW;
+   private static Graphics eX;
+   private static boolean eY;
+   private static int eZ;
+   private static int fa;
+   private static int fb;
+   private static int fc;
+   // $VF: renamed from: bX b
+   public static Actor player;
+   public static Actor bY;
+   public static Actor bZ;
+   public static Actor ca;
+   public static Actor cb;
+   public static int cc = 550;
+   public static int cd = 150;
+   public static int ce = 200;
+   // $VF: renamed from: cf b[]
+   public static Actor[] actors = new Actor[cc];
+   // $VF: renamed from: cg int
+   public static int actorCount;
+   public static Actor[] ch = new Actor[cd];
+   public static int ci;
+   public static Actor[] cj = new Actor[ce];
+   public static int ck;
+   public static int[] cl = new int[cc];
+   public static int cm = 0;
+   public static int cn = 20;
+   public static Actor[] co = new Actor[cn];
+   public static int cp;
+   public static byte[] cq = new byte[cc];
+   static short[] cr = new short[20];
+   public static byte[] cs;
+   private static String[] fd = new String[]{"/3", "/4", "/5", "/6", "/7", "/8", "/9", "/10", "/11", "/12", "/13", "/14", "/15", "/16", "/17", "/18", "/19"};
+   private static int[] fe = new int[52];
+   public static short[][] ct = new short[11][30];
+   public static short[] cu;
+   public static int cv;
+   public static short[] cw = new short[11];
+   private static boolean ff;
+   public static boolean cx;
+   private static boolean fg;
+   public static int cy;
+   public static int cz;
+   // $VF: renamed from: cA int
+   public static int levelPixelWidth;
+   public static int cB;
+   private static byte[] fh;
+   private static byte[] fi;
+   private static byte[] fj;
+   private static byte[] fk;
+   private static byte[] fl;
+   private static byte[] fm;
+   private static byte[] fn;
+   private static byte[] fo;
+   private static byte[] fp;
+   public static int cC;
+   public static int cD;
+   public static int cE;
+   public static int cF;
+   private static final String[] fq = new String[]{
+      "/3", "/3", "/5", "/5", "/5", "/3", "/3", "/10", "/10", "/10", "/3", "/14", "/15", "/14", "/17", "/18", "/19"
+   };
+   static int[] cG;
+   public static int[][] cH;
+   private static String[][] fr = new String[13][];
+   public static final int[] cI = new int[]{107, 57, 69, 109, 73, 71};
+   private static String fs;
+   private static InputStream ft;
+   private static int fu;
+   private static short fv;
+   private static int[] fw;
+   private static short fx;
+   private static short[] fy;
+   private static int fz;
+   private static byte[] fA;
+   static byte[] cJ;
+   static int cK;
+   static long cL;
+   static long cM;
+   static byte[] cN;
+   static int cO;
+   private static short[] fB;
+   private static int fC = 0;
+   public static int cP;
+   private static byte[][] fD = new byte[][]{{1, 4, 5, 6, 7, 8, 9}, {12, 13, 6, 7, 0, 9}, {1, 2, 3, 4, 5, 6, 7, 8, 9}};
+   public static int cQ = 110;
+   public static boolean cR = false;
+   public static boolean cS = false;
+   public static boolean cT = true;
+   static int cU = 0;
+   public static byte[][][] cV;
+   public static short[] cW;
+   public static short[] cX;
+   public static int[][] cY;
+   public static boolean cZ;
+   public static boolean da;
+   public static boolean db = true;
+   public static boolean dc = false;
+   public static int dd = -1;
+   public static int de = 0;
+   public static int df;
+   public static int[] dg = new int[3];
+   public static byte[] dh = new byte[3];
+   public static boolean di = true;
+   static final int[] dj = new int[]{6, 2, 3, 0, 2, 1, 1, 4, 4, 0, 0, 8, 1, 0, 4, 0, 4, 2, 0, 0, 1, 0};
+   static int dk = 0;
+   static boolean dl = false;
+   static boolean dm = false;
+   static int dn = 0;
+   // $VF: renamed from: do int
+   static int do_ = 0;
+   static final int[] dp = new int[]{327712, 4112, 8256, 16388, 33024};
+   static final int[] dq = new int[]{25, 22, 28, 31, 19};
+   static boolean dr;
+   static final int ds = 1127 + cc + 64;
+   static byte[] dt = new byte[ds];
+   // $VF: renamed from: du boolean
+   public static boolean saveLoaded = false;
+   public static int dv;
+   static int dw;
+   static int dx;
+   static int dy;
+   static int dz;
+   static int dA;
+   static int dB;
+   static int dC;
+   static int dD;
+   static int dE;
+   static int dF = 0;
+   static boolean dG = false;
+   static final int[] dH = new int[]{2, 1, 1, 32};
+   static short[] dI = new short[30];
+   static byte[] dJ = new byte[30];
+   static byte[] dK = new byte[20];
+   static byte[] dL = new byte[20];
+   static short[] dM = new short[30];
+   static byte[] dN = new byte[30];
+   static byte[] dO = new byte[30];
+   static byte[] dP = new byte[30];
+   static boolean dQ = false;
+   static int dR = 20;
+   static boolean dS = false;
+   static boolean dT = false;
+   static int dU;
+   static boolean dV = false;
+   static final int[] dW = new int[]{-1996488705, -1426063361};
+   public static final int[] dX = new int[]{-1428431909, -1145324613, 2004318071};
+   public static int dY = 70;
+   public static int dZ = 70;
+   public static int ea = 0;
+   public static int eb = 180;
+   public static int[] ec = new int[]{872414976, 1728052992, -1711276288};
+   public static int ed = 0;
+   public static int ee = 0;
+   public static int ef = 0;
+   private static int fE = 0;
+   private static boolean fF = false;
+   public static int eg = 11;
+   public static final int[] eh = new int[]{0, 2, 5, 7, 10, 11, 14};
+   public static int ei;
+   public static final byte[] ej = new byte[]{-67, -4, 35, -6, -79, -7, -16, -13, 50, -4, -79, -3, 50, -5, -59, -5, 7, 4, 70, -2, -16, -13};
+   public static final byte[][] ek = new byte[][]{{4, 12, 18}, {3, 8, 13, 18}, {3, 13, 18}, {5, 10, 15, 18}, {8, 18}};
+   private static final byte[][] fG = new byte[][]{
+      {
+            -118,
+            1,
+            -105,
+            -6,
+            -91,
+            -9,
+            -77,
+            -6,
+            -67,
+            -4,
+            -52,
+            3,
+            -38,
+            -1,
+            -27,
+            -9,
+            -14,
+            -9,
+            -3,
+            -2,
+            10,
+            1,
+            23,
+            -5,
+            35,
+            -6,
+            54,
+            0,
+            67,
+            0,
+            77,
+            -8,
+            88,
+            -15,
+            101,
+            -14,
+            113,
+            -10
+      },
+      {
+            -118,
+            1,
+            -105,
+            -6,
+            -91,
+            -9,
+            -79,
+            -7,
+            -52,
+            3,
+            -64,
+            -1,
+            -38,
+            -1,
+            -27,
+            -9,
+            -16,
+            -13,
+            -3,
+            -2,
+            10,
+            1,
+            24,
+            -1,
+            37,
+            -4,
+            50,
+            -4,
+            66,
+            -3,
+            77,
+            -8,
+            89,
+            -2,
+            101,
+            3,
+            114,
+            5
+      },
+      {
+            -118,
+            -6,
+            -105,
+            1,
+            -91,
+            4,
+            -79,
+            -2,
+            -64,
+            -4,
+            -52,
+            -8,
+            -38,
+            -4,
+            -27,
+            4,
+            -16,
+            4,
+            -3,
+            -3,
+            10,
+            -6,
+            24,
+            -4,
+            37,
+            -1,
+            50,
+            -5,
+            66,
+            -2,
+            77,
+            3,
+            89,
+            -3,
+            101,
+            -8,
+            114,
+            -10
+      },
+      {
+            -119,
+            -10,
+            -106,
+            -8,
+            -94,
+            -3,
+            -82,
+            3,
+            -71,
+            -2,
+            -59,
+            -5,
+            -42,
+            -1,
+            -29,
+            -4,
+            -15,
+            -6,
+            -2,
+            -3,
+            7,
+            4,
+            22,
+            4,
+            33,
+            -4,
+            47,
+            -8,
+            59,
+            -4,
+            70,
+            -2,
+            86,
+            4,
+            100,
+            1,
+            113,
+            -6
+      },
+      {
+            -118,
+            1,
+            -105,
+            -6,
+            -91,
+            -9,
+            -79,
+            -7,
+            -52,
+            3,
+            -64,
+            -1,
+            -38,
+            -1,
+            -27,
+            -9,
+            -16,
+            -13,
+            -3,
+            -2,
+            10,
+            1,
+            24,
+            -1,
+            37,
+            -4,
+            50,
+            -4,
+            66,
+            -3,
+            77,
+            -8,
+            89,
+            -2,
+            101,
+            3,
+            114,
+            5
+      }
+   };
+   private static int fH = 0;
+   private static int fI = 0;
+   private static int fJ = 2;
+   private static boolean fK;
+   private static int fL;
+   private static Player fM;
+   public static boolean el = true;
+   private static int fN;
+   // $VF: renamed from: fO int
    private static int resumeSoundId = -1;
-   // $VF: renamed from: en int
+   // $VF: renamed from: fP int
    private static int soundResumeFrames;
-   // $VF: renamed from: eo int
-   private static int wavIdThreshold = 20;
-   // $VF: renamed from: ep byte[]
-   private static byte[] soundData;
+   private static int fQ = 18;
+   private static byte[][] fR = new byte[18][];
+   static byte[] em = new byte[]{-1, -1, -1, -1, 2, 4, 6, 8, -1, -1, -1, -1, 2, 4, 6, 8};
+   static short[] en = new short[]{
+      7,
+      8,
+      9,
+      10,
+      11,
+      12,
+      13,
+      14,
+      16,
+      17,
+      19,
+      21,
+      23,
+      25,
+      28,
+      31,
+      34,
+      37,
+      41,
+      45,
+      50,
+      55,
+      60,
+      66,
+      73,
+      80,
+      88,
+      97,
+      107,
+      118,
+      130,
+      143,
+      157,
+      173,
+      190,
+      209,
+      230,
+      253,
+      279,
+      307,
+      337,
+      371,
+      408,
+      449,
+      494,
+      544,
+      598,
+      658,
+      724,
+      796,
+      876,
+      963,
+      1060,
+      1166,
+      1282,
+      1411,
+      1552,
+      1707,
+      1878,
+      2066,
+      2272,
+      2499,
+      2749,
+      3024,
+      3327,
+      3660,
+      4026,
+      4428,
+      4871,
+      5358,
+      5894,
+      6484,
+      7132,
+      7845,
+      8630,
+      9493,
+      10442,
+      11487,
+      12635,
+      13899,
+      15289,
+      16818,
+      18500,
+      20350,
+      22385,
+      24623,
+      27086,
+      29794,
+      32767
+   };
+   protected static final byte[] eo = new byte[]{82, 73, 70, 70};
+   protected static final byte[] ep = new byte[]{87, 65, 86, 69};
+   protected static final byte[] eq = new byte[]{102, 109, 116, 32};
+   protected static final byte[] er = new byte[]{100, 97, 116, 97};
+   protected static final byte[] es = new byte[]{16, 0, 0, 0};
+   protected static final byte[] et = new byte[]{1, 0};
+   protected static final byte[] eu = new byte[]{1, 0};
+   protected static final byte[] ev = new byte[]{64, 31, 0, 0};
+   protected static final byte[] ew = new byte[]{-128, 62, 0, 0};
+   protected static final byte[] ex = new byte[]{2, 0};
+   protected static final byte[] ey = new byte[]{16, 0};
+   public static Image[] ez;
 
    Game() {
       int[] var10000 = new int[]{0, 1};
+      this.setFullScreenMode(true);
       suspended = false;
       random = new Random(System.currentTimeMillis());
       state = 0;
@@ -520,198 +845,585 @@ final class Game extends FullCanvas implements Runnable {
    }
 
    public final void paint(Graphics var1) {
-      try {
-         graphics = var1;
-         directGraphics = DirectUtils.getDirectGraphics(graphics);
-         stateFrame++;
-         tickDeltaMs = 83;
-         switch (state) {
-            case 0:
-               initialize();
-               break;
-            case 1:
-               updateLogoLoading();
-               break;
-            case 2:
-               this.updateMainMenu();
-            case 3:
-            case 4:
-            case 10:
-            case 11:
-            case 13:
-            case 16:
-            case 17:
-            case 21:
-            case 22:
-            case 24:
-            case 25:
-            case 26:
-            case 28:
-            case 29:
-            case 31:
-            default:
-               break;
-            case 5:
-               updateHelp();
-               break;
-            case 6:
-            case 20:
-               updateScrollingText();
-               break;
-            case 7:
-               updatePromotion();
-               break;
-            case 8:
-               Actor.graphics = graphics;
-               updateGameplay();
-               break;
-            case 9:
-               updateLevelLoading();
-               break;
-            case 12:
-               updateGameOver();
-               break;
-            case 14:
-               updatePauseMenu();
-               break;
-            case 15:
-               updateLetterbox();
-               if (aM == aN) {
-                  this.updateLevelComplete();
-               }
-               break;
-            case 18:
-               updateTitle();
-               break;
-            case 19:
-               updateLevelSelection();
-               break;
-            case 23:
-               updateSoundPrompt();
-               break;
-            case 27:
-               updatePromotionPrompt();
-               break;
-            case 30:
-               startNewGame();
-               break;
-            case 32:
-               updateCrystalReward(dq);
+      if (this.getWidth() > this.getHeight()) {
+         l = true;
+         var1.setColor(0);
+         var1.setClip(0, 0, 320, 240);
+         var1.fillRect(0, 0, 320, 240);
+         var1.setColor(16777215);
+         var1.setFont(Font.getFont(0, 0, 8));
+
+         try {
+            V(0);
+         } catch (Exception var3) {
          }
 
-         graphics = null;
-         latchInput();
-      } catch (Exception var3) {
-         var3.printStackTrace();
-      }
+         String var2 = k(0, 105);
+         var1.drawString(var2, 160, 80, 17);
+         if (!suspended) {
+            T();
+            this.e();
+         }
+      } else {
+         if (l) {
+            this.d();
+            l = false;
+         }
 
-      paintComplete = true;
+         if (System.currentTimeMillis() - lastPaintMs >= 2500L && lastPaintMs > 0L) {
+            this.hideNotify();
+            this.showNotify();
+         }
+
+         lastPaintMs = System.currentTimeMillis();
+
+         try {
+            graphics = var1;
+            stateFrame++;
+            h = Math.min(frameDeltaMs, 50);
+            f = (h + 12) / 50;
+            f = Math.min(f, 1);
+            g = (h << 8) / 50;
+            switch (state) {
+               case 0:
+                  au();
+                  break;
+               case 1:
+                  ad();
+                  break;
+               case 2:
+                  this.aK();
+               case 3:
+               case 4:
+               case 10:
+               case 11:
+               case 13:
+               case 16:
+               case 17:
+               case 21:
+               case 22:
+               case 24:
+               case 25:
+               case 26:
+               case 28:
+               case 29:
+               default:
+                  break;
+               case 5:
+                  ah();
+                  break;
+               case 6:
+               case 20:
+                  aQ();
+                  if (state == 6) {
+                     av();
+                  }
+                  break;
+               case 7:
+                  ai();
+                  break;
+               case 8:
+                  Actor.bt = graphics;
+                  ap();
+                  break;
+               case 9:
+                  at();
+                  break;
+               case 12:
+                  ag();
+                  break;
+               case 14:
+                  am();
+                  break;
+               case 15:
+                  av();
+                  if (br == bs) {
+                     this.Z();
+                  }
+                  break;
+               case 18:
+                  aL();
+                  break;
+               case 19:
+                  aO();
+                  break;
+               case 23:
+                  ae();
+                  break;
+               case 27:
+                  p();
+                  break;
+               case 30:
+                  af();
+                  break;
+               case 31:
+                  ak();
+                  break;
+               case 32:
+                  L(eI);
+            }
+
+            graphics = null;
+            L();
+         } catch (Exception var4) {
+            var4.printStackTrace();
+         }
+
+         paintComplete = true;
+         this.b();
+      }
    }
 
-   // $VF: renamed from: H () void
-   private static void updateHudSlide() {
-      if (player.animationId != 8 && (player.animationId < 13 || player.animationId > 25) && !aR) {
-         l = false;
+   protected final void pointerPressed(int var1, int var2) {
+      m = var1;
+      n = var2;
+      if (state == 7) {
+         InGamePromotion.a(var1, var2);
+      }
+   }
+
+   protected final void pointerReleased(int var1, int var2) {
+      m = -1000;
+      n = -1000;
+      this.keyReleased(o);
+      o = -256;
+   }
+
+   private void W() {
+      if (state == 8 && !modalActive) {
+         if (m > 0 && n > 297 && m < 30 && n < 320) {
+            this.keyPressed(-6);
+         }
+
+         if (m > 210 && n > 297 && m < 240 && n < 320) {
+            this.keyPressed(-7);
+            return;
+         }
       } else {
-         l = true;
-         n = 0;
-         aR = false;
+         if (m > 0 && n > 297 && m < 65 && n < 320) {
+            this.keyPressed(-6);
+            return;
+         }
+
+         if (m > 175 && n > 297 && m < 240 && n < 320) {
+            this.keyPressed(-7);
+         }
+      }
+   }
+
+   public final void a() {
+      m = -1000;
+      n = -1000;
+   }
+
+   public final void b() {
+      this.W();
+      label489:
+      switch (state) {
+         case 0:
+         case 1:
+         case 3:
+         case 4:
+         case 5:
+         case 7:
+         case 10:
+         case 11:
+         case 12:
+         case 13:
+         case 15:
+         case 16:
+         case 17:
+         case 21:
+         case 22:
+         case 23:
+         case 24:
+         case 25:
+         case 26:
+         case 27:
+         case 28:
+         case 29:
+         case 30:
+         default:
+            break;
+         case 2:
+            if (m < 57 && n > 235 && n < 273) {
+               this.keyPressed(52);
+            }
+
+            if (m > 186 && n > 235 && n < 273) {
+               this.keyPressed(54);
+            }
+
+            if (m < 186 && m > 57 && n > 235 && n < 273) {
+               this.keyPressed(53);
+            }
+            break;
+         case 6:
+         case 20:
+            if (n > 0 && n < 273) {
+               this.keyPressed(53);
+            }
+            break;
+         case 8:
+            int var18 = player.positionX - cameraX;
+            int var3 = player.positionY - cameraY;
+            if (modalActive) {
+               if (bJ == 1) {
+                  if (m > 55 && m < 95 && n > 140 && n < 190) {
+                     this.keyPressed(52);
+                  }
+
+                  if (m > 147 && m < 210 && n > 140 && n < 190) {
+                     this.keyPressed(54);
+                  }
+               }
+
+               if ((bJ == 14 || bJ == 5) && m > 0 && n < 243) {
+                  this.keyPressed(-6);
+               }
+            } else if (m < 85 && m > 45 && n < 330 && n > 293) {
+               this.keyPressed(53);
+            } else if (m < 141 && m > 101 && n < 330 && n > 293) {
+               this.keyPressed(48);
+            } else if (m > 158 && m < 200 && n < 330 && n > 293) {
+               this.keyPressed(57);
+            } else if (player.aq == 1) {
+               if (m < var18 + 15 && m > var18 - 15 && n > var3 && n < var3 - 30) {
+                  this.keyPressed(53);
+               } else if (m > var18 + 15 && n < var3 + 50 && n > var3 - 50) {
+                  if (p) {
+                     this.keyPressed(53);
+                  } else {
+                     this.keyPressed(54);
+                  }
+               } else if (m > var18 - 15 && m < var18 + 15 && n < var3 && n > var3 - 15) {
+                  this.keyPressed(-5);
+               } else if (m < var18 - 15 && m > 0 && n < var3 + 50 && n > var3 - 50) {
+                  if (p) {
+                     this.keyPressed(53);
+                  } else {
+                     this.keyPressed(52);
+                  }
+               } else if (m < var18 + 15 && m > var18 - 15 && n > var3) {
+                  this.keyPressed(56);
+               } else if (m < var18 + 15 && m > var18 - 15 && n < var3 - 15) {
+                  this.keyPressed(50);
+               } else if (m > 0 && m < var18 - 15 && n < var3 - 15) {
+                  this.keyPressed(49);
+               } else if (m > var18 + 15 && n < var3 - 15) {
+                  this.keyPressed(51);
+               }
+            } else if (m > var18 + 20 && n < var3 + 75 && n > var3 - 60) {
+               if (p) {
+                  this.keyPressed(53);
+               } else {
+                  this.keyPressed(54);
+               }
+            } else if (m < var18 - 20 && m > 0 && n < var3 + 75 && n > var3 - 60) {
+               if (p) {
+                  this.keyPressed(53);
+               } else {
+                  this.keyPressed(52);
+               }
+            } else if (m > var18 - 20 && m < var18 + 20 && n < var3 + 5 && n > var3 - 60) {
+               this.keyPressed(-5);
+            } else if (m > var18 + 20 && n < var3 - 60) {
+               this.keyPressed(51);
+            } else if (m > 0 && m < var18 - 20 && n < var3 - 60) {
+               this.keyPressed(49);
+            } else if (m < var18 + 20 && m > var18 - 20 && n > var3) {
+               this.keyPressed(56);
+            } else if (m < var18 + 20 && m > var18 - 20 && n < var3 - 60) {
+               this.keyPressed(50);
+            }
+            break;
+         case 9:
+            if (m > 0 && n > 0) {
+               this.keyPressed(53);
+            }
+            break;
+         case 14:
+            int[] var10 = new int[]{35, 70, 105, 140, 175, 210, 245};
+
+            for (int var17 = 0; var17 < 6; var17++) {
+               if (n > var10[var17] && n < var10[var17 + 1]) {
+                  cP = var17;
+                  this.keyPressed(53);
+                  break label489;
+               }
+            }
+            break;
+         case 18:
+            if (m > 0 && n > 0) {
+               this.keyPressed(53);
+            }
+            break;
+         case 19:
+            if (n > 194 && n < 232) {
+               if (ei < 2) {
+                  int[] var5 = new int[]{0, 106, 206};
+
+                  for (int var12 = 0; var12 < 2; var12++) {
+                     if (m > var5[var12] && m < var5[var12 + 1]) {
+                        if (ei == var12) {
+                           this.keyPressed(53);
+                        } else if (var12 < maxUnlockedLevel) {
+                           ei = var12;
+                        }
+                        break;
+                     }
+                  }
+               }
+
+               if (1 < ei && ei < 5) {
+                  int[] var6 = new int[]{0, 0, 0, 72, 136, 220};
+
+                  for (int var13 = 2; var13 < 5; var13++) {
+                     if (m > var6[var13] && m < var6[var13 + 1]) {
+                        if (ei == var13) {
+                           this.keyPressed(53);
+                        } else if (var13 < maxUnlockedLevel) {
+                           ei = var13;
+                        }
+                        break;
+                     }
+                  }
+               }
+
+               if (4 < ei && ei < 7) {
+                  int[] var7 = new int[]{0, 0, 0, 0, 0, 0, 106, 209};
+
+                  for (int var14 = 5; var14 < 7; var14++) {
+                     if (m > var7[var14] && m < var7[var14 + 1]) {
+                        if (ei == var14) {
+                           this.keyPressed(53);
+                        } else if (var14 < maxUnlockedLevel) {
+                           ei = var14;
+                        }
+                        break;
+                     }
+                  }
+               }
+
+               if (6 < ei && ei < 10) {
+                  int[] var8 = new int[]{0, 0, 0, 0, 0, 0, 0, 0, 90, 156, 220};
+
+                  for (int var15 = 7; var15 < 10; var15++) {
+                     if (m > var8[var15] && m < var8[var15 + 1]) {
+                        if (ei == var15) {
+                           this.keyPressed(53);
+                        } else if (var15 < maxUnlockedLevel) {
+                           ei = var15;
+                        }
+                        break;
+                     }
+                  }
+               }
+
+               if (9 < ei) {
+                  int[] var9 = new int[]{0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 84, 121};
+
+                  for (int var16 = 10; var16 < 11; var16++) {
+                     if (m > var9[var16] && m < var9[var16 + 1]) {
+                        if (ei == var16) {
+                           this.keyPressed(53);
+                        } else if (var16 < maxUnlockedLevel) {
+                           ei = var16;
+                        }
+                        break;
+                     }
+                  }
+               }
+            }
+
+            if (m > 0 && m < 65 && n > 234 && n < 275) {
+               this.keyPressed(52);
+            }
+
+            if (m > 172 && m < 240 && n > 234 && n < 275) {
+               this.keyPressed(54);
+            }
+
+            if (m > 65 && m < 172 && n > 234 && n < 275) {
+               this.keyPressed(53);
+            }
+            break;
+         case 31:
+            if (m > 38 && m < 208 && n < 78 && n > 18) {
+               this.keyPressed(54);
+            }
+
+            if (Actor.bD) {
+               int[] var4 = new int[]{90, 125, 158, 190, 216};
+
+               for (int var11 = 0; var11 < 4; var11++) {
+                  if (n > var4[var11] && n < var4[var11 + 1]) {
+                     aW = var11;
+                     break;
+                  }
+               }
+            } else {
+               int[] var1 = new int[]{90, 125, 158, 190};
+
+               for (int var2 = 0; var2 < 3; var2++) {
+                  if (n > var1[var2] && n < var1[var2 + 1]) {
+                     aW = var2;
+                     break;
+                  }
+               }
+            }
+
+            if (m > 22 && n < 262 && n > 85) {
+               this.keyPressed(53);
+            }
+            break;
+         case 32:
+            if (m > 0 && n > 0) {
+               this.keyPressed(53);
+            }
       }
 
-      if (l && m < 0) {
-         m += 5;
-         if (m > 0) {
-            m = 0;
+      this.a();
+   }
+
+   private static void X() {
+      if (player.animationId != 11 && (player.animationId < 16 || player.animationId > 33) && (player.animationId < 38 || player.animationId > 51) && !bu) {
+         t = false;
+      } else {
+         t = true;
+         v = 0;
+         bu = false;
+      }
+
+      if (t && u < 0) {
+         u += 5;
+         if (u > 0) {
+            u = 0;
          }
       }
 
-      if (!l && m > -41) {
-         n = n + tickDeltaMs;
-         if (n >= 4000) {
-            m -= 5;
-         } else if (m < 0) {
-            m += 5;
-            if (m > 0) {
-               m = 0;
+      if (!t && u > -41) {
+         v = v + h;
+         if (v >= 4000) {
+            u -= 5;
+         } else if (u < 0) {
+            u += 5;
+            if (u > 0) {
+               u = 0;
             }
          }
 
-         if (m < -41) {
-            m = -41;
+         if (u < -41) {
+            u = -41;
          }
       }
    }
 
-   // $VF: renamed from: a (int, int, int, int, int, int) void
-   public static final void drawSegmentedBar(int var0, int var1, int var2, int var3, int var4, int var5) {
-      setColor(var0);
-      fillRect(var2, var3, var5 * 61 / 60, var4);
-      setColor(var1);
-      fillRect(var2 + 1, var3 + 1, var5 * 61 / 60 - 2, var4 - 2);
-      setColor(var0);
+   private static int a(int var0, int var1, int var2, boolean var3) {
+      String var4;
+      int var5 = (var4 = var0 + "").length();
+      int var6 = 0;
+      if (!var3) {
+         var1 -= 6 * var5;
+      }
+
+      for (int var8 = 0; var8 < var5; var8++) {
+         int var7 = var4.charAt(var8) - '0';
+         b[33].a(graphics, 2 + var7, var6 + var1, var2, 0, 0, 0);
+         var6 += 6;
+      }
+
+      return var6;
+   }
+
+   public static final void a(int var0, int var1, int var2, int var3, int var4, int var5) {
+      b(var0);
+      b(var2, var3, var5 * 60 / 60, var4);
+      b(var1);
+      b(var2 + 1, var3 + 1, var5 * 60 / 60 - 2, var4 - 2);
+      b(var0);
       if (var5 > 0) {
-         for (int var6 = 0; var6 <= (var5 * 61 / 60 - 2) / o; var6++) {
-            drawLine(var2 + var6 * o, var3, var2 + var6 * o, var3 + var4 - 1);
+         for (int var6 = 0; var6 <= (var5 * 60 / 60 - 2) / w; var6++) {
+            d(var2 + var6 * w, var3, var2 + var6 * w, var3 + var4 - 1);
          }
       }
    }
 
-   // $VF: renamed from: I () void
-   private static void drawHud() {
-      k = false;
-      sprites[35].drawFrame(graphics, 0, 0, m, 0, 0, 0);
-      setColor(15773760);
-      drawRect(56, 8 + m, maxHealth * 61 / 60 + 14, 8);
-      setColor(0);
-      fillRect(70, 9 + m, maxHealth * 61 / 60, 7);
-      drawSegmentedBar(1611800, 63488, 70, 10 + m, 5, health);
-      setColor(8402944);
-      drawRect(70, 17 + m, maxHealth * 61 / 60, 1);
-      setColor(15773760);
-      drawRect(56, 18 + m, maxMagic * 61 / 60 + 14, 8);
-      setColor(0);
-      fillRect(70, 19 + m, maxMagic * 61 / 60, 7);
-      setColor(2132128);
-      fillRect(70, 20 + m, magic * 61 / 60, 5);
-      setColor(3725552);
-      fillRect(71, 21 + m, magic * 61 / 60 - 2, 3);
-      drawSegmentedBar(2132128, 3725552, 70, 20 + m, 5, magic);
-      sprites[35].drawFrame(graphics, 2 + Actor.activeWeapon, -1, m, 0, 0, 0);
-   }
+   private static void Y() {
+      b[33].a(graphics, 0, 0, u, 0, 0, 0);
+      b(15773760);
+      c(51, 8 + u, maxHealth * 60 / 60 + 14, 8);
+      b(0);
+      b(65, 9 + u, maxHealth * 60 / 60, 7);
+      a(1611800, 63488, 65, 10 + u, 5, health);
+      b(8402944);
+      c(65, 17 + u, maxHealth * 60 / 60, 1);
+      b(15773760);
+      c(51, 18 + u, maxMagic * 60 / 60 + 14, 8);
+      b(0);
+      b(65, 19 + u, maxMagic * 60 / 60, 7);
+      b(2132128);
+      b(65, 20 + u, magic * 60 / 60, 5);
+      b(3725552);
+      b(66, 21 + u, magic * 60 / 60 - 2, 3);
+      a(2132128, 3725552, 65, 20 + u, 5, magic);
+      b[33].a(graphics, 1, 0, 0 + u, 0, 0, 0);
+      a(D, 67, 29 + u, true);
+      b[33].a(graphics, 20 + Actor.ch, -1, u, 0, 0, 0);
+      if (E > 0L) {
+         E = E - h;
+         if (E <= 0L) {
+            N();
+         }
 
-   public static final void a() {
-      if (Actor.bv != 2 && cm && aN < 5) {
-         sprites[35].drawFrame(graphics, 5, 10, 307, 0, 0, 0);
+         b[33].a(graphics, 4, stateFrame % 4 < 2 ? 0 : 1, player.positionX - cameraX, player.positionY - cameraY - 70, 0, 0, 0);
       }
    }
 
-   // $VF: renamed from: G (int) void
-   private static void updateCrystalReward(int var0) {
-      drawWorld();
-      k = true;
-      directGraphics.setARGBColor(-587202560);
-      setClip(9, 30, 222, 252);
-      fillRect(9, 30, 222, 252);
-      setColor(15692292);
-      drawRect(9, 30, 221, 251);
-      int var1 = var0 == 0 ? r : u;
-      if (dr) {
+   public static final void c() {
+      if (Actor.bE == 2) {
+         b[16].a(graphics, 13, stateFrame % 4 >> 1, 170, 250, 1, 0, 0);
+      }
+
+      if (Actor.bE != 2 && di) {
+         b[33].a(graphics, 35, 10, 307, 0, 0, 0);
+      }
+
+      b[33].a(graphics, 36, 230, 307, 0, 0, 0);
+      if (aj() || Actor.bE == 2) {
+         a(stateFrame % 8, 213, 297, 20, 20);
+      }
+   }
+
+   private static void L(int var0) {
+      as();
+      b(-587202560);
+      a(19, 30, 202, 252);
+      b(19, 30, 202, 252);
+      b[33].a(graphics, 25, 119, 166, 0, 0, 0);
+      b(15692292);
+      d(20, 50, 20, 262);
+      d(219, 31, 219, 262);
+      int var1 = var0 == 0 ? z : C;
+      if (eJ) {
          var1 = 4;
       }
 
-      dp++;
-      if (!dr && dp == 5) {
+      eH++;
+      if (!eJ && eH == 5) {
          if (var0 == 0) {
             if (var1 == 4) {
-               r = 0;
+               z = 0;
                maxHealth += 10;
                if (maxHealth > 120) {
                   maxHealth = 120;
+                  if (maxUnlockedLevel == 11) {
+                     al();
+                  }
                }
 
                health = maxHealth;
-               dr = true;
-               k = true;
+               eJ = true;
             } else {
                health += 10;
                if (health > maxHealth) {
@@ -720,17 +1432,16 @@ final class Game extends FullCanvas implements Runnable {
             }
          } else if (var0 == 1) {
             if (var1 == 4) {
-               u = 0;
+               C = 0;
                maxMagic += 10;
                if (maxMagic > 120) {
                   maxMagic = 120;
                }
 
                magic = maxMagic;
-               dr = true;
-               k = true;
+               eJ = true;
             } else {
-               if (Actor.bu) {
+               if (Actor.bD) {
                   magic += 10;
                }
 
@@ -742,137 +1453,176 @@ final class Game extends FullCanvas implements Runnable {
       }
 
       for (int var2 = -1; var2 <= 1; var2++) {
-         directGraphics.setARGBColor(h[(var2 == 0 ? 0 : 1) + var0 * 2]);
-         drawArc(55 + var2, 55 + var2, 65 - var2 << 1, 65 - var2 << 1, 0, 360);
-         drawRect(74 + var2, 74 + var2, 46 - var2 << 1, 46 - var2 << 1);
-         drawArc(74 + var2, 74 + var2, 46 - var2 << 1, 46 - var2 << 1, 0, 360);
+         b(q[(var2 == 0 ? 0 : 1) + var0 * 2]);
+         c(55 + var2, 55 + var2, 65 - var2 << 1, 65 - var2 << 1, 0, 360);
+         c(74 + var2, 74 + var2, 46 - var2 << 1, 46 - var2 << 1);
+         c(74 + var2, 74 + var2, 46 - var2 << 1, 46 - var2 << 1, 0, 360);
 
          for (int var3 = 0; var3 < 4; var3++) {
-            drawLine(i[var3 * 2 + (var2 + 1) * 10], i[var3 * 2 + 1 + (var2 + 1) * 10], i[var3 * 2 + 2 + (var2 + 1) * 10], i[var3 * 2 + 3 + (var2 + 1) * 10]);
-            sprites[35].drawFrame(graphics, 17, j[var3 * 2], j[var3 * 2 + 1], 0, 0, 0);
+            d(r[var3 * 2 + (var2 + 1) * 10], r[var3 * 2 + 1 + (var2 + 1) * 10], r[var3 * 2 + 2 + (var2 + 1) * 10], r[var3 * 2 + 3 + (var2 + 1) * 10]);
+            b[33].a(graphics, 50, s[var3 * 2], s[var3 * 2 + 1], 0, 0, 0);
             if (var3 < var1) {
-               sprites[33].currentPalette = 0;
-               sprites[33].drawAnimationFrame(graphics, var0 == 0 ? 1 : 3, 0, j[var3 * 2], j[var3 * 2 + 1], 0, 0, 0);
+               b[31].z = 0;
+               b[31].a(graphics, var0 == 0 ? 1 : 3, 0, s[var3 * 2], s[var3 * 2 + 1], 0, 0, 0);
             }
          }
       }
 
-      font.currentPalette = 0;
+      a.z = 5;
       String var4;
       if (var1 < 4) {
-         var4 = getString(0, 56 + var0).replace('#', (char)(52 - var1));
+         var4 = k(0, 60 + var0).replace('#', (char)(52 - var1));
       } else {
-         var4 = getString(0, 58 + var0);
+         var4 = k(0, 62 + var0);
       }
 
-      font.drawWrappedText(graphics, var4, 120, 195, 17, 200, 0, -1);
-      if (dp > 10) {
+      a.a(graphics, var4, 120, 195, 17, 180, 0, -1);
+      if (eH > 10) {
          if (stateFrame % 10 < 5) {
-            font.drawWrappedText(graphics, getString(0, 10), 120, 262, 17, 230, 0, -1);
+            a.a(graphics, k(0, 106), 120, 262, 17, 180, 0, -1);
          }
 
-         if (hasKeyPress()) {
+         if (M()) {
             state = 8;
-            k = true;
-            dr = false;
-            cm = true;
+            eJ = false;
+            di = true;
+            U();
          }
       }
    }
 
    protected final void hideNotify() {
-      if (rememberedMusicId >= 0 && soundPlayer != null && soundPlayer.getState() == 400) {
-         resumeSoundId = rememberedMusicId;
+      if (fN >= 0 && fM != null && fM.getState() == 400) {
+         resumeSoundId = fN;
       }
 
-      stopSound();
+      T();
       suspended = true;
    }
 
    protected final void showNotify() {
-      k = true;
       suspended = false;
       if (state != 0 && state != 1 && state != 9 && state != 15) {
          stateFrame = 0;
       }
 
-      if (state == 8 && !aS && !hasActiveBackgroundScript()) {
-         selectedMenuItem = 0;
-         changeState(14);
+      if (state == 8 && !modalActive && !hasActiveBackgroundScript()) {
+         cP = 0;
+         a(14);
       }
 
       if (resumeSoundId >= 0 && state != 14) {
          soundResumeFrames = 3;
       }
 
-      clearInput();
+      N();
    }
 
-   // $VF: renamed from: J () void
-   private void updateLevelComplete() {
-      k = true;
-      drawWorld();
+   private void Z() {
+      as();
       g(0, 0, 240, 320);
-      drawSoftkeys("", getString(0, 17));
-      setClip(0, 0, 240, 320);
-      font.drawText(graphics, getString(0, 85), 120, 160, 17);
-      if (wasKeyPressed(327712)) {
-         aN = 0;
-         aM = 0;
-         finishLevel();
+      a("", k(0, 17));
+      a(0, 5, 240, 285);
+      if (eL == 0) {
+         eL = 1;
+      } else if (eL == 2) {
+         if (eK == 0) {
+            eL = 3;
+         }
+
+         int var1 = eK / 2;
+         if (eK % 2 == 0) {
+            var1 = -var1;
+         }
+
+         b[37].a(graphics, 5, 120, 160 + var1, 0, 0, 0);
+         b[37].a(graphics, 6, 120, 160 + var1, 0, 0, 0);
+         eK--;
+      } else if (eL == 1) {
+         b[37].a(graphics, 5, 120, 0 + eM, 0, 0, 0);
+         b[37].a(graphics, 6, 120, 320 - eM, 0, 0, 0);
+         eK++;
+         if (0 + eM >= 160) {
+            eK = 15;
+            eL = 2;
+         } else {
+            eM = eM + eK * 5;
+         }
+      } else {
+         b[37].a(graphics, 5, 120, 160, 0, 0, 0);
+         b[37].a(graphics, 6, 120, 160, 0, 0, 0);
+      }
+
+      if (G(327712) && eL == 3) {
+         eK = 0;
+         eL = 0;
+         eM = 5;
+         bs = 0;
+         br = 0;
+         if (al()) {
+            a(31);
+            eR = true;
+            return;
+         }
+
+         c(true);
       }
    }
 
    public static final void a(boolean var0) {
-      dh = levelIndex + (var0 ? 1 : 0);
-      if (levelIndex + (var0 ? 1 : 0) == 9) {
-         dh = 0;
-         df = 9;
+      ei = levelIndex + (var0 ? 1 : 0);
+      if (levelIndex + (var0 ? 1 : 0) == 11) {
+         ei = 0;
+         eg = 11;
       } else {
-         while (dg[df - 9 + 1] <= dh) {
-            df++;
+         while (eh[eg - 11 + 1] <= ei) {
+            eg++;
          }
       }
    }
 
-   // $VF: renamed from: a (int) void
-   public static final void changeState(int var0) {
+   public static final void a(int var0) {
       if (var0 == 9) {
-         stopSound();
-         dv = levelIndex == 0 ? 0 : randomRange(0, 7);
+         T();
+         eS = levelIndex == 0 ? 0 : i(0, 7);
          soundResumeFrames = 0;
       } else if (var0 == 12) {
-         stopSound();
-         playSoundOnce(-1);
+         T();
+         I(5);
       } else if (var0 == 15) {
-         stopSound();
-         playSoundOnce(-1);
-         aN = 1;
-         aM = 160;
+         T();
+         I(6);
+         bs = 1;
+         br = 160;
       } else if (var0 == 8 && state == 9) {
          soundResumeFrames = 0;
-         playLevelMusic();
+         if (levelIndex != 4 && levelIndex != 9 && levelIndex != 0 && levelIndex != 15 || fg) {
+            U();
+         }
+
+         fg = false;
       }
 
       if (var0 == 20) {
-         dh = 0;
-         dc = 0;
-         scrollingTextY = 240;
-         df = 10;
-         H = 12;
+         ei = 0;
+         ed = 0;
+         fL = 240;
+         eg = 12;
+         U = 12;
       }
 
       if (var0 == 19 || var0 == 20) {
-         menuDefinition = 0;
-         dd = 2;
-         de = 0;
-         H = 12;
-         ensureTileBuffer();
+         fC = 0;
+         ee = 2;
+         ef = 0;
+         U = 12;
+         ax();
       }
 
       if (var0 == 6) {
-         scrollingTextY = 266;
-         String var1 = getString(0, 28);
+         fL = 280;
+         String var1 = k(0, 28);
+         I(7);
          String var2;
          if ((var2 = GloftSOFD.instance.getAppProperty("MIDlet-Version")) == null) {
             var2 = "0.0.0";
@@ -880,19 +1630,19 @@ final class Game extends FullCanvas implements Runnable {
 
          int var3;
          if ((var3 = var1.indexOf("X.X.X")) != -1) {
-            stringTables[0][28] = var1.substring(0, var3) + " " + var2 + var1.substring(var3 + 5);
+            fr[0][28] = var1.substring(0, var3) + " " + var2 + var1.substring(var3 + 5);
          }
 
-         dd = 0;
+         ee = 0;
       }
 
       if (var0 == 2) {
-         selectedMenuItem = 0;
-         if (readI16LE(saveBuffer, 16) == 0) {
-            menuDefinition = 0;
+         cP = 0;
+         if (b(dt, 16) == 0) {
+            fC = 0;
          } else {
-            menuDefinition = 2;
-            selectedMenuItem = 1;
+            fC = 2;
+            cP = 1;
          }
 
          switch (state) {
@@ -917,7 +1667,7 @@ final class Game extends FullCanvas implements Runnable {
             case 28:
             case 29:
             default:
-               stopSound();
+               T();
             case 2:
             case 3:
             case 5:
@@ -927,17 +1677,16 @@ final class Game extends FullCanvas implements Runnable {
             case 19:
             case 20:
             case 30:
-               loadSoundData(-1);
-               playSoundOnce(0);
+               I(0);
          }
       }
 
       if (state == 2 && var0 != 2) {
-         menuNewBadge = null;
+         eG = null;
       } else if (var0 == 2 && state != 2) {
          try {
-            if (menuNewBadge == null) {
-               menuNewBadge = Image.createImage("/new.png");
+            if (eG == null) {
+               eG = Image.createImage("/new.png");
             }
          } catch (Exception var4) {
             var4.printStackTrace();
@@ -945,37 +1694,50 @@ final class Game extends FullCanvas implements Runnable {
       }
 
       if (var0 == 14) {
-         menuDefinition = 1;
+         fC = 1;
       }
 
       if (var0 == 14 || var0 == 7) {
-         stopSound();
+         T();
       }
 
       if (var0 == 9) {
-         titleImage = null;
+         eE = null;
       }
 
-      aJ = false;
+      bi = false;
       if (var0 == 13 || var0 == 12 || var0 == 14 || var0 == 31 || var0 == 15 || var0 == 32) {
-         aJ = true;
+         bi = true;
       }
 
       if (var0 == 8 && (state == 14 || state == 12)) {
-         playLevelMusic();
+         player.g();
+         if (levelIndex != 9 || !Actor.b(player.collisionBounds, H)) {
+            U();
+         }
+      }
+
+      if (var0 == 31) {
+         aV = Actor.ch;
       }
 
       stateFrame = 0;
       previousState = state;
       state = var0;
-      clearInput();
+      N();
    }
 
    public final void run() {
       while (state != 11) {
-         frameStartMs = System.currentTimeMillis();
+         K = System.currentTimeMillis();
+         frameDeltaMs = (int)(K - L);
+         if (frameDeltaMs > 1000) {
+            frameDeltaMs = 1000;
+         }
+
+         L = K;
          if (!suspended) {
-            if ((state != 14 && state != 8 && state != 9 || state == 8 && aS) && (state != 5 || previousState != 14) && soundResumeFrames > 0) {
+            if ((state != 14 && state != 8 && state != 9 || state == 8 && modalActive) && (state != 5 || previousState != 14) && soundResumeFrames > 0) {
                while (--soundResumeFrames == 0) {
                   playSound(resumeSoundId, -1);
                }
@@ -992,12 +1754,12 @@ final class Game extends FullCanvas implements Runnable {
             }
          }
 
-         frameStartMs = Math.min(frameStartMs, System.currentTimeMillis());
-         frameElapsedMs = System.currentTimeMillis() - frameStartMs;
+         K = Math.min(K, System.currentTimeMillis());
+         J = System.currentTimeMillis() - K;
          boolean var1 = hasActiveBackgroundScript();
 
          try {
-            Thread.sleep(Math.max(1L, (var1 ? 83 : 83) - frameElapsedMs));
+            Thread.sleep(Math.max(1L, (var1 ? 66 : 50) - J));
          } catch (Exception var3) {
             var3.printStackTrace();
          }
@@ -1006,304 +1768,446 @@ final class Game extends FullCanvas implements Runnable {
       GloftSOFD.instance.destroyApp(true);
    }
 
-   // $VF: renamed from: b () void
-   public final void resumeLoop() {
+   public final void d() {
       if (suspended) {
          suspended = false;
       }
    }
 
-   // $VF: renamed from: c () void
-   public final void suspendLoop() {
+   public final void e() {
       suspended = true;
    }
 
-   // $VF: renamed from: i (int, int, int, int) void
-   private static void setClipInternal(int var0, int var1, int var2, int var3) {
+   private static void j(int var0, int var1, int var2, int var3) {
       graphics.setClip(var0, var1, var2, var3);
    }
 
-   // $VF: renamed from: a (int, int, int, int) void
-   public static final void setClip(int var0, int var1, int var2, int var3) {
+   public static final void a(int var0, int var1, int var2, int var3) {
       graphics.setClip(var0, var1, var2, var3);
    }
 
-   // $VF: renamed from: b (int) void
-   public static final void setColor(int var0) {
+   public static final void b(int var0) {
       graphics.setColor(var0);
    }
 
-   // $VF: renamed from: b (int, int, int, int) void
-   public static final void fillRect(int var0, int var1, int var2, int var3) {
+   public static final void b(int var0, int var1, int var2, int var3) {
       graphics.fillRect(var0, var1, var2, var3);
    }
 
-   // $VF: renamed from: c (int, int, int, int) void
-   public static final void drawRect(int var0, int var1, int var2, int var3) {
+   public static final void c(int var0, int var1, int var2, int var3) {
       graphics.drawRect(var0, var1, var2, var3);
    }
 
-   // $VF: renamed from: d (int, int, int, int) void
-   public static final void drawLine(int var0, int var1, int var2, int var3) {
+   public static final void d(int var0, int var1, int var2, int var3) {
       graphics.drawLine(var0, var1, var2, var3);
    }
 
-   // $VF: renamed from: a (javax.microedition.lcdui.Image, int, int, int) void
-   public static final void drawImage(Image var0, int var1, int var2, int var3) {
+   public static final void a(Image var0, int var1, int var2, int var3) {
       graphics.drawImage(var0, var1, var2, var3);
    }
 
-   // $VF: renamed from: b (int, int, int, int, int, int) void
-   public static final void fillArc(int var0, int var1, int var2, int var3, int var4, int var5) {
+   public static final void b(int var0, int var1, int var2, int var3, int var4, int var5) {
       graphics.fillArc(var0, var1, var2, var3, var4, var5);
    }
 
-   // $VF: renamed from: c (int, int, int, int, int, int) void
-   public static final void fillTriangle(int var0, int var1, int var2, int var3, int var4, int var5) {
-      graphics.fillTriangle(var0, var1, var2, var3, var4, var5);
-   }
-
-   // $VF: renamed from: d (int, int, int, int, int, int) void
-   public static final void drawArc(int var0, int var1, int var2, int var3, int var4, int var5) {
+   public static final void c(int var0, int var1, int var2, int var3, int var4, int var5) {
       graphics.drawArc(var0, var1, var2, var3, var4, var5);
    }
 
-   static final void d() {
-      if (aU != null) {
+   static final void f() {
+      if (dialogText != null) {
          c(0);
-         E++;
+         P++;
+         if (Actor.bE == 2 && G(131072)) {
+            Actor.bE = 0;
+            dialogText = null;
+            s();
+            a(31);
+            return;
+         }
       } else {
-         l();
+         s();
+         if (Actor.bE == 1) {
+            Actor.b(0, 57, true);
+            Actor.bE = 2;
+         }
       }
    }
 
    static final void a(int var0, boolean var1, int var2) {
-      k = true;
-      int var3 = F - cameraX + 0;
-      int var4 = G - cameraY + 0;
-      if (var1 || !aS) {
-         E++;
+      b(-2013265920);
+      b(0, 0, 240, 320);
+      int var3 = Q - cameraX + 0;
+      int var4 = R - cameraY + 0;
+      if (var1 || !modalActive) {
+         P++;
       }
 
-      if (E <= 5) {
-         int var12 = (var4 << 8) / 5 * E >> 8;
-         directGraphics.setARGBColor(I[var0]);
-         fillRect(var3 - 15, var4 - var12, 30, var12);
-         directGraphics.setARGBColor(J[var0]);
-         fillRect(var3 - 15 - 16, var4 - var12, 16, var12);
-         fillRect(var3 + 15, var4 - var12, 16, var12);
-      } else if (E <= 19 + var2) {
+      if (P <= 8) {
+         int var12 = (var4 << 8) / 8 * P >> 8;
+         b(V[var0]);
+         b(var3 - 15, var4 - var12, 30, var12);
+         b(W[var0]);
+         b(var3 - 15 - 16, var4 - var12, 16, var12);
+         b(var3 + 15, var4 - var12, 16, var12);
+      } else if (P <= 32 + var2) {
          int var9;
-         if ((var9 = (E - 5 - var2 - 1) % 8) > 3) {
+         if ((var9 = (P - 8 + var2 - 1) % 8) > 3) {
             var9 = 7 - var9;
          }
 
-         int var11 = 3840 * var9 / 14 >> 8;
-         int var14 = 2048 * var9 / 14 >> 8;
-         directGraphics.setARGBColor(I[var0]);
-         fillRect(var3 - 15 + var11, 0, (15 - var11) * 2, var4);
-         directGraphics.setARGBColor(J[var0]);
-         fillRect(var3 - 15 - (8 - var14) * 2 + var11, 0, (8 - var14) * 2, var4);
-         fillRect(var3 + 15 - var11, 0, (8 - var14) * 2, var4);
-      } else if (E <= 33 + var2 * 2) {
-         int var8 = E - 19 - 1 - var2 * 2;
-         int var10 = 3840 * var8 / 14 >> 8;
-         int var13 = 2048 * var8 / 14 >> 8;
-         directGraphics.setARGBColor(I[var0]);
-         fillRect(var3 - 15 + var10, 0, (15 - var10) * 2, var4);
-         directGraphics.setARGBColor(J[var0]);
-         fillRect(var3 - 15 - (8 - var13) * 2 + var10, 0, (8 - var13) * 2, var4);
-         fillRect(var3 + 15 - var10, 0, (8 - var13) * 2, var4);
-      } else if (E <= 38 + var2 * 2) {
-         int var5 = E - 33 - var2 * 2;
-         int var6 = (var4 << 8) / 5;
+         int var11 = 3840 * var9 / 24 >> 8;
+         int var14 = 2048 * var9 / 24 >> 8;
+         b(V[var0]);
+         b(var3 - 15 + var11, 0, (15 - var11) * 2, var4);
+         b(W[var0]);
+         b(var3 - 15 - (8 - var14) * 2 + var11, 0, (8 - var14) * 2, var4);
+         b(var3 + 15 - var11, 0, (8 - var14) * 2, var4);
+      } else if (P <= 56 + var2 * 2) {
+         int var8 = P - 32 - 1 + var2 * 2;
+         int var10 = 3840 * var8 / 24 >> 8;
+         int var13 = 2048 * var8 / 24 >> 8;
+         b(V[var0]);
+         b(var3 - 15 + var10, 0, (15 - var10) * 2, var4);
+         b(W[var0]);
+         b(var3 - 15 - (8 - var13) * 2 + var10, 0, (8 - var13) * 2, var4);
+         b(var3 + 15 - var10, 0, (8 - var13) * 2, var4);
+      } else if (P <= 64 + var2 * 2) {
+         int var5 = P - 56 + var2 * 2;
+         int var6 = (var4 << 8) / 8;
          int var7 = var5 * var6 >> 8;
-         directGraphics.setARGBColor(I[var0]);
-         fillRect(var3 - 1, 0, 2, var4 - var7);
-      } else if (var1) {
-         if (aU != null) {
-            aS = false;
-            f(14);
-         } else {
-            l();
-         }
+         b(V[var0]);
+         b(var3 - 1, 0, 2, var4 - var7);
       } else {
-         ci = false;
+         U();
+         if (var1) {
+            if (dialogText != null) {
+               modalActive = false;
+               player.c &= -4097;
+               h(14);
+            } else {
+               s();
+            }
+         } else {
+            dc = false;
+            dd = -1;
+            de = 0;
+         }
       }
    }
 
    public static final void e(int var0, int var1, int var2, int var3) {
-      setColor(0);
-      fillRect(var0, var1, var2, var3);
-      setColor(15244571);
-      drawRect(var0, var1, var2 - 1, var3 - 1);
-      setColor(0);
-      drawRect(var0 + 1, var1 + 1, var2 - 2 - 1, var3 - 2 - 1);
-      setColor(10374921);
-      drawRect(var0 + 2, var1 + 2, var2 - 4 - 1, var3 - 4 - 1);
+      b(-587202560);
+      b(var0, var1, var2, var3);
+      b(15700800);
+      c(var0 + 1, var1, var2 - 3, var3);
+      b(9781250);
+      d(var0, var1 + 1, var0 + var2 - 1, var1 + 1);
+      b(4196354);
+      d(var0, var1 + 3, var0 + var2 - 1, var1 + 3);
    }
 
    public static final void c(int var0) {
       int var1;
-      if ((var1 = E - var0) <= 8) {
+      if ((var1 = P - var0) <= 8) {
          boolean var2 = false;
          boolean var3 = false;
          boolean var4 = false;
          e(120 - 15 * var1, 160 - 20 * var1, 15 * var1 * 2, 4 * var1);
       } else {
-         e(0, 0, 240, 75);
-         font.currentPalette = 0;
-         font.drawWrappedText(graphics, aU, 15, 7, 20, 210, ba, 3);
-         sprites[35].drawAnimationFrame(graphics, 4, stateFrame % 6 >> 1, 228, 63, 0, 0, 0);
-         if (wasKeyPressed(327712) || wasKeyPressed(33024)) {
-            if (bb > 3) {
-               bb -= 3;
-               ba += 3;
-            } else {
-               aU = null;
-               clearInput();
+         e(0, 0, 240, 70);
+         b[33].a(graphics, 23, 0, 0, 0, 0, 0);
+         b[33].a(graphics, 23, 240, 0, 1, 0, 0);
+         b[33].a(graphics, 24, 39, 0, 0, 0, 0);
+         b[33].a(graphics, 24, 201, 0, 1, 0, 0);
+         a.z = 5;
+         a.a(graphics, dialogText, 25, 10, 20, 180, bH, 3);
+         b[33].a(graphics, 6, stateFrame % 6 >> 1, 232, 55, 0, 0, 0);
+         if (G(327712)) {
+            if (bI > 3) {
+               bI -= 3;
+               bH += 3;
+            } else if (Actor.bE != 2) {
+               dialogText = null;
+               N();
             }
          }
       }
 
-      drawSoftkeys("", getString(0, 17));
+      if (Actor.bE != 2) {
+         a("", k(0, 17));
+      }
    }
 
-   public static final void e() {
-      int var0 = K;
-      setClipInternal(0, 0, 240, 320);
+   public static final void g() {
+      int var0 = X;
+      j(0, 0, 240, 320);
       boolean var1 = false;
       boolean var2 = false;
       if (var0 <= 4) {
-         int var3 = aW + (120 - aW) * var0 / 5;
-         int var4 = aX + (37 - aX) * var0 / 5;
+         int var3 = bC + (120 - bC) * var0 / 5;
+         int var4 = bD + (35 - bD) * var0 / 5;
          int var5 = 24 * var0;
          int var6 = 7 * var0;
          e(var3 - var5, var4 - var6, var5 * 2, var6 * 2);
       } else {
-         boolean var7 = aY != -1 && aY <= 2;
-         e(0, 0, 240, 75);
-         if (aZ == 0) {
-            font.drawText(graphics, aV, var7 ? 50 : 5, 7, 20);
-            font.currentPalette = 0;
-            font.drawWrappedText(graphics, aU, var7 ? 50 : 5, 23, 20, var7 ? 175 : 210, ba, 3);
-         } else {
+         boolean var7 = bF != -1 && bF <= 2;
+         e(0, 0, 240, 70);
+         b[33].a(graphics, 24, 0, 0, 0, 0, 0);
+         b[33].a(graphics, 23, 240, 3, 1, 0, 0);
+         b[33].a(graphics, 24, 240, 0, 1, 0, 0);
+         if (bG == 0) {
             if (var7) {
-               sprites[-1].drawFrame(graphics, aY, 237, 4, 1, 0, 0);
+               b[42].a(graphics, bF, 3, 10, 0, 0, 0);
             }
 
-            font.drawText(graphics, aV, 5, 7, 20);
-            font.currentPalette = 0;
-            font.drawWrappedText(graphics, aU, 5, 23, 20, var7 ? 175 : 210, ba, 3);
+            a.a(graphics, bA, var7 ? 55 : 5, 10, 20);
+            a.z = 5;
+            a.a(graphics, dialogText, var7 ? 55 : 5, 23, 20, var7 ? 175 : 180, bH, 2);
+         } else {
+            if (var7) {
+               b[42].a(graphics, bF, 237, 10, 1, 0, 0);
+            }
+
+            a.a(graphics, bA, 15, 10, 20);
+            a.z = 5;
+            a.a(graphics, dialogText, 15, 23, 20, var7 ? 175 : 180, bH, 2);
          }
 
-         sprites[35].drawAnimationFrame(graphics, 4, stateFrame % 6 >> 1, aZ == 0 ? 230 : 190, 63, 0, 0, 0);
+         b[33].a(graphics, 6, stateFrame % 6 >> 1, bG == 0 ? 230 : 190, 55, 0, 0, 0);
       }
 
-      K++;
-      if (state != 14 && (wasKeyPressed(327712) || wasKeyPressed(33024))) {
-         if (bb > 3) {
-            bb -= 3;
-            ba += 3;
+      X++;
+      if (state != 14 && G(327712)) {
+         if (bI > 2) {
+            bI -= 2;
+            bH += 2;
             return;
          }
 
-         aU = null;
-         l();
-         clearInput();
+         dialogText = null;
+         s();
+         N();
+      }
+   }
+
+   public static final void h() {
+      int var0 = 320 - bE - 2;
+      e(0, var0, 240, bE);
+      b[33].a(graphics, 23, 0, var0, 0, 0, 0);
+      b[33].a(graphics, 23, 240, var0, 1, 0, 0);
+      b[33].a(graphics, 24, 39, var0, 0, 0, 0);
+      b[33].a(graphics, 24, 201, var0, 1, 0, 0);
+      a.z = 5;
+      a.a(graphics, dialogText, 120, bB, 3, 180, 0, -1);
+   }
+
+   static final void i() {
+      int var0 = 0;
+      if (Y <= 10) {
+         b(var0 = 0xFF000000 & 1677721 * Y << 8);
+         b(0, 0, 240, 320);
+      } else if (Y <= 100) {
+         b(0);
+         b(0, 0, 240, 320);
+         if (Y <= 30) {
+            var0 = 838860 * (Y - 10) >> 16;
+         } else if (Y > 80) {
+            var0 = 256 - (838860 * (Y - 80) >> 16);
+         }
+
+         if (Y <= 30 || Y > 80) {
+            a.t = true;
+            a.K = var0;
+         }
+
+         a.z = 5;
+         a.a(graphics, fr[12][15], 120, 120, 17, 175, 0, -1);
+         a.t = false;
+      } else {
+         b(0);
+         b(0, 0, 240, 320);
+         aC();
+         a(6);
+         bs = 160;
+         br = 0;
+      }
+
+      Y++;
+   }
+
+   static final void j() {
+      int var0;
+      b(var0 = 16777215 | 3276 * Y << 16);
+      b(0, 0, 240, 320);
+      Y++;
+      if (Y == 20) {
+         s();
+         c(false);
+         dc = false;
+         dd = -1;
+         de = 0;
+      }
+   }
+
+   static final void a(int var0, int var1, int var2, int var3, int var4) {
+      for (int var5 = 0; var5 < var0; var5++) {
+         b(Z[var5 >> 1]);
+         c(var1 - var5, var2 - var5, var3 + 2 * var5, var4 + 2 * var5, 0, 360);
+      }
+   }
+
+   static final void k() {
+      if (U >= 240) {
+         player.A();
+      } else {
+         U += 30;
+         b(60928 - 54 * U << 16 & 0xFF000000);
+         int var2 = S - 0 - U;
+         int var3 = T - 0 - U;
+         int var4 = 0 + 2 * U;
+         int var5 = 0 + 2 * U;
+         b(var2, var3, var4, var5, 0, 360);
+         player.v();
+         int var6 = U / 3;
+
+         for (int var9 = 0; var9 < 20; var9++) {
+            int var8 = i(0, var6 >> 2);
+            int var7 = var6 + var8;
+            b(-9150);
+            b(S - var7, T - var7, var7 * 2, var7 * 2, 360 * var9 / 20 + 9, 2);
+         }
       }
    }
 
    public static final void f(int var0, int var1, int var2, int var3) {
-      if (H >= 0) {
-         if (H <= 240) {
-            H += var3;
-            int var15 = 240 - H;
-            int var6 = 60928 - 54 * H << 16 & 0xFF000000;
-            directGraphics.setARGBColor(var6);
-            int var7 = var1 - var15;
-            int var8 = var2 - var15;
-            int var9 = 0 + 2 * var15;
-            int var10 = 0 + 2 * var15;
+      if (U >= 0) {
+         if (U <= 240) {
+            U += var3;
+            int var16 = 240 - U;
+            b(60928 - 54 * U << 16 & 0xFF000000);
+            int var7 = var1 - var16;
+            int var8 = var2 - var16;
+            int var9 = 0 + 2 * var16;
+            int var10 = 0 + 2 * var16;
             if (var0 >= 0 && var0 <= 2) {
-               fillArc(var7, var8, var9, var10, 0, 360);
+               b(var7, var8, var9, var10, 0, 360);
             }
 
-            int var11 = var15 >> 2;
+            int var11 = var16 >> 2;
             if (var0 != 4 && var0 != 1) {
-               directGraphics.setARGBColor(-9150);
+               b(16768066);
             } else {
-               directGraphics.setARGBColor(-10895105);
+               b(5882111);
             }
 
-            setClip(0, 0, 240, 320);
+            a(0, 0, 240, 320);
 
             for (int var14 = 0; var14 < 20; var14++) {
-               int var12 = randomRange(0, var11 >> 1);
+               int var12 = i(0, var11 >> 1);
                int var13 = var11 + var12;
-               fillArc(var1 - var13, var2 - var13, var13 * 2, var13 * 2, 360 * var14 / 20 + 9, 2);
+               b(var1 - var13, var2 - var13, var13 * 2, var13 * 2, 360 * var14 / 20 + 9, 2);
             }
 
-            setClip(0, 0, 240, 320);
+            a(0, 0, 240, 320);
          } else {
-            if (var0 == 3) {
-               if (Actor.spendMagic(Actor.bR[Actor.bO[Actor.activeWeapon]])) {
-                  Actor.cA = 0;
-                  Actor.cC = 2;
-                  player.setAnimationImmediate(16);
-                  Actor.aN = Actor.bQ[Actor.bO[0]];
-                  Actor.aM = new Actor[Actor.aN];
+            if (var0 == 0) {
+               if (player.animationId == 38) {
+                  player.a(39, 17, 9, player.facingLeft ? -30 : 30, -20, 302, false);
+               }
 
-                  for (int var4 = 0; var4 < Actor.aN; var4++) {
-                     Actor.aM[var4] = player.spawnActor(39, 1, 16, 0, -22, 302, false);
-                     Actor.aM[var4].flags |= 4096;
-                     Actor.aM[var4].ax = var4;
-                     Actor.aM[var4].aw = 600;
-                     Actor.aM[var4].au = 0;
-                     Actor.aM[var4].as = Actor.bO[Actor.activeWeapon];
-                     Actor.aM[var4].at = 0;
-                     Actor.aM[var4].W();
-                     Actor.aM[var4].flags |= 16;
+               s();
+            } else if (var0 == 1) {
+               if (player.animationId == 44) {
+                  if (Actor.ba == null) {
+                     Actor.ba = new Actor[4];
+                  }
+
+                  if (Actor.ba[0] != null) {
+                     Actor.ba[3] = Actor.ba[0];
+                     Actor.ba[0] = null;
+                     if (Actor.ba[3].animationId == 18 || Actor.ba[3].animationId == 19 || Actor.ba[3].animationId == 20) {
+                        Actor.ba[3].a(21);
+                     }
+                  }
+
+                  Actor.ba[0] = player.a(39, 17, 17, !player.facingLeft ? 10 : -10, -48, 302, false);
+                  Actor.ba[0].G = Actor.ba[0].facingLeft ? -2560 : 2560;
+                  Actor.ba[0].an();
+               }
+
+               s();
+            } else if (var0 == 2) {
+               player.a(39, 17, 67, player.facingLeft ? -30 : 30, -30, 302, false);
+               s();
+            } else if (var0 == 3) {
+               if (Actor.e(Actor.co[Actor.cl[Actor.ch]])) {
+                  Actor.eu = 0;
+                  Actor.ew = 2;
+                  player.b(24);
+                  Actor.aW = Actor.cn[Actor.cl[0]];
+                  Actor.aV = new Actor[Actor.aW];
+
+                  for (int var4 = 0; var4 < Actor.aW; var4++) {
+                     Actor.aV[var4] = player.a(39, 17, 35, 0, -22, 302, false);
+                     Actor.aV[var4].c |= 4096;
+                     Actor.aV[var4].aB = var4;
+                     Actor.aV[var4].aA = 600;
+                     Actor.aV[var4].ay = 0;
+                     Actor.aV[var4].aw = Actor.cl[Actor.ch];
+                     Actor.aV[var4].ax = 0;
+                     Actor.aV[var4].an();
                   }
                }
 
-               if (bc != 14) {
-                  l();
+               if (bJ != 14) {
+                  s();
                }
             } else if (var0 == 4) {
-               Actor.cA = 1;
-               Actor.cC = 2;
-               if (Actor.spendMagic(Actor.bR[Actor.bO[Actor.activeWeapon]])) {
-                  player.setAnimationImmediate(22);
-                  if (Actor.aR == null) {
-                     Actor.aR = new Actor[2];
+               Actor.eu = 1;
+               Actor.ew = 2;
+               if (Actor.e(Actor.co[Actor.cl[Actor.ch]])) {
+                  player.b(32);
+                  if (Actor.ba == null) {
+                     Actor.ba = new Actor[4];
                   }
 
-                  if (Actor.aR[0] != null) {
-                     Actor.aR[1] = Actor.aR[0];
-                     if (Actor.aR[1].animationId == 8 || Actor.aR[1].animationId == 9 || Actor.aR[1].animationId == 10) {
-                        Actor.aR[1].requestAnimation(10);
+                  if (Actor.ba[0] != null) {
+                     Actor.ba[3] = Actor.ba[0];
+                     if (Actor.ba[3].animationId == 18 || Actor.ba[3].animationId == 19 || Actor.ba[3].animationId == 20) {
+                        Actor.ba[3].a(21);
                      }
-
-                     Actor.aR[1].aw = 1000;
                   }
 
-                  Actor.aR[0] = player.spawnActor(39, 1, 7, player.facingLeft ? 10 : -10, -50, 302, false);
-                  Actor.aR[0].flags |= 16;
-                  Actor.aR[0].velocityX = Actor.aR[0].facingLeft ? -2560 : 2560;
-                  Actor.aR[0].W();
+                  if (Actor.cl[Actor.ch] == 1) {
+                     int var15 = !player.facingLeft ? 10 : -10;
+                     Actor.ba[0] = player.a(39, 17, 16, var15, -50, 302, false);
+                     Actor.ba[1] = player.a(39, 17, 16, -var15, -70, 302, false);
+                     Actor.ba[2] = player.a(39, 17, 16, -var15, -30, 302, false);
+
+                     for (int var5 = 0; var5 < 3; var5++) {
+                        Actor.ba[var5].c |= 16;
+                        Actor.ba[var5].G = Actor.ba[var5].facingLeft ? -2560 : 2560;
+                        Actor.ba[var5].an();
+                     }
+                  } else {
+                     Actor.ba[0] = player.a(39, 17, Actor.cl[Actor.ch] == 2 ? 17 : 16, player.facingLeft ? -10 : 10, -50, 302, false);
+                     Actor.ba[0].c |= 16;
+                     Actor.ba[0].G = Actor.ba[0].facingLeft ? -2560 : 2560;
+                     Actor.ba[0].an();
+                  }
                }
 
-               l();
+               s();
             }
 
-            H = -1;
+            U = -1;
          }
       }
    }
 
    public static final void a(int var0, int var1, int var2) {
-      int var3 = 100 * (450 - Actor.weaponSwitchCooldownMs) / 450;
+      int var3 = 100 * (450 - Actor.bb) / 450;
       int var4 = 0;
       if (var0 == 1) {
          var4 = 5882111;
@@ -1311,196 +2215,188 @@ final class Game extends FullCanvas implements Runnable {
          var4 = 16768066;
       }
 
-      if (Actor.weaponSwitchCooldownMs > 225) {
-         var4 |= 255 * (450 - Actor.weaponSwitchCooldownMs) / 225 << 24;
-      } else {
-         var4 |= 255 * (Actor.weaponSwitchCooldownMs - 225) / 225 << 24;
-      }
-
-      directGraphics.setARGBColor(var4);
+      graphics.setColor(var4);
 
       for (int var7 = 0; var7 < 20; var7++) {
-         int var5 = randomRange(0, var3 >> 1);
+         int var5 = i(0, var3 >> 1);
          int var6 = var3 + var5;
-         fillArc(var1 - var6, var2 - var6, var6 * 2, var6 * 2, 360 * var7 / 20 + 9, 2);
+         b(var1 - var6, var2 - var6, var6 * 2, var6 * 2, 360 * var7 / 20 + 9, 2);
       }
    }
 
-   // $VF: renamed from: K () void
-   private static void initializeCamera() {
-      if (activeCameraControllerUid == -1 || levelModes[levelIndex] != 2) {
-         cameraY = 0;
-         cameraX = 0;
-         cameraTargetY = 0;
-         cameraTargetX = 0;
-         Q = 0;
-         P = 0;
-         Z = false;
-         V = 0;
-         updateCamera(1);
+   private static void aa() {
+      if (aB == -1 || be[levelIndex] != 2) {
+         if (aB == -1 || levelIndex != 9) {
+            cameraY = 0;
+            cameraX = 0;
+            ad = 0;
+            ac = 0;
+            af = 0;
+            ae = 0;
+            ao = false;
+            ak = 0;
+            d(1);
+         }
       }
    }
 
-   // $VF: renamed from: d (int) void
-   public static final void updateCamera(int var0) {
+   public static final void d(int var0) {
       boolean var1 = false;
       if (hasActiveBackgroundScript()) {
          var1 = true;
       }
 
-      if (player != null) {
-         ac = false;
-         ad = false;
-         ae = false;
-         ag = false;
-         af = false;
-         if (activeCameraControllerUid == -1 && !var1 && au != null) {
-            if (cameraX + 240 > au.collisionBounds[2]) {
-               ae = true;
-               ac = true;
+      if (player != null && bJ != 18 && bJ != 17) {
+         ar = false;
+         as = false;
+         at = false;
+         av = false;
+         au = false;
+         if (aB == -1 && !var1 && aJ != null) {
+            if (cameraX + 240 > aJ.collisionBounds[2]) {
+               at = true;
+               ar = true;
             }
 
-            if (cameraX < au.collisionBounds[0]) {
-               ad = true;
-               ac = true;
+            if (cameraX < aJ.collisionBounds[0]) {
+               as = true;
+               ar = true;
             }
 
-            if (cameraY + 320 > au.collisionBounds[3]) {
-               ag = true;
-               ac = true;
+            if (cameraY + 320 > aJ.collisionBounds[3]) {
+               av = true;
+               ar = true;
             }
 
-            if (cameraY < au.collisionBounds[1]) {
-               af = true;
-               ac = true;
+            if (cameraY < aJ.collisionBounds[1]) {
+               au = true;
+               ar = true;
             }
          }
 
-         if (ac) {
-            if (!ai) {
-               if (shakeYTicks == 0) {
-                  cameraTargetY = player.positionY - 220;
+         if (ar) {
+            if (!ax) {
+               if (aN == 0) {
+                  ad = player.positionY - 220;
                }
             } else {
-               cameraTargetY = player.positionY - 220;
-               if (!af && !ag) {
-                  if (player.velocityX >= 0 && (player.velocityX != 0 || !player.facingLeft)) {
-                     cameraTargetX = R;
+               ad = player.positionY - 220;
+               if (!au && !av) {
+                  if (player.G >= 0 && (player.G != 0 || !player.facingLeft)) {
+                     ac = regionLeft;
                   } else {
-                     cameraTargetX = S - 240;
+                     ac = regionRight - 240;
                   }
-               } else if (af) {
-                  cameraTargetY = T;
+               } else if (au) {
+                  ad = ai;
                } else {
-                  cameraTargetY = U - 320;
+                  ad = aj - 320;
                }
 
-               ah = true;
+               aw = true;
             }
 
-            ap = cameraTargetY + 100;
-            if (ad || ae) {
-               cameraX = cameraTargetX;
+            aE = ad + 100;
+            if (as || at) {
+               cameraX = ac;
             }
 
-            if (af || ag) {
-               cameraY = cameraTargetY;
+            if (au || av) {
+               cameraY = ad;
             }
 
-            if (shakeYTicks <= 0 && shakeXTicks <= 0) {
-               applyCameraConstraints();
+            if (aN <= 0 && aO <= 0) {
+               n();
             }
          } else {
-            ah = false;
+            aw = false;
          }
 
-         if (!Z && !var1) {
+         if (!ao && !var1) {
             boolean var2 = false;
             int var3 = 0;
             boolean var4 = false;
             boolean var5 = false;
-            if (ah) {
+            if (aw) {
                var3 = 1;
                var4 = true;
             }
 
-            if (activeCameraControllerUid != -1) {
-               if (cameraControllerMode == 0 || cameraControllerMode == 3 || cameraControllerMode >= 4 && cameraScrollHorizontal) {
+            if (aB != -1) {
+               if (az == 0 || az == 3 || az >= 4 && aD) {
                   var3 = 1;
                }
 
-               if (levelIndex != 3) {
-                  var4 = true;
-               }
+               var4 = true;
             }
 
             if (levelIndex == 9) {
-               if (activeCameraControllerUid != -1 && cameraControllerMode >= 4 && cameraScrollHorizontal) {
+               if (aB != -1 && az >= 4 && aD) {
                   var3 = 1;
                   var4 = false;
                }
 
-               if (activeCameraControllerUid != -1 && cameraControllerMode >= 4 && (!cameraScrollHorizontal || al)) {
+               if (aB != -1 && az >= 4 && (!aD || aA)) {
                   var3 = 1;
                   var4 = true;
-                  al = false;
+                  aA = false;
                }
             }
 
             if (var3 == 0) {
-               cameraTargetX = player.facingLeft ? player.positionX - 160 : player.positionX - 80;
-               Y = X;
-               X = 0;
-               if (!player.grounded && Actor.playerPlatform == null) {
-                  if (Math.abs(cameraTargetX - cameraX) <= 0) {
-                     if (Y != 2) {
-                        X = 1;
+               ac = player.facingLeft ? player.positionX - 160 : player.positionX - 80;
+               an = am;
+               am = 0;
+               if (!player.bL && Actor.aT == null) {
+                  if (Math.abs(ac - cameraX) <= 0) {
+                     if (an != 2) {
+                        am = 1;
                      } else {
-                        X = 2;
+                        am = 2;
                      }
                   } else {
-                     X = 2;
+                     am = 2;
                   }
                }
             }
 
             if (!var4) {
-               aq = -1;
-               player.refreshBounds();
-               if (player.collisionBounds[1] <= ap) {
-                  aq = 0;
+               aF = -1;
+               player.g();
+               if (player.collisionBounds[1] <= aE) {
+                  aF = 0;
                }
 
-               if (player.positionY >= ap + 120) {
-                  aq = 1;
+               if (player.positionY >= aE + 90) {
+                  aF = 1;
                }
 
-               if ((player.velocityY < 0 || player.c(true) || Actor.playerPlatform != null || player.bU) && aq == 0
-                  || (player.velocityY > 0 || player.c(false) || Actor.playerPlatform != null || player.bU) && aq == 1) {
-                  if (aq == 0) {
-                     ap = player.collisionBounds[1];
+               if ((player.H < 0 || player.d(true) || Actor.aT != null || player.cI) && aF == 0
+                  || (player.H > 0 || player.d(false) || Actor.aT != null || player.cI) && aF == 1) {
+                  if (aF == 0) {
+                     aE = player.collisionBounds[1];
                   } else {
-                     ap = player.collisionBounds[3] - 120;
+                     aE = player.collisionBounds[3] - 90;
                   }
 
-                  cameraTargetY = ap - 100;
+                  ad = aE - 100;
                }
             }
 
-            V = 20;
-            if ((var0 & 1) == 0 || activeCameraControllerUid != -1 && levelModes[levelIndex] == 2) {
-               if (Actor.W && W != 1 && activeCameraControllerUid == -1) {
+            ak = 14;
+            if ((var0 & 1) == 0 || aB != -1 && be[levelIndex] == 2 || aB != -1 && levelIndex == 9) {
+               if (Actor.W && al != 1 && aB == -1) {
                   if (Actor.X == 1) {
                      if (Math.abs((var3 = player.facingLeft ? player.positionX - 160 : player.positionX - 80) - cameraX) < 40) {
-                        if (cameraTargetX != var3) {
-                           cameraTargetX = var3;
+                        if (ac != var3) {
+                           ac = var3;
                            Actor.Y = 0;
                         } else {
                            Actor.X++;
                            Actor.W = false;
                         }
                      } else if (Math.abs(cameraX - player.positionX + 120) > 2) {
-                        cameraTargetX = player.positionX - 120;
+                        ac = player.positionX - 120;
                         Actor.Y = 1;
                      } else {
                         Actor.X++;
@@ -1509,7 +2405,7 @@ final class Game extends FullCanvas implements Runnable {
                   } else if (Actor.X == 3) {
                      var3 = player.facingLeft ? player.positionX - 160 : player.positionX - 80;
                      if (Math.abs(cameraX - var3) > 2) {
-                        cameraTargetX = var3;
+                        ac = var3;
                         Actor.Y = 2;
                      } else {
                         Actor.X++;
@@ -1522,157 +2418,158 @@ final class Game extends FullCanvas implements Runnable {
                   }
                }
 
-               if (player.velocityX == 0 && (var0 & 4) == 0 && Actor.playerPlatform == null && !player.bU && activeCameraControllerUid == -1 && !ab && !Actor.W
-                  )
-                {
-                  P = 0;
-               } else if (Actor.W && activeCameraControllerUid == -1) {
-                  P = j(P, cameraTargetX - cameraX, at[Actor.Y], at[Actor.Y + 3]);
-               } else if (X == 2) {
-                  P = j(P, cameraTargetX - cameraX, 12, 2);
-               } else {
-                  P = j(P, cameraTargetX - cameraX, V, 2);
-               }
-
-               if (X == 1 || X == 0 && Y == 1) {
-                  P = 0;
-               }
-
-               Q = j(Q, cameraTargetY - cameraY, 32, 2);
-               if (activeCameraControllerUid != -1 && cameraControllerMode == 1) {
-                  Q = j(Q, cameraTargetY - cameraY, 40, 15);
-               }
-
-               if (!ah && !Actor.cu) {
-                  cameraX = cameraX + P;
-               }
-
-               cameraY = cameraY + Q;
-               if (activeCameraControllerUid != -1 && cameraControllerMode >= 4) {
-                  if (cameraScrollHorizontal) {
-                     cameraX = cameraTargetX;
+               if (player.G != 0
+                  || (var0 & 4) != 0
+                  || Actor.aT != null
+                  || player.cI
+                  || aB != -1
+                  || aq
+                  || Actor.W
+                  || player.aq == 1 && Actor.ar == 2 && Actor.cv == 70) {
+                  if (Actor.W && aB == -1) {
+                     ae = k(ae, ac - cameraX, aI[Actor.Y], aI[Actor.Y + 3]);
+                  } else if (am == 2) {
+                     ae = k(ae, ac - cameraX, 12, 2);
                   } else {
-                     cameraY = cameraTargetY;
+                     ae = k(ae, ac - cameraX, ak, 2);
+                  }
+               } else {
+                  ae = 0;
+               }
+
+               if (am == 1 || am == 0 && an == 1) {
+                  ae = 0;
+               }
+
+               af = k(af, ad - cameraY, 32, 2);
+               if (aB != -1 && az == 1) {
+                  af = k(af, ad - cameraY, 40, 15);
+               }
+
+               if (!aw && !Actor.en) {
+                  cameraX = cameraX + ae;
+               }
+
+               cameraY = cameraY + af;
+               if (aB != -1 && az >= 4) {
+                  if (aD) {
+                     cameraX = ac;
+                  } else {
+                     cameraY = ad;
                   }
                }
             } else {
-               cameraTargetX = player.facingLeft ? player.positionX - 160 : player.positionX - 80;
-               if (cameraTargetX < 0) {
-                  cameraTargetX = 0;
+               ac = player.facingLeft ? player.positionX - 160 : player.positionX - 80;
+               if (ac < 0) {
+                  ac = 0;
                }
 
-               if (levelModes[levelIndex] == 3 && levelIndex != 9) {
-                  cameraTargetY = 0;
+               if (be[levelIndex] == 3 && levelIndex != 9) {
+                  ad = 0;
                } else {
-                  cameraTargetY = player.positionY - 220;
+                  ad = player.positionY - 220;
                }
 
-               if (cameraTargetY + 320 > levelPixelHeight) {
-                  cameraTargetY = levelPixelHeight - 320;
+               if (ad + 320 > cB) {
+                  ad = cB - 320;
                }
 
-               if (cameraTargetY < 0) {
-                  cameraTargetY = 0;
+               if (ad < 0) {
+                  ad = 0;
                }
 
-               if (as == 0) {
-                  cameraY = cameraTargetY;
-                  cameraX = cameraTargetX;
-                  P = 0;
-                  Q = 0;
+               if (aH == 0) {
+                  cameraY = ad;
+                  cameraX = ac;
+                  ae = 0;
+                  af = 0;
                } else {
-                  P = j(P, cameraTargetX - cameraX, V, 2);
-                  Q = j(Q, cameraTargetY - cameraY, 32, 2);
+                  ae = k(ae, ac - cameraX, ak, 2);
+                  af = k(af, ad - cameraY, 32, 2);
                }
 
-               ap = cameraTargetY + 100;
+               aE = ad + 100;
             }
          }
 
-         if (Actor.godMode && Actor.bH) {
+         if (Actor.aP && Actor.bR) {
             cameraX = player.positionX - 120;
             cameraY = player.positionY - 160;
          }
 
          if (var1) {
-            applyShakeAndClampCamera();
+            ab();
          } else {
-            if ((var0 & 1) == 0 || as == 1 || ai) {
-               applyCameraConstraints();
-               as = 0;
-            } else if (shakeXTicks <= 0 && shakeYTicks <= 0 && au != null) {
-               clampCameraToScriptBounds();
+            if ((var0 & 1) == 0 || aH == 1 || ax) {
+               n();
+               aH = 0;
             }
 
-            updateViewBounds();
+            l();
          }
       }
    }
 
-   // $VF: renamed from: f () void
-   public static final void updateViewBounds() {
+   public static final void l() {
       viewBounds[0] = cameraX;
       viewBounds[1] = cameraY;
       viewBounds[2] = cameraX + 240;
       viewBounds[3] = cameraY + 320;
    }
 
-   // $VF: renamed from: g () void
-   public static final void clampCameraToScriptBounds() {
-      if (R > 0 && cameraX < R) {
-         cameraX = R;
-      } else if (S > 0 && cameraX > S - 240) {
-         cameraX = S - 240;
+   public static final void m() {
+      if (regionLeft > 0 && cameraX < regionLeft) {
+         cameraX = regionLeft;
+      } else if (regionRight > 0 && cameraX > regionRight - 240) {
+         cameraX = regionRight - 240;
       }
 
-      if (T > 0 && cameraY < T) {
-         cameraY = T;
+      if (ai > 0 && cameraY < ai) {
+         cameraY = ai;
       } else {
-         if (U > 0 && cameraY > U - 320) {
-            cameraY = U - 320;
+         if (aj > 0 && cameraY > aj - 320) {
+            cameraY = aj - 320;
          }
       }
    }
 
-   // $VF: renamed from: h () void
-   public static final void applyCameraConstraints() {
-      clampCameraToScriptBounds();
-      applyShakeAndClampCamera();
-      if (player.positionX - 80 <= R && player.velocityX > 0 && activeCameraControllerUid == -1 && shakeYTicks <= 0) {
-         cameraX = R;
+   public static final void n() {
+      m();
+      ab();
+      if (player.positionX - 80 <= regionLeft && player.G > 0 && aB == -1 && aN <= 0) {
+         cameraX = regionLeft;
       } else {
-         if (player.positionX + 80 > S && player.velocityX < 0 && activeCameraControllerUid == -1 && shakeYTicks <= 0) {
-            cameraX = S - 240;
+         if (player.positionX + 80 > regionRight && player.G < 0 && aB == -1 && aN <= 0) {
+            cameraX = regionRight - 240;
          }
       }
    }
 
-   // $VF: renamed from: L () void
-   private static void applyShakeAndClampCamera() {
-      if (shakeXTicks > 0) {
+   private static void ab() {
+      if (aO > 0) {
          int var0;
-         var0 = (var0 = shakeXTicks / 2) + shakeXTicks % 2;
-         if ((shakeXTicks & 1) != 0) {
+         var0 = (var0 = aO / 2) + aO % 2;
+         if ((aO & 1) != 0) {
             var0 = -var0;
          }
 
          cameraX += var0;
-         shakeXTicks--;
+         aO--;
       }
 
-      if (shakeYTicks > 0) {
+      if (aN > 0) {
          int var2;
-         if ((var2 = shakeYTicks / 2) > 10) {
+         if ((var2 = aN / 2) > 10) {
             var2 = 10;
          }
 
-         var2 += shakeXTicks % 2;
-         if ((shakeYTicks & 1) != 0) {
+         var2 += aO % 2;
+         if ((aN & 1) != 0) {
             var2 = -var2;
          }
 
          cameraY += var2;
-         shakeYTicks--;
+         aN--;
       }
 
       if (cameraX < 0) {
@@ -1684,13 +2581,13 @@ final class Game extends FullCanvas implements Runnable {
       if (cameraY < 0) {
          cameraY = 0;
       } else {
-         if (cameraY > levelPixelHeight - 320) {
-            cameraY = levelPixelHeight - 320;
+         if (cameraY > cB - 320) {
+            cameraY = cB - 320;
          }
       }
    }
 
-   private static int j(int var0, int var1, int var2, int var3) {
+   private static int k(int var0, int var1, int var2, int var3) {
       if (var1 < 0) {
          var0 -= var3;
       } else {
@@ -1712,146 +2609,205 @@ final class Game extends FullCanvas implements Runnable {
    }
 
    public static final void a(Actor var0) {
-      ai = false;
-      if (au != var0) {
-         aN = 160;
-         aM = 0;
-         av = au;
-         au = var0;
-         ai = true;
-         aw = 7;
-         ax = 34;
-         ay = 2;
-         cR = au.aw == 4;
-         ar = 1;
-         var0.refreshBounds();
+      boolean var1 = false;
+      ax = false;
+      if (aJ != var0) {
+         bs = 160;
+         br = 0;
+         aK = aJ;
+         aJ = var0;
+         ax = true;
+         dS = aJ.aA == 4;
+         bo = var0.aB;
+         aG = 1;
+         var0.g();
       }
    }
 
-   static final void i() {
-      while (aA > 0) {
-         int var0 = az[aA--];
-         collisionTiles[var0] = (byte)az[aA--];
+   static final void o() {
+      while (aM > 0) {
+         int var0 = aL[aM--];
+         fj[var0] = (byte)aL[aM--];
       }
    }
 
-   // $VF: renamed from: e (int) void
-   static final void startVerticalShake(int var0) {
-      if (shakeYTicks <= 0) {
+   static final void e(int var0) {
+      if (aN <= 0) {
          if (var0 > 0) {
-            shakeYTicks = var0;
+            aN = var0;
             return;
          }
 
-         shakeYTicks = -var0;
+         aN = -var0;
       }
    }
 
-   // $VF: renamed from: a (int, int) void
-   static final void startCameraShake(int var0, int var1) {
+   static final void a(int var0, int var1) {
       var0 = var0 >> 1 << 1;
-      if (shakeXTicks <= 0) {
+      if (aO <= 0) {
          if (var0 > 0) {
-            shakeXTicks = var0;
+            aO = var0;
          } else {
-            shakeXTicks = -var0;
+            aO = -var0;
          }
       }
 
-      if (shakeYTicks <= 0) {
+      if (aN <= 0) {
          if (var1 > 0) {
-            shakeYTicks = var1;
+            aN = var1;
             return;
          }
 
-         shakeYTicks = -var1;
+         aN = -var1;
       }
    }
 
-   // $VF: renamed from: a (java.lang.String, java.lang.String) void
-   static final void drawSoftkeys(String var0, String var1) {
-      drawSoftkeyBar(var0, var1, false);
+   static final void a(String var0, String var1) {
+      a(var0, var1, false);
    }
 
-   // $VF: renamed from: a (java.lang.String, java.lang.String, boolean) void
-   static final void drawSoftkeyBar(String var0, String var1, boolean var2) {
+   static final void a(String var0, String var1, boolean var2) {
       String var3 = var0;
       var0 = var1;
       var1 = var3;
       if (!var2) {
          boolean var4 = false;
-         setClip(0, 296, 240, 24);
-         setColor(0);
-         fillRect(0, 296, 240, 24);
-         setColor(15692292);
-         drawRect(0, 296, 239, 22);
+         a(0, 300, 240, 20);
+         if (!eO) {
+            b(0);
+         }
+
+         b(15692292);
       } else {
-         setClip(0, 296, 240, 24);
-         setColor(0);
-         fillRect(0, 296, 240, 24);
+         a(0, 300, 240, 20);
+         b(0);
+         b(0, 300, 240, 20);
       }
 
-      font.currentPalette = 0;
+      a.z = 0;
       if (var0 != null && var0 != "") {
-         font.drawText(graphics, var0, 2, 304, 20);
+         b[33].a(graphics, 72, 71, 300, 1, 0, 0);
+         if (aS) {
+            b[33].a(graphics, 8, stateFrame % 4, 1, 300, 0, 0, 0);
+            if (stateFrame % 4 == 3) {
+               aS = false;
+               aQ = true;
+               cT = true;
+            } else {
+               cT = false;
+            }
+         }
+
+         a.a(graphics, var0, 18, 305, 20);
       }
 
       if (var1 != null && var1 != "") {
-         font.drawText(graphics, var1, 238, 304, 24);
+         b[33].a(graphics, 65, 240, 300, 1, 0, 0);
+         if (aR) {
+            b[33].a(graphics, 8, stateFrame % 4, 172, 300, 0, 0, 0);
+            if (stateFrame % 4 == 3) {
+               aR = false;
+               aP = true;
+               cT = true;
+            } else {
+               cT = false;
+            }
+         }
+
+         a.a(graphics, var1, 222, 305, 24);
       }
    }
 
-   // $VF: renamed from: M () void
-   private static void drawConfirmation() {
-      directGraphics.setARGBColor(-2013265920);
-      setClip(0, 0, 240, 320);
-      fillRect(0, 0, 240, 320);
+   private static void ac() {
+      b(-2013265920);
+      a(0, 0, 240, 320);
+      b(0, 0, 240, 320);
       e(0, 100, 240, 100);
-      font.currentPalette = 0;
-      switch (confirmationKind) {
+      b[33].a(graphics, 23, 0, 100, 0, 0, 0);
+      b[33].a(graphics, 23, 242, 100, 1, 0, 0);
+      b[33].a(graphics, 24, 0, 100, 0, 0, 0);
+      b[33].a(graphics, 24, 242, 100, 1, 0, 0);
+      a.z = 5;
+      switch (aU) {
+         case 0:
+         case 1:
+         case 2:
+         case 3:
+            String var0 = k(0, 87 + aU);
+            int var1 = c(aW, aV);
+            if (aU == 0) {
+               var0 = " " + k(0, 87);
+            }
+
+            if (aU == 1) {
+               var0 = " " + k(0, 113);
+            }
+
+            if (aU == 2) {
+               var0 = " " + k(0, 89);
+            }
+
+            if (aU == 3) {
+               var0 = " " + k(0, 112);
+            }
+
+            char var2 = (char)(var1 + 1 + 48);
+            var0 = var0.replace('#', var2);
+            a.a(graphics, var0, 120, 150, 3, 210, 0, -1);
+            break;
+         case 4:
+            a.a(graphics, k(0, 86), 120, 150, 3, 210, 0, -1);
+            break;
+         case 5:
+            a.a(graphics, k(0, 95), 120, 150, 3, 210, 0, -1);
+            break;
          case 6:
-            font.drawWrappedText(graphics, getString(0, 14), 120, 150, 3, 210, 0, -1);
+            a.a(graphics, k(0, 14), 120, 150, 3, 210, 0, -1);
             break;
          case 7:
-            font.drawWrappedText(graphics, getString(0, 38), 120, 150, 3, 210, 0, -1);
+            a.a(graphics, k(0, 37), 120, 150, 3, 210, 0, -1);
       }
 
-      drawSoftkeys(getString(0, 16), getString(0, 15));
+      if (aU == 4) {
+         a(k(0, 18), "");
+      } else {
+         a(k(0, 16), k(0, 15));
+      }
    }
 
-   // $VF: renamed from: N () void
-   private static void updateLogoLoading() throws Exception {
-      setClip(0, 0, 240, 320);
-      setColor(16777215);
-      fillRect(0, 0, 240, 320);
+   private static void ad() throws Exception {
+      a(0, 0, 240, 320);
+      b(16777215);
+      b(0, 0, 240, 320);
 
       try {
-         if (stateFrame == 1 && logoImage == null) {
-            logoImage = Image.createImage("/logo.png");
+         if (stateFrame == 1 && eP == null) {
+            eP = Image.createImage("/logo.png");
          }
       } catch (Exception var1) {
          var1.printStackTrace();
       }
 
-      drawImage(logoImage, 120, 160, 3);
-      b(stateFrame, 47);
+      a(eP, 120, 160, 3);
+      e(stateFrame, 47);
       if (stateFrame == 2) {
-         af();
+         ay();
       } else if (stateFrame == 7) {
-         preloadMenuSound();
+         aR();
       } else if (stateFrame == 12) {
-         ag();
+         az();
       } else {
          if (stateFrame == 17) {
+            aA();
             InGamePromotion.a(GloftSOFD.instance, GloftSOFD.game, 240, 320);
             String var0;
             if ((var0 = GloftSOFD.instance.getAppProperty("GL-Censored")) != null) {
-               bloodCensored = var0.trim().toLowerCase().compareTo("true") == 0;
+               N = var0.trim().toLowerCase().compareTo("true") == 0;
                return;
             }
 
             if ((var0 = GloftSOFD.instance.getAppProperty("BLOOD")) != null) {
-               bloodCensored = var0.trim().toLowerCase().compareTo("0") == 0;
+               N = var0.trim().toLowerCase().compareTo("0") == 0;
                return;
             }
          } else {
@@ -1861,17 +2817,17 @@ final class Game extends FullCanvas implements Runnable {
             }
 
             if (stateFrame == 27) {
-               loadStringTable(0);
+               V(0);
                return;
             }
 
             if (stateFrame == 32) {
-               an();
+               aH();
                return;
             }
 
             if (stateFrame == 37) {
-               ao();
+               aI();
                return;
             }
 
@@ -1880,9 +2836,9 @@ final class Game extends FullCanvas implements Runnable {
             }
 
             if (stateFrame >= 47) {
-               logoImage = null;
-               changeState(23);
-               soundEnabled = false;
+               eP = null;
+               a(23);
+               el = false;
                return;
             }
 
@@ -1891,204 +2847,582 @@ final class Game extends FullCanvas implements Runnable {
       }
    }
 
-   private static void a(int var0, boolean var1) {
+   private static void b(int var0, boolean var1) {
       try {
-         openPack("/1");
+         a("/1");
          if (var1) {
-            titleSprite = loadSprite(1);
-            titleSprite.buildImages(var0, 0, -1, -1);
-            titleImage = titleSprite.cachedImages[var0][0];
+            eQ = U(1);
+            eQ.a(var0, 0, -1, -1);
+            eE = eQ.H[var0][0];
+         } else {
+            eQ = U(2);
+            eQ.a(0, 0, -1, -1);
+            eF = eQ.H[0][0];
          }
 
-         titleSprite.cachedImages[0][0] = null;
-         titleSprite = null;
-         closePack();
+         eQ.H[0][0] = null;
+         B();
       } catch (Exception var3) {
          var3.printStackTrace();
       }
    }
 
-   // $VF: renamed from: O () void
-   private static void updateSoundPrompt() {
-      setClip(0, 0, 240, 320);
-      setColor(0);
-      fillRect(0, 0, 240, 320);
-      font.drawText(graphics, getString(0, 22), 120, 160, 3);
-      drawSoftkeys(getString(0, 16), getString(0, 15));
-      if (wasKeyPressed(131072)) {
-         soundEnabled = false;
-         changeState(18);
-      } else {
-         if (wasKeyPressed(262144)) {
-            soundEnabled = true;
-            changeState(18);
-            loadSoundData(-1);
-            playSoundOnce(0);
+   private static void ae() {
+      a(0, 0, 240, 320);
+      b(0);
+      b(0, 0, 240, 320);
+      a.a(graphics, k(0, 22), 120, 160, 3);
+      a(k(0, 16), k(0, 15));
+      if (G(131072)) {
+         if (cT) {
+            aR = true;
+            stateFrame = -1;
+            return;
          }
-      }
-   }
-
-   // $VF: renamed from: P () void
-   private static void startNewGame() {
-      dh = 0;
-      df = 9;
-      levelIndex = 0;
-      maxUnlockedLevel = 0;
-      changeState(20);
-
-      for (int var0 = 0; var0 < saveBuffer.length; var0++) {
-         writeByte(saveBuffer, var0, 0);
-      }
-
-      resetPlayerMeters();
-      writeI16LE(saveBuffer, 32, (short)1);
-      writeI16LE(saveBuffer, 60, (short)maxHealth);
-      writeI16LE(saveBuffer, 62, (short)health);
-      writeI16LE(saveBuffer, 64, (short)r);
-      writeI16LE(saveBuffer, 66, (short)maxMagic);
-      writeI16LE(saveBuffer, 68, (short)magic);
-      writeI16LE(saveBuffer, 70, (short)u);
-      accessSaveRecord(true);
-      restoreCheckpoint();
-      Actor.bl = false;
-      Actor.bm = false;
-      Actor.bn = false;
-   }
-
-   // $VF: renamed from: Q () void
-   private static void updateGameOver() {
-      k = true;
-      drawWorld();
-      setClip(0, 0, 240, 320);
-      g(7, 20, 226, 265);
-      font.currentPalette = 1;
-      if (state == 12) {
-         font.drawText(graphics, getString(0, 84), 120, 160, 3);
-      }
-
-      font.currentPalette = 0;
-      font.drawWrappedText(graphics, getString(0, 27), 120, 192, 3, 230, 0, -1);
-      drawSoftkeys(getString(0, 16), getString(0, 15));
-      if (wasKeyPressed(131072)) {
-         unloadLevel();
-         accessSaveRecord(true);
-         a(false);
-         changeState(19);
       } else {
-         if (wasKeyPressed(262144)) {
-            playSoundOnce(-1);
-            restartLevel();
-         }
-      }
-   }
-
-   // $VF: renamed from: R () void
-   private static void updateHelp() {
-      setClip(0, 0, 240, 320);
-      g(0, 0, 240, 320);
-      font.currentPalette = 0;
-      font.drawText(graphics, getString(0, 7), 120, 25, 17);
-      font.currentPalette = 0;
-      font.drawWrappedText(graphics, getString(0, 31 + selectedMenuItem), 120, 160, 3, 200, 0, -1);
-      drawSoftkeys(getString(0, 18), getString(0, 17));
-      font.drawWrappedText(graphics, selectedMenuItem + 1 + "/" + 4, 120, 304, 17, 230, 0, -1);
-      if (wasKeyPressed(270400)) {
-         selectedMenuItem = ++selectedMenuItem % 4;
-         playSoundOnce(-1);
-      }
-
-      if (wasKeyPressed(131072)) {
-         changeState(previousState);
-         selectedMenuItem = 0;
-      }
-
-      if (wasKeyPressed(4112)) {
-         selectedMenuItem = (--selectedMenuItem + 4) % 4;
-         playSoundOnce(-1);
-      }
-   }
-
-   // $VF: renamed from: j () void
-   public static final void updatePromotionPrompt() {
-      setClip(0, 0, 240, 320);
-      setColor(0);
-      fillRect(0, 0, 240, 320);
-      font.drawWrappedText(graphics, getString(0, 37), 120, 160, 3, 230, 0, -1);
-      drawSoftkeys("", getString(0, 17));
-      if (wasKeyPressed(327712)) {
-         playSoundOnce(-1);
-         if (InGamePromotion.a()) {
-            changeState(7);
-            boolean var0 = false;
-            InGamePromotion.a(getString(0, 25) + "...", 0);
+         if (aP) {
+            aP = false;
+            el = false;
+            a(18);
             return;
          }
 
-         changeState(2);
+         if (G(262144)) {
+            if (cT) {
+               aS = true;
+               stateFrame = -1;
+               return;
+            }
+         } else if (aQ) {
+            aQ = false;
+            el = true;
+            a(18);
+            I(0);
+         }
       }
    }
 
-   // $VF: renamed from: S () void
-   private static void updatePromotion() {
+   private static void af() {
+      ei = 0;
+      eg = 11;
+      levelIndex = 0;
+      maxUnlockedLevel = 0;
+      a(20);
+
+      for (int var0 = 0; var0 < dt.length; var0++) {
+         a(dt, var0, 0);
+      }
+
+      aD();
+      a(dt, 36, (short)1);
+      a(dt, 64, (short)maxHealth);
+      a(dt, 66, (short)health);
+      a(dt, 68, (short)z);
+      a(dt, 70, (short)maxMagic);
+      a(dt, 72, (short)magic);
+      a(dt, 74, (short)C);
+      accessSaveRecord(true);
+      aE();
+      Actor.bu = false;
+      Actor.bv = false;
+      Actor.bw = false;
+   }
+
+   private static void ag() {
+      as();
+      a(0, 0, 240, 320);
+      g(20, 20, 200, 248);
+      a.z = 2;
+      if (state == 12) {
+         b[37].a(graphics, 2, 0, 120, 140, 0, 0, 0);
+      }
+
+      a.z = 0;
+      a.a(graphics, k(0, 27), 120, 192, 3, 180, 0, -1);
+      a(k(0, 16), k(0, 15));
+      if (G(131072)) {
+         if (cT) {
+            aR = true;
+            stateFrame = -1;
+            return;
+         }
+      } else {
+         if (aP) {
+            aP = false;
+            aC();
+            accessSaveRecord(true);
+            a(false);
+            a(19);
+            return;
+         }
+
+         if (G(262144)) {
+            if (cT) {
+               aS = true;
+               stateFrame = -1;
+               return;
+            }
+         } else if (aQ) {
+            aQ = false;
+            I(-1);
+            aF();
+         }
+      }
+   }
+
+   private static void ah() {
+      a(0, 0, 240, 320);
+      g(0, 0, 240, 320);
+      a.z = 1;
+      a.a(graphics, k(0, 7), 120, 5, 17);
+      a.z = 0;
+      if (cP == 0) {
+         a.a(graphics, k(0, 107), 120, 50, 17, 180, 0, 10);
+      } else if (cP == 1) {
+         a.a(graphics, k(0, 107), 120, 50, 17, 180, 10, 20);
+      } else {
+         a.a(graphics, k(0, 31 + cP - 1), 120, 160, 3, 180, 0, -1);
+      }
+
+      a(k(0, 18), k(0, 17));
+      a.a(graphics, cP + 1 + "/" + 4, 120, 305, 17, 180, 0, -1);
+      if (G(262144)) {
+         if (cT) {
+            aS = true;
+            stateFrame = -1;
+         }
+      } else if (aQ || G(8256)) {
+         aQ = false;
+         cP = ++cP % 4;
+         I(-1);
+      }
+
+      if (G(131072)) {
+         if (cT) {
+            aR = true;
+            stateFrame = -1;
+         }
+      } else if (aP) {
+         aP = false;
+         a(previousState);
+         cP = 0;
+      }
+
+      if (G(4112)) {
+         cP = (--cP + 4) % 4;
+         I(-1);
+      }
+   }
+
+   public static final void p() {
+      a(0, 0, 240, 320);
+      b(0);
+      b(0, 0, 240, 320);
+      a.a(graphics, k(0, 36), 120, 160, 3, 180, 0, -1);
+      a("", k(0, 17));
+      if (G(327712)) {
+         I(-1);
+         if (InGamePromotion.a()) {
+            a(7);
+            boolean var0 = false;
+            InGamePromotion.a(k(0, 25) + "...", 0);
+            return;
+         }
+
+         a(2);
+      }
+   }
+
+   private static void ai() {
       InGamePromotion.a(graphics);
       byte var0 = 0;
-      if (wasKeyPressed(16388)) {
+      if (G(16388)) {
          var0 = 21;
-         aD = false;
-      } else if (wasKeyPressed(33024)) {
+         aT = false;
+      } else if (G(33024)) {
          var0 = 32;
-         aD = false;
-      } else if (wasKeyPressed(4112)) {
+         aT = false;
+      } else if (G(4112)) {
          var0 = 23;
-         aD = false;
-      } else if (wasKeyPressed(8256)) {
+         aT = false;
+      } else if (G(8256)) {
          var0 = 24;
-         aD = false;
-      } else if (wasKeyPressed(131072)) {
+         aT = false;
+      } else if (G(131072)) {
          var0 = 26;
-         aD = false;
-      } else if (wasKeyPressed(327712)) {
+         aT = false;
+      } else if (G(327712)) {
          var0 = 25;
-         aD = true;
+         aT = true;
       }
 
-      if (InGamePromotion.a(var0) && !aD) {
-         changeState(2);
+      if (InGamePromotion.a(var0) && !aT) {
+         a(2);
       }
    }
 
-   public static final void a(int var0, int var1, int var2, int var3, int var4) {
-      setClip(0, 0, 240, 320);
-      directGraphics.setARGBColor(-587202560);
-      fillRect(var0, var1, var2, var3);
-      setColor(15692292);
-      drawRect(var0 - 1, var1 - 1, var2 + 1, var3 + 1);
+   public static final int b(int var0, int var1) {
+      if (var1 == 0) {
+         int var4;
+         if ((var4 = var0 % 5) <= 1) {
+            return 0;
+         } else {
+            return var4 <= 2 ? 1 : 2;
+         }
+      } else if (var1 == 1) {
+         int var3;
+         if ((var3 = var0 % 14) <= 9) {
+            return 0;
+         } else if (var3 <= 10) {
+            return 1;
+         } else if (var3 <= 11) {
+            return 2;
+         } else {
+            return var3 <= 12 ? 3 : 4;
+         }
+      } else {
+         if (var1 == 2) {
+            int var2;
+            if ((var2 = var0 % 16) <= 3) {
+               return 0;
+            }
+
+            if (var2 > 3 && var2 < 8) {
+               return 1;
+            }
+
+            if (var2 >= 8 && var2 < 12) {
+               return 2;
+            }
+
+            if (var2 >= 12 && var2 < 17) {
+               return 3;
+            }
+         }
+
+         return 0;
+      }
    }
 
-   // $VF: renamed from: T () void
-   private static void updatePauseMenu() {
-      drawWorld();
-      a(53, 80, 134, 157, 187);
-      drawMenuItems(1, 120, 110);
-      if (confirmationOpen) {
-         confirmationKind = 6;
-         drawConfirmation();
+   public static final int c(int var0, int var1) {
+      int var2 = 0;
+      switch (var0) {
+         case 0:
+            var2 = Actor.cj[var1];
+            break;
+         case 1:
+            if (var1 == 0) {
+               var2 = Actor.ck[var1] - 1;
+            } else {
+               var2 = Actor.ck[var1];
+            }
+            break;
+         case 2:
+            var2 = Actor.cm[var1];
+            break;
+         case 3:
+            var2 = Actor.cl[var1];
       }
 
-      handleMenuAction(1);
-      if (!confirmationOpen) {
-         navigateMenu(menuItems[1].length, false);
+      return var2;
+   }
+
+   public static final boolean d(int var0, int var1) {
+      switch (var0) {
+         case 0:
+            if (Actor.cj[var1] < 3) {
+               return true;
+            }
+
+            return false;
+         case 1:
+            if (var1 == 0) {
+               if (Actor.ck[var1] < 4) {
+                  return true;
+               }
+
+               return false;
+            } else {
+               if (Actor.ck[var1] < 3) {
+                  return true;
+               }
+
+               return false;
+            }
+         case 2:
+            if (Actor.cm[var1] < 3) {
+               return true;
+            }
+
+            return false;
+         case 3:
+            if (Actor.cl[var1] < 2) {
+               return true;
+            }
+
+            return false;
+         default:
+            return false;
+      }
+   }
+
+   public static final void f(int var0) {
+      switch (var0) {
+         case 0:
+            Actor.cj[aV]++;
+            return;
+         case 1:
+            Actor.ck[aV]++;
+            return;
+         case 2:
+            Actor.cm[aV]++;
+            return;
+         case 3:
+            Actor.cl[aV]++;
+      }
+   }
+
+   public static final void g(int var0) {
+      if (!eR) {
+         as();
+      }
+
+      b(-587202560);
+      b(19, 20, 203, 250);
+      if (Actor.bB) {
+         b[33].a(graphics, 0, b(aX, 0), 120, 167, 0, 0, 0);
+      } else {
+         b[33].a(graphics, 28, 120, 167, 0, 0, 0);
+      }
+
+      if (var0 == 0) {
+         b[33].a(graphics, 20, 92, 45, 0, 0, 0);
+      } else {
+         b[33].a(graphics, 21, 92, 45, 0, 0, 0);
+      }
+
+      b(15692292);
+      d(20, 40, 20, 254);
+      d(220, 40, 220, 254);
+   }
+
+   public static final void q() {
+      g(aV);
+
+      for (int var0 = 0; var0 < 4; var0++) {
+         if (Actor.bD || var0 != 3) {
+            boolean var1 = !d(var0, aV);
+            int var2 = c(var0, aV);
+            var2 = aV * 12 + var0 * 3 + var2 + (var1 ? -1 : 0);
+            a(k(0, 80 + var0), c(var0, aV), aY[var0 + aV * 4], ba[var2], 45, 104 + 32 * var0, 150, bc, bd, var1);
+            if (aW == var0) {
+               b[33].a(graphics, 1, b(stateFrame, 1), 32, 108 + var0 * 32, 0, 0, 0);
+               b[33].a(graphics, 1, b(stateFrame, 1), 208, 108 + var0 * 32, 1, 0, 0);
+            }
+         }
+      }
+
+      b[31].a(graphics, 9, 0, 190, 232, 0, 0, 0);
+      a(D, 170, 222, false);
+      a.z = 5;
+      if (aX % 9 <= 5 && !bb) {
+         a.a(graphics, k(0, 111), 120, 252, 3, 180, 0, -1);
+      }
+
+      aX++;
+      if (bb) {
+         ac();
+      } else {
+         a(k(0, 18), "");
+      }
+   }
+
+   public static final void a(String var0, int var1, int var2, int var3, int var4, int var5, int var6, int[] var7, int[] var8, boolean var9) {
+      a.z = 5;
+      a.a(graphics, var0 + " " + k(0, 84) + (var1 + 1), var4 - 1, var5 - 14, 20);
+      int var10 = a(var3, var4 + var6, var5 - 12, false);
+      var10 += 6;
+      b[33].a(graphics, 22, var4 + var6 - var10, var5 - 12, 0, 0, 0);
+      a(var2, var4 + var6 - var10, var5 - 12, false);
+      int var11 = var6 * var2 / var3;
+      a(var4, var5, var6, var11, var7, var8);
+   }
+
+   private static boolean aj() {
+      for (int var2 = 0; var2 < 4; var2++) {
+         if (d(var2, Actor.ch)) {
+            int var0 = c(var2, Actor.ch);
+            var0 = Actor.ch * 12 + var2 * 3 + var0;
+            int var1 = ba[var0];
+            if (D >= var1 - aY[Actor.ch * 4 + var2]) {
+               return true;
+            }
+         }
+      }
+
+      return false;
+   }
+
+   private static void ak() {
+      if (eR) {
+         graphics.setColor(0);
+         b(0, 0, 240, 320);
+      }
+
+      q();
+      if (!bb) {
+         if (Actor.bB && G(12368)) {
+            if (aV == 0) {
+               aV = 1;
+            } else {
+               aV = 0;
+            }
+         }
+
+         if (G(16388)) {
+            aW--;
+            if (aW < 0) {
+               aW = 3;
+               if (!Actor.bD) {
+                  aW--;
+               }
+            }
+         } else if (G(33024)) {
+            aW++;
+            if (aW > (Actor.bD ? 3 : 2)) {
+               aW = 0;
+            }
+         }
+      }
+
+      if ((F(65568) || Actor.aP && H(65568)) && !bb) {
+         if (!d(aW, aV)) {
+            bb = true;
+            aU = 5;
+            N();
+            return;
+         }
+
+         if (D > 0) {
+            boolean var0 = false;
+            int var1 = c(aW, aV) + aV * 12 + aW * 3;
+            if (Actor.aP && H(65568) && aY[aV * 4 + aW] + D >= ba[var1]) {
+               aZ = ba[var1] - aY[aV * 4 + aW];
+               f(aW);
+               bb = true;
+               aU = aW;
+               D = D - aZ;
+               if (!d(aW, aV)) {
+                  aY[aV * 4 + aW] = ba[var1];
+                  return;
+               }
+
+               aY[aV * 4 + aW] = 0;
+               return;
+            }
+
+            if (aX % 5 == 0) {
+               aZ++;
+            }
+
+            if (D - aZ <= 0) {
+               aZ = D;
+               bb = true;
+               aU = 4;
+            }
+
+            if (aY[aV * 4 + aW] + aZ >= ba[var1]) {
+               aZ = ba[var1] - aY[aV * 4 + aW];
+               f(aW);
+               var0 = true;
+               bb = true;
+               aU = aW;
+            }
+
+            D = D - aZ;
+            aY[aV * 4 + aW] = aY[aV * 4 + aW] + aZ;
+            if (var0 && d(aW, aV)) {
+               aY[aV * 4 + aW] = 0;
+            }
+
+            b[17].z = 2;
+            j(0, 0, 240, 320);
+            b[17].a(graphics, 26, aX % 7, 35, 108 + aW * 32, 0, 0, 0);
+            b[17].a(graphics, 26, aX % 7, 205, 108 + aW * 32, 0, 0, 0);
+         } else {
+            aZ = 0;
+            bb = true;
+            aU = 4;
+            N();
+         }
+      } else {
+         aZ = 0;
+      }
+
+      if (G(327712) && bb) {
+         bb = false;
+         N();
+      }
+
+      if (G(131072)) {
+         if (cT) {
+            aR = true;
+            stateFrame = -1;
+            return;
+         }
+      } else if (aP) {
+         aP = false;
+         if (eR) {
+            c(true);
+            eR = false;
+            return;
+         }
+
+         a(8);
+         Actor.ch = aV;
+         Actor.g(Actor.ch);
+         bb = false;
+         N();
+      }
+   }
+
+   private static boolean al() {
+      boolean var0 = false;
+
+      for (int var1 = 0; var1 < 2; var1++) {
+         for (int var2 = 0; var2 < 4; var2++) {
+            if (d(var2, var1)) {
+               aV = var1;
+               return true;
+            }
+         }
+      }
+
+      return false;
+   }
+
+   private static void am() {
+      as();
+      f(1, 120, 52);
+      if (eN) {
+         aU = 6;
+         ac();
+      }
+
+      N(1);
+      if (!eN) {
+         d(fD[1].length, false);
       }
    }
 
    public static final void a(int var0, int var1, int var2, int var3, int[] var4, int[] var5) {
-      setColor(0);
-      fillRect(var0, var1 + 1, var2 + 1, 9);
-      setColor(9794829);
-      drawLine(var0, var1, var0 + var2, var1);
-      drawLine(var0 - 1, var1 + 1, var0 - 1, var1 + 7 + 1);
-      drawLine(var0 + var2 + 1, var1 + 1, var0 + var2 + 1, var1 + 7 + 1);
-      drawLine(var0, var1 + 7 + 2, var0 + var2, var1 + 7 + 2);
+      b(0);
+      b(var0, var1 + 1, var2 + 1, 9);
+      b(9794829);
+      d(var0, var1, var0 + var2, var1);
+      d(var0 - 1, var1 + 1, var0 - 1, var1 + 7 + 1);
+      d(var0 + var2 + 1, var1 + 1, var0 + var2 + 1, var1 + 7 + 1);
+      d(var0, var1 + 7 + 2, var0 + var2, var1 + 7 + 2);
       a(var0 + 1, var1 + 2, var2 - 2, var4);
       if (var3 > 2) {
          a(var0 + 1, var1 + 2, var3 - 2, var5);
@@ -2097,790 +3431,1180 @@ final class Game extends FullCanvas implements Runnable {
 
    public static final void a(int var0, int var1, int var2, int[] var3) {
       for (int var4 = 0; var4 < var3.length; var4++) {
-         setColor(var3[var4]);
-         drawLine(var0, var1 + var4, var0 + var2, var1 + var4);
+         b(var3[var4]);
+         d(var0, var1 + var4, var0 + var2, var1 + var4);
       }
    }
 
-   // $VF: renamed from: U () void
-   private static void finishLevel() {
-      Actor.bC = false;
-      writeByte(saveBuffer, 644, (byte)(Actor.bC ? 1 : 0));
+   private static void c(boolean var0) {
+      Actor.bM = false;
+      a(dt, 772, (int)(byte)(Actor.bM ? 1 : 0));
       if (maxUnlockedLevel < levelIndex + 1) {
          maxUnlockedLevel = levelIndex + 1;
       }
 
-      levelCompleted = true;
-      Actor.serializeProgress();
+      Actor.ej[0] = Actor.ej[1] = Actor.ej[2] = 0;
+      bh = true;
+      Actor.q();
       accessSaveRecord(true);
-      unloadLevel();
-      a(true);
-      changeState(19);
+      aC();
+      if (var0) {
+         a(true);
+      }
+
+      if (var0) {
+         a(19);
+      } else {
+         levelIndex = 16;
+         a(9);
+      }
    }
 
-   // $VF: renamed from: V () void
-   private static void drawActors() {
-      setClipInternal(0, 0, 240, 320);
-      paintActorCount = 0;
+   private static void an() {
+      j(0, 0, 240, 320);
+      ci = 0;
+      bv = false;
 
       for (int var1 = 0; var1 < actorCount; var1++) {
-         if (actors[var1] != null && (actors[var1].flags & 1024) == 0) {
+         if (actors[var1] != null && (actors[var1].c & 1024) == 0) {
             Actor var0;
-            if ((var0 = actors[var1]).isVisible()) {
-               if (actors[var1].type != 22
-                  && actors[var1].type != 49
-                  && actors[var1].type != 20
-                  && actors[var1].type != 40
-                  && actors[var1].type != 23
-                  && actors[var1].type != 59
-                  && (actors[var1].flags & 32768) == 0) {
-                  enqueuePaintActor(var0);
+            if ((var0 = actors[var1]).h()) {
+               if (var0.type == 41) {
+                  bL[var0.aB] = 1;
+                  if ((var0.c & 4096) != 0) {
+                     player.c |= 4096;
+                     cb.c |= 4096;
+                     bv = true;
+                  }
                }
-            } else if (actors[var1].updatedThisTick) {
-               actors[var1].advanceAnimation();
+
+               if (var0.type != 22 && var0.type != 49 && var0.type != 20 && (var0.c & 32768) == 0 && var0.type != 40 && var0.type != 23 && var0.type != 59) {
+                  j(var0);
+               }
+            } else if (var0.type == 41) {
+               bL[var0.aB] = 0;
+            } else if (var0.at) {
+               var0.c(f);
             }
+         }
+      }
+
+      if (!bv && !bw) {
+         player.c &= -4097;
+         if (cb != null) {
+            cb.c &= -4097;
          }
       }
 
       if (hasActiveBackgroundScript()) {
-         for (int var4 = 0; var4 < bC; var4++) {
+         for (int var4 = 0; var4 < cp; var4++) {
             Actor var2;
-            if (bB[var4] != null && ((var2 = bB[var4]).flags & 128) == 0) {
-               enqueuePaintActor(var2);
+            if (co[var4] != null && ((var2 = co[var4]).c & 128) == 0) {
+               j(var2);
             }
          }
       }
 
-      if ((player.flags & 128) == 0) {
-         enqueuePaintActor(player);
+      if ((player.c & 128) == 0) {
+         j(player);
       }
 
-      if (3 == levelModes[levelIndex]) {
-         if (bm != null && (bm.flags & 128) == 0) {
-            enqueuePaintActor(bm);
+      if (3 == be[levelIndex]) {
+         if (bZ != null && (bZ.c & 128) == 0) {
+            j(bZ);
          }
 
-         if (bn != null && (bn.flags & 128) == 0) {
-            enqueuePaintActor(bn);
+         if (ca != null && (ca.c & 128) == 0) {
+            j(ca);
          }
       }
 
-      for (int var5 = 0; var5 < paintActorCount; var5++) {
+      for (int var5 = 0; var5 < ci; var5++) {
          Actor var3;
-         if ((var3 = paintActors[var5]) != null) {
-            var3.paint();
+         if ((var3 = ch[var5]) != null && (var3.c & 4096) == 0 && var3.type != 41) {
+            var3.v();
          }
       }
    }
 
-   // $VF: renamed from: f (b) void
-   private static void enqueuePaintActor(Actor var0) {
+   private static void j(Actor var0) {
       int var1 = 0;
 
-      while (var1 < paintActorCount && paintActors[var1].paintPriority <= var0.paintPriority) {
+      while (var1 < ci && ch[var1].ap <= var0.ap) {
          var1++;
       }
 
-      if (paintActorCount >= bq) {
-         for (int var2 = 0; var2 < bq; var2++) {
-            System.out.println("paint out of bound: " + paintActors[var2].type);
+      if (ci >= cd) {
+         for (int var2 = 0; var2 < cd; var2++) {
+            System.out.println("paint out of bound: " + ch[var2].type);
          }
       }
 
-      for (int var3 = paintActorCount; var3 > var1; var3--) {
-         paintActors[var3] = paintActors[var3 - 1];
+      for (int var3 = ci; var3 > var1; var3--) {
+         ch[var3] = ch[var3 - 1];
       }
 
-      paintActors[var1] = var0;
-      paintActorCount++;
+      ch[var1] = var0;
+      ci++;
    }
 
-   // $VF: renamed from: g (b) void
-   private static void enqueueUpdateActor(Actor var0) {
-      if (updateActorCount >= br) {
-         for (int var1 = 0; var1 < br; var1++) {
-            System.out.println("update out of bound: " + updateActors[var1].type);
+   private static void k(Actor var0) {
+      if (ck >= ce) {
+         for (int var1 = 0; var1 < ce; var1++) {
+            System.out.println("update out of bound: " + cj[var1].type);
          }
       }
 
-      updateActors[updateActorCount++] = var0;
+      cj[ck++] = var0;
    }
 
-   // $VF: renamed from: h (b) boolean
-   private static boolean shouldUpdateActor(Actor var0) {
-      if ((var0.flags & 16) != 0) {
-         return true;
-      }
-
-      if ((var0.flags & 256) != 0 || (var0.flags & 32) != 0) {
+   private static boolean l(Actor var0) {
+      byte var1 = 2;
+      if ((var0.c & 32) != 0) {
          return false;
       }
 
-      if (au == null && var0.type == 22) {
+      if ((var0.c & 16) != 0) {
          return true;
       }
 
-      byte var1 = 2;
-      if (var0.type == 40 || var0.type == 49) {
-         var1 = 7;
-         if (var0.type == 49 && Actor.rectsOverlapInclusive(var0.collisionBounds, player.collisionBounds)) {
-            return true;
-         }
-      } else if (var0.type == 78) {
-         var1 = 14;
-      } else if (var0.type == 45) {
-         var1 = 4;
-      } else if (var0.type == 10) {
-         var1 = 4;
-      } else if (var0.type == 37) {
-         var1 = 3;
-      } else if (var0.type == 89) {
-         var1 = 3;
+      if (var0 == player || var0 == player.q) {
+         return true;
       }
 
-      return var0.cameraDistanceBucket < var1;
+      if (var0 == cb) {
+         return true;
+      }
+
+      if (aJ != null && var0.collisionBounds != null && !Actor.c(aJ.collisionBounds, var0.collisionBounds)) {
+         return var0.type != 2 || var0.ar() != 3 && var0.ar() != 13 ? var0.type == 39 && var0.animationId == 58 : true;
+      }
+
+      if (aJ == null && var0.type == 22) {
+         return true;
+      }
+
+      if (var0.type != 81 || var0.aq != 101 && (var0.n == null || var0.n[var0.ax - 1] <= 0 || var0.n[var0.ax - 1] > 7)) {
+         if (var0.type == 40 || var0.type == 49) {
+            var1 = 7;
+            if (var0.type == 49 && Actor.b(var0.collisionBounds, player.collisionBounds)) {
+               return true;
+            }
+         } else if (var0.type == 33) {
+            var1 = 4;
+         } else if (var0.type == 41) {
+            var1 = 3;
+         } else if (var0.type == 42) {
+            var1 = 14;
+         } else if (var0.type == 78) {
+            var1 = 14;
+         } else if (var0.type == 72) {
+            var1 = 6;
+         } else if (var0.type == 74) {
+            var1 = 3;
+         } else if (var0.type == 45) {
+            var1 = 4;
+         } else if (var0.T != null || var0.U != null) {
+            var1 = 6;
+         } else if (var0.type == 14) {
+            var1 = 4;
+         } else if (var0.type == 10) {
+            var1 = 4;
+         } else if (var0.type == 89) {
+            var1 = 3;
+         } else if (var0.type == 50) {
+            var1 = 3;
+         } else if (var0.type == 95) {
+            var1 = 3;
+         } else if (var0.type == 79) {
+            var1 = 3;
+         }
+
+         return var0.ak < var1;
+      } else {
+         return true;
+      }
    }
 
-   // $VF: renamed from: k () void
-   public static final void refreshCameraRegionSelection() {
+   public static final void r() {
       for (int var0 = 0; var0 < actorCount; var0++) {
          Actor var1;
-         if ((var1 = actors[var0]) != null && var1.type == 22 && au != var1) {
-            var1.update();
-            if (ai) {
+         if ((var1 = actors[var0]) != null && var1.type == 22 && aJ != var1) {
+            var1.t();
+            if (ax) {
                return;
             }
          }
       }
    }
 
-   // $VF: renamed from: W () void
-   private static void updateWorldActors() {
-      player.update();
-      if (player.actionState != 0 || player.animationId != 9) {
-         if (Actor.playerPlatform != null && Actor.playerPlatform.type == 33 && player.ceilingHit) {
-            Actor.playerPlatform.velocityY = 0;
+   private static void ao() {
+      player.t();
+      if (player.aq != 0 || player.animationId != 12) {
+         if (Actor.aT != null && Actor.aT.type == 33 && player.bN) {
+            Actor.aT.H = 0;
          }
 
-         if (ai) {
+         if (ax) {
             for (int var1 = 0; var1 < actorCount; var1++) {
                Actor var0;
                if ((var0 = actors[var1]) != null) {
                   if (var0.type == 74) {
-                     if (var0.s == null && var0.aB != -1) {
-                        var0.s = findActorByUid(var0.aB);
+                     if (var0.s == null && var0.aG != -1) {
+                        var0.s = i(var0.aG);
                      }
 
                      if (var0.s != null) {
-                        if (var0.s == au) {
-                           var0.flags |= 16;
-                           var0.flags &= -33;
-                           var0.changeActionState(0);
+                        if (var0.s == aJ) {
+                           var0.c |= 16;
+                           var0.c &= -33;
+                           var0.p(0);
                         } else {
-                           var0.flags &= -17;
-                           var0.flags |= 32;
+                           var0.c &= -17;
+                           var0.c |= 32;
                         }
                      }
                   }
 
-                  if (var0.isRespawnable()) {
-                     if (au != null && Actor.rectsOverlapInclusive(var0.collisionBounds, au.collisionBounds)) {
-                        var0.flags &= -1025;
-                     } else if (av != null && Actor.rectsOverlapInclusive(var0.collisionBounds, av.collisionBounds)) {
-                        var0.resetOrRemove(false);
+                  if (var0.ao()) {
+                     if (aJ != null && Actor.b(var0.collisionBounds, aJ.collisionBounds)) {
+                        var0.c &= -1025;
+                        if (var0.type == 5) {
+                           var0.F();
+                        }
+                     } else if (aK != null && Actor.b(var0.collisionBounds, aK.collisionBounds)) {
+                        var0.b(false);
                      }
 
                      if (actors[var1] != null) {
-                        actors[var1].setAttachedActor(null);
+                        actors[var1].b((Actor)null);
                      }
-                  } else if (var0.isBasicEnemyType()) {
-                     if (var0.actionState != 0) {
-                        var0.resetOrRemove(false);
+                  } else if (var0.L()) {
+                     if ((actors[var1].type != 11 || actors[var1].ar() != 1) && var0.aq != 0) {
+                        var0.b(false);
                      }
-                  } else if (var0 != null && var0.uid == -1 && var0.type != 84 && var0.type != 85 && (var0.type != 39 || var0.animationId != 13)) {
-                     removeActor(var0);
+                  } else if (bY == var0) {
+                     var0.t();
+                  } else if (var0 != null
+                     && var0.an == -1
+                     && var0.type != 8
+                     && var0.type != 84
+                     && var0.type != 85
+                     && var0.type != -103
+                     && (var0.type != 39 || var0.animationId != 29)) {
+                     if (var0.type == 73) {
+                        c(var0);
+                     }
+
+                     e(var0);
                   }
                }
             }
 
-            ai = false;
+            ax = false;
          }
 
-         updateActorCount = 0;
-
-         for (int var4 = 0; var4 < actorCount; var4++) {
+         for (int var5 = 0; var5 < actorCount; var5++) {
             Actor var2;
-            if ((var2 = actors[var4]) != null && (!ai || var2.type != 22) && var2.type != 0) {
-               var2.updatedThisTick = false;
-               if (shouldUpdateActor(var2)) {
-                  enqueueUpdateActor(var2);
-               }
+            if ((var2 = actors[var5]) != null) {
+               var2.at = false;
             }
          }
 
-         for (int var5 = 0; var5 < updateActorCount; var5++) {
+         ck = 0;
+
+         for (int var6 = 0; var6 < actorCount; var6++) {
             Actor var3;
-            if ((var3 = updateActors[var5]) != null && Actor.cq[0] != var3 && Actor.cq[1] != var3 && Actor.cq[2] != var3 && (!ai || var3.type != 22)) {
-               var3.update();
-               if (var3 != null && var3.attachedActor != null && !var3.attachedActor.updatedThisTick) {
-                  var3.attachedActor.update();
+            if ((var3 = actors[var6]) != null && var3.type != 0 && l(var3)) {
+               if (var3.type == 23) {
+                  var3.t();
+               } else {
+                  k(var3);
                }
             }
          }
 
-         if (3 == levelModes[levelIndex] && bm != null && bn != null) {
-            bm.update();
-            bn.update();
-         } else {
-            if (2 == levelModes[levelIndex] && !aS) {
-               Actor.cn = -512;
-               Actor.cp = 0;
-
-               for (int var6 = 0; var6 < 3; var6++) {
-                  if (Actor.cq[var6] != null) {
-                     Actor.cq[var6].K();
-                  }
+         for (int var7 = 0; var7 < ck; var7++) {
+            Actor var4;
+            if ((var4 = cj[var7]) != null && Actor.dU[0] != var4 && Actor.dU[1] != var4 && Actor.dU[2] != var4 && (!ax || var4.type != 22)) {
+               var4.t();
+               if (var4 != null && var4.r != null && !var4.r.at) {
+                  var4.r.t();
                }
+            }
+         }
 
-               if (Actor.cn >= 0) {
-                  Actor.cn = 0;
+         if (3 == be[levelIndex] && bZ != null && ca != null) {
+            bZ.t();
+            ca.t();
+         } else if (2 == be[levelIndex] && !modalActive) {
+            Actor.dR = -512;
+            Actor.dT = 0;
+
+            for (int var8 = 0; var8 < 3; var8++) {
+               if (Actor.dU[var8] != null) {
+                  Actor.dU[var8].X();
                }
+            }
 
-               if (Actor.cp == 0) {
-                  if (Actor.J()) {
-                     if (Actor.cn > -768) {
-                        if (Actor.co == 0) {
-                           Actor.co++;
-                        }
+            if (Actor.dR >= 0) {
+               Actor.dR = 0;
+            }
 
-                        Actor.cn = Actor.cn + -128 * Actor.co;
-                     } else {
-                        Actor.cn = -768;
-                        Actor.co = 0;
+            if (Actor.dT == 0) {
+               if (Actor.W()) {
+                  if (Actor.dR > -768) {
+                     if (Actor.dS == 0) {
+                        Actor.dS++;
                      }
-                  } else if (Actor.cn != 0) {
-                     Actor.cn = -512;
-                  }
-               }
 
-               for (int var7 = 0; var7 < 3; var7++) {
-                  if (Actor.cq[var7] != null) {
-                     Actor.cq[var7].update();
+                     Actor.dR = Actor.dR + -128 * Actor.dS;
+                  } else {
+                     Actor.dR = -768;
+                     Actor.dS = 0;
                   }
+               } else if (Actor.dR != 0) {
+                  Actor.dR = -512;
                }
+            }
+
+            for (int var9 = 0; var9 < 3; var9++) {
+               if (Actor.dU[var9] != null) {
+                  Actor.dU[var9].t();
+               }
+            }
+         }
+
+         if (Actor.aQ && Actor.aR != -1) {
+            Actor.bI++;
+            if (Actor.bI >= Actor.aS) {
+               Actor.as();
             }
          }
       }
    }
 
-   // $VF: renamed from: X () void
-   private static void updateGameplay() {
-      if (wasKeyPressed(2048) && cheatsUnlocked) {
-         if (!Actor.godMode) {
-            Actor.godMode = true;
-            Actor.bI = true;
-            v = 50000;
+   private static void ap() {
+      if (G(2048) && dG) {
+         if (!Actor.aP) {
+            Actor.aP = true;
+            Actor.bS = true;
+            D = 50000;
          } else {
-            Actor.godMode = false;
-            Actor.bI = false;
+            Actor.aP = false;
+            Actor.bS = false;
          }
 
-         if (!Actor.godMode) {
-            Actor.bH = false;
+         if (!Actor.aP) {
+            Actor.bR = false;
          }
       }
 
-      if (Actor.godMode && wasKeyPressed(1024)) {
-         Actor.bH = !Actor.bH;
+      if (Actor.aP && G(1024)) {
+         Actor.bR = !Actor.bR;
       }
 
-      if (bc == 5) {
-         scriptsPaused = true;
+      if (bJ == 5) {
+         cZ = true;
       }
 
       if (hasActiveBackgroundScript()) {
-         updateBackgroundScripts();
-         if (Actor.cw != null) {
-            Actor.cw.update();
-         }
-
-         if (Actor.bC && bm != null && bn != null && levelIndex == 3) {
-            bm.positionX = bn.positionX = player.positionX;
-            bm.positionY = bn.positionY = player.positionY;
+         I();
+         if (Actor.ep != null) {
+            Actor.ep.t();
          }
       } else {
-         if (cj > 0) {
-            updateSelectedScripts();
+         if (df > 0) {
+            J();
          }
 
-         updateWorldActors();
+         ao();
       }
 
-      if (cg) {
-         for (; hasActiveBackgroundScript(); updateBackgroundScripts()) {
-            if (Actor.bC && bm != null && bn != null && levelIndex == 3) {
-               bm.positionX = bn.positionX = player.positionX;
-               bm.positionY = bn.positionY = player.positionY;
-            }
+      if (da) {
+         while (hasActiveBackgroundScript()) {
+            I();
          }
 
-         cg = false;
+         da = false;
       }
 
-      drawWorld();
-      if (wasKeyPressed(262144) && !aS && !hasActiveBackgroundScript()) {
-         selectedMenuItem = 0;
-         changeState(14);
+      as();
+      if (G(262144) && !modalActive && !hasActiveBackgroundScript()) {
+         cP = 0;
+         a(14);
+      } else if (G(131072) && !modalActive && !hasActiveBackgroundScript()) {
+         a(31);
       } else {
-         if (Actor.godMode && aU == null) {
-            font.currentPalette = 0;
-            font.drawText(graphics, "is GOD MODULE!", 237, 20, 9);
+         if (Actor.aP && dialogText == null) {
+            a.z = 0;
+            a.a(graphics, "is GOD MODULE!", 237, 20, 9);
          }
 
-         if (ar != -1) {
-            updateCamera(ar);
-            ar = -1;
+         if (aG != -1) {
+            d(aG);
+            aG = -1;
          } else {
-            updateCamera(2);
+            d(2);
          }
       }
    }
 
-   // $VF: renamed from: Y () void
-   private static void drawWorld() {
-      if (Actor.cu) {
-         a(cameraX + Actor.cv % 240, 0, true);
-         d(cameraX + Actor.cv % 240, 0, 2);
-      } else if (levelModes[levelIndex] == 3) {
-         a(cameraX, cameraY < 0 ? 0 : cameraY, true);
-         d((cameraX >> 3) % (bV * 20), cameraY < 0 ? 0 : cameraY, 2);
+   private static int M(int var0) {
+      return var0 / 1;
+   }
+
+   private static void d(boolean var0) {
+      for (int var3 = 0; var3 < 3; var3++) {
+         if (bj[var3 * 4 + 2] < 0) {
+            int var1 = M(var3);
+            int var2 = 40 + var1 * 60 / 3;
+            bj[var3 * 4 + 2] = i(0, 2);
+            if (var0) {
+               bj[var3 * 4 + 0] = i(-60, 300) << 8;
+            } else {
+               bj[var3 * 4 + 0] = 240 + i(60, 240) << 8;
+            }
+
+            bj[var3 * 4 + 1] = i(var2, var2 + 20);
+            bj[var3 * 4 + 3] = -(16 << var1);
+         }
+      }
+   }
+
+   private static void aq() {
+      for (int var0 = 0; var0 < 3; var0++) {
+         bj[var0 * 4 + 2] = -1;
+         d(true);
+      }
+   }
+
+   private static void ar() {
+      if (R()) {
+         for (int var0 = 0; var0 < 3; var0++) {
+            if (bk[var0 * 4 + 2] >= 0) {
+               b[Actor.bs[24]].z = 0;
+               b[Actor.bs[24]].a(graphics, bk[var0 * 4 + 2], (bk[var0 * 4 + 0] >> 8) - cameraX, bk[var0 * 4 + 1] - cameraY, 0, 0, 0);
+               if (state != 14 && state != 31) {
+                  bk[var0 * 4 + 0] = bk[var0 * 4 + 0] + bk[var0 * 4 + 3];
+                  if ((bk[var0 * 4 + 0] >> 8) - cameraX < -60
+                     || (bk[var0 * 4 + 0] >> 8) - cameraX > 480
+                     || bk[var0 * 4 + 1] - cameraY < -80
+                     || bk[var0 * 4 + 1] - cameraY > 320) {
+                     bk[var0 * 4 + 2] = -1;
+                  }
+               }
+            } else {
+               e(false);
+            }
+         }
+      }
+   }
+
+   private static void e(boolean var0) {
+      for (int var1 = 0; var1 < 3; var1++) {
+         if (bk[var1 * 4 + 2] < 0) {
+            bk[var1 * 4 + 2] = i(0, 2);
+            if (var0) {
+               bk[var1 * 4 + 0] = i(-60, 300) + cameraX << 8;
+            } else {
+               bk[var1 * 4 + 0] = 240 + i(60, 240) + cameraX << 8;
+            }
+
+            bk[var1 * 4 + 1] = i(240, 290) + cameraY;
+            bk[var1 * 4 + 3] = -i(64, 256);
+         }
+      }
+   }
+
+   private static void as() {
+      if (Actor.en) {
+         a(cameraX + Actor.eo >> 6, 20, true);
+         e((cameraX + Actor.eo >> 3) % (cD * 20), 20, 2);
+         e(cameraX + Actor.eo % 240, cameraY, 1);
+      } else if (be[levelIndex] == 3) {
+         if (bo != -2) {
+            a(cameraX >> 6, 20, true);
+         }
+
+         if (bo != -1) {
+            e((cameraX >> 3) % (cD * 20), 20, 2);
+         }
+
+         if (levelIndex == 9) {
+            j(0, 0, 240, 320);
+            u();
+            e(cameraX, cameraY < 0 ? 0 : cameraY, 1);
+         } else {
+            e(cameraX, cameraY < 0 ? 0 : cameraY, 1);
+         }
       } else {
-         a(cameraX, cameraY, true);
-         d(cameraX, cameraY < 0 ? 0 : cameraY, 1);
+         if (bo != -3 && bo != -2) {
+            a(cameraX * (cC - 13) / (cy - 13), cameraY * (cE - 17) / (cz - 17), true);
+         } else {
+            b(0);
+            b(0, 0, 240, 320);
+         }
+
+         if (bo != -1 && bo != -3) {
+            e((cameraX >> 3) % (cD * 20), (cameraY + bo) * (cF - 16) / (cz - 16), 2);
+         }
+
+         u();
+         e(cameraX, cameraY < 0 ? 0 : cameraY, 1);
       }
 
-      setClip(0, 0, 240, 320);
-      if (!hasActiveBackgroundScript() && !Actor.bd && !Actor.bi && (Actor.activeBoss == null || Actor.activeBoss.actionState != 3)) {
-         if (player.animationId == 18) {
+      if (dc && dd <= 1) {
+         a(2 - dd, false, de);
+      }
+
+      an();
+      if (dc && dd > 1) {
+         Actor.E.G();
+      }
+
+      for (int var0 = 0; var0 < bN; var0++) {
+         if (bL[var0] == 1) {
+            b(var0, cameraX, cameraY);
+         }
+      }
+
+      a(0, 0, 240, 320);
+      if (modalActive && (bJ == 9 || bJ == 12)) {
+         h(Actor.dN, bJ, (Actor.dJ + Actor.dK >> 1) - cameraX, Actor.dH + 120 - cameraY);
+      }
+
+      if (!hasActiveBackgroundScript() && !Actor.bm && !Actor.br && (Actor.E == null || Actor.E.aq != 3)) {
+         if (player.animationId == 25) {
             f(3, player.positionX - cameraX, player.positionY - cameraY - 30, 80);
-         } else if (player.animationId == 23) {
+         } else if (player.animationId == 33) {
             f(4, player.positionX - cameraX + (player.facingLeft ? -40 : 40), player.positionY - cameraY - 50, 80);
          }
       }
 
-      if (aS) {
-         if (bc >= 6 && bc <= 8) {
-            f(bc - 6, player.positionX - cameraX + (player.facingLeft ? -20 : 20), player.positionY - cameraY - 55, 40);
-         } else if (bc == 13) {
-            Actor.activeBoss.y();
-         } else if (bc == 3) {
-            a(aT, true, 0);
-         } else if (bc == 10 || bc == 11) {
-            a(0, true, 0);
+      if (modalActive) {
+         if (bJ >= 6 && bJ <= 8) {
+            f(bJ - 6, player.positionX - cameraX + (player.facingLeft ? -20 : 20), player.positionY - cameraY - 55, 40);
+         } else if (bJ == 13) {
+            Actor.E.G();
+         } else if (bJ == 3) {
+            a(by, true, 0);
+         } else if (bJ == 1) {
+            Actor.B();
+         } else if (bJ == 2) {
+            k();
+         } else if (bJ == 10) {
+            a(2, true, 0);
+         } else if (bJ == 11) {
+            a(1, true, 0);
          }
       }
 
-      drawActors();
-      if (Actor.weaponSwitchCooldownMs > 0) {
-         a(Actor.activeWeapon, player.positionX - cameraX, player.positionY - cameraY + 0 + -80);
+      if (Actor.bb > 0) {
+         a(Actor.ch, player.positionX - cameraX, player.positionY - cameraY + 0 + -80);
       }
 
-      for (int var0 = 0; var0 < paintActorCount; var0++) {
+      for (int var2 = 0; var2 < ci; var2++) {
          Actor var1;
-         if ((var1 = paintActors[var0]) == null) {
+         if ((var1 = ch[var2]) == null) {
             System.out.println("null actor in s_paintActors");
          }
 
-         if (var1.linkedEffect != null) {
-            var1.linkedEffect.isVisible();
+         if ((var1.c & 4096) != 0 && var1.type != 41) {
+            var1.v();
+         }
+
+         if (var1.q != null) {
+            var1.q.h();
          }
       }
 
-      D();
-      if (aS && bc == 14) {
-         setClipInternal(0, 0, 240, 320);
-         d();
-      }
-
-      if (w > 0L) {
-         k = true;
-         w = w - tickDeltaMs;
-         if (w <= 0L) {
-            clearInput();
+      ar();
+      P();
+      O();
+      if (!hasActiveBackgroundScript() && bJ != 14 && state != 14 && state != 12 && state != 31 && state != 15 && !modalActive && state != 32) {
+         graphics.setColor(0);
+         b(0, 293, 320, 28);
+         b(15692292);
+         c(0, 294, 239, 26);
+         b[16].a(graphics, 98, 45, 294, 0, 0, 0);
+         if (Actor.bD) {
+            b[16].a(graphics, 82, 100, 294, 0, 0, 0);
+         } else {
+            b[16].a(graphics, 117, 100, 294, 0, 0, 0);
          }
 
-         sprites[35].drawAnimationFrame(graphics, 2, stateFrame % 4 < 2 ? 0 : 1, player.positionX - cameraX - 0, player.positionY - cameraY - 0, 0, 0, 0);
+         if (F(65568) && bn) {
+            if (!bl) {
+               bl = true;
+               stateFrame = 0;
+            }
+
+            bm = 0;
+         }
+
+         if (G(1) && Actor.bD && bn) {
+            if (!bl) {
+               bl = true;
+               stateFrame = 0;
+            }
+
+            bm = 1;
+         }
+
+         if (G(512) && Actor.bB && bn && player.aq != 1) {
+            if (!bl) {
+               bl = true;
+               stateFrame = 0;
+            }
+
+            bm = 2;
+         } else if (Actor.ch == 1 && bn && Actor.bB) {
+            b[16].a(graphics, 120, 158, 294, 0, 0, 0);
+         } else if (Actor.ch == 0 && bn && Actor.bB) {
+            b[16].a(graphics, 100, 158, 294, 0, 0, 0);
+         } else if (Actor.ch == 1 && bn) {
+            b[16].a(graphics, 120, 158, 294, 0, 0, 0);
+         } else if (Actor.ch == 0 && bn) {
+            b[16].a(graphics, 119, 158, 294, 0, 0, 0);
+         }
+
+         int var3 = 0;
+         if (bl) {
+            switch (bm) {
+               case 0:
+                  var3 = stateFrame % 3;
+                  b[16].a(graphics, 35, var3, 45, 294, 0, 0, 0);
+                  if (var3 == 2) {
+                     bl = false;
+                  }
+                  break;
+               case 1:
+                  var3 = stateFrame % 3;
+                  b[16].a(graphics, 36, var3, 100, 294, 0, 0, 0);
+                  if (var3 == 2) {
+                     bl = false;
+                  }
+                  break;
+               case 2:
+                  if (Actor.ch == 1) {
+                     var3 = stateFrame % 7;
+                     b[16].a(graphics, 37, var3, 158, 294, 0, 0, 0);
+                  } else if (Actor.ch == 0) {
+                     var3 = stateFrame % 7;
+                     b[16].a(graphics, 38, var3, 158, 294, 0, 0, 0);
+                  }
+
+                  if (var3 == 6) {
+                     bl = false;
+                     bn = true;
+                  } else {
+                     bn = false;
+                  }
+            }
+         }
       }
 
-      updateLetterbox();
-      if (bc == 5 && aS) {
-         e();
+      if (modalActive && bJ == 14) {
+         j(0, 0, 240, 320);
+         f();
       }
 
-      if (aS && bc == 18) {
-         levelCompleted = true;
-         health = maxHealth;
-         Actor.serializeProgress();
-         accessSaveRecord(true);
-         unloadLevel();
-         scriptTicks = null;
-         stopSound();
-         changeState(6);
-         l();
+      av();
+      if (bJ == 5 && modalActive) {
+         g();
+      }
+
+      if (modalActive) {
+         if (bJ == 17) {
+            j();
+         } else if (bJ == 18) {
+            i();
+         }
       }
 
       if (hasActiveBackgroundScript()) {
-         drawSoftkeyBar(bc != 17 && ch ? getString(0, 20) : "", bc == 5 ? getString(0, 17) : "", true);
+         a(bJ != 17 && db ? k(0, 20) : "", bJ == 5 ? k(0, 17) : "", true);
       }
 
-      if (aw > 0) {
-         if (ay != 0) {
-            ay--;
-            directGraphics.setARGBColor(-16777216);
-         } else {
-            directGraphics.setARGBColor(aw * ax << 24);
+      if (player != null && player.aq == 1 && state != 15 && !modalActive && state == 8) {
+         player.C();
+      }
+
+      if (!hasActiveBackgroundScript() && dialogText == null && bs <= 0 && !modalActive && state == 8 || Actor.bE == 2) {
+         if (Actor.bE != 2 && di) {
+            X();
+            Y();
          }
 
-         fillRect(0, 0, 240, 320);
-         aw--;
+         c();
       }
 
-      if (!hasActiveBackgroundScript() && aU == null && aN <= 0 && !aS && state == 8) {
-         if (cm) {
-            updateHudSlide();
-            drawHud();
-         }
-
-         a();
-      } else {
-         if (k && cm) {
-            drawHud();
-         }
-
-         a();
-      }
-
-      if (!hasActiveBackgroundScript()) {
-         updateLetterbox();
-      }
-
-      if (!hasActiveBackgroundScript() && Actor.activeBoss != null && (Actor.activeBoss.flags & 128) == 0 && (Actor.activeBoss.flags & 32) == 0) {
-         c(Actor.activeBoss.health, Actor.bossInitialHealth);
+      if (Actor.E != null && (Actor.E.c & 128) == 0 && (Actor.E.c & 32) == 0 && !hasActiveBackgroundScript()) {
+         f(Actor.E.as, Actor.F);
       }
    }
 
    static final void g(int var0, int var1, int var2, int var3) {
-      e(var0, var1, var2, var3);
+      e(var0, var1, var2, var3 - 1);
+      b[33].a(graphics, 23, var0, var1, 0, 0, 0);
+      b[33].a(graphics, 23, var0 + var2, var1, 1, 0, 0);
+      b[33].a(graphics, 24, 39 + var0, var1, 0, 0, 0);
+      b[33].a(graphics, 24, var0 + var2 - 39, var1, 1, 0, 0);
    }
 
-   static final void b(int var0, int var1) {
-      a(60, 265, 120, var0 * 120 / var1, be, aK);
-      if (font != null) {
-         font.drawText(graphics, "" + var0 * 100 / var1 + "%", 120, 280, 17);
+   static final void e(int var0, int var1) {
+      a(60, 280, 120, var0 * 120 / var1, bR, bp);
+      if (a != null) {
+         a.a(graphics, "" + var0 * 100 / var1 + "%", 120, 295, 17);
       }
    }
 
    private static void b(boolean var0, int var1) {
-      setClip(0, 0, 240, 320);
+      a(0, 0, 240, 320);
       g(0, 0, 240, 320);
       Actor.a(120, 160, 120, 160, 60, 50, stateFrame * 5, true);
-      font.currentPalette = 0;
+      a.z = 5;
       if (levelIndex != 16) {
-         String var2 = getString(0, 62 + dv);
-         font.drawWrappedText(graphics, var2, 120, 30, 17, 230, 0, -1);
+         String var2 = k(0, 71 + eS);
+         if (eS == 0) {
+            var2 = k(0, 114);
+         }
+
+         if (eS == 6) {
+            var2 = k(0, 110);
+         }
+
+         a.a(graphics, var2, 120, 20, 17, 180, 0, -1);
       }
 
       if (stateFrame <= var1) {
-         b(stateFrame, var1);
-         aL = false;
+         e(stateFrame, var1);
+         bq = false;
       } else {
          if (stateFrame % 10 < 5 && var0) {
-            font.drawText(graphics, getString(0, 10), 120, 265, 17);
+            a.a(graphics, k(0, 106), 120, 280, 17);
          }
       }
    }
 
-   // $VF: renamed from: Z () void
-   private static void updateLevelLoading() {
-      b(true, 80);
-      if (!aL && loadLevelStep(stateFrame)) {
-         aL = true;
+   private static void at() {
+      b(true, 79);
+      if (!bq && Q(stateFrame)) {
+         bq = true;
       }
 
-      if (aL && hasKeyPress()) {
-         initializeCamera();
-         aN = 160;
-         aM = 0;
-         changeState(8);
-         k = true;
-         aQ = 2;
+      if (bq && M()) {
+         aa();
+         bs = 160;
+         br = 0;
+         a(8);
+         bt = 2;
       }
 
       System.gc();
    }
 
-   // $VF: renamed from: aa () void
-   private static void prepareLevelSelectionStats() {
-      if (readI16LE(saveBuffer, 16) > 0) {
-         restoreProgress();
-         skipCheckpointPosition = true;
-      } else {
-         resetPlayerMeters();
-         skipCheckpointPosition = true;
-      }
-
-      dw = false;
-   }
-
-   // $VF: renamed from: H (int) void
-   private static void handleMenuAction(int var0) {
-      if (confirmationOpen) {
-         if (wasKeyPressed(131072)) {
-            confirmationOpen = false;
-            stateFrame = 0;
-            clearInput();
-            return;
-         }
-
-         if (wasKeyPressed(262144)) {
-            if (menuItems[var0][selectedMenuItem] != 13) {
-               playSoundOnce(-1);
+   private static void N(int var0) {
+      if (eN) {
+         if (G(131072)) {
+            if (cT) {
+               aR = true;
+               stateFrame = -1;
+               return;
+            }
+         } else {
+            if (aP) {
+               aP = false;
+               eN = false;
+               aU = 0;
+               N();
+               return;
             }
 
-            confirmationOpen = false;
-            if (menuItems[var0][selectedMenuItem] == 9) {
-               state = 11;
-            } else if (menuItems[var0][selectedMenuItem] == 13) {
-               restartLevel();
-            } else if (menuItems[var0][selectedMenuItem] == 0) {
-               unloadLevel();
-               changeState(2);
-            } else if (menuItems[var0][selectedMenuItem] == 1) {
-               startNewGame();
-            }
+            if (G(262144)) {
+               if (cT) {
+                  aS = true;
+                  stateFrame = -1;
+                  return;
+               }
+            } else if (aQ) {
+               aQ = false;
+               if (fD[var0][cP] != 13) {
+                  I(-1);
+               }
 
-            clearInput();
+               eN = false;
+               if (fD[var0][cP] == 9) {
+                  state = 11;
+               } else if (fD[var0][cP] == 13) {
+                  aF();
+               } else if (fD[var0][cP] == 0) {
+                  aC();
+                  eE = null;
+                  eQ = null;
+                  a(2);
+               } else if (fD[var0][cP] == 1) {
+                  af();
+               }
+
+               N();
+               return;
+            }
+         }
+      } else if (G(131072)) {
+         if (cT) {
+            aR = true;
+            stateFrame = -1;
             return;
          }
       } else {
-         if (wasKeyPressed(131072)) {
+         if (aP) {
+            aP = false;
             if (var0 == 1) {
-               changeState(8);
-               k = true;
+               a(8);
             }
 
-            clearInput();
+            N();
             return;
          }
 
-         if (wasKeyPressed(327712)) {
-            switch (menuItems[var0][selectedMenuItem]) {
+         if (G(327712)) {
+            if (cT) {
+               cR = true;
+               stateFrame = -1;
+               return;
+            }
+         } else if (cS) {
+            cS = false;
+            switch (fD[var0][cP]) {
                case 0:
-                  confirmationOpen = true;
+                  eN = true;
                   break;
                case 1:
-                  if (readI16LE(saveBuffer, 16) > 0) {
-                     confirmationOpen = true;
-                     confirmationKind = 7;
+                  if (b(dt, 16) > 0) {
+                     eN = true;
+                     aU = 7;
                   } else {
-                     changeState(20);
+                     a(20);
                   }
                   break;
                case 2:
-                  titleImage = null;
-                  levelIndex = readSignedByte(saveBuffer, 14);
-                  maxUnlockedLevel = readSignedByte(saveBuffer, 15);
-                  levelCompleted = readI16LE(saveBuffer, 24) == 1;
-                  continueFromCheckpoint = true;
-                  if (levelCompleted && levelIndex < 8) {
+                  eE = null;
+                  levelIndex = a(dt, 14);
+                  maxUnlockedLevel = a(dt, 15);
+                  bh = b(dt, 24) == 1;
+                  ff = true;
+                  fg = true;
+                  if (bh && levelIndex < 10) {
                      levelIndex++;
-                     continueFromCheckpoint = false;
+                     ff = false;
+                     fg = false;
                   }
 
-                  if (readI16LE(saveBuffer, 16) > 0) {
-                     restoreProgress();
+                  if (b(dt, 16) > 0) {
+                     A();
                   } else {
-                     resetPlayerMeters();
+                     aD();
                   }
 
-                  changeState(9);
+                  a(9);
                   break;
                case 3:
-                  levelIndex = readSignedByte(saveBuffer, 14);
-                  df = 9;
-                  dw = true;
-                  a(levelCompleted);
-                  if (ed) {
-                     maxUnlockedLevel = 9;
-                  } else {
-                     maxUnlockedLevel = readSignedByte(saveBuffer, 15);
+                  levelIndex = a(dt, 14);
+
+                  for (int var3 = 0; var3 < 3; var3++) {
+                     Actor.ej[var3] = 0;
                   }
 
-                  changeState(19);
+                  if (b(dt, 16) > 0) {
+                     A();
+                     cx = true;
+                  } else {
+                     aD();
+                     cx = true;
+                  }
+
+                  eg = 11;
+                  a(bh);
+                  if (fF) {
+                     maxUnlockedLevel = 11;
+                  } else {
+                     maxUnlockedLevel = a(dt, 15);
+                  }
+
+                  a(19);
                   break;
                case 4:
                   if (InGamePromotion.a()) {
-                     A(16);
-                     writeByte(saveBuffer, 10, (byte)cy);
+                     E(16);
+                     a(dt, 10, (int)(byte)dv);
                      accessSaveRecord(true);
-                     changeState(7);
+                     a(7);
                      boolean var2 = false;
-                     InGamePromotion.a(getString(0, 25) + "...", 0);
+                     InGamePromotion.a(k(0, 25) + "...", 0);
                   }
                   break;
                case 5:
                   if (InGamePromotion.d()) {
-                     A(32);
-                     writeByte(saveBuffer, 10, (byte)cy);
+                     E(32);
+                     a(dt, 10, (int)(byte)dv);
                      accessSaveRecord(true);
-                     changeState(7);
+                     a(7);
                      boolean var1 = false;
-                     InGamePromotion.b(getString(0, 25) + "...", 0);
+                     InGamePromotion.b(k(0, 25) + "...", 0);
                   }
                   break;
                case 6:
-                  soundEnabled = !soundEnabled;
+                  el = !el;
                   stateFrame = 0;
-                  if (!soundEnabled) {
-                     stopSound();
-                  } else if (soundEnabled) {
+                  if (!el) {
+                     T();
+                  } else if (el) {
                      if (var0 == 1) {
-                        playLevelMusic();
+                        I(9);
                      } else {
                         playSound(0, -1);
                      }
                   }
                   break;
                case 7:
-                  selectedMenuItem = 0;
-                  playSoundOnce(-1);
-                  changeState(5);
+                  cP = 0;
+                  I(-1);
+                  a(5);
                   break;
                case 8:
-                  changeState(6);
+                  a(6);
                   break;
                case 9:
-                  confirmationOpen = true;
-                  confirmationKind = 6;
+                  eN = true;
+                  aU = 6;
                case 10:
                case 11:
                default:
                   break;
                case 12:
-                  changeState(8);
-                  k = true;
+                  a(8);
                   break;
                case 13:
-                  confirmationOpen = true;
+                  eN = true;
             }
 
-            if (menuItems[var0][selectedMenuItem] != 12 && menuItems[var0][selectedMenuItem] != 6) {
-               playSoundOnce(-1);
+            if (fD[var0][cP] != 12 && fD[var0][cP] != 6) {
+               I(-1);
             }
 
-            clearInput();
+            N();
          }
       }
    }
 
-   // $VF: renamed from: ab () void
-   private static void initialize() throws Exception {
-      sprites = new BSprite[53];
-      changeState(1);
+   private static void au() throws Exception {
+      b = new BSprite[52];
+      a(1);
    }
 
-   // $VF: renamed from: ac () void
-   private static void updateLetterbox() {
-      if (aO && hasActiveBackgroundScript()) {
-         fillRect(0, 0, 240, aN);
-         fillRect(0, 320 - aN, 240, aN);
-         aN += 20;
-      } else if (levelIndex == 8 && aP) {
-         fillRect(0, 0, 240, aN);
-         fillRect(0, 320 - aN, 240, aN);
-         aN += 20;
-      } else {
-         if ((aQ < 0 || aS) && aM != aN) {
-            int var0;
-            if ((var0 = aM - aN) > -20 && var0 < 20) {
-               aN = aM;
-            } else {
-               aN += var0 > 0 ? 20 : -20;
-            }
-         }
-
-         if (aN > 0) {
-            aQ--;
-            setClipInternal(0, 0, 240, 320);
-            setColor(-587202560);
-            fillRect(0, 0, 240, aN);
-            fillRect(0, 320 - aN, 240, aN);
+   private static void av() {
+      if ((bt < 0 || modalActive) && br != bs) {
+         int var0;
+         if ((var0 = br - bs) > -20 && var0 < 20) {
+            bs = br;
          } else {
-            aQ = 2;
+            bs += var0 > 0 ? 20 : -20;
          }
+      }
+
+      if (bs > 0) {
+         bt--;
+         j(0, 0, 240, 320);
+         b(-587202560);
+         b(0, 0, 240, bs);
+         b(0, 320 - bs, 240, bs);
+      } else {
+         bt = 2;
       }
    }
 
-   public static final void f(int var0) {
-      cm = false;
-      if (var0 == 18) {
-         aS = true;
-         bc = var0;
-      }
+   public static final void h(int var0) {
+      di = false;
+      if (!modalActive) {
+         modalActive = true;
+         bJ = var0;
+         if (!dc) {
+            P = 0;
+         }
 
-      if (!aS) {
-         aS = true;
-         bc = var0;
-         if (!ci) {
-            E = 0;
+         if (bK != null) {
+            bK.c |= 4096;
          }
 
          if (var0 == 13 || var0 == 16) {
             for (int var1 = 0; var1 < 10; var1++) {
-               Actor.cj[var1] = randomRange(var1 * 36, var1 * 36 + 18);
-               Actor.ck[var1] = randomRange(5, 15);
+               Actor.dc[var1] = i(var1 * 36, var1 * 36 + 18);
+               Actor.dd[var1] = i(5, 15);
             }
 
-            player.flags |= 4096;
-            bo.flags |= 4096;
+            player.c |= 4096;
+            cb.c |= 4096;
+            bw = true;
          }
       }
    }
 
-   public static final void l() {
-      aS = false;
-      if (bc != 5) {
-         cm = true;
+   public static final void s() {
+      modalActive = false;
+      if (bJ != 5) {
+         di = true;
       }
 
-      if (bc == 10 || bc == 11) {
+      if (bJ == 10 || bJ == 11) {
          state = 32;
-         if (bc == 10) {
-            r++;
-            dq = 0;
+         if (bJ == 10) {
+            z++;
+            eI = 0;
          } else {
-            u++;
-            dq = 1;
+            C++;
+            eI = 1;
          }
 
-         dp = 0;
-         dr = false;
-         cm = false;
+         eH = 0;
+         eJ = false;
+         di = false;
       }
 
-      bc = -1;
-      if (bd != null) {
-         removeActor(bd);
-         bd = null;
+      bJ = -1;
+      if (bK != null) {
+         e(bK);
+         bK = null;
       }
 
-      aU = null;
-      scriptsPaused = false;
+      if (bJ != 5) {
+         player.c &= -4097;
+         bw = false;
+      }
+
+      dialogText = null;
+      cZ = false;
+   }
+
+   public static final void a(int var0, boolean var1) {
+      bM[var0 * 5 + 4] = var1 ? 1 : 0;
+   }
+
+   public static final void t() {
+      for (int var0 = 0; var0 < 80; var0++) {
+         bM[var0 * 5 + 4] = 0;
+      }
+   }
+
+   public static final void b(int var0, int var1, int var2) {
+      b(-33554432);
+      int var3 = bM[var0 * 5 + 0];
+      int var4 = bM[var0 * 5 + 1];
+      int var5 = bM[var0 * 5 + 2];
+      int var6 = bM[var0 * 5 + 3];
+      int var7 = bM[var0 * 5 + 4];
+      if (var3 + var5 >= var1 && var4 + var6 >= var2 && var3 <= var1 + 240 && var4 <= var2 + 320) {
+         int var8;
+         if ((var8 = var3 - var1) < 0 && var7 == 0) {
+            var8 = 0;
+            var5 = var5 + var3 - var1;
+         }
+
+         int var9;
+         if ((var9 = var4 - var2) < 0 && var7 == 0) {
+            var9 = 0;
+            var6 = var6 + var4 - var2;
+         }
+
+         if (var7 == 0) {
+            b(var8, var9, var5, var6);
+         } else if (var7 == 1) {
+            b[29].a(graphics, 0, var8 + 70, var9 + 70, 0, 0, 0);
+         } else if (var7 == 2) {
+            b[36].a(graphics, 0, var8, var9, 0, 0, 0);
+         } else {
+            b[36].a(graphics, 0, var8 + 40, var9, 1, 0, 0);
+         }
+      }
+   }
+
+   public static final void u() {
+      for (int var0 = 0; var0 < bP; var0++) {
+         if (bQ[var0] != null && bQ[var0].h()) {
+            bQ[var0].v();
+            if (bQ[var0].q != null && bQ[var0].q.h() && (bQ[var0].q.c & 128) == 0) {
+               bQ[var0].q.v();
+            }
+         }
+      }
+   }
+
+   public static final void b(Actor var0) {
+      var0.c |= 32768;
+      int var1 = 0;
+
+      while (var1 < bP && bQ[var1] != null && bQ[var1].ap < var0.ap) {
+         var1++;
+      }
+
+      for (int var2 = bP; var2 > var1; var2--) {
+         bQ[var2] = bQ[var2 - 1];
+      }
+
+      bQ[var1] = var0;
+      bP++;
+   }
+
+   public static final void c(Actor var0) {
+      var0.c &= -32769;
+
+      for (int var1 = 0; var1 < bP; var1++) {
+         if (bQ[var1] == var0) {
+            bQ[var1] = null;
+            bP--;
+            return;
+         }
+      }
+   }
+
+   public static final void v() {
+      for (int var0 = 0; var0 < bP; var0++) {
+         bQ[var0] = null;
+      }
+
+      bP = 0;
+   }
+
+   public static final void h(int var0, int var1, int var2, int var3) {
+      P++;
+      int var4 = var1 == 9 ? P : 25 - P;
+      if (var1 == 9 && var0 == 1 || var1 == 12 && var0 == 1) {
+         var2 += Actor.dO;
+         var3 += Actor.dP;
+      }
+
+      boolean var5;
+      if ((var1 != 9 || var0 != 0) && (var1 != 12 || var0 != 1)) {
+         var5 = false;
+      } else {
+         var5 = true;
+      }
+
+      if (P != 1) {
+         if (P < 25) {
+            int var6 = var4 * 700 / 25;
+            b(var4 * 221 / 25 << 24 | (var5 ? 255 : 16711680));
+            b(var2 - (var6 >> 1), var3 - (var6 >> 1), var6, var6, 0, 360);
+         } else {
+            s();
+         }
+      }
    }
 
    public static final void a(int var0, int var1, int var2, int var3, int var4, int var5, int var6) {
-      int var7 = 6 * sin256(var4);
-      int var8 = 6 * cos256(var4);
+      int var7 = 6 * m(var4);
+      int var8 = 6 * l(var4);
       int var9 = var0 << 8;
       int var10 = var1 << 8;
       boolean var11 = false;
@@ -2900,24 +4624,24 @@ final class Game extends FullCanvas implements Runnable {
          if (var18) {
             int var19;
             if ((var19 = stateFrame % 14) <= 9) {
-               sprites[28].drawAnimationFrame(graphics, 13, 0, var14, var15 + 3, 0, 0, 0);
+               b[24].a(graphics, 14, 0, var14, var15 + 3, 0, 0, 0);
             } else {
-               sprites[28].drawAnimationFrame(graphics, 13, var19 - 9, var14, var15 + 3, 0, 0, 0);
+               b[24].a(graphics, 14, var19 - 9, var14, var15 + 3, 0, 0, 0);
             }
 
             var11 = true;
             var13++;
          } else {
-            setColor(16777215);
-            drawLine(var14, var15, var16, var17);
-            setColor(13027014);
-            drawLine(var14 - 2, var15 + 2, var16 - 2, var17 + 2);
-            drawLine(var14 + 1, var15 + 2, var16 + 1, var17 + 2);
-            setColor(7631988);
-            drawLine(var14 - 1, var15, var16 - 1, var17);
-            setColor(6579300);
-            drawLine(var14 - 3, var15 + 2, var16 - 3, var17 + 2);
-            drawLine(var14 + 2, var15 + 2, var16 + 2, var17 + 2);
+            b(16777215);
+            d(var14, var15, var16, var17);
+            b(13027014);
+            d(var14 - 2, var15 + 2, var16 - 2, var17 + 2);
+            d(var14 + 1, var15 + 2, var16 + 1, var17 + 2);
+            b(7631988);
+            d(var14 - 1, var15, var16 - 1, var17);
+            b(6579300);
+            d(var14 - 3, var15 + 2, var16 - 3, var17 + 2);
+            d(var14 + 2, var15 + 2, var16 + 2, var17 + 2);
          }
 
          var9 = var12;
@@ -2925,26 +4649,26 @@ final class Game extends FullCanvas implements Runnable {
       }
    }
 
-   public static final void c(int var0, int var1) {
-      if (aN <= 0) {
-         int var2 = 13107200 / var1;
+   public static final void f(int var0, int var1) {
+      if (bs <= 0) {
+         int var2 = 11141120 / var1;
          int var3 = var0 * var2 >> 16;
          if (var0 == var1) {
-            var3 = 200;
+            var3 = 170;
          }
 
-         int[] var4 = bh;
-         if (var3 >= 133) {
-            var4 = bf;
-         } else if (var3 >= 66) {
-            var4 = bg;
+         int[] var4 = bU;
+         if (var3 >= 113) {
+            var4 = bS;
+         } else if (var3 >= 56) {
+            var4 = bT;
          }
 
-         a(20, 305, 200, var3, be, var4);
+         a(35, 255, 170, var3, bR, var4);
       }
    }
 
-   public static final void b(int var0, int var1, int var2) {
+   public static final void c(int var0, int var1, int var2) {
       int var3 = var0 + var1;
       if (var0 <= 320 && var3 >= 0 && var2 > 0 && var2 <= 240) {
          if (var0 < 0) {
@@ -2956,48 +4680,47 @@ final class Game extends FullCanvas implements Runnable {
          }
 
          for (int var4 = 0; var4 < 3; var4++) {
-            int var5 = dy[randomRange(0, 3)];
-            directGraphics.setARGBColor(var5);
-            int var6 = randomRange(0, 2);
-            int var7 = randomRange(5, 7);
-            int var8 = randomRange(2, 4);
+            b(eU[i(0, 3)]);
+            int var6 = i(0, 2);
+            int var7 = i(5, 7);
+            int var8 = i(2, 4);
             int var9 = var0;
-            int var10 = var2 - randomRange(0, 3);
+            int var10 = var2 - i(0, 3);
             int var11 = 0;
             int var12 = var0;
             if (var6 == 0) {
                while (var9 < var3 - 5 || var12 < var3 - 5) {
-                  var12 = var9 + var7 * dx[randomRange(0, 10)] / 1000;
-                  var11 = var2 - var8 + randomRange(-1, 2);
-                  drawLine(var10, var9, var11, var12);
-                  if (randomRange(0, 4) == 0) {
-                     drawLine(var11, var12, var11, var12 + 1);
+                  var12 = var9 + var7 * eT[i(0, 10)] / 1000;
+                  var11 = var2 - var8 + i(-1, 2);
+                  d(var10, var9, var11, var12);
+                  if (i(0, 4) == 0) {
+                     d(var11, var12, var11, var12 + 1);
                      var12++;
                   }
 
-                  var9 = var12 + var7 * dx[randomRange(0, 10)] / 1000;
-                  var10 = var2 + var8 + randomRange(-1, 2);
-                  drawLine(var11, var12, var10, var9);
-                  if (randomRange(0, 4) == 0) {
-                     drawLine(var10, var9, var10, var9 + 1);
+                  var9 = var12 + var7 * eT[i(0, 10)] / 1000;
+                  var10 = var2 + var8 + i(-1, 2);
+                  d(var11, var12, var10, var9);
+                  if (i(0, 4) == 0) {
+                     d(var10, var9, var10, var9 + 1);
                      var9++;
                   }
                }
             } else {
                while (var9 < var3 - 5 || var12 < var3 - 5) {
-                  var12 = var9 + var7 * dx[randomRange(0, 10)] / 1000;
-                  var11 = var2 + var8 + randomRange(-1, 2);
-                  drawLine(var10, var9, var11, var12);
-                  if (randomRange(0, 4) == 0) {
-                     drawLine(var11, var12, var11, var12 + 1);
+                  var12 = var9 + var7 * eT[i(0, 10)] / 1000;
+                  var11 = var2 + var8 + i(-1, 2);
+                  d(var10, var9, var11, var12);
+                  if (i(0, 4) == 0) {
+                     d(var11, var12, var11, var12 + 1);
                      var12++;
                   }
 
-                  var9 = var12 + var7 * dx[randomRange(0, 10)] / 1000;
-                  var10 = var2 - var8 + randomRange(-1, 2);
-                  drawLine(var11, var12, var10, var9);
-                  if (randomRange(0, 4) == 0) {
-                     drawLine(var10, var9, var10, var9 + 1);
+                  var9 = var12 + var7 * eT[i(0, 10)] / 1000;
+                  var10 = var2 - var8 + i(-1, 2);
+                  d(var11, var12, var10, var9);
+                  if (i(0, 4) == 0) {
+                     d(var10, var9, var10, var9 + 1);
                      var9++;
                   }
                }
@@ -3006,54 +4729,85 @@ final class Game extends FullCanvas implements Runnable {
       }
    }
 
-   private static void j(int var0, int var1) throws Exception {
+   private static void q(int var0, int var1) throws Exception {
       if (var0 == 0) {
-         openPack("/16");
-      } else if (var0 != 1) {
-         if (var0 == 2) {
-            dl = loadSprite(bi[var1 * 4 + 2]);
-         } else if (var0 == 3) {
-            dm = loadSprite(bi[var1 * 4 + 3]);
-         } else if (var0 == 4) {
-            dD = true;
-            closePack();
-         } else if (var0 != 5 && var0 != 6) {
-            if (var0 == 7) {
-               byte var2 = bj[var1 * 4 + 2];
-               dl.currentPalette = var2;
-               dl.buildImages(var2, 0, -1, -1);
-               dl.releaseImageData();
-               dz = dl.cachedImages[var2][0];
-            } else if (var0 == 8) {
-               byte var3 = bj[var1 * 4 + 3];
-               dm.currentPalette = var3;
-               dm.buildImages(var3, 0, -1, -1);
-               dm.releaseImageData();
-               dA = dm.cachedImages[var3][0];
-            }
+         a("/21");
+         if (!T(var1)) {
+            eA = U(bV[var1 * 4 + 0]);
          }
+      } else if (var0 == 1) {
+         if (!T(var1)) {
+            eB = U(bV[var1 * 4 + 1]);
+         }
+      } else if (var0 == 2) {
+         eC = U(bV[var1 * 4 + 2]);
+      } else if (var0 == 3) {
+         eD = U(bV[var1 * 4 + 3]);
+      } else if (var0 == 4) {
+         eY = true;
+         B();
+      } else if (var0 == 5) {
+         if (!T(var1)) {
+            byte var2 = bW[var1 * 4 + 0];
+            if (state == 20 && var1 == 12) {
+               var2 = 1;
+            }
+
+            eA.z = var2;
+            eA.a(var2, 0, -1, -1);
+            eA.a();
+            eV = eA.H[var2][0];
+            eA = null;
+         }
+      } else if (var0 == 6) {
+         if (!T(var1)) {
+            byte var3 = bW[var1 * 4 + 1];
+            if (state == 20 && var1 == 12) {
+               var3 = 1;
+            }
+
+            eB.z = var3;
+            eB.a(var3, 0, -1, -1);
+            eB.a();
+         }
+      } else if (var0 == 7) {
+         byte var4 = bW[var1 * 4 + 2];
+         if (state == 20 && var1 == 12) {
+            var4 = 1;
+         }
+
+         eC.z = var4;
+         eC.a(var4, 0, -1, -1);
+         eC.a();
+      } else if (var0 == 8) {
+         byte var5 = bW[var1 * 4 + 3];
+         if (state == 20 && var1 == 12) {
+            var5 = 1;
+         }
+
+         eD.z = var5;
+         eD.a(var5, 0, -1, -1);
+         eD.a();
       }
 
       System.gc();
    }
 
-   private static void ad() {
-      dz = null;
-      dA = null;
+   private static void aw() {
+      eV = null;
       System.gc();
    }
 
-   // $VF: renamed from: ae () void
-   private static void ensureTileBuffer() {
-      if (dB == null) {
-         dB = Image.createImage(260, 340);
+   private static void ax() {
+      if (eW == null) {
+         eW = Image.createImage(260, 340);
       }
 
-      if (dC == null) {
-         dC = dB.getGraphics();
+      if (eX == null) {
+         eX = eW.getGraphics();
       }
 
-      dD = true;
+      eY = true;
    }
 
    private static void a(int var0, int var1, boolean var2) {
@@ -3074,76 +4828,105 @@ final class Game extends FullCanvas implements Runnable {
       if (var3 < 0) {
          var3 = 0;
          var7 = 0;
-      } else if (var3 > bU - 1 && !var2) {
-         var3 = bU - 1;
+      } else if (var3 > cC - 1 && !var2) {
+         var3 = cC - 1;
       }
 
       if (var4 < 0) {
          var4 = 0;
-      } else if (var4 > bW - 1) {
-         var4 = bW - 1;
+      } else if (var4 > cE - 1) {
+         var4 = cE - 1;
       }
 
-      if (!dD && (var3 != dE || var5 != dG)) {
-         if (var5 < dE || var3 > dG) {
-            dD = true;
-         } else if (var3 < dE) {
-            var7 = dE;
-            k(var3, var4, dE - 1, var6);
-         } else if (var5 > dG) {
-            var8 = dG;
-            k(dG + 1, var4, var5, var6);
+      if (!eY && (var3 != eZ || var5 != fb)) {
+         if (var5 < eZ || var3 > fb) {
+            eY = true;
+         } else if (var3 < eZ) {
+            var7 = eZ;
+            l(var3, var4, eZ - 1, var6);
+         } else if (var5 > fb) {
+            var8 = fb;
+            l(fb + 1, var4, var5, var6);
          }
       }
 
-      if (!dD && (var4 != dF || var6 != dH)) {
-         if (var6 < dF || var4 > dH) {
-            dD = true;
-         } else if (var4 < dF) {
-            k(var7, var4, var8, dF - 1);
-         } else if (var6 > dH) {
-            k(var7, dH + 1, var8, var6);
+      if (!eY && (var4 != fa || var6 != fc)) {
+         if (var6 < fa || var4 > fc) {
+            eY = true;
+         } else if (var4 < fa) {
+            l(var7, var4, var8, fa - 1);
+         } else if (var6 > fc) {
+            l(var7, fc + 1, var8, var6);
          }
       }
 
-      if (dD) {
-         dD = false;
-         k(var3, var4, var5, var6);
+      if (eY) {
+         eY = false;
+         l(var3, var4, var5, var6);
       }
 
-      dE = var3;
-      dF = var4;
-      dG = var5;
-      dH = var6;
-      k(var0, var1);
+      eZ = var3;
+      fa = var4;
+      fb = var5;
+      fc = var6;
+      r(var0, var1);
    }
 
-   private static void k(int var0, int var1, int var2, int var3) {
+   private static void l(int var0, int var1, int var2, int var3) {
       for (int var6 = var1; var6 <= var3; var6++) {
          int var5 = var6 % 17;
          int var7 = var6;
 
          for (int var8 = var0; var8 <= var2; var8++) {
             int var4 = var8 % 13;
-            a(dC, var4 * 20, var5 * 20, var8 % bU + var7 * bU);
+            a(eX, var4 * 20, var5 * 20, var8 % cC + var7 * cC);
          }
       }
    }
 
-   private static void d(int var0, int var1, int var2) {
-      boolean var5 = false;
-      boolean var6 = false;
-      boolean var7 = false;
-      boolean var8 = false;
-      setClipInternal(0, 0, 240, 320);
-      boolean var3 = false;
-      boolean var9 = false;
-      boolean var4 = false;
-      boolean var10 = false;
-      boolean var11 = false;
+   private static void e(int var0, int var1, int var2) {
+      if (var1 < 0) {
+         var1 -= 20;
+      }
+
+      int var5 = var0 / 20;
+      int var6 = var1 / 20;
+      int var7 = (var0 + 240 - 1) / 20;
+      int var8 = (var1 + 320 - 1) / 20;
+      j(0, 0, 240, 320);
+      if (var1 < 0) {
+         var1 += 20;
+      }
+
+      int var3 = var5 * 20 - var0;
+
+      for (int var9 = var5; var9 <= var7; var9++) {
+         int var4 = var6 * 20 - var1 + 0;
+         int var10 = var9;
+         if (var2 == 2 && var9 >= cD) {
+            var10 = var9 % cD;
+         } else if (var2 == 1 && var9 >= cy) {
+            var10 = var9 % cy;
+         }
+
+         for (int var11 = var6; var11 <= var8; var11++) {
+            if (var2 != 0) {
+               if (var2 == 1) {
+                  a(graphics, fm, fn, eC, var3, var4, var10 + var11 * cy);
+                  a(graphics, fo, fp, eD, var3, var4, var10 + var11 * cy);
+               } else {
+                  a(graphics, fh, fi, eB, var3, var4, var10 + var11 * cD);
+               }
+            }
+
+            var4 += 20;
+         }
+
+         var3 += 20;
+      }
    }
 
-   private static void k(int var0, int var1) {
+   private static void r(int var0, int var1) {
       if (var1 < 0) {
          var1 = var1 % 340 + 340;
       }
@@ -3154,33 +4937,33 @@ final class Game extends FullCanvas implements Runnable {
       int var5 = (var1 + 320) % 340;
       if (var3 > var2) {
          if (var5 > var4) {
-            e(var2, var4, 240, 320, 0, 0);
+            d(var2, var4, 240, 320, 0, 0);
          } else {
-            e(var2, var4, 240, 320 - var5, 0, 0);
-            e(var2, 0, 240, var5, 0, 320 - var5);
+            d(var2, var4, 240, 320 - var5, 0, 0);
+            d(var2, 0, 240, var5, 0, 320 - var5);
          }
       } else if (var5 > var4) {
-         e(var2, var4, 240 - var3, 320, 0, 0);
-         e(0, var4, var3, 320, 240 - var3, 0);
+         d(var2, var4, 240 - var3, 320, 0, 0);
+         d(0, var4, var3, 320, 240 - var3, 0);
       } else {
-         e(var2, var4, 240 - var3, 320 - var5, 0, 0);
-         e(var2, 0, 240 - var3, var5, 0, 320 - var5);
-         e(0, var4, var3, 320 - var5, 240 - var3, 0);
-         e(0, 0, var3, var5, 240 - var3, 320 - var5);
+         d(var2, var4, 240 - var3, 320 - var5, 0, 0);
+         d(var2, 0, 240 - var3, var5, 0, 320 - var5);
+         d(0, var4, var3, 320 - var5, 240 - var3, 0);
+         d(0, 0, var3, var5, 240 - var3, 320 - var5);
       }
    }
 
-   private static void e(int var0, int var1, int var2, int var3, int var4, int var5) {
-      setClipInternal(var4, var5, var2, var3);
-      drawImage(dB, var4 - var0, var5 - var1, 0);
+   private static void d(int var0, int var1, int var2, int var3, int var4, int var5) {
+      j(var4, var5, var2, var3);
+      a(eW, var4 - var0, var5 - var1, 0);
    }
 
    private static void a(Graphics var0, int var1, int var2, int var3) {
-      if ((tileLayer0[var3] & 255) != 255) {
-         byte var6 = 0;
-         int var4 = tileLayer0[var3] & 255;
+      if ((fk[var3] & 255) != 255) {
+         int var6 = 0;
+         int var4 = fk[var3] & 255;
          int var5;
-         if ((var5 = (tileLayer0Transforms[var3 >> 2] & 255) >> (3 - (var3 & 3) << 1) & 3) != 0) {
+         if ((var5 = (fl[var3 >> 2] & 255) >> (3 - (var3 & 3) << 1) & 3) != 0) {
             if ((var5 & 1) != 0) {
                var6 = 2;
             }
@@ -3190,40 +4973,44 @@ final class Game extends FullCanvas implements Runnable {
             }
          }
 
-         int var7 = var4 * 20 % dz.getWidth();
-         int var8 = var4 * 20 / dz.getWidth() * 20;
-         var0.drawRegion(dz, var7, var8, 20, 20, var6, var1, var2, 20);
-      }
-
-      if ((tileLayer1[var3] & 255) != 255) {
-         byte var11 = 0;
-         int var9 = tileLayer1[var3] & 255;
-         int var10;
-         if ((var10 = (tileLayer1Transforms[var3 >> 2] & 255) >> (3 - (var3 & 3) << 1) & 3) != 0) {
-            if ((var10 & 1) != 0) {
-               var11 = 2;
-            }
-
-            if ((var10 & 2) != 0) {
-               var11 |= 1;
-            }
-         }
-
-         int var12 = var9 * 20 % dA.getWidth();
-         int var13 = var9 * 20 / dA.getWidth() * 20;
-         var0.drawRegion(dA, var12, var13, 20, 20, var11, var1, var2, 20);
+         int var7 = var4 * 20 % eV.getWidth();
+         int var8 = var4 * 20 / eV.getWidth() * 20;
+         var0.drawRegion(eV, var7, var8, 20, 20, var6, var1, var2, 20);
       }
    }
 
-   // $VF: renamed from: b (b) void
-   public static final void addActor(Actor var0) {
-      var0.persistenceIndex = -98;
-      if (bz > 0) {
-         actors[by[--bz]] = var0;
-      } else if (actorCount < bp) {
+   private static void a(Graphics var0, byte[] var1, byte[] var2, BSprite var3, int var4, int var5, int var6) {
+      if (var6 < 0 || var6 >= var1.length) {
+         System.out.println("invalid bottom map index : " + var6);
+         state = 11;
+      }
+
+      if ((var1[var6] & 255) != 255) {
+         int var9 = 0;
+         int var7 = var1[var6] & 255;
+         int var8;
+         if ((var8 = (var2[var6 >> 2] & 255) >> (3 - (var6 & 3) << 1) & 3) != 0) {
+            if ((var8 & 1) != 0) {
+               var9 = 2;
+            }
+
+            if ((var8 & 2) != 0) {
+               var9 |= 1;
+            }
+         }
+
+         var0.drawRegion(var3.H[var3.z][var7], 0, 0, 20, 20, var9, var4, var5, 20);
+      }
+   }
+
+   public static final void d(Actor var0) {
+      var0.af = -98;
+      if (cm > 0) {
+         actors[cl[--cm]] = var0;
+      } else if (actorCount < cc) {
          actors[actorCount++] = var0;
       } else {
-         System.out.println("s_actors_num exceed maxnum" + bp);
+         System.out.println("s_actors_num exceed maxnum" + cc);
 
          for (int var1 = 0; var1 < actorCount; var1++) {
             System.out.println(var1 + " actor == " + actors[var1].type + "   anim: " + actors[var1].animationId);
@@ -3231,90 +5018,89 @@ final class Game extends FullCanvas implements Runnable {
       }
    }
 
-   // $VF: renamed from: c (b) void
-   public static final void removeActor(Actor var0) {
+   public static final void e(Actor var0) {
       if (var0 != null) {
-         var0.setAttachedActor(null);
+         var0.b((Actor)null);
          var0.s = null;
          var0.t = null;
          var0.u = null;
          var0.v = null;
          var0.w = null;
          var0.x = null;
-         var0.supportActor = null;
-         var0.supportedActor = null;
-         if ((var0.flags & 8192) != 0) {
-            var0.flags |= 1024;
+         var0.T = null;
+         var0.U = null;
+         if ((var0.c & 8192) != 0) {
+            var0.c |= 1024;
          } else {
-            if (Actor.playerPlatform == var0) {
-               Actor.playerPlatform = null;
+            if (Actor.aT == var0) {
+               Actor.aT = null;
             }
 
             for (int var1 = 0; var1 < actorCount; var1++) {
                if (actors[var1] == var0) {
-                  if (var0.persistenceIndex != -98) {
-                     bD[var0.persistenceIndex] = -99;
+                  if (var0.af != -98) {
+                     cq[var0.af] = -99;
                   }
 
-                  if ((actors[var1].flags & 512) != 0 && !Actor.cl) {
-                     bH[bI++] = (short)actors[var1].uid;
+                  if ((actors[var1].c & 512) != 0 && !Actor.do_) {
+                     cu[cv++] = (short)actors[var1].an;
                   }
 
-                  actors[var1].releaseLinksAndBounds();
+                  actors[var1].a();
                   actors[var1] = null;
-                  by[bz++] = var1;
+                  cl[cm++] = var1;
                   break;
                }
             }
 
-            for (int var2 = 0; var2 < updateActorCount; var2++) {
-               if (updateActors[var2] == var0) {
-                  updateActors[var2] = null;
+            for (int var2 = 0; var2 < ck; var2++) {
+               if (cj[var2] == var0) {
+                  cj[var2] = null;
                   break;
                }
             }
 
-            if (Actor.aR != null) {
-               for (int var3 = 0; var3 < Actor.aR.length; var3++) {
-                  if (Actor.aR[var3] == var0) {
-                     Actor.aR[var3] = null;
+            if (Actor.ba != null) {
+               for (int var3 = 0; var3 < Actor.ba.length; var3++) {
+                  if (Actor.ba[var3] == var0) {
+                     Actor.ba[var3] = null;
                      break;
                   }
                }
             }
 
-            if (Actor.aM != null) {
-               for (int var4 = 0; var4 < Actor.aM.length; var4++) {
-                  if (Actor.aM[var4] == var0) {
-                     Actor.aM[var4] = null;
+            if (Actor.aV != null) {
+               for (int var4 = 0; var4 < Actor.aV.length; var4++) {
+                  if (Actor.aV[var4] == var0) {
+                     Actor.aV[var4] = null;
                      break;
                   }
                }
             }
 
-            if (Actor.cx != null) {
-               for (int var5 = 0; var5 < Actor.cx.length; var5++) {
-                  if (Actor.cx[var5] == var0) {
-                     Actor.cx[var5] = null;
+            if (Actor.er != null) {
+               for (int var5 = 0; var5 < Actor.er.length; var5++) {
+                  if (Actor.er[var5] == var0) {
+                     Actor.er[var5] = null;
                      break;
                   }
                }
             }
 
-            if (Actor.activeBoss == var0) {
-               Actor.activeBoss = null;
+            if (Actor.E == var0) {
+               Actor.E = null;
             }
          }
       }
    }
 
-   public static final Actor d(Actor var0) {
+   public static final Actor f(Actor var0) {
       if (var0 == null) {
          return null;
       }
 
       for (int var1 = 0; var1 < actorCount; var1++) {
-         if (actors[var1] != null && actors[var1].attachedActor == var0) {
+         if (actors[var1] != null && actors[var1].r == var0) {
             return actors[var1];
          }
       }
@@ -3322,106 +5108,151 @@ final class Game extends FullCanvas implements Runnable {
       return null;
    }
 
-   // $VF: renamed from: g (int) b
-   public static final Actor findActorByUid(int var0) {
-      if (player != null && player.uid == var0) {
+   public static final Actor i(int var0) {
+      if (player != null && player.an == var0) {
          return player;
       }
 
       for (int var1 = 0; var1 < actorCount; var1++) {
-         if (actors[var1] != null && actors[var1].uid == var0) {
+         if (actors[var1] != null && actors[var1].an == var0) {
             return actors[var1];
          }
       }
 
-      if (bm != null && var0 == bm.uid) {
-         return bm;
+      if (bZ != null && var0 == bZ.an) {
+         return bZ;
       } else {
-         return bn != null && var0 == bn.uid ? bn : null;
+         return ca != null && var0 == ca.an ? ca : null;
       }
    }
 
-   // $VF: renamed from: e (b) void
-   public static final void addCinematicActor(Actor var0) {
-      if (bC >= bA) {
-         System.out.print("s_cine_actors_num exceed maxnum" + bA);
+   public static final void g(Actor var0) {
+      if (cp >= cn) {
+         System.out.print("s_cine_actors_num exceed maxnum" + cn);
       } else {
-         bB[bC++] = var0;
+         co[cp++] = var0;
       }
    }
 
-   // $VF: renamed from: m () void
-   public static final void clearCinematicActors() {
-      for (int var0 = 0; var0 < bC; var0++) {
-         bB[var0] = null;
+   public static final void w() {
+      for (int var0 = 0; var0 < cp; var0++) {
+         co[var0] = null;
       }
 
-      bC = 0;
+      cp = 0;
    }
 
-   // $VF: renamed from: h (int) b
-   public static final Actor findCinematicActor(int var0) {
-      for (int var1 = 0; var1 < bC; var1++) {
-         if (bB[var1] != null && bB[var1].uid == var0) {
-            return bB[var1];
+   public static final Actor j(int var0) {
+      for (int var1 = 0; var1 < cp; var1++) {
+         if (co[var1] != null && co[var1].an == var0) {
+            return co[var1];
          }
       }
 
       return null;
    }
 
-   // $VF: renamed from: a (b, int) void
-   public static final void storeLinkedActorSnapshot(Actor var0, int var1) {
-      Actor.by[var1 * 18] = (byte)var0.animationId;
-      Actor.by[var1 * 18 + 1] = (byte)var0.animationFrame;
-      writeI16LE(Actor.by, var1 * 18 + 2, (short)var0.positionX);
-      writeI16LE(Actor.by, var1 * 18 + 4, (short)var0.positionY);
-      writeI32LE(Actor.by, var1 * 18 + 6, var0.actionState);
-      writeI32LE(Actor.by, var1 * 18 + 10, var0.flags);
-      writeI32LE(Actor.by, var1 * 18 + 14, var0.aw);
+   public static final void a(Actor var0, int var1) {
+      Actor.bH[var1 * 18] = (byte)var0.animationId;
+      Actor.bH[var1 * 18 + 1] = (byte)var0.h;
+      a(Actor.bH, var1 * 18 + 2, (short)var0.positionX);
+      a(Actor.bH, var1 * 18 + 4, (short)var0.positionY);
+      b(Actor.bH, var1 * 18 + 6, var0.aq);
+      b(Actor.bH, var1 * 18 + 10, var0.c);
+      b(Actor.bH, var1 * 18 + 14, var0.aA);
    }
 
-   // $VF: renamed from: b (b, int) void
-   public static final void restoreLinkedActorSnapshot(Actor var0, int var1) {
-      var0.animationId = Actor.by[var1 * 18];
-      var0.animationFrame = Actor.by[var1 * 18 + 1];
-      var0.positionX = readI16LE(Actor.by, var1 * 18 + 2);
-      var0.positionY = readI16LE(Actor.by, var1 * 18 + 4);
-      var0.actionState = readI32LE(Actor.by, var1 * 18 + 6);
-      var0.flags = readI32LE(Actor.by, var1 * 18 + 10);
-      var0.aw = readI32LE(Actor.by, var1 * 18 + 14);
+   public static final void b(Actor var0, int var1) {
+      var0.animationId = Actor.bH[var1 * 18];
+      var0.h = Actor.bH[var1 * 18 + 1];
+      var0.positionX = b(Actor.bH, var1 * 18 + 2);
+      var0.positionY = b(Actor.bH, var1 * 18 + 4);
+      var0.aq = c(Actor.bH, var1 * 18 + 6);
+      var0.c = c(Actor.bH, var1 * 18 + 10);
+      var0.aA = c(Actor.bH, var1 * 18 + 14);
    }
 
-   // $VF: renamed from: I (int) boolean
-   private static boolean staysRemovedOnRestart(int var0) {
+   public static final void h(Actor var0) {
+      a(Actor.dy, 0, (short)var0.ay);
+      a(Actor.dy, 2, (short)var0.aw);
+      a(Actor.dy, 4, (short)var0.ax);
+      a(Actor.dy, 6, (short)var0.av);
+      a(Actor.dy, 8, (short)var0.az);
+      a(Actor.dy, 10, (short)var0.ac);
+      a(Actor.dy, 12, (short)var0.ad);
+      a(Actor.dy, 14, (short)Actor.dz);
+      a(Actor.dy, 16, (short)Actor.dA);
+      a(Actor.dy, 18, (short)Actor.dB);
+      a(Actor.dy, 20, (short)Actor.dC);
+      a(Actor.dy, 22, (short)Actor.dD);
+      a(Actor.dy, 24, (short)(Actor.dE ? 1 : 0));
+      a(Actor.dy, 26, (short)Actor.dG);
+   }
+
+   public static final void i(Actor var0) {
+      var0.ay = b(Actor.dy, 0);
+      var0.aw = b(Actor.dy, 2);
+      var0.ax = b(Actor.dy, 4);
+      var0.av = b(Actor.dy, 6);
+      var0.az = b(Actor.dy, 8);
+      var0.ac = b(Actor.dy, 10);
+      var0.ad = b(Actor.dy, 12);
+      Actor.dz = b(Actor.dy, 14);
+      Actor.dA = b(Actor.dy, 16);
+      Actor.dB = b(Actor.dy, 18);
+      Actor.dC = b(Actor.dy, 20);
+      Actor.dD = b(Actor.dy, 22);
+      Actor.dE = b(Actor.dy, 24) == 1;
+      Actor.dG = b(Actor.dy, 26);
+   }
+
+   public static final void c(Actor var0, int var1) {
+      a(Actor.dx, var1 * 20 + 0, (short)var0.positionX);
+      a(Actor.dx, var1 * 20 + 2, (short)var0.positionY);
+      b(Actor.dx, var1 * 20 + 4, (short)var0.G);
+      b(Actor.dx, var1 * 20 + 8, (short)var0.H);
+      b(Actor.dx, var1 * 20 + 12, var0.aq);
+      b(Actor.dx, var1 * 20 + 16, var0.c);
+   }
+
+   public static final void d(Actor var0, int var1) {
+      var0.positionX = b(Actor.dx, var1 * 20 + 0);
+      var0.positionY = b(Actor.dx, var1 * 20 + 2);
+      var0.G = c(Actor.dx, var1 * 20 + 4);
+      var0.H = c(Actor.dx, var1 * 20 + 8);
+      var0.aq = c(Actor.dx, var1 * 20 + 12);
+      var0.c = c(Actor.dx, var1 * 20 + 16);
+   }
+
+   private static boolean O(int var0) {
       return var0 == 35 || var0 == 23 || var0 == 48 || var0 == 82;
    }
 
-   // $VF: renamed from: c (boolean) void
-   private static void constructLevelActors(boolean var0) {
+   private static void f(boolean var0) {
       int var2 = 0;
       if (!var0) {
-         for (int var3 = 0; var3 < bp; var3++) {
-            bD[var3] = 0;
+         for (int var3 = 0; var3 < cc; var3++) {
+            cq[var3] = 0;
          }
       }
 
       int var10 = 0;
 
-      while (var2 < bF.length) {
-         byte var1 = bF[var2++];
+      while (var2 < cs.length) {
+         byte var1 = cs[var2++];
          int var4 = var2;
 
          for (int var5 = 0; var5 < var1; var5++) {
-            bE[var5] = (short)((bF[var2++] & 255) + (bF[var2++] << 8));
+            cr[var5] = (short)((cs[var2++] & 255) + (cs[var2++] << 8));
          }
 
          boolean var11 = false;
-
-         for (int var6 = 0; var6 <= bI; var6++) {
-            if (bH[var6] == bE[1]) {
-               var11 = true;
-               break;
+         if (levelIndex != 16) {
+            for (int var6 = 0; var6 <= cv; var6++) {
+               if (cu[var6] == cr[1]) {
+                  var11 = true;
+                  break;
+               }
             }
          }
 
@@ -3429,389 +5260,305 @@ final class Game extends FullCanvas implements Runnable {
             var10++;
          } else {
             Actor var12 = null;
-            short var7 = bE[0];
+            short var7 = cr[0];
             int var8 = 0;
             if (var7 != 0) {
                var8 = var10++;
                if (!var0) {
-                  (var12 = new Actor(bE, var4, var1)).persistenceIndex = var8;
+                  (var12 = new Actor(cr, var4, var1)).af = var8;
                } else {
-                  if (bD[var10 - 1] == -99 && staysRemovedOnRestart(var7)) {
+                  if (cq[var10 - 1] == -99 && O(var7)) {
                      continue;
                   }
 
-                  bD[var10 - 1] = 0;
-                  (var12 = new Actor(bE, var4, var1)).persistenceIndex = var8;
+                  cq[var10 - 1] = 0;
+                  (var12 = new Actor(cr, var4, var1)).af = var8;
                }
             }
 
             if (var7 == 0) {
                if (player == null) {
-                  player = new Actor(bE, var4, var1);
+                  player = new Actor(cr, var4, var1);
                }
             } else if (var7 == 69) {
-               if (bm == null) {
-                  bm = new Actor(bE, var4, var1);
-               } else if (bn == null) {
-                  bn = new Actor(bE, var4, var1);
+               if (bZ == null) {
+                  bZ = new Actor(cr, var4, var1);
+               } else if (ca == null) {
+                  ca = new Actor(cr, var4, var1);
                }
             } else {
-               addActor(var12);
-               if (var12.type == 28 && bo == null) {
-                  bo = var12;
+               d(var12);
+               if (var12.type == 28 && cb == null) {
+                  cb = var12;
                }
 
-               actors[actorCount - 1].persistenceIndex = var10 - 1;
-               var12.finalizeRecordCollision(bE);
+               actors[actorCount - 1].af = var10 - 1;
+               var12.a(cr);
             }
          }
       }
+
+      aq();
    }
 
-   // $VF: renamed from: n () void
-   public static final void clearActors() {
+   public static final void x() {
       for (int var0 = 0; var0 < actorCount; var0++) {
          if (actors[var0] != null) {
-            actors[var0].releaseLinksAndBounds();
+            actors[var0].a();
             actors[var0] = null;
          }
       }
 
-      clearActorLists();
-      l();
-      Actor.aO = null;
-      Actor.aP = null;
+      y();
+      s();
+      Actor.aX = null;
+      Actor.aY = null;
       actorCount = 0;
-      bz = 0;
+      cm = 0;
+      bN = 0;
       player = null;
-      bm = null;
-      bn = null;
-      bl = null;
-      au = null;
-      bo = null;
-      Actor.cx = null;
-      Actor.aM = null;
-      Actor.aR = null;
-      activeCameraControllerUid = -1;
-      cameraControllerActive = false;
-      i();
+      bZ = null;
+      ca = null;
+      bY = null;
+      aJ = null;
+      cb = null;
+      Actor.er = null;
+      Actor.aV = null;
+      Actor.ba = null;
+      aB = -1;
+      ay = false;
+      o();
    }
 
-   private static void af() throws Exception {
-      openPack("/1");
-      font = loadSprite(0);
-      font.registerImageCache(2);
-      BSprite.createImageCache(2, 30);
-      closePack();
+   private static void ay() throws Exception {
+      a("/1");
+      a = U(0);
+      B();
    }
 
-   private static void ag() throws Exception {
-      openPack("/2");
-      sprites[35] = loadSprite(35);
-      sprites[33] = loadSprite(33);
-      BSprite.registeredCacheSprites[0] = sprites[33];
-      BSprite.registeredCacheSprites[0].registerImageCache(0);
-      sprites[35].registerImageCache(3);
-      BSprite.createImageCache(3, 10);
-      closePack();
+   private static void az() throws Exception {
+      a("/2");
+      b[16] = U(16);
+      b[33] = U(33);
+      b[31] = U(31);
+      b[31].a(0, 0, -1, -1);
+      b[31].a();
    }
 
-   // $VF: renamed from: J (int) void
-   private static void loadObjectsAndScripts(int var0) throws Exception {
-      openPack(levelPackPaths[var0]);
-      byte[] var1 = readResource(0);
-      byte[] var2 = readResource(1);
-      closePack();
-      bF = var1;
-      decodeScripts(var2);
+   private static void aA() throws Exception {
+      b[17] = U(17);
+      B();
    }
 
-   public static final boolean i(int var0) {
-      int[] var1;
-      switch (var0) {
-         case 4:
-            var1 = bL;
-            break;
-         case 27:
-            var1 = bK;
-            break;
-         case 28:
-            var1 = bM;
-            break;
-         case 41:
-            var1 = bN;
-            break;
-         case 48:
-            var1 = bO;
-            break;
-         default:
-            var1 = null;
-      }
-
-      if (var1 != null) {
-         for (int var2 = 0; var2 < var1.length; var2++) {
-            if (var1[var2] == levelIndex) {
-               return true;
-            }
-         }
-      }
-
-      return false;
+   private static void P(int var0) throws Exception {
+      a(fd[var0]);
+      byte[] var1 = q(0);
+      byte[] var2 = q(1);
+      B();
+      cs = var1;
+      b(var2);
    }
 
-   // $VF: renamed from: ah () void
-   private static void collectRequiredSprites() {
-      for (int var0 = 0; var0 < 53; var0++) {
-         dJ[var0] = 0;
+   private static void aB() {
+      for (int var0 = 0; var0 < 52; var0++) {
+         fe[var0] = 0;
       }
 
       short[] var1 = new short[20];
       int var2 = 0;
 
-      while (var2 < bF.length) {
-         byte var4 = bF[var2++];
+      while (var2 < cs.length) {
+         byte var4 = cs[var2++];
 
          for (int var3 = 0; var3 < var4; var3++) {
-            var1[var3] = (short)((bF[var2++] & 255) + (bF[var2++] << 8));
+            var1[var3] = (short)((cs[var2++] & 255) + (cs[var2++] << 8));
          }
 
-         if (var1[0] < Actor.spriteIdByType.length && Actor.spriteIdByType[var1[0]] != -1) {
-            dJ[Actor.spriteIdByType[var1[0]]] = 1;
+         if (var1[0] < Actor.bs.length && Actor.bs[var1[0]] != -1) {
+            fe[Actor.bs[var1[0]]] = 1;
+         }
+
+         if (var1[0] == 42 || var1[0] == 78) {
+            k(18);
+            if (var1[0] == 78) {
+               k(44);
+            }
+         } else if (var1[0] == 41) {
+            k(29);
+            k(30);
+            k(36);
+         } else if (var1[0] == 38) {
+            k(20);
          }
       }
 
-      requireSprite(1);
-      requireSprite(33);
-      requireSprite(-1);
-      requireSprite(18);
-      requireSprite(40);
-      requireSprite(-1);
-      requireSprite(40);
-      if (dJ[Actor.spriteIdByType[73]] == 1) {
-         requireSprite(30);
+      k(17);
+      k(50);
+      if (levelIndex <= 1) {
+         k(22);
       }
 
-      if (dJ[Actor.spriteIdByType[13]] == 1) {
-         requireSprite(13);
+      k(31);
+      k(37);
+      k(16);
+      k(38);
+      k(51);
+      k(42);
+      if (levelIndex <= 1) {
+         k(23);
       }
 
-      if (dJ[Actor.spriteIdByType[90]] == 1) {
-         requireSprite(16);
+      if (levelIndex == 0) {
+         k(35);
+         k(49);
+         k(13);
+      } else if (levelIndex == 6) {
+         k(48);
+         k(49);
+         k(13);
+         k(14);
+         k(11);
+      } else if (levelIndex == 8) {
+         k(48);
+         k(49);
+         k(13);
+      } else if (levelIndex == 9) {
+         k(48);
+         k(49);
+      } else if (levelIndex == 4) {
+         k(49);
+      } else if (levelIndex == 16) {
+         k(39);
+         k(49);
+      } else if (levelIndex == 10) {
+         k(44);
+         k(26);
+         k(48);
       }
 
-      if (dJ[Actor.spriteIdByType[90]] == 1) {
-         requireSprite(17);
+      k(38);
+      if (fe[Actor.bs[14]] == 1) {
+         k(25);
       }
 
-      if (i(27)) {
-         requireSprite(27);
+      if (fe[Actor.bs[73]] == 1 || fe[Actor.bs[83]] == 1 || levelIndex != 4 && levelIndex != 6) {
+         k(19);
       }
 
-      if (i(4)) {
-         requireSprite(4);
+      if (fe[Actor.bs[13]] == 1) {
+         k(11);
       }
 
-      if (i(28)) {
-         requireSprite(28);
+      if (fe[Actor.bs[90]] == 1) {
+         k(14);
       }
 
-      if (i(41)) {
-         requireSprite(41);
+      if (fe[Actor.bs[90]] == 1 || fe[Actor.bs[92]] == 1) {
+         k(15);
       }
 
-      if (i(48)) {
-         requireSprite(48);
-         requireSprite(30);
+      if (fe[Actor.bs[83]] == 1) {
+         k(19);
+         k(44);
       }
+
+      k(3);
    }
 
-   // $VF: renamed from: j (int) void
-   public static final void requireSprite(int var0) {
+   public static final void k(int var0) {
       if (var0 >= 0) {
-         dJ[var0] = 1;
+         fe[var0] = 1;
       }
    }
 
-   // $VF: renamed from: K (int) boolean
-   private static boolean loadLevelStep(int var0) {
+   private static boolean Q(int var0) {
       try {
          if (var0 == 1) {
-            levelCompleted = false;
-            loadStringTable(2 + levelIndex);
-            if (levelIndex != 6 && levelIndex == 9) {
+            eF = null;
+            bh = false;
+            V(1 + (levelIndex == 16 ? 11 : levelIndex));
+            if (levelIndex == 8 || levelIndex == 9) {
+               bo = -1;
             }
          } else if (var0 == 3) {
-            loadSoundData(levelIndex);
-            ensureTileBuffer();
+            ax();
          } else if (var0 < 14) {
             int var1;
-            j(var1 = var0 - 4, levelIndex);
+            q(var1 = var0 - 4, levelIndex);
          } else if (var0 < 15) {
-            loadTileMaps(levelIndex, true);
-         } else if (var0 == 15) {
-            loadObjectsAndScripts(levelIndex);
-         } else if (var0 == 17) {
-            openPack("/2");
-            collectRequiredSprites();
-         } else if (var0 < 71 && var0 > 17) {
-            int var5 = var0 - 18;
-            if (dJ[var5] == 1) {
-               sprites[var5] = loadSprite(var5);
-               if (var5 == 0 || var5 == 25) {
-                  try {
-                     sprites[var5].buildImages(0, 0, -1, -1);
-                     sprites[var5].releaseImageData();
-                  } catch (Exception var3) {
-                     System.out.println("s_sprites[idx]----error=====  " + var5);
-                  }
-               } else if (var5 == 2
-                  || var5 == 4
-                  || var5 == 3
-                  || var5 == 10
-                  || var5 == 18
-                  || var5 == 28
-                  || var5 == 34
-                  || var5 == 36
-                  || var5 == 14
-                  || var5 == 29
-                  || var5 == 41
-                  || var5 == 12
-                  || var5 == 13
-                  || var5 == 15
-                  || var5 == 27
-                  || var5 == 40
-                  || var5 == 47
-                  || var5 == 16
-                  || var5 == 17
-                  || var5 == 30
-                  || var5 == 49
-                  || var5 == 48
-                  || var5 == -1) {
-                  byte var2 = -1;
-                  switch (var5) {
-                     case -1:
-                        var2 = 22;
-                     case 0:
-                     case 1:
-                     case 5:
-                     case 6:
-                     case 7:
-                     case 8:
-                     case 9:
-                     case 11:
-                     case 19:
-                     case 20:
-                     case 21:
-                     case 22:
-                     case 23:
-                     case 24:
-                     case 25:
-                     case 26:
-                     case 31:
-                     case 32:
-                     case 33:
-                     case 35:
-                     case 37:
-                     case 38:
-                     case 39:
-                     case 42:
-                     case 43:
-                     case 44:
-                     case 45:
-                     case 46:
-                     default:
-                        break;
-                     case 2:
-                        var2 = 1;
-                        break;
-                     case 3:
-                        var2 = 3;
-                        break;
-                     case 4:
-                        var2 = 2;
-                        break;
-                     case 10:
-                        var2 = 4;
-                        break;
-                     case 12:
-                        var2 = 11;
-                        break;
-                     case 13:
-                        var2 = 12;
-                        break;
-                     case 14:
-                        var2 = 8;
-                        break;
-                     case 15:
-                        var2 = 13;
-                        break;
-                     case 16:
-                        var2 = 17;
-                        break;
-                     case 17:
-                        var2 = 18;
-                        break;
-                     case 18:
-                        var2 = 5;
-                        break;
-                     case 27:
-                        var2 = 14;
-                        break;
-                     case 28:
-                        var2 = 6;
-                        break;
-                     case 29:
-                        var2 = 9;
-                        break;
-                     case 30:
-                        var2 = 19;
-                        break;
-                     case 34:
-                        var2 = 0;
-                        break;
-                     case 36:
-                        var2 = 7;
-                        break;
-                     case 40:
-                        var2 = 15;
-                        break;
-                     case 41:
-                        var2 = 10;
-                        break;
-                     case 47:
-                        var2 = 16;
-                        break;
-                     case 48:
-                        var2 = 21;
-                        break;
-                     case 49:
-                        var2 = 20;
-                  }
+            c(levelIndex, true);
+            i = new int[19200];
+            boolean var4 = false;
 
-                  BSprite.registeredCacheSprites[var2] = sprites[var5];
-                  BSprite.registeredCacheSprites[var2].registerImageCache(0);
+            for (int var2 = 0; var2 < 19200; var2++) {
+               i[var2] = 1712008019;
+            }
+
+            j = Image.createRGBImage(i, 120, 160, true);
+         } else if (var0 == 15) {
+            P(levelIndex);
+         } else if (var0 == 17) {
+            a("/2");
+            aB();
+         } else if (var0 < 70 && var0 > 17) {
+            int var5 = var0 - 18;
+            if (fe[var5] == 1) {
+               if (31 != var5 && 17 != var5) {
+                  b[var5] = U(var5);
+               }
+
+               if (var5 == 20) {
+                  BSprite.a(b[var5], 0, 16768066);
+                  b[var5].a(0, 0, -1, -1);
+                  b[var5].a();
+               } else if (var5 == 30) {
+                  b[29].a(b[var5], 0, 0, -1, -1);
+                  b[29].a();
+                  b[var5] = null;
+               } else if (var5 == 36) {
+                  BSprite.a(b[var5], 0, 0);
+                  b[var5].a(0, 0, -1, -1);
+                  b[var5].a();
+               } else if (var5 == 22) {
+                  BSprite.a(b[var5], 0, 16777215);
+                  b[var5].a(0, 0, -1, -1);
+                  b[var5].a();
+               } else if (var5 == 38) {
+                  BSprite.b(b[var5], 0, 221);
+                  b[var5].a(0, 0, -1, -1);
+                  b[var5].a();
+               } else if (var5 == 50) {
+                  BSprite.a(b[var5], 0, -16736257);
+                  b[var5].a(0, 0, -1, -1);
+                  b[var5].a();
+               } else if (var5 == 6 && levelIndex == 0) {
+                  b[var5].R = 10;
+                  b[var5].b();
+               } else if (var5 == 24 || var5 == 28 || var5 == 27 || var5 == 25) {
+                  b[var5].a(0, 0, -1, -1);
+                  b[var5].a();
                }
             }
-         } else if (var0 == 71) {
-            BSprite.createImageCache(0, 40);
-            System.gc();
-            closePack();
-         } else if (var0 != 76) {
-            if (var0 == 77) {
+         } else if (var0 == 70) {
+            B();
+            V();
+         } else if (var0 != 75) {
+            if (var0 == 76) {
                System.gc();
-            } else if (var0 != 78) {
-               if (var0 == 79) {
-                  restoreActorPersistence();
-                  if (continueFromCheckpoint) {
-                     reconstructLevelActors(true);
-                     restoreCheckpoint();
-                     refreshCameraRegionSelection();
-                     continueFromCheckpoint = false;
+            } else if (var0 != 77) {
+               if (var0 == 78) {
+                  z();
+                  if (ff) {
+                     g(true);
+                     aE();
+                     r();
+                     ff = false;
                   } else {
-                     constructLevelActors(false);
+                     f(false);
                   }
                } else {
-                  if (var0 > 79) {
+                  if (var0 > 78) {
+                     Actor.g(Actor.ch);
                      return true;
                   }
 
@@ -3819,305 +5566,399 @@ final class Game extends FullCanvas implements Runnable {
                }
             }
          }
-      } catch (Exception var4) {
-         var4.printStackTrace();
+      } catch (Exception var3) {
+         var3.printStackTrace();
       }
 
       return false;
    }
 
-   // $VF: renamed from: ai () void
-   private static void unloadLevel() {
-      clearActors();
-      bF = null;
-      cP = false;
-      Actor.resetWorldActorState();
-      releaseScripts();
-      ad();
-      releaseTileMaps();
-      dl = null;
-      dm = null;
+   private static void aC() {
+      x();
+      cs = null;
+      dQ = false;
+      Actor.m();
+      v();
+      H();
+      aw();
+      aG();
+      eB = null;
+      eC = null;
+      eD = null;
+      eA = null;
+      i = null;
+      j = null;
 
-      for (int var0 = 0; var0 < 53; var0++) {
-         if (var0 != 35 && var0 != 33) {
-            sprites[var0] = null;
+      for (int var0 = 0; var0 < 52; var0++) {
+         if (var0 != 33 && var0 != 31 && var0 != 17 && var0 != 16) {
+            b[var0] = null;
          }
       }
 
-      for (int var1 = 2; var1 < 11; var1++) {
-         releaseStringTable(var1);
+      if (BSprite.I != null) {
+         for (int var1 = 0; var1 < BSprite.I.length; var1++) {
+            BSprite.I[var1] = null;
+         }
+
+         BSprite.I = null;
       }
 
-      for (int var2 = 0; var2 < 23; var2++) {
-         BSprite.registeredCacheSprites[var2] = null;
+      for (int var2 = 1; var2 < 13; var2++) {
+         W(var2);
       }
 
-      BSprite.destroyImageCache(0);
-      BSprite.destroyImageCache(1);
       System.gc();
    }
 
-   // $VF: renamed from: o () void
-   public static final void clearActorLists() {
-      for (int var0 = 0; var0 < bq; var0++) {
-         if (paintActors[var0] != null) {
-            paintActors[var0].sprite = null;
-            paintActors[var0] = null;
+   public static final void y() {
+      for (int var0 = 0; var0 < cd; var0++) {
+         if (ch[var0] != null) {
+            ch[var0].p = null;
+            ch[var0] = null;
          }
       }
 
-      paintActorCount = 0;
-      updateActorCount = 0;
+      ci = 0;
+      ck = 0;
 
-      for (int var1 = 0; var1 < br; var1++) {
-         if (updateActors[var1] != null) {
-            updateActors[var1].sprite = null;
-            updateActors[var1] = null;
+      for (int var1 = 0; var1 < ce; var1++) {
+         if (cj[var1] != null) {
+            cj[var1].p = null;
+            cj[var1] = null;
          }
       }
 
-      bC = 0;
+      cp = 0;
 
-      for (int var2 = 0; var2 < bA; var2++) {
-         if (bB[var2] != null) {
-            bB[var2].sprite = null;
-            bB[var2] = null;
+      for (int var2 = 0; var2 < cn; var2++) {
+         if (co[var2] != null) {
+            co[var2].p = null;
+            co[var2] = null;
          }
       }
    }
 
-   // $VF: renamed from: p () void
-   public static final void restoreActorPersistence() {
-      for (int var0 = 0; var0 < 9; var0++) {
-         bJ[var0] = readI16LE(saveBuffer, 86 + 2 * var0);
-      }
-
-      bI = bJ[levelIndex];
-
-      for (int var2 = 0; var2 < 9; var2++) {
-         for (int var1 = 0; var1 < 30; var1++) {
-            bG[var2][var1] = readI16LE(saveBuffer, 104 + var2 * 30 * 2 + var1 * 2);
+   public static final void z() {
+      if (levelIndex != 16) {
+         for (int var0 = 0; var0 < 11; var0++) {
+            cw[var0] = b(dt, 90 + 2 * var0);
          }
-      }
 
-      bH = bG[levelIndex];
+         cv = cw[levelIndex];
 
-      for (int var3 = 0; var3 < bp; var3++) {
-         bD[var3] = readSignedByte(saveBuffer, 999 + var3);
+         for (int var2 = 0; var2 < 11; var2++) {
+            for (int var1 = 0; var1 < 30; var1++) {
+               ct[var2][var1] = b(dt, 112 + var2 * 30 * 2 + var1 * 2);
+            }
+         }
+
+         cu = ct[levelIndex];
+
+         for (int var3 = 0; var3 < cc; var3++) {
+            cq[var3] = a(dt, 1127 + var3);
+         }
       }
    }
 
-   // $VF: renamed from: aj () void
-   private static void resetPlayerMeters() {
+   private static void aD() {
       health = 60;
       maxHealth = 60;
       magic = 60;
       maxMagic = 60;
-      r = 0;
-      u = 0;
-      v = 0;
+      z = 0;
+      C = 0;
+      D = 0;
    }
 
-   // $VF: renamed from: ak () void
-   private static void restoreCheckpoint() {
-      if (levelIndex == 3) {
-         Actor.bC = readSignedByte(saveBuffer, 644) == 1;
-         if (bm != null && Actor.bC) {
-            bn.positionX = bm.positionX = readI16LE(saveBuffer, 645);
-            bn.positionY = bm.positionY = readI16LE(saveBuffer, 647);
-            bn.actionState = bm.actionState = readI32LE(saveBuffer, 649);
+   private static void aE() {
+      if (levelIndex == 4) {
+         Actor.bM = a(dt, 772) == 1;
+         if (bZ != null && Actor.bM) {
+            ca.positionX = bZ.positionX = b(dt, 773);
+            ca.positionY = bZ.positionY = b(dt, 775);
+            ca.aq = bZ.aq = c(dt, 777);
          }
       }
 
-      if (player != null && !skipCheckpointPosition) {
-         player.positionX = readI16LE(saveBuffer, 18);
-         player.positionY = readI16LE(saveBuffer, 20);
-         player.facingLeft = readI16LE(saveBuffer, 22) == 1;
-         levelCompleted = readI16LE(saveBuffer, 24) == 1;
-         if (levelIndex == 5) {
+      if (player != null && !cx) {
+         player.positionX = b(dt, 18);
+         player.positionY = b(dt, 20);
+         player.facingLeft = b(dt, 22) == 1;
+         bh = b(dt, 24) == 1;
+         if (levelIndex == 6) {
+            player.positionY -= 20;
+         }
+
+         if (levelIndex == 9) {
             player.positionY -= 20;
          }
       }
 
-      restoreProgress();
-   }
-
-   // $VF: renamed from: q () void
-   public static final void restoreProgress() {
-      Actor.activeWeapon = readI16LE(saveBuffer, 26);
-
-      for (int var0 = 0; var0 < 2; var0++) {
-         Actor.bM[var0] = readI16LE(saveBuffer, 28 + 2 * var0);
-         Actor.bN[var0] = readI16LE(saveBuffer, 32 + 2 * var0);
-         Actor.bO[var0] = readI16LE(saveBuffer, 36 + 2 * var0);
-         Actor.bP[var0] = readI16LE(saveBuffer, 40 + 2 * var0);
+      A();
+      Actor.cv = b(dt, 28);
+      if (player != null && !cx) {
+         short var0 = b(dt, 26);
+         player.h(var0);
       }
 
-      maxHealth = readI16LE(saveBuffer, 60);
-      health = readI16LE(saveBuffer, 62);
-      r = readI16LE(saveBuffer, 64);
-      maxMagic = readI16LE(saveBuffer, 66);
-      magic = readI16LE(saveBuffer, 68);
-      u = readI16LE(saveBuffer, 70);
-      v = readI32LE(saveBuffer, 72);
-      Actor.bl = readSignedByte(saveBuffer, 653) == 1;
-      Actor.bm = readSignedByte(saveBuffer, 654) == 1;
-      Actor.bn = readSignedByte(saveBuffer, 655) == 1;
-      Actor.bo = readSignedByte(saveBuffer, 656) == 1;
-      Actor.bq = readSignedByte(saveBuffer, 657) == 1;
-      Actor.bp = readSignedByte(saveBuffer, 658) == 1;
-      Actor.br = readSignedByte(saveBuffer, 659) == 1;
-      Actor.bs = readSignedByte(saveBuffer, 660) == 1;
-      Actor.bt = readSignedByte(saveBuffer, 661) == 1;
-      Actor.bu = readSignedByte(saveBuffer, 662) == 1;
-      Actor.bw = readSignedByte(saveBuffer, 663) == 1;
+      for (int var1 = 0; var1 < 3; var1++) {
+         Actor.ej[var1] = a(dt, 802 + var1);
+      }
    }
 
-   // $VF: renamed from: d (boolean) void
-   private static void reconstructLevelActors(boolean var0) {
-      if (levelIndex == 5 && var0) {
+   public static final void A() {
+      Actor.ch = b(dt, 30);
+
+      for (int var0 = 0; var0 < 2; var0++) {
+         Actor.cj[var0] = b(dt, 32 + 2 * var0);
+         Actor.ck[var0] = b(dt, 36 + 2 * var0);
+         Actor.cl[var0] = b(dt, 40 + 2 * var0);
+         Actor.cm[var0] = b(dt, 44 + 2 * var0);
+      }
+
+      maxHealth = b(dt, 64);
+      health = b(dt, 66);
+      z = b(dt, 68);
+      maxMagic = b(dt, 70);
+      magic = b(dt, 72);
+      C = b(dt, 74);
+      D = c(dt, 76);
+
+      for (int var1 = 0; var1 < 8; var1++) {
+         aY[var1] = b(dt, 48 + var1 * 2);
+      }
+
+      Actor.bu = a(dt, 781) == 1;
+      Actor.bv = a(dt, 782) == 1;
+      Actor.bw = a(dt, 783) == 1;
+      Actor.bx = a(dt, 784) == 1;
+      Actor.bz = a(dt, 785) == 1;
+      Actor.by = a(dt, 786) == 1;
+      Actor.bA = a(dt, 787) == 1;
+      Actor.bB = a(dt, 788) == 1;
+      Actor.bC = a(dt, 789) == 1;
+      Actor.bD = a(dt, 790) == 1;
+      Actor.bF = a(dt, 791) == 1;
+   }
+
+   private static void g(boolean var0) {
+      if (levelIndex == 6 && var0) {
          for (int var1 = 0; var1 < 3; var1++) {
-            Actor.bx[var1] = readI16LE(saveBuffer, 664 + var1 * 2);
+            Actor.bG[var1] = b(dt, 792 + var1 * 2);
          }
 
          for (int var6 = 0; var6 < 54; var6++) {
-            Actor.by[var6] = readSignedByte(saveBuffer, 677 + var6);
+            Actor.bH[var6] = a(dt, 805 + var6);
          }
       }
 
-      if (continueFromCheckpoint) {
-         constructLevelActors(false);
-      } else {
-         constructLevelActors(var0);
+      if (levelIndex == 9 && var0) {
+         Actor.dt = b(dt, 865);
+         Actor.du = b(dt, 867);
+         Actor.dv = b(dt, 869);
+         Actor.dw = b(dt, 871);
+         if (Actor.dt != 0) {
+            ac = b(dt, 873);
+            ad = b(dt, 875);
+            cameraX = ac;
+            cameraY = ad;
+            viewBounds[0] = cameraX;
+            viewBounds[2] = cameraX + 240;
+            viewBounds[1] = cameraY;
+            viewBounds[3] = cameraY + 320;
+            aE = b(dt, 877);
+         }
+
+         for (int var7 = 0; var7 < 220; var7++) {
+            Actor.dx[var7] = a(dt, 907 + var7);
+         }
+
+         for (int var8 = 0; var8 < Actor.dy.length; var8++) {
+            Actor.dy[var8] = a(dt, 879 + var8);
+         }
       }
 
-      if (levelIndex == 5 && var0) {
-         activeCameraControllerUid = readI16LE(saveBuffer, 731);
+      for (int var9 = 0; var9 < 3; var9++) {
+         Actor.ej[var9] = a(dt, 802 + var9);
+      }
+
+      if (ff) {
+         f(false);
+      } else {
+         f(var0);
+      }
+
+      if (levelIndex == 6 && var0) {
+         aB = b(dt, 859);
 
          for (int var2 = 0; var2 < actorCount; var2++) {
-            Actor var7 = actors[var2];
+            Actor var10 = actors[var2];
 
             for (int var3 = 0; var3 < 3; var3++) {
-               if (Actor.bx[var3] != -1 && Actor.bx[var3] == var7.uid) {
-                  Actor.cq[var3] = var7;
-                  restoreLinkedActorSnapshot(Actor.cq[var3], var3);
+               if (Actor.bG[var3] != -1 && Actor.bG[var3] == var10.an) {
+                  Actor.dU[var3] = var10;
+                  b(Actor.dU[var3], var3);
                }
             }
 
-            if (activeCameraControllerUid != -1) {
-               if (activeCameraControllerUid == var7.uid) {
-                  var7.flags |= 16;
-                  var7.flags &= -33;
+            if (aB != -1) {
+               if (aB == var10.an) {
+                  var10.c |= 16;
+                  var10.c &= -33;
                }
 
-               if (var7.aB == activeCameraControllerUid) {
-                  short var9 = readI16LE(saveBuffer, 733);
-                  short var4 = readI16LE(saveBuffer, 735);
-                  int var5 = var9 + var4;
-                  viewBounds[1] = cameraTargetY = cameraY = var9 - 2;
-                  var7.ar = var7.positionY - var5;
-                  var7.positionY = var5;
+               if (var10.aG == aB) {
+                  short var16 = b(dt, 861);
+                  short var4 = b(dt, 863);
+                  int var5 = var16 + var4;
+                  viewBounds[1] = ad = cameraY = var16 - 2;
+                  var10.av = var10.positionY - var5;
+                  var10.positionY = var5;
                   viewBounds[3] = cameraY + 320;
-                  var7.flags |= 16;
-                  var7.flags &= -33;
-                  cameraControllerMode = 4;
+                  var10.c |= 16;
+                  var10.c &= -33;
+                  az = 4;
                }
             }
          }
 
-         for (int var8 = 0; var8 < 3; var8++) {
-            if (Actor.bx[var8] == -1) {
-               Actor.cq[var8] = null;
+         for (int var12 = 0; var12 < 3; var12++) {
+            if (Actor.bG[var12] == -1) {
+               Actor.dU[var12] = null;
+            }
+         }
+      }
+
+      if (levelIndex == 9 && var0) {
+         aB = b(dt, 859);
+
+         for (int var13 = 0; var13 < actorCount; var13++) {
+            Actor var11 = actors[var13];
+            if (Actor.dt == var11.an) {
+               Actor.R();
+               Actor.dp[0] = var11;
+               d(Actor.dp[0], 0);
+            }
+
+            if (aB != -1 && aB == var11.an) {
+               var11.c |= 16;
+               var11.c &= -33;
+            }
+         }
+
+         i(Actor.dp[0]);
+         if (Actor.dp != null) {
+            Actor.dp[0].aH = Actor.dw;
+            Actor.dp[0].Q();
+
+            for (int var14 = 1; var14 < 11; var14++) {
+               d(Actor.dp[var14], var14);
+            }
+
+            for (int var15 = 0; var15 < 10; var15++) {
+               Actor.dp[var15].b(Actor.dp[var15 + 1].positionX, Actor.dp[var15 + 1].positionY, Actor.dp[var15 + 1].aK);
+            }
+
+            if (Actor.dw == 1) {
+               Actor.dp[0].s = i(Actor.dv);
+            } else {
+               e(i(Actor.du));
+            }
+
+            if (Actor.dp[0].s != null) {
+               Actor.dp[0].s.c |= 16;
+               Actor.dp[0].s.c &= -33;
             }
          }
       }
    }
 
-   // $VF: renamed from: al () void
-   private static void restartLevel() {
-      clearActors();
-      Actor.resetWorldActorState();
-      restoreActorPersistence();
-      reconstructLevelActors(true);
-      restoreCheckpoint();
+   private static void aF() {
+      x();
+      Actor.m();
+      Actor.am();
+      t();
+      v();
+      z();
+      g(true);
+      aE();
+      Actor.g(Actor.ch);
       health = maxHealth;
-      resetScripts();
-      initializeCamera();
-      aN = 0;
-      aM = 0;
-
-      for (int var0 = 0; var0 < BSprite.imageCaches[0].length; var0++) {
-         BSprite.imageCaches[0][var0] = null;
-      }
-
-      changeState(8);
-      k = true;
+      G();
+      aa();
+      bs = 0;
+      br = 0;
+      a(8);
    }
 
-   // $VF: renamed from: L (int) byte[]
-   private static byte[] loadMapCellsAndDimensions(int var0) throws Exception {
-      byte[] var1 = readResource(var0);
-      selectResource(var0 + 1);
-      mapWidthTiles = readPackU16LE();
-      mapHeightTiles = readPackU16LE();
+   private static byte[] R(int var0) throws Exception {
+      byte[] var1 = q(var0);
+      p(var0 + 1);
+      cy = D();
+      cz = D();
       return var1;
    }
 
-   // $VF: renamed from: M (int) byte[]
-   private static byte[] loadMapTransforms(int var0) throws Exception {
-      return readResource(var0);
+   private static byte[] S(int var0) throws Exception {
+      return q(var0);
    }
 
-   // $VF: renamed from: b (int, boolean) void
-   private static void loadTileMaps(int var0, boolean var1) throws Exception {
-      if (var0 == 11) {
-         openPack(levelPackPaths[var0 - 2]);
-      } else if (var0 == 12) {
-         openPack(levelPackPaths[var0 - 1]);
-      } else if (var0 == 13) {
-         openPack(levelPackPaths[var0 - 4]);
-      } else {
-         openPack(levelPackPaths[var0]);
+   private static boolean T(int var0) {
+      return var0 == 10 || var0 == 15;
+   }
+
+   private static void c(int var0, boolean var1) throws Exception {
+      if (!T(var0)) {
+         a(fq[var0]);
+         fh = R(!var1 ? 6 : 11);
+         fi = S(!var1 ? 8 : 13);
+         cD = cy;
+         cF = cz;
+         fk = R(!var1 ? 9 : 14);
+         fl = S(!var1 ? 11 : 16);
+         cC = cy;
+         cE = cz;
+         B();
       }
 
+      a(fd[var0]);
       if (var1) {
-         collisionTiles = loadMapCellsAndDimensions(2);
+         fj = R(2);
       }
 
-      tileLayer0 = loadMapCellsAndDimensions(var1 ? 5 : 0);
-      tileLayer0Transforms = loadMapTransforms(var1 ? 7 : 2);
-      tileLayer1 = loadMapCellsAndDimensions(var1 ? 8 : 3);
-      tileLayer1Transforms = loadMapTransforms(var1 ? 10 : 5);
-      bV = mapWidthTiles;
-      bU = mapWidthTiles;
-      bW = mapHeightTiles;
-      levelPixelWidth = mapWidthTiles * 20;
-      levelPixelHeight = mapHeightTiles * 20;
-      closePack();
+      fm = R(var1 ? 5 : 0);
+      fn = S(var1 ? 7 : 2);
+      fo = R(var1 ? 8 : 3);
+      fp = S(var1 ? 10 : 5);
+      levelPixelWidth = cy * 20;
+      cB = cz * 20;
+      B();
       if (var1) {
-         for (int var2 = 0; var2 < collisionTiles.length; var2++) {
-            if (collisionTiles[var2] == -1) {
-               collisionTiles[var2] = 0;
+         for (int var2 = 0; var2 < fj.length; var2++) {
+            if (fj[var2] == -1) {
+               fj[var2] = 0;
             }
          }
       }
 
-      aA = -1;
+      aM = -1;
    }
 
-   // $VF: renamed from: am () void
-   private static void releaseTileMaps() {
-      tileLayer0 = null;
-      tileLayer0Transforms = null;
-      tileLayer1 = null;
-      tileLayer1Transforms = null;
-      collisionTiles = null;
+   private static void aG() {
+      fh = null;
+      fi = null;
+      fm = null;
+      fn = null;
+      fo = null;
+      fp = null;
+      fj = null;
+      fk = null;
+      fl = null;
    }
 
-   // $VF: renamed from: d (int, int) int
-   public static final int getCollisionTile(int var0, int var1) {
-      if (var0 >= 0 && var0 < mapWidthTiles && var1 < mapHeightTiles) {
-         if (levelModes[levelIndex] == 3) {
+   public static final int g(int var0, int var1) {
+      if (var0 >= 0 && var0 < cy && var1 < cz) {
+         if (be[levelIndex] == 3) {
             if (var1 < 0) {
                return 0;
             }
@@ -4125,50 +5966,49 @@ final class Game extends FullCanvas implements Runnable {
             return 24;
          }
 
-         return collisionTiles[var0 + var1 * mapWidthTiles];
+         return fj[var0 + var1 * cy];
       } else {
-         return levelModes[levelIndex] == 2 ? 0 : 24;
+         return be[levelIndex] == 2 ? 0 : 24;
       }
    }
 
-   // $VF: renamed from: c (int, int, int) void
-   public static final void setCollisionTile(int var0, int var1, int var2) {
-      if (var0 >= 0 && var1 >= 0 && var0 < mapWidthTiles && var1 < mapHeightTiles) {
-         collisionTiles[var0 + var1 * mapWidthTiles] = (byte)var2;
+   public static final void d(int var0, int var1, int var2) {
+      if (var0 >= 0 && var1 >= 0 && var0 < cy && var1 < cz) {
+         fj[var0 + var1 * cy] = (byte)var2;
       }
    }
 
-   private static void an() throws Exception {
-      openPack("/17");
-      selectResource(0);
-      trigTable256 = new int[256];
+   private static void aH() throws Exception {
+      a("/22");
+      p(0);
+      cG = new int[256];
 
       for (int var0 = 0; var0 < 256; var0++) {
-         trigTable256[var0] = readPackI32LE();
+         cG[var0] = E();
       }
 
-      closePack();
+      B();
    }
 
-   private static void ao() throws Exception {
-      openPack("/18");
-      byte[] var3 = readResource(0);
-      closePack();
+   private static void aI() throws Exception {
+      a("/23");
+      byte[] var3 = q(0);
+      B();
       ByteArrayInputStream var4 = new ByteArrayInputStream(var3);
       DataInputStream var5;
-      actorStatTables = new int[(var5 = new DataInputStream(var4)).readInt()][];
+      cH = new int[(var5 = new DataInputStream(var4)).readInt()][];
 
-      for (int var0 = 0; var0 < actorStatTables.length; var0++) {
+      for (int var0 = 0; var0 < cH.length; var0++) {
          int var2 = var5.readInt();
-         actorStatTables[var0] = new int[var2];
+         cH[var0] = new int[var2];
 
          for (int var1 = 0; var1 < var2; var1++) {
-            actorStatTables[var0][var1] = var5.readInt();
+            cH[var0][var1] = var5.readInt();
          }
       }
    }
 
-   public static final int e(int var0, int var1) {
+   public static final int h(int var0, int var1) {
       if (var0 < 0) {
          var0 = -var0;
       }
@@ -4195,22 +6035,19 @@ final class Game extends FullCanvas implements Runnable {
       return var4 + 512 >> 10;
    }
 
-   // $VF: renamed from: k (int) int
-   public static final int cos256(int var0) {
+   public static final int l(int var0) {
       while (var0 < 0) {
          var0 += 360;
       }
 
-      return trigTable256[var0 % 360 * 256 / 360];
+      return cG[var0 % 360 * 256 / 360];
    }
 
-   // $VF: renamed from: l (int) int
-   public static final int sin256(int var0) {
-      return cos256(90 - var0);
+   public static final int m(int var0) {
+      return l(90 - var0);
    }
 
-   // $VF: renamed from: f (int, int) int
-   public static final int randomRange(int var0, int var1) {
+   public static final int i(int var0, int var1) {
       if (var1 != var0) {
          int var2;
          if ((var2 = random.nextInt()) < 0) {
@@ -4223,8 +6060,7 @@ final class Game extends FullCanvas implements Runnable {
       }
    }
 
-   // $VF: renamed from: g (int, int) int
-   public static final int approximateDistance(int var0, int var1) {
+   public static final int j(int var0, int var1) {
       if (var0 == 0 && var1 == 0) {
          return 0;
       }
@@ -4241,52 +6077,47 @@ final class Game extends FullCanvas implements Runnable {
       return var0 + var1 - (var2 >> 1) - (var2 >> 2) + (var2 >> 3);
    }
 
-   // $VF: renamed from: N (int) d
-   private static BSprite loadSprite(int var0) throws Exception {
+   private static BSprite U(int var0) throws Exception {
       BSprite var1 = new BSprite();
-      byte[] var2 = readResource(var0);
-      var1.load(var2, 0);
+      byte[] var2 = q(var0);
+      var1.a(var2, 0);
       return var1;
    }
 
-   // $VF: renamed from: m (int) d
-   public static final BSprite getSprite(int var0) {
-      return sprites[var0];
+   public static final BSprite n(int var0) {
+      return b[var0];
    }
 
-   // $VF: renamed from: O (int) void
-   private static void loadStringTable(int var0) throws Exception {
-      openPack("/15");
-      byte[] var1 = readResource(var0);
-      closePack();
-      decodeStringTable(var0, var1);
-      String var2 = stringTables[0][29];
+   private static void V(int var0) throws Exception {
+      a("/20");
+      byte[] var1 = q(var0);
+      B();
+      a(var0, var1);
+      String var2 = fr[0][29];
 
-      for (int var3 = 0; var3 < bZ.length; var3++) {
-         int var4 = bZ[var3];
-         stringTables[0][var4] = replaceToken(stringTables[0][var4], "#SK", var2);
+      for (int var3 = 0; var3 < cI.length; var3++) {
+         int var4 = cI[var3];
+         fr[0][var4] = a(fr[0][var4], "#SK", var2);
       }
 
-      stringTables[0][29] = null;
+      fr[0][29] = null;
    }
 
-   // $VF: renamed from: P (int) void
-   private static void releaseStringTable(int var0) {
-      clearStringTable(var0);
+   private static void W(int var0) {
+      o(var0);
    }
 
-   // $VF: renamed from: a (int, byte[]) void
-   static final void decodeStringTable(int var0, byte[] var1) {
+   static final void a(int var0, byte[] var1) {
       if (var1 != null) {
          try {
             ByteArrayInputStream var2 = new ByteArrayInputStream(var1);
             DataInputStream var3;
             (var3 = new DataInputStream(var2)).skip(6L);
             short var4 = var3.readShort();
-            stringTables[var0] = new String[var4];
+            fr[var0] = new String[var4];
 
             for (int var5 = 0; var5 < var4; var5++) {
-               stringTables[var0][var5] = var3.readUTF().toUpperCase().trim();
+               fr[var0][var5] = var3.readUTF().toUpperCase().trim();
             }
 
             var3.close();
@@ -4296,31 +6127,26 @@ final class Game extends FullCanvas implements Runnable {
       }
    }
 
-   // $VF: renamed from: n (int) void
-   static final void clearStringTable(int var0) {
-      stringTables[var0] = null;
+   static final void o(int var0) {
+      fr[var0] = null;
    }
 
-   // $VF: renamed from: h (int, int) java.lang.String
-   static final String getString(int var0, int var1) {
-      return stringTables[var0][var1];
+   static final String k(int var0, int var1) {
+      return fr[var0][var1];
    }
 
-   // $VF: renamed from: a (byte[], int, int) int
-   static final int writeByte(byte[] var0, int var1, int var2) {
+   static final int a(byte[] var0, int var1, int var2) {
       var0[var1++] = (byte)var2;
       return var1;
    }
 
-   // $VF: renamed from: a (byte[], int, short) int
-   static final int writeI16LE(byte[] var0, int var1, short var2) {
+   static final int a(byte[] var0, int var1, short var2) {
       var0[var1++] = (byte)(var2 & 0xFF);
       var0[var1++] = (byte)(var2 >>> 8 & 0xFF);
       return var1;
    }
 
-   // $VF: renamed from: b (byte[], int, int) int
-   static final int writeI32LE(byte[] var0, int var1, int var2) {
+   static final int b(byte[] var0, int var1, int var2) {
       var0[var1++] = (byte)(var2 & 0xFF);
       var0[var1++] = (byte)(var2 >>> 8 & 0xFF);
       var0[var1++] = (byte)(var2 >>> 16 & 0xFF);
@@ -4328,358 +6154,689 @@ final class Game extends FullCanvas implements Runnable {
       return var1;
    }
 
-   // $VF: renamed from: a (byte[], int) byte
-   static final byte readSignedByte(byte[] var0, int var1) {
+   static final byte a(byte[] var0, int var1) {
       return var0[var1];
    }
 
-   // $VF: renamed from: b (byte[], int) short
-   static final short readI16LE(byte[] var0, int var1) {
+   static final short b(byte[] var0, int var1) {
       return (short)(var0[var1++] & 0xFF | (var0[var1] & 255) << 8);
    }
 
-   // $VF: renamed from: c (byte[], int) int
-   static final int readI32LE(byte[] var0, int var1) {
+   static final int c(byte[] var0, int var1) {
       return var0[var1++] & 0xFF | (var0[var1++] & 0xFF) << 8 | (var0[var1++] & 0xFF) << 16 | (var0[var1] & 0xFF) << 24;
    }
 
-   // $VF: renamed from: a (java.lang.String) void
-   static final void openPack(String var0) throws Exception {
-      if (packPath == null || var0.compareTo(packPath) != 0) {
-         if (packStream != null) {
-            closePack();
+   static final void a(String var0) throws Exception {
+      if (fs == null || var0.compareTo(fs) != 0) {
+         if (ft != null) {
+            B();
          }
 
-         packPath = var0;
-         packStream = packPath.getClass().getResourceAsStream(packPath);
-         packResourceCount = (short)readPackU16LE();
-         packPartCount = (short)readPackU16LE();
-         packPartFirstResource = new short[packPartCount];
+         fs = var0;
+         ft = b(fs);
+         fv = (short)D();
+         fx = (short)D();
+         fy = new short[fx];
 
-         for (int var1 = 0; var1 < packPartCount; var1++) {
-            packPartFirstResource[var1] = (short)readPackU16LE();
+         for (int var1 = 0; var1 < fx; var1++) {
+            fy[var1] = (short)D();
          }
 
-         packPartIndex = 0;
-         readPackOffsetTable();
+         fz = 0;
+         aJ();
       }
    }
 
-   // $VF: renamed from: ap () void
-   private static void readPackOffsetTable() throws Exception {
+   private static void aJ() throws Exception {
       int var0;
-      if (packPartIndex == packPartCount - 1) {
-         var0 = packResourceCount - packPartFirstResource[packPartIndex];
+      if (fz == fx - 1) {
+         var0 = fv - fy[fz];
       } else {
-         var0 = packPartFirstResource[packPartIndex + 1] - packPartFirstResource[packPartIndex];
+         var0 = fy[fz + 1] - fy[fz];
       }
 
-      packOffsets = new int[var0 + 1];
+      fw = new int[var0 + 1];
 
       for (int var1 = 0; var1 < var0 + 1; var1++) {
-         packOffsets[var1] = readPackI32LE();
+         fw[var1] = E();
       }
    }
 
-   // $VF: renamed from: r () void
-   static final void closePack() throws Exception {
-      if (packStream != null) {
-         packStream.close();
-         packStream = null;
+   static final void B() throws Exception {
+      if (ft != null) {
+         ft.close();
+         ft = null;
       }
 
-      packPosition = 0;
+      fu = 0;
    }
 
-   // $VF: renamed from: o (int) int
-   static final int selectResource(int var0) throws Exception {
-      int var1 = packPartCount - 1;
+   static final int p(int var0) throws Exception {
+      int var1 = fx - 1;
 
-      while (var1 >= 0 && packPartFirstResource[var1] > var0) {
+      while (var1 >= 0 && fy[var1] > var0) {
          var1--;
       }
 
-      if (packPartIndex != var1) {
-         packPartIndex = var1;
-         closePack();
-         if (packPartIndex == 0) {
-            packStream = packPath.getClass().getResourceAsStream(packPath);
-            readPackU16LE();
-            readPackU16LE();
+      if (fz != var1) {
+         fz = var1;
+         B();
+         if (fz == 0) {
+            ft = b(fs);
+            D();
+            D();
 
-            for (int var2 = 0; var2 < packPartCount; var2++) {
-               readPackU16LE();
+            for (int var2 = 0; var2 < fx; var2++) {
+               D();
             }
          } else {
-            packStream = packPath.getClass().getResourceAsStream(packPath + "." + packPartIndex);
+            ft = b(fs + "." + fz);
          }
 
-         readPackOffsetTable();
-      } else if (packStream == null) {
-         if (packPartIndex == 0) {
-            packStream = packPath.getClass().getResourceAsStream(packPath);
+         aJ();
+      } else if (ft == null) {
+         if (fz == 0) {
+            ft = b(fs);
          } else {
-            packStream = packPath.getClass().getResourceAsStream(packPath + "." + packPartIndex);
+            ft = b(fs + "." + fz);
          }
       }
 
-      var0 -= packPartFirstResource[packPartIndex];
-      int var5 = packOffsets[var0];
-      int var3 = packOffsets[var0 + 1] - packOffsets[var0] - 1;
-      seekPack(var5);
-      readPackByte();
+      var0 -= fy[fz];
+      int var5 = fw[var0];
+      int var3 = fw[var0 + 1] - fw[var0] - 1;
+      r(var5);
+      C();
       return var3;
    }
 
-   // $VF: renamed from: p (int) byte[]
-   static final byte[] readResource(int var0) throws Exception {
+   static final byte[] q(int var0) throws Exception {
       int var1;
-      if ((var1 = selectResource(var0)) < 0) {
+      if ((var1 = p(var0)) < 0) {
          return null;
       }
 
       byte[] var2;
-      readPackFully(var2 = new byte[var1], 0, var2.length);
+      c(var2 = new byte[var1], 0, var2.length);
       return var2;
    }
 
-   // $VF: renamed from: q (int) void
-   static final void seekPack(int var0) throws Exception {
-      if (packPosition != var0) {
-         if (packPosition > var0) {
-            closePack();
-            if (packPartIndex == 0) {
-               packStream = packPath.getClass().getResourceAsStream(packPath);
+   static final void r(int var0) throws Exception {
+      if (fu != var0) {
+         if (fu > var0) {
+            B();
+            if (fz == 0) {
+               ft = b(fs);
             } else {
-               packStream = packPath.getClass().getResourceAsStream(packPath + "." + packPartIndex);
+               ft = b(fs + "." + fz);
             }
          } else {
-            var0 -= packPosition;
+            var0 -= fu;
          }
 
-         skipPackBytes(var0);
+         s(var0);
       }
    }
 
-   // $VF: renamed from: r (int) void
-   static final void skipPackBytes(int var0) throws Exception {
+   static final void s(int var0) throws Exception {
       if (var0 != 0) {
-         if (packSkipBuffer == null) {
-            packSkipBuffer = new byte[256];
+         if (fA == null) {
+            fA = new byte[256];
          }
 
          while (var0 > 256) {
-            readPackFully(packSkipBuffer, 0, 256);
+            c(fA, 0, 256);
             var0 -= 256;
          }
 
          if (var0 > 0) {
-            readPackFully(packSkipBuffer, 0, var0);
+            c(fA, 0, var0);
          }
       }
    }
 
-   // $VF: renamed from: s () int
-   static final int readPackByte() throws Exception {
+   static final int C() throws Exception {
       int var0;
-      if ((var0 = packStream.read()) >= 0) {
-         packPosition++;
+      if ((var0 = ft.read()) >= 0) {
+         fu++;
       }
 
       return var0;
    }
 
-   // $VF: renamed from: t () int
-   static final int readPackU16LE() throws Exception {
-      return readPackByte() & 0xFF | (readPackByte() & 0xFF) << 8;
+   static final int D() throws Exception {
+      return C() & 0xFF | (C() & 0xFF) << 8;
    }
 
-   // $VF: renamed from: u () int
-   static final int readPackI32LE() throws Exception {
-      return readPackByte() & 0xFF | (readPackByte() & 0xFF) << 8 | (readPackByte() & 0xFF) << 16 | (readPackByte() & 0xFF) << 24;
+   static final int E() throws Exception {
+      return C() & 0xFF | (C() & 0xFF) << 8 | (C() & 0xFF) << 16 | (C() & 0xFF) << 24;
    }
 
-   // $VF: renamed from: c (byte[], int, int) int
-   static final int readPackFully(byte[] var0, int var1, int var2) throws Exception {
+   static final int c(byte[] var0, int var1, int var2) throws Exception {
       int var3 = var1;
       int var4 = var2;
       int var5 = 0;
 
       while (var4 > 0) {
-         var5 = packStream.read(var0, var3, var4);
+         var5 = ft.read(var0, var3, var4);
          var4 -= var5;
          var3 += var5;
       }
 
-      packPosition += var2;
+      fu += var2;
       return var2;
    }
 
-   // $VF: renamed from: aq () void
-   private void updateMainMenu() {
-      updateCheatSequence();
-      setClip(0, 0, 240, 320);
-      if (titleImage == null) {
-         a(0, true);
+   static final int F() {
+      return cO == cK ? 255 : cJ[cO++] & 0xFF;
+   }
+
+   static final void d(byte[] var0, int var1) {
+      cJ = var0;
+      cK = var1;
+      cO = 0;
+      cM = 0L;
+      cL = 4294967295L;
+
+      for (int var2 = 0; var2 < 5; var2++) {
+         cM = cM << 8 | F();
+      }
+   }
+
+   static final int t(int var0) {
+      long var1 = (cL >> 11) * fB[var0];
+      if (cM < var1) {
+         cL = var1;
+         int var3 = 2048 - fB[var0];
+         fB[var0] = (short)(fB[var0] + (var3 >> 5));
+         if (cL < 16777216L) {
+            cM = cM << 8 | F();
+            cL <<= 8;
+         }
+
+         return 0;
+      } else {
+         cL -= var1;
+         cM -= var1;
+         fB[var0] = (short)(fB[var0] - (fB[var0] >> 5));
+         if (cL < 16777216L) {
+            cM = cM << 8 | F();
+            cL <<= 8;
+         }
+
+         return 1;
+      }
+   }
+
+   static final int a(int var0, byte var1) {
+      int var2 = 1;
+
+      do {
+         int var4 = var1 >> 7 & 1;
+         var1 = (byte)(var1 << 1);
+         int var3 = t(var0 + (1 + var4 << 8) + var2);
+         var2 = var2 << 1 | var3;
+         if (var4 != var3) {
+            while (var2 < 256) {
+               var2 = var2 << 1 | t(var0 + var2);
+            }
+            break;
+         }
+      } while (var2 < 256);
+
+      return var2;
+   }
+
+   static final int u(int var0) {
+      int var1 = 1;
+
+      while ((var1 = var1 << 1 | t(var0 + var1)) < 256) {
       }
 
-      drawImage(titleImage, 0, 0, 0);
-      a(23, 110, 194, 177, 217);
-      if (cheatsUnlocked) {
-         font.currentPalette = 0;
-         font.drawText(graphics, "is GOD MODULE!", 237, 20, 9);
+      return var1;
+   }
+
+   static final int l(int var0, int var1) {
+      int var2 = 1;
+
+      for (int var3 = var1; var3 > 0; var3--) {
+         var2 = (var2 << 1) + t(var0 + var2);
       }
 
-      if (cheatsUnlocked) {
+      return var2 - (1 << var1);
+   }
+
+   static final int m(int var0, int var1) {
+      if (t(var0 + 0) == 0) {
+         return l(var0 + 2 + (var1 << 3), 3);
+      } else {
+         return t(var0 + 1) == 0 ? 8 + l(var0 + 130 + (var1 << 3), 3) : 16 + l(var0 + 258, 8);
+      }
+   }
+
+   static final int n(int var0, int var1) {
+      int var2 = 1;
+      int var4 = 0;
+
+      for (int var3 = 0; var3 < var1; var3++) {
+         int var5 = t(var0 + var2);
+         var2 = (var2 << 1) + var5;
+         var4 |= var5 << var3;
+      }
+
+      return var4;
+   }
+
+   static final int v(int var0) {
+      long var1 = cL;
+      long var3 = cM;
+      int var5 = 0;
+
+      for (int var6 = var0; var6 > 0; var6--) {
+         var1 >>= 1;
+         var5 <<= 1;
+         if (var3 >= var1) {
+            var3 -= var1;
+            var5 |= 1;
+         }
+
+         if (var1 < 16777216L) {
+            var1 <<= 8;
+            var3 = var3 << 8 | F();
+         }
+      }
+
+      cL = var1;
+      cM = var3;
+      return var5;
+   }
+
+   static final void a(int var0, int var1, int var2, int var3, byte[] var4, int var5) {
+      int var6 = var4.length;
+      int var7 = 1846 + (768 << var1 + var2);
+      short[] var8 = fB;
+      int var10 = 0;
+      boolean var11 = false;
+      int var12 = 0;
+      int var25 = 1;
+      int var14 = 1;
+      int var15 = 1;
+      int var16 = 1;
+      int var17 = 0;
+      int var18 = (1 << var3) - 1;
+      int var19 = (1 << var2) - 1;
+      int var20 = 0;
+      if (var0 >= var7 * 2) {
+         for (int var9 = 0; var9 < var7; var9++) {
+            var8[var9] = 1024;
+         }
+
+         d(var4, var6);
+
+         while (var17 < var5) {
+            int var21 = var17 & var18;
+            if (t(0 + (var10 << 4) + var21) == 0) {
+               int var30 = 1846 + 768 * (((var17 & var19) << var1) + ((var12 & 0xFF) >> 8 - var1));
+               if (var10 < 4) {
+                  var10 = 0;
+               } else if (var10 < 10) {
+                  var10 -= 3;
+               } else {
+                  var10 -= 6;
+               }
+
+               if (var11) {
+                  byte var31 = cN[var17 - var25];
+                  var12 = a(var30, var31) & 0xFF;
+                  var11 = false;
+               } else {
+                  var12 = u(var30) & 0xFF;
+               }
+
+               cN[var17++] = (byte)var12;
+            } else {
+               var11 = true;
+               if (t(192 + var10) == 1) {
+                  if (t(204 + var10) == 0) {
+                     if (t(240 + (var10 << 4) + var21) == 0) {
+                        var10 = (byte)(var10 < 7 ? 9 : 11);
+                        var12 = cN[var17 - var25] & 255;
+                        cN[var17++] = (byte)var12;
+                        continue;
+                     }
+                  } else {
+                     int var22;
+                     if (t(216 + var10) == 0) {
+                        var22 = var14;
+                     } else {
+                        if (t(228 + var10) == 0) {
+                           var22 = var15;
+                        } else {
+                           var22 = var16;
+                           var16 = var15;
+                        }
+
+                        var15 = var14;
+                     }
+
+                     var14 = var25;
+                     var25 = var22;
+                  }
+
+                  var20 = m(1332, var21);
+                  var10 = (byte)(var10 < 7 ? 8 : 11);
+               } else {
+                  var16 = var15;
+                  var15 = var14;
+                  var14 = var25;
+                  var10 = (byte)(var10 < 7 ? 7 : 10);
+                  var20 = m(818, var21);
+                  int var29;
+                  if ((var29 = l(432 + ((var20 < 4 ? var20 : 3) << 6), 6)) >= 4) {
+                     int var23 = (var29 >> 1) - 1;
+                     var25 = (2 | var29 & 1) << var23;
+                     if (var29 < 14) {
+                        var25 += n(688 + var25 - var29 - 1, var23);
+                     } else {
+                        int var26;
+                        var25 = (var26 = var25 + (v(var23 - 4) << 4)) + n(802, 4);
+                     }
+                  } else {
+                     var25 = var29;
+                  }
+
+                  var25++;
+               }
+
+               var20 += 2;
+
+               while (true) {
+                  var12 = cN[var17 - var25] & 255;
+                  cN[var17++] = (byte)var12;
+                  if (--var20 <= 0 || var17 >= var5) {
+                     break;
+                  }
+               }
+            }
+         }
+      }
+   }
+
+   public static final void a(byte[] var0) throws Exception {
+      byte[] var1 = new byte[13];
+      byte[] var2 = new byte[var0.length - 13];
+      System.arraycopy(var0, 0, var1, 0, 13);
+      System.arraycopy(var0, 13, var2, 0, var2.length);
+      int[] var3 = new int[5];
+
+      for (int var4 = 0; var4 < 5; var4++) {
+         var3[var4] = var1[var4] & 255;
+      }
+
+      int var11 = 0;
+
+      for (int var6 = 0; var6 < 4; var6++) {
+         int var5 = var1[var6 + 5] & 255;
+         var11 += var5 << (var6 << 3);
+      }
+
+      int var12 = var3[0];
+      int var9 = 0;
+
+      while (var12 >= 45) {
+         var9++;
+         var12 -= 45;
+      }
+
+      int var8 = 0;
+
+      while (var12 >= 9) {
+         var8++;
+         var12 -= 9;
+      }
+
+      int var7 = var12;
+      int var10 = 1846 + (768 << var7 + var8);
+      cN = new byte[var11];
+      fB = new short[var10];
+      a(var10 * 2, var7, var8, var9, var2, var11);
+      fB = null;
+      cJ = null;
+      System.gc();
+   }
+
+   public static final InputStream b(String var0) {
+      try {
+         DataInputStream var1;
+         byte[] var3 = new byte[(var1 = new DataInputStream(var0.getClass().getResourceAsStream(var0))).readInt()];
+         var1.readFully(var3);
+         var1.close();
+         a(var3);
+         ByteArrayInputStream var4 = new ByteArrayInputStream(cN);
+         cN = null;
+         return var4;
+      } catch (Exception var5) {
+         return null;
+      }
+   }
+
+   private void aK() {
+      aM();
+      a(0, 0, 240, 320);
+      if (eE == null) {
+         b(0, true);
+      }
+
+      eQ.a(graphics, 0, 120, 127, 0, 0, 0);
+      if (dG) {
+         a.z = 0;
+         a.a(graphics, "is GOD MODULE!", 237, 20, 9);
+      }
+
+      if (dG) {
          graphics.setColor(16777215);
          graphics.drawString("level :" + levelIndex, 0, 10, 0);
-         if (wasKeyPressed(1)) {
+         if (G(1)) {
             levelIndex++;
          }
 
-         if (levelIndex > 8) {
+         if (levelIndex > 10) {
             levelIndex = 0;
          }
 
-         if (wasKeyPressed(2048)) {
-            titleImage = null;
-            changeState(9);
+         if (G(2048)) {
+            eE = null;
+            a(9);
          }
       }
 
-      font.currentPalette = 0;
-      drawMenuItems(menuDefinition, 120, 125 + countHiddenMenuItems() * 9);
-      font.currentPalette = 0;
-      if (confirmationOpen) {
-         drawConfirmation();
+      a.z = 0;
+      g(fC, 120, 255);
+      a.z = 0;
+      if (eN) {
+         ac();
       } else {
-         navigateMenu(menuItems[menuDefinition].length, false);
+         d(fD[fC].length, true);
       }
 
-      handleMenuAction(menuDefinition);
+      N(fC);
    }
 
-   // $VF: renamed from: l (int, int) java.lang.String
-   private static String getMenuItemText(int var0, int var1) {
-      return getString(0, menuItems[var0][var1]);
+   private static String s(int var0, int var1) {
+      return k(0, fD[var0][var1]);
    }
 
-   // $VF: renamed from: ar () int
-   private static int countHiddenMenuItems() {
-      int var0 = 0;
-      if (menuDefinition == 0) {
-         var0 += 2;
-      }
+   private static void f(int var0, int var1, int var2) {
+      if (var0 == 1) {
+         cQ = 35 * cP - 26;
 
-      if (!InGamePromotion.a()) {
-         var0++;
-      }
-
-      if (!InGamePromotion.d()) {
-         var0++;
-      }
-
-      return var0;
-   }
-
-   // $VF: renamed from: e (int, int, int) void
-   private static void drawMenuItems(int var0, int var1, int var2) {
-      int var3 = 0;
-
-      for (int var4 = 0; var4 < menuItems[var0].length; var4++) {
-         if (var0 != 0 && var0 != 2
-            || (!InGamePromotion.a() ? menuItems[var0][var4] != 4 && menuItems[var0][var4] != 5 : InGamePromotion.d() || menuItems[var0][var4] != 5)) {
-            int var5 = var1;
-            String var6 = getMenuItemText(var0, var4);
-            if ((var0 == 0 || var0 == 2) && InGamePromotion.a() && menuItems[var0][var4] == 4) {
-               font.currentPalette = selectedMenuItem == var4 ? 2 : 1;
-            } else if ((var0 == 0 || var0 == 2) && InGamePromotion.a() && InGamePromotion.d() && menuItems[var0][var4] == 5) {
-               font.currentPalette = selectedMenuItem == var4 ? 2 : 1;
-            } else if (var0 == 1) {
-               font.currentPalette = selectedMenuItem == var4 ? 1 : 0;
-            } else {
-               font.currentPalette = selectedMenuItem == var4 ? 2 : 0;
-            }
-
-            if (menuItems[var0][var4] == 6) {
-               font.drawText(graphics, var6 + ": " + (soundEnabled ? getString(0, 23) : getString(0, 24)), var5, 18 * var3 + var2, 3);
-            } else {
-               font.drawText(graphics, var6, var5, 18 * var3 + var2, 3);
-            }
-
-            if (menuItems[var0][var4] == 4) {
-               InGamePromotion.a(graphics, menuNewBadge, var5 + BSprite.textWidth / 2 + 0, 18 * var3 + var2, 6);
-            } else if (menuItems[var0][var4] == 5) {
-               InGamePromotion.b(graphics, menuNewBadge, var5 + BSprite.textWidth / 2 + 0, 18 * var3 + var2, 6);
-            }
-
-            if (selectedMenuItem == var4) {
-               sprites[35].drawAnimationFrame(graphics, 5, stateFrame % 6 >> 1, state == 14 ? 60 : 45, var2 + var3 * 18, 1, 0, 0);
-            }
-
-            var3++;
+         for (int var3 = 0; var3 < 6; var3++) {
+            b[33].a(graphics, 66, 60, 38 + var3 * 35, 0, 0, 0);
          }
       }
 
-      drawSoftkeys(var0 == 1 ? getString(0, 18) : "", getString(0, 21));
+      if (cR) {
+         int var8 = stateFrame % 4;
+         b[33].a(graphics, 14, var8, 60, 64 + cQ, 0, 0, 0);
+         if (var8 == 3) {
+            cR = false;
+            cS = true;
+            cT = true;
+         } else {
+            cT = false;
+         }
+      }
+
+      int var4 = 0;
+
+      for (int var5 = 0; var5 < fD[var0].length; var5++) {
+         if (var0 != 0 && var0 != 2 || (!InGamePromotion.a() ? fD[var0][var5] != 4 && fD[var0][var5] != 5 : InGamePromotion.d() || fD[var0][var5] != 5)) {
+            int var6 = var1;
+            String var7 = s(var0, var5);
+            if ((var0 == 0 || var0 == 2) && InGamePromotion.a() && fD[var0][var5] == 4) {
+               a.z = cP == var5 ? 4 : 2;
+            } else if ((var0 == 0 || var0 == 2) && InGamePromotion.a() && InGamePromotion.d() && fD[var0][var5] == 5) {
+               a.z = cP == var5 ? 4 : 2;
+            } else if (var0 == 1) {
+               a.z = cP == var5 ? 2 : 5;
+            } else {
+               a.z = cP == var5 ? 4 : 5;
+            }
+
+            if (fD[var0][var5] == 6) {
+               a.a(graphics, var7 + ": " + (el ? k(0, 23) : k(0, 24)), var6, 35 * var4 + var2, 3);
+            } else {
+               a.a(graphics, var7, var6, 35 * var4 + var2, 3);
+            }
+
+            if (fD[var0][var5] == 4) {
+               InGamePromotion.a(graphics, eG, var6 + BSprite.S / 2 + 5, 35 * var4 + var2, 6);
+            } else if (fD[var0][var5] == 5) {
+               InGamePromotion.b(graphics, eG, var6 + BSprite.S / 2 + 5, 35 * var4 + var2, 6);
+            }
+
+            var4++;
+         }
+      }
+
+      aX++;
+      a(var0 == 1 ? k(0, 18) : "", k(0, 21));
    }
 
-   // $VF: renamed from: c (int, boolean) void
-   private static void navigateMenu(int var0, boolean var1) {
+   private static void g(int var0, int var1, int var2) {
+      b(0);
+      b(0, 300, 240, 20);
+      b[33].a(graphics, 66, 60, 240, 0, 0, 0);
+      int var3 = 0;
+      if (cR) {
+         var3 = stateFrame % 4;
+         b[33].a(graphics, 14, var3, 60, 240, 0, 0, 0);
+         if (var3 == 3) {
+            cR = false;
+            cS = true;
+            cT = true;
+         } else {
+            cT = false;
+         }
+      }
+
+      String var4 = s(var0, cP);
+      if (fD[var0][cP] == 6) {
+         var4 = var4 + ": " + (el ? k(0, 23) : k(0, 24));
+      }
+
+      if (fD[var0][cP] != 5 && fD[var0][cP] != 4) {
+         a.z = 0;
+      } else {
+         a.z = 2;
+      }
+
+      a.a(graphics, var4, var1, var2, 3);
+      if (fD[var0][cP] == 4) {
+         InGamePromotion.a(graphics, eG, var1 + 5, var2 + 20, 3);
+      } else if (fD[var0][cP] == 5) {
+         InGamePromotion.b(graphics, eG, var1 + 5, var2 + 20, 3);
+      }
+
+      a.a(var4);
+      boolean var5 = false;
+      b[33].a(graphics, 16, cU % (G(4112) ? 2 : 1), 58, 242, 0, 0, 0);
+      b[33].a(graphics, 12, cU % (G(8256) ? 2 : 1), 188, 242, 0, 0, 0);
+      cU++;
+      if (cU > 1) {
+         cU = 1;
+      }
+
+      aX++;
+      eO = true;
+      a(var0 == 1 ? k(0, 18) : "", k(0, 21));
+      eO = false;
+   }
+
+   private static void d(int var0, boolean var1) {
       if (var0 > 0) {
-         if (wasKeyPressed(var1 ? 4112 : 16388)) {
-            playSoundOnce(-1);
-            selectedMenuItem += var0 - 1;
-            selectedMenuItem %= var0;
-            if ((menuDefinition == 0 || menuDefinition == 2) && menuItems[menuDefinition][selectedMenuItem] == 5) {
-               if (!InGamePromotion.a()) {
-                  selectedMenuItem += var0 - 2;
-                  selectedMenuItem %= var0;
-                  return;
+         if (G(var1 ? 4112 : 16388)) {
+            I(-1);
+            cP += var0 - 1;
+            cP %= var0;
+            if (fC == 0 || fC == 2) {
+               if (var1) {
+                  aX = 0;
                }
 
-               if (InGamePromotion.a() && !InGamePromotion.d()) {
-                  selectedMenuItem += var0 - 1;
-                  selectedMenuItem %= var0;
-                  return;
-               }
-            }
-         } else if (wasKeyPressed(var1 ? 8256 : 33024)) {
-            playSoundOnce(-1);
-            selectedMenuItem++;
-            selectedMenuItem %= var0;
-            if (menuDefinition == 0 || menuDefinition == 2) {
-               if (menuItems[menuDefinition][selectedMenuItem] == 4) {
+               if (fD[fC][cP] == 5) {
                   if (!InGamePromotion.a()) {
-                     selectedMenuItem += 2;
-                     selectedMenuItem %= var0;
+                     cP += var0 - 2;
+                     cP %= var0;
                      return;
                   }
-               } else if (menuItems[menuDefinition][selectedMenuItem] == 5 && InGamePromotion.a() && !InGamePromotion.d()) {
-                  selectedMenuItem++;
-                  selectedMenuItem %= var0;
+
+                  if (InGamePromotion.a() && !InGamePromotion.d()) {
+                     cP += var0 - 1;
+                     cP %= var0;
+                     return;
+                  }
+               }
+            }
+         } else if (G(var1 ? 8256 : 33024)) {
+            if (var1) {
+               aX = 0;
+            }
+
+            I(-1);
+            cP++;
+            cP %= var0;
+            if (fC == 0 || fC == 2) {
+               if (fD[fC][cP] == 4) {
+                  if (!InGamePromotion.a()) {
+                     cP += 2;
+                     cP %= var0;
+                     return;
+                  }
+               } else if (fD[fC][cP] == 5 && InGamePromotion.a() && !InGamePromotion.d()) {
+                  cP++;
+                  cP %= var0;
                }
             }
          }
       }
    }
 
-   // $VF: renamed from: a (byte[]) void
-   public static final void decodeScripts(byte[] var0) {
+   public static final void b(byte[] var0) {
       int var19 = 0;
       var19++;
       short var2;
-      scriptTracks = new byte[var2 = var0[0]][][];
-      scriptIds = new short[var2];
-      scriptTrackOffsets = new int[var2][];
+      cV = new byte[var2 = var0[0]][][];
+      cW = new short[var2];
+      cY = new int[var2][];
 
       for (int var3 = 0; var3 < var2; var3++) {
-         scriptIds[var3] = (short)((var0[var19] & 255) + ((var0[var19 + 1] & 255) << 8));
+         cW[var3] = (short)((var0[var19] & 255) + ((var0[var19 + 1] & 255) << 8));
          var19 += 2;
          byte var4 = var0[var19++];
          var19 += 2;
-         scriptTracks[var3] = new byte[var4][];
-         scriptTrackOffsets[var3] = new int[var4];
+         cV[var3] = new byte[var4][];
+         cY[var3] = new int[var4];
 
          for (int var5 = 0; var5 < var4; var5++) {
             int var6 = var19;
@@ -4708,7 +6865,7 @@ final class Game extends FullCanvas implements Runnable {
                for (int var12 = 0; var12 < var11; var12++) {
                   byte var13;
                   if ((var13 = var0[var19++]) >= 100) {
-                     var19 += getScriptOpcodeSize(var13);
+                     var19 += D(var13);
                   } else {
                      switch (var13) {
                         case 11:
@@ -4762,113 +6919,106 @@ final class Game extends FullCanvas implements Runnable {
             }
 
             int var21 = var19 - var6;
-            scriptTracks[var3][var5] = new byte[var21 + 2];
-            scriptTrackOffsets[var3][var5] = var9 - var6;
-            System.arraycopy(var0, var6, scriptTracks[var3][var5], 0, var21);
-            scriptTracks[var3][var5][var21] = (byte)(scriptTrackOffsets[var3][var5] & 0xFF);
-            scriptTracks[var3][var5][var21 + 1] = (byte)(scriptTrackOffsets[var3][var5] >> 8 & 0xFF);
+            cV[var3][var5] = new byte[var21 + 2];
+            cY[var3][var5] = var9 - var6;
+            System.arraycopy(var0, var6, cV[var3][var5], 0, var21);
+            cV[var3][var5][var21] = (byte)(cY[var3][var5] & 0xFF);
+            cV[var3][var5][var21 + 1] = (byte)(cY[var3][var5] >> 8 & 0xFF);
          }
       }
 
-      scriptTicks = new short[var2];
-      resetScripts();
+      cX = new short[var2];
+      G();
    }
 
-   // $VF: renamed from: v () void
-   public static final void resetScripts() {
-      scriptsPaused = false;
+   public static final void G() {
+      cZ = false;
 
-      for (int var0 = 0; var0 < scriptTicks.length; var0++) {
-         scriptTicks[var0] = -1;
+      for (int var0 = 0; var0 < cX.length; var0++) {
+         cX[var0] = -1;
       }
 
-      for (int var4 = 0; var4 < scriptIds.length; var4++) {
-         byte[][] var1 = scriptTracks[var4];
+      for (int var4 = 0; var4 < cW.length; var4++) {
+         byte[][] var1 = cV[var4];
 
          for (int var2 = 0; var2 < var1.length; var2++) {
             byte[] var3 = var1[var2];
-            scriptTrackOffsets[var4][var2] = (var3[var3.length - 2] & 255) + (var3[var3.length - 1] << 8 & 0xFF);
+            cY[var4][var2] = (var3[var3.length - 2] & 255) + (var3[var3.length - 1] << 8 & 0xFF);
          }
       }
    }
 
-   // $VF: renamed from: w () void
-   public static final void releaseScripts() {
-      scriptTracks = (byte[][][])null;
-      scriptIds = null;
-      scriptTicks = null;
-      scriptTrackOffsets = (int[][])null;
+   public static final void H() {
+      cV = (byte[][][])null;
+      cW = null;
+      cX = null;
+      cY = (int[][])null;
    }
 
-   // $VF: renamed from: s (int) void
-   public static final void startCutscene(int var0) {
-      cm = false;
-      Z = true;
-      scriptTicks[var0] = 0;
-      aM = 35;
-      clearInput();
-      Actor.weaponSwitchCooldownMs = 0;
-      Actor.clearCombatEffects(true);
+   public static final void w(int var0) {
+      di = false;
+      ao = true;
+      cX[var0] = 0;
+      br = 35;
+      N();
+      Actor.bb = 0;
+      Actor.e(bY);
    }
 
-   // $VF: renamed from: t (int) void
-   public static final void startScript(int var0) {
-      scriptTicks[var0] = 0;
+   public static final void x(int var0) {
+      cX[var0] = 0;
    }
 
-   // $VF: renamed from: u (int) void
-   public static final void stopAndRewindScript(int var0) {
-      scriptTicks[var0] = -2;
-      byte[][] var1 = scriptTracks[var0];
+   public static final void y(int var0) {
+      cX[var0] = -2;
+      byte[][] var1 = cV[var0];
 
       for (int var2 = 0; var2 < var1.length; var2++) {
          byte[] var3 = var1[var2];
-         scriptTrackOffsets[var0][var2] = (var3[var3.length - 2] & 255) + (var3[var3.length - 1] << 8 & 0xFF);
+         cY[var0][var2] = (var3[var3.length - 2] & 255) + (var3[var3.length - 1] << 8 & 0xFF);
       }
    }
 
-   // $VF: renamed from: v (int) void
-   public static final void restartScript(int var0) {
-      scriptTicks[var0] = 0;
-      byte[][] var1 = scriptTracks[var0];
+   public static final void z(int var0) {
+      cX[var0] = 0;
+      byte[][] var1 = cV[var0];
 
       for (int var2 = 0; var2 < var1.length; var2++) {
          byte[] var3 = var1[var2];
-         scriptTrackOffsets[var0][var2] = (var3[var3.length - 2] & 255) + (var3[var3.length - 1] << 8 & 0xFF);
+         cY[var0][var2] = (var3[var3.length - 2] & 255) + (var3[var3.length - 1] << 8 & 0xFF);
       }
    }
 
-   // $VF: renamed from: w (int) void
-   public static final void finishCutscene(int var0) {
-      cm = true;
-      Z = false;
-      scriptTicks[var0] = -2;
+   public static final void A(int var0) {
+      di = true;
+      ao = false;
+      cX[var0] = -2;
       if (state != 15) {
-         aM = 0;
+         br = 0;
       }
 
-      if (!isSelectedScript(var0)) {
-         ar = 1;
+      if (!C(var0)) {
+         aG = 1;
       }
 
-      if (levelIndex != 9 && levelIndex != 3) {
-         as = 1;
+      if (levelIndex != 9 && levelIndex != 4 && levelIndex != 1) {
+         aH = 1;
       }
 
-      ch = true;
-      ci = false;
-      clearCinematicActors();
-      if (bc != 17 && bc != 18) {
-         l();
+      db = true;
+      dc = false;
+      dd = -1;
+      w();
+      if (bJ != 17 && bJ != 18) {
+         s();
       }
 
-      aO = false;
+      Actor.d(bY);
    }
 
-   // $VF: renamed from: x (int) int
-   public static final int findScriptIndex(int var0) {
-      for (int var1 = 0; var1 < scriptIds.length; var1++) {
-         if (scriptIds[var1] == var0) {
+   public static final int B(int var0) {
+      for (int var1 = 0; var1 < cW.length; var1++) {
+         if (cW[var1] == var0) {
             return var1;
          }
       }
@@ -4876,45 +7026,42 @@ final class Game extends FullCanvas implements Runnable {
       return -1;
    }
 
-   // $VF: renamed from: x () void
-   public static final void updateBackgroundScripts() {
-      if (wasKeyPressed(131072) && ch) {
-         cg = true;
-         scriptsPaused = false;
-         clearInput();
+   public static final void I() {
+      if (G(131072) && db) {
+         da = true;
+         cZ = false;
+         N();
       }
 
-      if (!scriptsPaused) {
-         for (int var0 = 0; var0 < scriptIds.length; var0++) {
+      if (!cZ) {
+         for (int var0 = 0; var0 < cW.length; var0++) {
             boolean var1 = false;
 
-            for (int var2 = 0; var2 < cj; var2++) {
-               if (var0 == ck[var2]) {
+            for (int var2 = 0; var2 < df; var2++) {
+               if (var0 == dg[var2]) {
                   var1 = true;
                   break;
                }
             }
 
             if (!var1) {
-               updateScript(var0, var1, 1);
+               b(var0, var1, 1);
             }
          }
       }
    }
 
-   // $VF: renamed from: y () void
-   public static final void updateSelectedScripts() {
-      for (int var0 = 0; var0 < cj; var0++) {
-         updateScript(ck[var0], true, cl[var0]);
+   public static final void J() {
+      for (int var0 = 0; var0 < df; var0++) {
+         b(dg[var0], true, dh[var0]);
       }
    }
 
-   // $VF: renamed from: y (int) boolean
-   public static final boolean isSelectedScript(int var0) {
+   public static final boolean C(int var0) {
       boolean var1 = false;
 
-      for (int var2 = 0; var2 < cj; var2++) {
-         if (var0 == ck[var2]) {
+      for (int var2 = 0; var2 < df; var2++) {
+         if (var0 == dg[var2]) {
             var1 = true;
             break;
          }
@@ -4923,15 +7070,15 @@ final class Game extends FullCanvas implements Runnable {
       return var1;
    }
 
-   // $VF: renamed from: z () boolean
+   // $VF: renamed from: K () boolean
    public static final boolean hasActiveBackgroundScript() {
-      if (scriptTicks != null) {
-         for (int var0 = 0; var0 < scriptTicks.length; var0++) {
-            if (scriptTicks[var0] >= 0) {
+      if (cX != null) {
+         for (int var0 = 0; var0 < cX.length; var0++) {
+            if (cX[var0] >= 0) {
                boolean var1 = false;
 
-               for (int var2 = 0; var2 < cj; var2++) {
-                  if (var0 == ck[var2]) {
+               for (int var2 = 0; var2 < df; var2++) {
+                  if (var0 == dg[var2]) {
                      var1 = true;
                      break;
                   }
@@ -4947,19 +7094,38 @@ final class Game extends FullCanvas implements Runnable {
       return false;
    }
 
-   // $VF: renamed from: b (int, boolean, int) void
-   public static final void updateScript(int var0, boolean var1, int var2) {
+   public static final void b(int var0, boolean var1, int var2) {
       Actor var6 = null;
-      if (scriptTicks[var0] >= 0) {
+      if (cX[var0] >= 0) {
+         if (Actor.aQ) {
+            Actor.bI++;
+            if (dl && M()) {
+               if (!dm && player.q != null) {
+                  if (G(dp[dk])) {
+                     dm = true;
+                  }
+
+                  e(player.q);
+                  player.q = null;
+               }
+
+               Actor.as();
+            }
+
+            if ((Actor.bI + 1) % Actor.aS != 1) {
+               return;
+            }
+         }
+
          boolean var7 = true;
-         byte[][] var8 = scriptTracks[var0];
-         short var9 = scriptTicks[var0]++;
+         byte[][] var8 = cV[var0];
+         short var9 = cX[var0]++;
 
          for (int var10 = 0; var10 < var8.length; var10++) {
             Actor var11 = null;
             int var13 = 0;
             byte[] var14 = var8[var10];
-            if (scriptTrackOffsets[var0][var10] < var14.length - 2) {
+            if (cY[var0][var10] < var14.length - 2) {
                byte var15 = var14[0];
                boolean var16 = false;
                switch (var15) {
@@ -4968,23 +7134,26 @@ final class Game extends FullCanvas implements Runnable {
                   default:
                      break;
                   case 2:
-                     var11 = findActorByUid((var14[2] & 255) + ((var14[3] & 255) << 8));
+                     var11 = i((var14[2] & 255) + ((var14[3] & 255) << 8));
                      break;
                   case 3:
                      int var12;
                      short var17;
-                     if ((var11 = findCinematicActor(var12 = ((var17 = (short)((var14[2] & 255) + ((var14[3] & 255) << 8))) << 16) + (var0 << 8) + var10))
-                        == null) {
-                        player.createActor(-2, var17, 0, 0, 0, 200, false);
-                        var11 = Actor.lastSpawnedActor;
-                        Actor.lastSpawnedActor.uid = var12;
+                     if ((var11 = j(var12 = ((var17 = (short)((var14[2] & 255) + ((var14[3] & 255) << 8))) << 16) + (var0 << 8) + var10)) == null) {
+                        player.b(-2, var17, 0, 0, 0, 200, false);
+                        var11 = Actor.aU;
+                        if (var17 == 31) {
+                           var11.c |= 4096;
+                        }
+
+                        var11.an = var12;
                         var11.facingLeft = false;
-                        var11.flags &= -2;
-                        addCinematicActor(var11);
+                        var11.c &= -2;
+                        g(var11);
                      }
                }
 
-               var13 = scriptTrackOffsets[var0][var10];
+               var13 = cY[var0][var10];
                int var32 = 0;
                int var18 = 0;
                short var19 = -1;
@@ -4995,7 +7164,7 @@ final class Game extends FullCanvas implements Runnable {
                for (int var22 = 0; var22 < var21; var22++) {
                   byte var23;
                   if ((var23 = var14[var13++]) >= 100) {
-                     var13 += executeScriptOpcode(var23, var14, var13, var9, var20, var11);
+                     var13 += a(var23, var14, var13, var9, var20, var11);
                   } else {
                      switch (var23) {
                         case 11:
@@ -5024,8 +7193,8 @@ final class Game extends FullCanvas implements Runnable {
 
                                  if (var18 < 0) {
                                     var18 = 0;
-                                 } else if (var18 > levelPixelHeight - 320) {
-                                    var18 = levelPixelHeight - 320;
+                                 } else if (var18 > cB - 320) {
+                                    var18 = cB - 320;
                                  }
                               }
 
@@ -5058,12 +7227,12 @@ final class Game extends FullCanvas implements Runnable {
                         case 32:
                         case 42:
                            if (var20 <= var9) {
-                              short var35;
+                              int var35;
                               if ((var35 = var14[var13]) < 0) {
                                  var35 += 256;
                               }
 
-                              var11.setAnimationImmediate(var35);
+                              var11.b(var35);
                            }
 
                            var13++;
@@ -5085,8 +7254,8 @@ final class Game extends FullCanvas implements Runnable {
                                  var34 |= 65536;
                               }
 
-                              var11.flags |= var34 >> 16;
-                              var11.facingLeft = (var11.flags & 1) != 0;
+                              var11.c |= var34 >> 16;
+                              var11.facingLeft = (var11.c & 1) != 0;
                            }
 
                            var13 += 4;
@@ -5108,10 +7277,10 @@ final class Game extends FullCanvas implements Runnable {
                                  var33 |= 65536;
                               }
 
-                              var11.flags &= ~(var33 >> 16);
+                              var11.c &= ~(var33 >> 16);
                            }
 
-                           var11.facingLeft = (var11.flags & 1) != 0;
+                           var11.facingLeft = (var11.c & 1) != 0;
                            var13 += 4;
                            break;
                         case 34:
@@ -5119,7 +7288,7 @@ final class Game extends FullCanvas implements Runnable {
                         case 36:
                            int var27 = (var14[var13] & 255) + ((var14[var13 + 1] & 255) << 8);
                            var13 += 2;
-                           var6 = findActorByUid(var27);
+                           var6 = i(var27);
                         case 37:
                         case 38:
                         case 39:
@@ -5145,60 +7314,67 @@ final class Game extends FullCanvas implements Runnable {
                            if (var6 != null) {
                               var6 = null;
                            } else if (var20 == var9) {
-                              executeScriptGlobalCommand(var3, var4, var5, var26);
+                              i(var3, var4, var5, var26);
                            }
                      }
                   }
                }
 
                if (var20 == var9) {
-                  scriptTrackOffsets[var0][var10] = var13;
+                  cY[var0][var10] = var13;
                } else if (var20 < var9) {
-                  scriptTrackOffsets[var0][var10] = var13;
+                  cY[var0][var10] = var13;
                }
 
-               if (scriptTrackOffsets[var0][var10] < var14.length - 2) {
+               if (cY[var0][var10] < var14.length - 2) {
                   var7 = false;
                } else if (var15 == 3) {
-                  removeActor(var11);
+                  e(var11);
                }
 
                if (var19 >= 0) {
                   if (var15 == 1) {
                      cameraX = cameraX + (var32 - cameraX) / (var19 - var9 + 1);
                      cameraY = cameraY + (var18 - cameraY) / (var19 - var9 + 1);
-                     updateViewBounds();
+                     l();
                   } else {
                      var11.positionX = var11.positionX + (var32 - var11.positionX) / (var19 - var9 + 1);
                      var11.positionY = var11.positionY + (var18 - var11.positionY) / (var19 - var9 + 1);
-                     var11.isVisible();
+                     var11.h();
+                     if (var11.type == 8 && var11.q != null) {
+                        var11.q.ac = var11.positionX + 0;
+                        var11.q.ad = var11.positionY + 0;
+                        var11.q.positionX = var11.positionX;
+                        var11.q.positionY = var11.positionY;
+                     }
                   }
                }
             }
          }
 
-         if (var7 || cu) {
-            cu = false;
+         if (var7 || dr) {
+            dr = false;
             if (var2 == 0) {
-               restartScript(var0);
+               z(var0);
                return;
             }
 
-            finishCutscene(var0);
-            if (cp) {
-               cp = false;
-               ch = false;
-               removeActor(player.linkedEffect);
-               player.linkedEffect = null;
-               if (cq) {
-                  startCutscene(findScriptIndex(cr));
-                  Actor.activeBoss.health = Actor.activeBoss.health - Actor.activeBoss.health / 5;
-                  if (Actor.activeBoss.health <= 0) {
-                     Actor.activeBoss.health = 1;
+            A(var0);
+            if (dl) {
+               dl = false;
+               db = false;
+               Actor.as();
+               e(player.q);
+               player.q = null;
+               if (dm) {
+                  w(B(dn));
+                  Actor.E.as = Actor.E.as - Actor.E.as / 5;
+                  if (Actor.E.as <= 0) {
+                     Actor.E.as = 1;
                      return;
                   }
                } else {
-                  startCutscene(findScriptIndex(cs));
+                  w(B(do_));
                   health = health - health / 3;
                }
             }
@@ -5206,57 +7382,50 @@ final class Game extends FullCanvas implements Runnable {
       }
    }
 
-   // $VF: renamed from: h (int, int, int, int) void
-   static final void executeScriptGlobalCommand(int var0, int var1, int var2, int var3) {
+   static final void i(int var0, int var1, int var2, int var3) {
       if (var3 != 1) {
          if (var3 == 2) {
             switch (var0) {
                case 0:
-                  aw = 14;
-                  ax = 17;
-                  ay = 2;
-                  aO = false;
-                  aP = false;
+                  bs = 160;
+                  br = 35;
                   return;
                case 1:
-                  aO = true;
-                  aM = 35;
+                  br = 35;
                   return;
                case 2:
-                  aM = 0;
+                  br = 0;
                   return;
                case 3:
-                  changeState(15);
+                  a(15);
             }
          }
       }
    }
 
-   // $VF: renamed from: z (int) int
-   static final int getScriptOpcodeSize(int var0) {
-      return scriptOpcodeSizes[var0 - 100];
+   static final int D(int var0) {
+      return dj[var0 - 100];
    }
 
-   // $VF: renamed from: a (int, byte[], int, int, int, b) int
-   static final int executeScriptOpcode(int var0, byte[] var1, int var2, int var3, int var4, Actor var5) {
-      int var7 = getScriptOpcodeSize(var0);
+   static final int a(int var0, byte[] var1, int var2, int var3, int var4, Actor var5) {
+      int var7 = D(var0);
       if (var3 != var4) {
          return var7;
       }
 
       switch (var0) {
          case 100:
-            short var31 = (short)((var1[var2] & 255) + ((var1[var2 + 1] & 255) << 8));
-            var2 += 2;
             short var32 = (short)((var1[var2] & 255) + ((var1[var2 + 1] & 255) << 8));
             var2 += 2;
-            short var30 = (short)((var1[var2] & 255) + ((var1[var2 + 1] & 255) << 8));
-            findActorByUid(var31).applyScriptProperty(var32, var30);
+            short var34 = (short)((var1[var2] & 255) + ((var1[var2 + 1] & 255) << 8));
+            var2 += 2;
+            short var31 = (short)((var1[var2] & 255) + ((var1[var2 + 1] & 255) << 8));
+            i(var32).c(var34, var31);
             break;
          case 101:
-            short var29 = (short)((var1[var2] & 255) + ((var1[var2 + 1] & 255) << 8));
-            cu = true;
-            startCutscene(findScriptIndex(var29));
+            short var30 = (short)((var1[var2] & 255) + ((var1[var2 + 1] & 255) << 8));
+            dr = true;
+            w(B(var30));
             break;
          case 102:
             short var6 = (short)((var1[var2] & 255) + ((var1[var2 + 1] & 255) << 8));
@@ -5269,34 +7438,44 @@ final class Game extends FullCanvas implements Runnable {
             playSound(var6, var8);
             break;
          case 103:
-            stopSound();
+            T();
             break;
          case 104:
-            startVerticalShake((short)((var1[var2] & 255) + ((var1[var2 + 1] & 255) << 8)));
+            e((short)((var1[var2] & 255) + ((var1[var2 + 1] & 255) << 8)));
+            break;
          case 105:
-         case 109:
-         case 110:
-         case 112:
-         case 118:
-         default:
+            int var33;
+            if ((var33 = var1[var2] & 255) == 0) {
+               Actor.as();
+            } else {
+               Actor.j(var33, 0);
+            }
             break;
          case 106:
             int var9 = var1[var2] & 255;
-            if (var5.isBasicEnemyType()) {
-               var5.changeActionState(var9);
+            if (var5.L()) {
+               var5.p(var9);
             } else {
-               var5.actionState = var9;
+               var5.aq = var9;
             }
             break;
          case 107:
             int var10 = (var1[var2] & 255) + ((var1[var2 + 1] & 255) << 8) + ((var1[var2 + 2] & 255) << 16) + ((var1[var2 + 3] & 255) << 24);
-            var5.flags |= var10;
+            var5.c |= var10;
             if (var10 == 4096) {
+               bw = true;
             }
             break;
          case 108:
             int var11 = (var1[var2] & 255) + ((var1[var2 + 1] & 255) << 8) + ((var1[var2 + 2] & 255) << 16) + ((var1[var2 + 3] & 255) << 24);
-            var5.flags &= ~var11;
+            var5.c &= ~var11;
+            break;
+         case 109:
+            var5.p.L = true;
+            var5.p.K = 136;
+            break;
+         case 110:
+            var5.p.L = false;
             break;
          case 111:
          case 116:
@@ -5312,57 +7491,71 @@ final class Game extends FullCanvas implements Runnable {
                var2 += 2;
                var17 = (short)((var1[var2] & 255) + ((var1[var2 + 1] & 255) << 8));
             } else {
-               var5.refreshBounds();
+               var5.g();
                var16 = var5.positionX;
                var17 = var5.collisionBounds[1];
             }
 
-            if (aU == null) {
-               aU = getString(var12, var13);
-               aV = getString(0, var14 + 77);
-               K = 0;
-               aY = var14;
-               aZ = var15;
-               aY = -1;
-               boolean var18 = aY != -1 && aY <= 2;
+            if (dialogText == null) {
+               dialogText = k(var12, var13);
+               bA = k(0, var14 + 96);
+               X = 0;
+               bF = var14;
+               bG = var15;
+               boolean var35 = bF != -1 && bF <= 2;
                boolean var19 = false;
-               font.currentPalette = 0;
-               font.wrapText('}' + aU, var18 ? 175 : 210);
-               ba = 0;
-               aW = var16 - cameraX;
-               aX = var17 - cameraY;
-               f(5);
+               a.z = 5;
+               a.a('}' + dialogText, var35 ? 175 : 180);
+               bH = 0;
+               bC = var16 - cameraX;
+               bD = var17 - cameraY;
+               h(5);
+            }
+            break;
+         case 112:
+            int var18;
+            if ((var18 = var1[var2] & 255) == 255) {
+               var5.p.c();
+            } else {
+               var5.p.f(var18, 10);
             }
             break;
          case 113:
-            removeActor(var5);
+            e(var5);
             break;
          case 114:
-            co = randomRange(0, 5);
-            player.showLinkedPrompt(ct[co], cameraX + 120, cameraY + 160);
-            cr = (short)((var1[var2] & 255) + ((var1[var2 + 1] & 255) << 8));
+            dk = i(0, 5);
+            player.c(dq[dk], cameraX + 120, cameraY + 160);
+            dn = (short)((var1[var2] & 255) + ((var1[var2 + 1] & 255) << 8));
             var2 += 2;
-            cs = (short)((var1[var2] & 255) + ((var1[var2 + 1] & 255) << 8));
-            cp = true;
-            cq = false;
+            do_ = (short)((var1[var2] & 255) + ((var1[var2 + 1] & 255) << 8));
+            dl = true;
+            dm = false;
             break;
          case 115:
-            ch = false;
+            db = false;
             break;
          case 117:
-            ci = true;
-            F = var5.positionX;
-            G = var5.positionY;
-            E = 0;
+            dc = true;
+            dd = var1[var2] & 255;
+            Q = var5.positionX;
+            R = var5.positionY;
+            P = 0;
+            de = var1[++var2] & 255;
+         case 118:
+         default:
             break;
          case 119:
-            f(17);
+            h(17);
+            Y = 0;
+            BSprite.N = false;
             break;
          case 120:
-            var5.aG = var1[var2] & 255;
+            var5.aL = var1[var2] & 255;
             break;
          case 121:
-            f(18);
+            h(18);
+            Y = 0;
       }
 
       return var7;
@@ -5378,11 +7571,11 @@ final class Game extends FullCanvas implements Runnable {
                return;
             }
 
-            var1.addRecord(saveBuffer, 0, saveBufferSize);
+            var1.addRecord(dt, 0, ds);
          } else if (var0) {
-            var1.setRecord(1, saveBuffer, 0, saveBufferSize);
+            var1.setRecord(1, dt, 0, ds);
          } else {
-            var1.getRecord(1, saveBuffer, 0);
+            var1.getRecord(1, dt, 0);
             saveLoaded = true;
          }
 
@@ -5392,30 +7585,28 @@ final class Game extends FullCanvas implements Runnable {
       }
    }
 
-   public static final void A(int var0) {
-      cy |= var0 & 0xFF;
+   public static final void E(int var0) {
+      dv |= var0 & 0xFF;
    }
 
-   // $VF: renamed from: as () void
-   private static void updateTitle() {
-      setClip(0, 0, 240, 320);
-      if (titleImage == null) {
-         a(0, true);
+   private static void aL() {
+      a(0, 0, 240, 320);
+      if (eE == null) {
+         b(0, true);
       }
 
-      drawImage(titleImage, 0, 0, 0);
-      font.currentPalette = 0;
+      eQ.a(graphics, 0, 120, 127, 0, 0, 0);
+      a.z = 0;
       if (stateFrame % 10 > 5) {
-         font.drawText(graphics, getString(0, 10), 120, 300, 17);
+         a.a(graphics, k(0, 106), 120, 300, 17);
       }
 
-      if (hasKeyPress()) {
-         changeState(2);
+      if (M()) {
+         a(2);
       }
    }
 
-   // $VF: renamed from: Q (int) int
-   private static int mapKeyCode(int var0) {
+   private static int X(int var0) {
       switch (var0) {
          case -7:
             return 131072;
@@ -5506,778 +7697,1106 @@ final class Game extends FullCanvas implements Runnable {
       }
    }
 
-   // $VF: renamed from: at () boolean
-   private static boolean updateCheatSequence() {
-      if (wasKeyPressed(cheatSequence[cheatProgress])) {
-         cheatProgress++;
-         if (cheatProgress == cheatSequence.length) {
-            cheatProgress = 0;
-            playSoundOnce(-1);
-            clearInput();
-            cheatsUnlocked = true;
+   private static boolean aM() {
+      if (G(dH[dF])) {
+         dF++;
+         if (dF == dH.length) {
+            dF = 0;
+            I(-1);
+            N();
+            dG = true;
             return true;
          }
-      } else if (hasKeyPress()) {
-         cheatProgress = 0;
+      } else if (M()) {
+         dF = 0;
       }
 
       return false;
    }
 
-   // $VF: renamed from: A () void
-   public static final void latchInput() {
-      if (pressedMask != 0) {
-         framesSincePress = 0;
+   public static final void L() {
+      if (dw != 0) {
+         dD = dw;
+         dE = 0;
       }
 
-      if (releasedMask != 0) {
-         heldFrameCount = -1;
+      if (dB != 0) {
+         dA = -1;
       }
 
-      framesSincePress++;
-      if (frameHeldMask != heldMask || frameHeldMask == 0) {
-         if (player != null && (player.animationId == 2 || player.animationId == 3) && heldFrameCount >= 0) {
-            if (heldFrameCount <= 2) {
-               Actor.shortJump = true;
+      dE++;
+      if (dz != dy || dz == 0) {
+         if (player != null && (player.animationId == 5 || player.animationId == 6) && dA >= 0) {
+            if (dA <= 2) {
+               Actor.bQ = true;
             } else {
-               Actor.shortJump = false;
+               Actor.bQ = false;
             }
          }
 
-         heldFrameCount = -1;
+         dA = -1;
       }
 
-      if (frameHeldMask != 0) {
-         heldFrameCount++;
+      if (dz != 0) {
+         dA++;
       }
 
-      frameHeldMask = heldMask;
-      pressedMask = pendingPressMask;
-      releasedMask = pendingReleaseMask;
-      pendingPressMask = 0;
-      pendingReleaseMask = 0;
+      dz = dy;
+      dw = dx;
+      dB = dC;
+      dx = 0;
+      dC = 0;
    }
 
    protected final void keyPressed(int var1) {
-      pendingPressMask = pendingPressMask | mapKeyCode(var1);
-      int var2 = mapKeyCode(var1);
-      pendingPressMask |= var2;
-      if ((var2 & 4112) != 0) {
-         pendingPressMask &= -8257;
-         pendingPressMask &= -16389;
-         pendingPressMask &= -33025;
-      }
-
-      if ((var2 & 8256) != 0) {
-         pendingPressMask &= -4113;
-         pendingPressMask &= -16389;
-         pendingPressMask &= -33025;
-      }
-
-      if ((var2 & 16388) != 0) {
-         pendingPressMask &= -4113;
-         pendingPressMask &= -8257;
-         pendingPressMask &= -33025;
-      }
-
-      if ((var2 & 33024) != 0) {
-         pendingPressMask &= -4113;
-         pendingPressMask &= -8257;
-         pendingPressMask &= -16389;
-      }
-
-      if ((var2 & 65568) != 0) {
-         pendingPressMask &= -4113;
-         pendingPressMask &= -8257;
-         pendingPressMask &= -33025;
-         pendingPressMask &= -16389;
-      }
-
-      frameHeldMask = frameHeldMask | pendingPressMask;
-      heldMask = heldMask | pendingPressMask;
+      o = var1;
+      dx = dx | X(var1);
+      dz = dz | dx;
+      dy = dy | dx;
    }
 
    protected final void keyReleased(int var1) {
-      pendingReleaseMask = pendingReleaseMask | mapKeyCode(var1);
-      heldMask = heldMask & ~pendingReleaseMask;
-      frameHeldMask = frameHeldMask & ~pendingReleaseMask;
+      dC = dC | X(var1);
+      dy = dy & ~dC;
+      dz = dz & ~dC;
    }
 
-   // $VF: renamed from: B (int) boolean
-   public static final boolean isKeyHeld(int var0) {
-      return (frameHeldMask & var0) != 0;
+   public static final boolean F(int var0) {
+      return (dz & var0) != 0;
    }
 
-   // $VF: renamed from: C (int) boolean
-   public static final boolean wasKeyPressed(int var0) {
-      return (pressedMask & var0) != 0;
+   public static final boolean G(int var0) {
+      return (dw & var0) != 0;
    }
 
-   // $VF: renamed from: B () boolean
-   public static final boolean hasKeyPress() {
-      return pressedMask != 0;
+   public static final boolean H(int var0) {
+      return (dw & var0) != 0 && dw == dD && dE < 5;
    }
 
-   // $VF: renamed from: C () void
-   public static final void clearInput() {
-      heldMask = 0;
-      frameHeldMask = 0;
-      pressedMask = 0;
-      releasedMask = 0;
-      pendingPressMask = 0;
-      pendingReleaseMask = 0;
+   public static final boolean M() {
+      return dw != 0;
    }
 
-   public static final void D() {
-      if (E() && bc != 1) {
-         if (cR) {
-            if (!cP) {
+   public static final void N() {
+      dy = 0;
+      dz = 0;
+      dw = 0;
+      dB = 0;
+      dx = 0;
+      dC = 0;
+   }
+
+   public static final void O() {
+      if (Q()) {
+         if (!dQ) {
+            for (int var0 = 0; var0 < 20; var0++) {
+               dI[var0] = (short)(var0 * 16);
+               dM[var0] = (short)(i(0, 100) * 320 / 100);
+               dK[var0] = (byte)i(0, 5);
+               dL[var0] = (byte)i(0, 5);
+               dN[var0] = (byte)(1 + i(0, 4));
+               dO[var0] = (byte)(0 + i(0, 5));
+               if (dO[var0] > 2) {
+                  dP[var0] = 0;
+               } else {
+                  dP[var0] = 4;
+               }
+
+               if (i(0, 2) == 0) {
+                  dO[var0] = (byte)(-dO[var0]);
+               }
+            }
+
+            dQ = true;
+         }
+
+         boolean var1 = false;
+         if ((levelIndex == 7 || levelIndex == 9) && bo == -2) {
+            var1 = true;
+         }
+
+         b[44].z = 0;
+
+         for (int var3 = 0; var3 < 20; var3++) {
+            if (state != 14 && state != 31) {
+               dM[var3] = (short)(dM[var3] - dN[var3]);
+               dI[var3] = (short)(dI[var3] + dO[var3]);
+               if (i(0, 300) == 0) {
+                  byte var2 = dO[var3];
+                  dO[var3] = dP[var3];
+                  dP[var3] = var2;
+               }
+
+               while (dM[var3] < 0) {
+                  dM[var3] = (short)(dM[var3] + 320);
+               }
+
+               while (dM[var3] > 320) {
+                  dM[var3] = (short)(dM[var3] - 320);
+               }
+
+               while (dI[var3] > 240) {
+                  dI[var3] = (short)(dI[var3] - 240);
+               }
+
+               while (dI[var3] < 0) {
+                  dI[var3] = (short)(dI[var3] + 240);
+               }
+            }
+
+            b[44].a(graphics, (var1 ? 12 : 7) + dK[var3], 0, dI[var3], dM[var3], 0, 0, 0);
+         }
+      }
+   }
+
+   public static final void P() {
+      if (S() && bJ != 1) {
+         if (dS) {
+            if (!dQ) {
                for (int var0 = 0; var0 < 30; var0++) {
-                  cK[var0] = (short)(var0 * 8);
-                  cM[var0] = (short)(randomRange(0, 100) * 320 / 100);
-                  cN[var0] = (byte)(10 + randomRange(0, 8));
-                  cO[var0] = (byte)(7 + randomRange(0, 6));
-                  cL[var0] = (byte)randomRange(0, 3);
+                  dI[var0] = (short)(var0 * 8);
+                  dM[var0] = (short)(i(0, 100) * 320 / 100);
+                  dN[var0] = (byte)(10 + i(0, 8));
+                  dO[var0] = (byte)(7 + i(0, 6));
+                  dJ[var0] = (byte)i(0, 3);
                }
 
-               cP = true;
+               dQ = true;
             }
 
-            setColor(-1428431909);
+            b(-1428431909);
 
-            for (int var3 = 0; var3 < cQ; var3++) {
+            for (int var3 = 0; var3 < dR; var3++) {
                if (state != 14 && state != 31) {
-                  cM[var3] = (short)(cM[var3] + cN[var3]);
-                  cK[var3] = (short)(cK[var3] - cO[var3]);
+                  dM[var3] = (short)(dM[var3] + dN[var3]);
+                  dI[var3] = (short)(dI[var3] - dO[var3]);
 
-                  while (cM[var3] < 0) {
-                     cM[var3] = (short)(cM[var3] + 320);
+                  while (dM[var3] < 0) {
+                     dM[var3] = (short)(dM[var3] + 320);
                   }
 
-                  while (cM[var3] > 320) {
-                     cM[var3] = (short)(cM[var3] - 320);
+                  while (dM[var3] > 320) {
+                     dM[var3] = (short)(dM[var3] - 320);
                   }
 
-                  while (cK[var3] > 240) {
-                     cK[var3] = (short)(cK[var3] - 240);
+                  while (dI[var3] > 240) {
+                     dI[var3] = (short)(dI[var3] - 240);
                   }
 
-                  while (cK[var3] < 0) {
-                     cK[var3] = (short)(cK[var3] + 240);
+                  while (dI[var3] < 0) {
+                     dI[var3] = (short)(dI[var3] + 240);
                   }
                }
 
-               setColor(cW[cL[var3]]);
-               drawLine(cK[var3], cM[var3], cK[var3] - 7, cM[var3] + 13);
+               b(dX[dJ[var3]]);
+               d(dI[var3], dM[var3], dI[var3] - 7, dM[var3] + 13);
             }
 
-            if (randomRange(0, 500) == 40 && !cS) {
-               cS = true;
-               cT = 0;
-               cU = randomRange(0, 3) == 0;
+            if (i(0, 500) == 40 && !dT) {
+               dT = true;
+               dU = 0;
+               dV = i(0, 3) == 0;
             }
 
-            if (cS && state != 14) {
-               int var2 = cT++;
-               if (cU) {
-                  directGraphics.setARGBColor(cV[0]);
-                  fillRect(0, 0, 240, 320);
-                  cS = false;
+            if (dT && state != 14) {
+               int var2 = dU++;
+               if (dV) {
+                  b(dW[0]);
+                  b(0, 0, 240, 320);
+                  dT = false;
                   return;
                }
 
                if (var2 <= 1) {
-                  directGraphics.setARGBColor(cV[var2]);
-                  fillRect(0, 0, 240, 320);
+                  b(dW[var2]);
+                  b(0, 0, 240, 320);
                   return;
                }
 
-               cS = false;
+               dT = false;
             }
          }
       }
    }
 
    public static final void a(boolean var0, int var1) {
-      directGraphics.setARGBColor(872414976);
+      b(872414976);
       short var2 = 0;
       int var3 = 0;
       if (var1 == 0) {
          for (int var11 = 0; var11 < 3; var11++) {
-            var3 = (cZ + var11 * 15) % 180;
+            var3 = (ea + var11 * 15) % 180;
             if (var0) {
                if (var3 < 90) {
-                  cX = var3 * 70 / 90;
+                  dY = var3 * 70 / 90;
                   var2 = 270;
                } else {
-                  cX = (180 - var3) * 70 / 90;
+                  dY = (180 - var3) * 70 / 90;
                   var2 = 90;
                }
             } else if (var3 < 90) {
-               cX = var3 * 70 / 90;
+               dY = var3 * 70 / 90;
                var2 = 90;
             } else {
-               cX = (180 - var3) * 70 / 90;
+               dY = (180 - var3) * 70 / 90;
                var2 = 270;
             }
 
-            directGraphics.setARGBColor(db[var11]);
-            drawArc(player.positionX - cX / 2 - cameraX, player.positionY - 30 - 35 - cameraY, cX, 70, var2, 180);
-            drawArc(player.positionX - cX / 2 + 1 - cameraX, player.positionY - 30 - 35 - cameraY, cX, 70, var2, 180);
+            b(ec[var11]);
+            c(player.positionX - dY / 2 - cameraX, player.positionY - 30 - 35 - cameraY, dY, 70, var2, 180);
+            c(player.positionX - dY / 2 + 1 - cameraX, player.positionY - 30 - 35 - cameraY, dY, 70, var2, 180);
          }
 
-         cZ = (cZ + 3) % 180;
+         ea = (ea + 3) % 180;
       } else if (var1 == 1) {
          for (int var10 = 0; var10 < 3; var10++) {
-            var3 = (da + var10 * 15) % 180;
+            var3 = (eb + var10 * 15) % 180;
             if (var0) {
                if (var3 < 90) {
-                  cY = var3 * 70 / 90;
+                  dZ = var3 * 70 / 90;
                   var2 = 180;
                } else {
-                  cY = (180 - var3) * 70 / 90;
+                  dZ = (180 - var3) * 70 / 90;
                   var2 = 0;
                }
             } else if (var3 < 90) {
-               cY = var3 * 70 / 90;
+               dZ = var3 * 70 / 90;
                var2 = 0;
             } else {
-               cY = (180 - var3) * 70 / 90;
+               dZ = (180 - var3) * 70 / 90;
                var2 = 180;
             }
 
-            directGraphics.setARGBColor(db[var10]);
-            drawArc(player.positionX - 35 - cameraX, player.positionY - 30 - cY / 2 - cameraY, 70, cY, var2, 180);
-            drawArc(player.positionX - 35 - cameraX, player.positionY - 30 - cY / 2 + 1 - cameraY, 70, cY, var2, 180);
+            b(ec[var10]);
+            c(player.positionX - 35 - cameraX, player.positionY - 30 - dZ / 2 - cameraY, 70, dZ, var2, 180);
+            c(player.positionX - 35 - cameraX, player.positionY - 30 - dZ / 2 + 1 - cameraY, 70, dZ, var2, 180);
          }
 
-         da = (da + 4) % 180;
+         eb = (eb + 4) % 180;
       } else {
          if (var1 == 888) {
-            if (da == 0 || da == 180 || sin256(da) == 0) {
-               da = (da + 1) % 45;
+            if (eb == 0 || eb == 180 || m(eb) == 0) {
+               eb = (eb + 1) % 45;
                return;
             }
 
-            int var4 = 8960 / sin256(da);
-            int var5 = 35 * cos256(da) * sin256(45) / sin256(da) >> 8;
+            int var4 = 8960 / m(eb);
+            int var5 = 35 * l(eb) * m(45) / m(eb) >> 8;
             System.out.println("r2  " + var4);
             System.out.println("r3  " + var5);
             if (var0) {
-               drawArc(player.positionX + var5 - var4 - cameraX, player.positionY - 30 + var5 - var4 - cameraY, var4 * 2, var4 * 2, 135 - da, da * 2);
+               c(player.positionX + var5 - var4 - cameraX, player.positionY - 30 + var5 - var4 - cameraY, var4 * 2, var4 * 2, 135 - eb, eb * 2);
             } else {
-               drawArc(player.positionX - var5 - var4 - cameraX, player.positionY - 30 - var5 - var4 - cameraY, var4 * 2, var4 * 2, 315 - da, da * 2);
+               c(player.positionX - var5 - var4 - cameraX, player.positionY - 30 - var5 - var4 - cameraY, var4 * 2, var4 * 2, 315 - eb, eb * 2);
             }
 
-            da = (da + 1) % 45;
+            eb = (eb + 1) % 45;
          }
       }
    }
 
-   public static final boolean E() {
+   public static final boolean Q() {
+      return levelIndex == 6 || levelIndex == 9 || levelIndex == 8 || levelIndex == 7;
+   }
+
+   public static final boolean R() {
+      return levelIndex == 0 || levelIndex == 1;
+   }
+
+   public static final boolean S() {
       return levelIndex == 2 || levelIndex == 3;
    }
 
-   private static void R(int var0) {
+   private static void t(int var0, int var1) {
       try {
-         loadTileMaps(var0, false);
-      } catch (Exception var2) {
-      }
-   }
-
-   private static void S(int var0) {
-      for (int var1 = 0; var1 < 9; var1++) {
-         m(var0, var1);
-      }
-   }
-
-   private static void m(int var0, int var1) {
-      try {
-         if (var0 == 11) {
-            j(var1, var0 - 2);
-         } else if (var0 == 12) {
-            j(var1, var0 - 1);
-         } else if (var0 == 13) {
-            j(var1, var0 - 4);
-         } else {
-            j(var1, var0);
-         }
+         q(var1, var0);
       } catch (Exception var3) {
       }
    }
 
-   private static void f(int var0, int var1, int var2) {
+   private static void h(int var0, int var1, int var2) {
       if (var1 > 10) {
          var1 = 10;
       }
 
       for (int var3 = 0; var3 < var0; var3++) {
          if (var3 % 2 == 0) {
-            drawLine(0, var3 + var2, var1 * 24, var3 + var2);
+            d(0, var3 + var2, var1 * 24, var3 + var2);
          } else {
-            drawLine(240 - var1 * 24, var3 + var2, 240, var3 + var2);
+            d(240 - var1 * 24, var3 + var2, 240, var3 + var2);
          }
       }
    }
 
    private static void a(int var0, int var1, int var2, int var3, boolean var4, int var5, int var6) {
       if (var4) {
-         setColor(var6);
-         fillRect(var0, var1, var2 + 1, var3 + 2);
+         b(var6);
+         b(var0, var1, var2 + 1, var3 + 2);
       }
 
-      setColor(var5);
-      drawLine(var0, var1, var0 + var2, var1);
-      drawLine(var0 - 1, var1 + 1, var0 - 1, var1 + 1 + var3);
-      drawLine(var0, var1 + var3 + 2, var0 + var2, var1 + var3 + 2);
-      drawLine(var0 + var2 + 1, var1 + 1, var0 + var2 + 1, var1 + 1 + var3);
+      b(var5);
+      d(var0, var1, var0 + var2, var1);
+      d(var0 - 1, var1 + 1, var0 - 1, var1 + 1 + var3);
+      d(var0, var1 + var3 + 2, var0 + var2, var1 + var3 + 2);
+      d(var0 + var2 + 1, var1 + 1, var0 + var2 + 1, var1 + 1 + var3);
    }
 
-   private static void e(boolean var0) {
-      if (dd != 2) {
-         a(dc, 0, true);
-         setClip(0, 0, 240, 320);
-         if (wasKeyPressed(2048) && var0 && cheatsUnlocked) {
-            ed = !ed;
-            if (ed) {
-               ec = maxUnlockedLevel;
-               maxUnlockedLevel = 9;
+   private static void h(boolean var0) {
+      if (ee != 2) {
+         if (ei >= 7 && ei <= 9) {
+            if (fk != null) {
+               a(ed, 0, true);
+               e(ed, 0, 2);
+            }
+
+            e(ed, 0, 1);
+         } else {
+            if (ei != 10 && fk != null) {
+               a(ed >> 3, 0, true);
+            }
+
+            if (ei != 10 && fk != null) {
+               e(ed >> 2, 0, 2);
+            }
+
+            e(ed, 0, 1);
+         }
+
+         if (G(2048) && var0 && dG) {
+            fF = !fF;
+            if (fF) {
+               fE = maxUnlockedLevel;
+               maxUnlockedLevel = 11;
             } else {
-               maxUnlockedLevel = ec;
+               maxUnlockedLevel = fE;
             }
          }
       }
 
-      setColor(0);
-      fillRect(0, 0, 240, 20);
-      fillRect(0, 200, 240, 140);
-      if (var0) {
-         font.currentPalette = 0;
-         font.drawText(graphics, getString(0, 41) + " " + (dh + 1), 120, 260, 3);
+      if (!var0 && ee < 2) {
+         b(1426063360);
+         b(0, 0, 240, 320);
       }
 
-      font.currentPalette = 1;
-      font.drawText(graphics, getString(0, 42 + dh), 120, 280, 3);
-      if (dd == 1) {
-         f(var0 ? 186 : 191, H, 16);
-         H++;
-         if (H >= 11) {
-            H = 12;
-            dd = 2;
-            de = 0;
+      b(0);
+      b(0, 0, 240, 72);
+      if (!var0) {
+         b(0, 226, 240, 107);
+      } else {
+         b(0, 193, 240, 140);
+      }
+
+      if (eF == null) {
+         b(0, false);
+      }
+
+      a(eF, 115, 10, 17);
+      b[33].a(graphics, !var0 ? 38 : 37, 120, 160, 0, 0, 0);
+      if (var0) {
+         if (maxUnlockedLevel != 0) {
+            b[33].a(graphics, 16, cU % (G(4112) ? 2 : 1), 65, 238, 0, 0, 0);
+            b[33].a(graphics, 12, cU % (G(8256) ? 2 : 1), 173, 238, 0, 0, 0);
          }
-      } else if (dd == 3) {
-         H--;
-         f(var0 ? 186 : 191, H, 16);
-         if (H <= 0) {
-            dd = 0;
+
+         b[33].a(graphics, 69, 70, 235, 0, 0, 0);
+         if (cR) {
+            b[33].a(graphics, 9, stateFrame % 4, 70, 235, 0, 0, 0);
+            if (stateFrame % 4 == 3) {
+               cR = false;
+               cS = true;
+               cT = true;
+               stateFrame = 0;
+            } else {
+               cT = false;
+            }
          }
-      } else if (dd == 2 || dd == 1 && H >= 9) {
-         fillRect(0, 16, 240, 186 + (var0 ? 0 : 50));
+
+         a.z = 5;
+         a.a(graphics, k(0, 43) + " " + (ei + 1), 120, 250, 3);
+      }
+
+      a.a(graphics, k(0, !var0 ? 41 : 44 + ei), 120, !var0 ? 260 : 283, 3);
+      if (ee == 1) {
+         h(var0 ? 123 : 162, U, 71);
+         U++;
+         if (U >= 11) {
+            U = 12;
+            ee = 2;
+            ef = 0;
+         }
+      } else if (ee == 3) {
+         U--;
+         h(var0 ? 123 : 162, U, 71);
+         if (U <= 0) {
+            ee = 0;
+         }
+      } else if (ee == 2 || ee == 1 && U >= 9) {
+         b(0, 71, 240, 123 + (var0 ? 0 : 33));
          Actor.a(120, var0 ? 120 : 145, 120, var0 ? 120 : 145, 40, 35, 3 * stateFrame, true);
-         font.currentPalette = 0;
-         font.drawText(graphics, getString(0, 26), 120, 180 + (var0 ? 0 : 25), 17);
+         a.z = 5;
+         a.a(graphics, k(0, 26), 120, 180 + (var0 ? 0 : 25), 17);
       }
 
       if (var0) {
          byte var1 = -1;
-         int var2 = df - 9;
-         byte[] var3 = dj[var2];
-         byte[] var4 = ee[var2];
-         if (dg[var2 + 1] - 1 >= maxUnlockedLevel) {
-            int var5 = maxUnlockedLevel - dg[var2];
+         int var2 = eg - 11;
+         byte[] var3 = ek[var2];
+         byte[] var4 = fG[var2];
+         if (eh[var2 + 1] - 1 >= maxUnlockedLevel) {
+            int var5 = maxUnlockedLevel - eh[var2];
             var1 = var3[var5];
          }
 
          int var8 = 0;
-         if (maxUnlockedLevel != 9 && var2 == 0) {
-            var8 = 2;
+         if (maxUnlockedLevel != 11 && var2 == 0) {
+            var8 = 4;
          }
 
          for (; var8 < var4.length >> 1 && (var1 <= 0 || var8 < var1); var8++) {
             int var6 = 120 + var4[var8 << 1];
             int var7 = 235 + var4[(var8 << 1) + 1];
-            if (eh != 2 && ef == var8) {
-               a(var6 - 2, var7 - 2, 3, 3, true, 0, 16777215);
+            if (fJ != 2 && fH == var8) {
+               a(var6 - 2, var7 - 2, 4, 4, true, 15395562, 15480832);
             } else {
-               a(var6 - 1, var7 - 1, 1, 1, true, 0, 16777215);
+               a(var6 - 1, var7 - 1, 2, 2, true, 13079364, 4196354);
             }
          }
 
          for (int var9 = 0; var9 < var3.length - 1; var9++) {
-            sprites[35].drawFrame(graphics, 7, 120 + var4[var3[var9] << 1], 235 + var4[(var3[var9] << 1) + 1], 0, 0, 0);
+            b[33].a(graphics, 40, 120 + var4[var3[var9] << 1], 235 + var4[(var3[var9] << 1) + 1], 0, 0, 0);
          }
 
-         if (eh == 2) {
-            sprites[35].drawAnimationFrame(graphics, 0, dc % 8, 120 + di[dh << 1], 239 + di[(dh << 1) + 1] - 4, 0, 0, 0);
+         if (fJ == 2) {
+            b[33].a(graphics, 2, ed % 8, 120 + ej[ei << 1], 239 + ej[(ei << 1) + 1] - 4, 0, 0, 0);
          }
       }
 
-      if (dd == 0) {
-         dc++;
-      }
-
-      setColor(15244571);
-      if (dh > 0 || maxUnlockedLevel == 9) {
-         fillTriangle(8, 223, 18, 218, 18, 228);
-      }
-
-      if (dh < maxUnlockedLevel || maxUnlockedLevel == 9) {
-         fillTriangle(232, 223, 222, 218, 222, 228);
+      if (ee == 0 || !var0) {
+         ed++;
       }
    }
 
-   private static void au() {
+   private static void aN() {
       int var0 = 0;
-      int var1 = df - 9;
+      int var1 = eg - 11;
 
       for (int var2 = 0; var2 < var1; var2++) {
-         if (var2 == 0 || var2 == 3) {
-            var0 += 2;
-         } else if (var2 != 2 && var2 != 4) {
+         if (var2 != 0 && var2 != 2) {
             var0 += 3;
          } else {
-            var0++;
+            var0 += 2;
          }
       }
 
-      int var3 = dh - var0;
-      ef = dj[var1][var3];
-      if (var3 == 0 && ei) {
-         eg = 0;
-      } else if (ei) {
-         eg = dj[var1][var3 - 1];
+      int var3 = ei - var0;
+      fH = ek[var1][var3];
+      if (var3 == 0 && fK) {
+         fI = 0;
+      } else if (fK) {
+         fI = ek[var1][var3 - 1];
       } else {
-         eg = dj[var1][var3 + 1];
+         fI = ek[var1][var3 + 1];
       }
    }
 
-   private static void f(boolean var0) {
+   private static void i(boolean var0) {
       if (var0) {
-         dh--;
-         if (dh < dg[df - 9]) {
-            df--;
-            if (df < 9) {
-               df = 13;
+         ei--;
+         if (ei < eh[eg - 11]) {
+            eg--;
+            if (eg < 11) {
+               eg = 15;
             }
 
-            dd = 1;
-            if (dh < 0) {
-               if (maxUnlockedLevel == 9) {
-                  dh = 8;
+            ee = 1;
+            if (ei < 0) {
+               if (maxUnlockedLevel == 11) {
+                  ei = 10;
                   return;
                }
 
-               df = 9;
-               dh = 0;
-               dd = 0;
+               eg = 11;
+               ei = 0;
+               ee = 0;
                return;
             }
          }
       } else {
-         dh++;
-         if (dh >= dg[df - 9 + 1]) {
-            df++;
-            if (df > 13) {
-               df = 9;
+         ei++;
+         if (ei >= eh[eg - 11 + 1]) {
+            eg++;
+            if (eg > 15) {
+               eg = 11;
             }
 
-            dd = 1;
-            if (dh >= 9) {
-               if (maxUnlockedLevel == 9) {
-                  dh = 0;
+            ee = 1;
+            if (ei >= 11) {
+               if (maxUnlockedLevel == 11) {
+                  ei = 0;
                   return;
                }
 
-               df = 13;
-               dh = 8;
-               dd = 0;
+               eg = 15;
+               ei = 10;
+               ee = 0;
             }
          }
       }
    }
 
-   // $VF: renamed from: av () void
-   private static void updateLevelSelection() {
-      e(true);
-      if (dd != 2) {
-         drawSoftkeys(getString(0, 18), getString(0, 17));
-      } else {
-         setClip(0, 296, 240, 24);
-         setColor(0);
-         fillRect(0, 296, 240, 24);
+   private static void aO() {
+      h(true);
+      if (ee != 2) {
+         a(k(0, 18), k(0, 17));
       }
 
-      if (eh != 2) {
-         if (ei) {
-            ef--;
+      if (fJ != 2) {
+         if (fK) {
+            fH--;
          } else {
-            ef++;
+            fH++;
          }
 
-         if (ef == eg) {
-            eh++;
-            if (eh == 1) {
-               if (ei) {
-                  f(true);
+         if (fH == fI) {
+            fJ++;
+            if (fJ == 1) {
+               if (fK) {
+                  i(true);
                } else {
-                  f(false);
+                  i(false);
                }
 
-               if (dd == 1) {
-                  if (ei) {
-                     int var0 = dj[df - 9].length;
-                     eg = dj[df - 9][var0 - 2];
-                     ef = dj[df - 9][var0 - 1];
+               if (ee == 1) {
+                  if (fK) {
+                     int var0 = ek[eg - 11].length;
+                     fI = ek[eg - 11][var0 - 2];
+                     fH = ek[eg - 11][var0 - 1];
                   } else {
-                     ef = 0;
-                     eg = dj[df - 9][0];
+                     fH = 0;
+                     fI = ek[eg - 11][0];
                   }
                } else {
-                  eh = 2;
+                  fJ = 2;
                }
             }
          }
       }
 
-      if (eh != 0) {
-         if (dd == 0) {
-            if (wasKeyPressed(8256)) {
-               if (maxUnlockedLevel <= dh) {
+      if (fJ != 0) {
+         if (ee == 0) {
+            if (G(8256)) {
+               if (maxUnlockedLevel <= ei) {
                   return;
                }
 
-               eh = 0;
-               ei = false;
-               au();
-            } else if (wasKeyPressed(4112)) {
-               if (dh == 0 && maxUnlockedLevel != 9) {
+               fJ = 0;
+               fK = false;
+               aN();
+            } else if (G(4112)) {
+               if (ei == 0 && maxUnlockedLevel != 11) {
                   return;
                }
 
-               ei = true;
-               eh = 0;
-               au();
+               fK = true;
+               fJ = 0;
+               aN();
             }
 
-            if (wasKeyPressed(327712)) {
-               levelIndex = dh;
-               changeState(9);
-               if (dw) {
-                  prepareLevelSelectionStats();
+            if (G(327712)) {
+               I(-1);
+               if (cT) {
+                  cR = true;
+                  stateFrame = -1;
                }
-
-               Actor.bC = false;
-               writeByte(saveBuffer, 644, (byte)(Actor.bC ? 1 : 0));
-            } else if (wasKeyPressed(131072)) {
-               changeState(2);
-               dw = false;
+            } else if (cS) {
+               cS = false;
+               levelIndex = ei;
+               a(9);
+               Actor.bM = false;
+               a(dt, 772, (int)(byte)(Actor.bM ? 1 : 0));
+            } else if (G(131072)) {
+               if (cT) {
+                  aR = true;
+                  stateFrame = -1;
+               }
+            } else if (aP) {
+               aP = false;
+               eE = null;
+               eQ = null;
+               a(2);
             }
          }
 
-         aw();
+         aP();
       }
    }
 
-   private static void aw() {
-      if (dd == 2) {
+   private static void aP() {
+      if (ee == 2) {
          try {
-            if (de == 2) {
-               S(df);
-            } else if (de == 5) {
-               R(df);
-            } else if (de == 8) {
-               loadTileMaps(df, false);
-            } else if (de == 8) {
-               m(df, de);
+            if (ef >= 3) {
+               t(eg, ef - 3);
+            }
+
+            if (ef == 11) {
+               c(eg, false);
             }
          } catch (Exception var1) {
             var1.printStackTrace();
          }
 
-         if (de == 12) {
-            dc = 0;
-            dd = 3;
-            de = 0;
+         if (ef == 12) {
+            ed = 0;
+            ee = 3;
+            ef = 0;
             return;
          }
 
-         de++;
+         ef++;
       }
    }
 
-   // $VF: renamed from: ax () void
-   private static void updateScrollingText() {
-      setClip(0, 0, 240, 320);
-      g(0, 0, 240, 320);
-      setClip(0, 20, 240, 266);
-      String var0 = null;
-      if (state == 20) {
-         var0 = getString(0, 40);
+   private static void aQ() {
+      a(0, 0, 240, 320);
+      if (state == 6) {
+         g(0, 0, 240, 320);
       } else {
-         var0 = getString(0, 28);
+         h(false);
+         aP();
       }
 
-      font.currentPalette = state != 6 ? 0 : 0;
-      if (font.drawWrappedText(graphics, var0, 120, scrollingTextY, 17, 230, 0, -1) < 0) {
-         scrollingTextY = 266;
+      if (state == 6) {
+         a(0, 10, 240, 280);
       } else {
-         scrollingTextY--;
+         a(0, 80, 240, 165);
+      }
+
+      String var0;
+      if (state == 20) {
+         var0 = k(0, 42);
+      } else {
+         var0 = k(0, 28);
+      }
+
+      a.z = state != 6 ? 0 : 5;
+      if (ee == 0) {
+         if (a.a(graphics, var0, 120, fL, 17, state == 20 ? 180 : 180, 0, -1) < 0) {
+            fL = state == 20 ? 240 : 280;
+         } else {
+            fL--;
+         }
       }
 
       if (previousState == 8) {
-         drawSoftkeys(getString(0, 20), "");
+         a(k(0, 20), "");
       } else {
-         drawSoftkeys(getString(0, 18), state == 6 ? "" : getString(0, 17));
+         a(k(0, 18), state == 6 ? "" : k(0, 17));
       }
 
-      if (wasKeyPressed(262144) && state == 20) {
-         changeState(19);
-         skipCheckpointPosition = true;
-         df = 9;
+      if (G(262144) && cT) {
+         aS = true;
+         stateFrame = -1;
       }
 
-      if (!isKeyHeld(65568) && !isKeyHeld(33024)) {
-         if (wasKeyPressed(131072)) {
-            if (previousState == 8 && InGamePromotion.a()) {
-               changeState(27);
-               return;
+      if (aQ && state == 20) {
+         aQ = false;
+         a(19);
+         eg = 11;
+      }
+
+      if (F(65568) || F(33024)) {
+         fL -= 4;
+      }
+
+      if (G(131072)) {
+         if (cT) {
+            aR = true;
+            stateFrame = -1;
+            return;
+         }
+      } else if (aP) {
+         aP = false;
+         eE = null;
+         eQ = null;
+         a(2);
+         eg = 11;
+      }
+   }
+
+   private static void aR() {
+      try {
+         a("/24");
+
+         for (int var2 = 0; var2 < 18; var2++) {
+            byte[] var1;
+            if ((var1 = q(var2)) != null) {
+               if (var2 >= fQ) {
+                  byte[] var0 = c(var1);
+                  fR[var2] = var0;
+               } else {
+                  fR[var2] = var1;
+               }
             }
-
-            changeState(2);
-            df = 9;
          }
-      } else {
-         scrollingTextY -= 4;
-      }
-   }
 
-   // $VF: renamed from: ay () void
-   private static void preloadMenuSound() {
-      try {
-         openPack("/19");
-         loadSoundData(-1);
-         closePack();
-      } catch (Exception var2) {
-         var2.printStackTrace();
-      }
-   }
-
-   // $VF: renamed from: D (int) void
-   public static final void loadSoundData(int var0) {
-      try {
-         openPack("/19");
-         byte[] var1;
-         if ((var1 = readResource(musicIdForLevel(var0))) != null) {
-            soundData = null;
-            soundData = var1;
-            closePack();
-         }
+         B();
       } catch (Exception var3) {
          var3.printStackTrace();
       }
    }
 
-   // $VF: renamed from: i (int, int) void
+   // $VF: renamed from: o (int, int) void
    public static final void playSound(int var0, int var1) {
-      if (var0 != -1 && soundEnabled) {
-         if (var0 != rememberedMusicId || soundPlayer == null || soundPlayer.getState() != 400) {
-            switch (var0) {
-               case 0:
-               case 1:
-               case 2:
-               case 3:
-                  rememberedMusicId = var0;
-               default:
-                  stopSound();
+      if (var0 != -1 && el) {
+         if (fR[var0] != null) {
+            if (var0 != fN || fM == null || fM.getState() != 400) {
+               switch (var0) {
+                  case 0:
+                  case 1:
+                  case 2:
+                  case 3:
+                  case 7:
+                     fN = var0;
+                  case 4:
+                  case 5:
+                  case 6:
+                  default:
+                     T();
 
-                  try {
-                     ByteArrayInputStream var2;
-                     (var2 = new ByteArrayInputStream(soundData)).reset();
-                     if (var0 < wavIdThreshold) {
-                        soundPlayer = Manager.createPlayer(var2, "audio/midi");
-                     } else {
-                        soundPlayer = Manager.createPlayer(var2, "audio/x-wav");
-                     }
-
-                     soundPlayer.realize();
-                     var2.close();
-                  } catch (Exception var6) {
-                     var6.printStackTrace();
-                  }
-
-                  Player var3 = soundPlayer;
-                  if (soundPlayer != null) {
                      try {
-                        var3.setLoopCount(var1);
-                        var3.start();
-                        resumeSoundId = -1;
-                     } catch (Exception var5) {
-                        ErrorReporter.report(var5, "play");
-                        var5.printStackTrace();
+                        ByteArrayInputStream var2;
+                        (var2 = new ByteArrayInputStream(fR[var0])).reset();
+                        if (var0 < fQ) {
+                           fM = Manager.createPlayer(var2, "audio/midi");
+                        } else {
+                           fM = Manager.createPlayer(var2, "audio/x-wav");
+                        }
+
+                        fM.realize();
+                        var2.close();
+                     } catch (Exception var6) {
+                        var6.printStackTrace();
                      }
-                  }
+
+                     Player var3 = fM;
+                     if (fM != null) {
+                        try {
+                           var3.setLoopCount(var1);
+                           var3.start();
+                           resumeSoundId = -1;
+                        } catch (Exception var5) {
+                           ErrorReporter.a(var5, "play");
+                           var5.printStackTrace();
+                        }
+                     }
+               }
             }
          }
       }
    }
 
-   // $VF: renamed from: E (int) void
-   public static final void playSoundOnce(int var0) {
-      playSound(var0, 1);
+   public static final void I(int var0) {
+      playSound(var0, var0 == 0 ? -1 : 1);
    }
 
-   // $VF: renamed from: F () void
-   public static final void stopSound() {
+   public static final void T() {
       try {
-         if (soundPlayer != null) {
-            if (soundPlayer.getState() == 400) {
-               soundPlayer.stop();
+         if (fM != null) {
+            if (fM.getState() == 400) {
+               fM.stop();
             }
 
-            if (soundPlayer.getState() == 300) {
-               soundPlayer.deallocate();
+            if (fM.getState() == 300) {
+               fM.deallocate();
             }
 
-            soundPlayer.close();
-            soundPlayer = null;
+            fM.close();
+            fM = null;
          }
       } catch (Exception var1) {
       }
    }
 
-   // $VF: renamed from: F (int) int
-   public static final int musicIdForLevel(int var0) {
+   static final void a(byte[] var0, int var1, byte[] var2, int var3) {
+      for (int var4 = 0; var4 < var1; var4++) {
+         var2[var3++] = var0[var4];
+      }
+   }
+
+   static final byte[] J(int var0) {
+      int var2;
+      byte[] var1 = new byte[var2 = var0 + 44];
+      a(eo, 4, var1, 0);
+      var2 -= 8;
+      var1[4] = (byte)var2;
+      var1[5] = (byte)(var2 >> 8);
+      var1[6] = (byte)(var2 >> 16);
+      var1[7] = (byte)(var2 >> 24);
+      a(ep, 4, var1, 8);
+      a(eq, 4, var1, 12);
+      a(es, 4, var1, 16);
+      a(et, 2, var1, 20);
+      a(eu, 2, var1, 22);
+      a(ev, 4, var1, 24);
+      a(ew, 4, var1, 28);
+      a(ex, 2, var1, 32);
+      a(ey, 2, var1, 34);
+      a(er, 4, var1, 36);
+      var2 = var0;
+      var1[40] = (byte)var2;
+      var1[41] = (byte)(var2 >> 8);
+      var1[42] = (byte)(var2 >> 16);
+      var1[43] = (byte)(var2 >> 24);
+      return var1;
+   }
+
+   static final void a(byte[] var0, byte[] var1, int var2, int var3) {
+      int var7 = var0[var2] & 255 | var0[var2 + 1] << 8;
+      int var9 = var0[var2 + 2];
+      var1[var3++] = (byte)(var7 & 0xFF);
+      var1[var3++] = (byte)(var7 >> 8);
+      var2 += 4;
+      boolean var11 = false;
+      byte var10 = 0;
+      short var6 = en[var9];
+
+      for (int var12 = 504; var12 > 0; var12--) {
+         int var5;
+         if (var11) {
+            var5 = var10 & 15;
+         } else {
+            var5 = (var10 = var0[var2++]) >> 4 & 15;
+         }
+
+         var11 = !var11;
+         if ((var9 += em[var5]) < 0) {
+            var9 = 0;
+         }
+
+         if (var9 > 88) {
+            var9 = 88;
+         }
+
+         int var4 = var5 & 8;
+         var5 &= 7;
+         int var8 = var6 >> 3;
+         if ((var5 & 4) != 0) {
+            var8 += var6;
+         }
+
+         if ((var5 & 2) != 0) {
+            var8 += var6 >> 1;
+         }
+
+         if ((var5 & 1) != 0) {
+            var8 += var6 >> 2;
+         }
+
+         if (var4 != 0) {
+            var7 -= var8;
+         } else {
+            var7 += var8;
+         }
+
+         if (var7 > 32767) {
+            var7 = 32767;
+         } else if (var7 < -32768) {
+            var7 = -32768;
+         }
+
+         var6 = en[var9];
+         var1[var3++] = (byte)(var7 & 0xFF);
+         var1[var3++] = (byte)(var7 >> 8);
+      }
+   }
+
+   static final byte[] c(byte[] var0) {
+      int var7 = 0;
+      int var8 = e(var0, 16);
+      var7 = 16 + var8 + 4;
+      var7 += 4;
+      var8 = e(var0, var7);
+      int var12;
+      int var2 = (var12 = var7 + var8 + 4) + 8;
+      var7 = var12 + 4;
+      int var6 = e(var0, var7) >> 8;
+      int var5;
+      byte[] var1 = J(var5 = 1010 * var6);
+      int var4 = 44;
+
+      for (int var9 = 0; var9 < var6; var9++) {
+         a(var0, var1, var2, var4);
+         var2 += 256;
+         var4 += 1010;
+      }
+
+      return var1;
+   }
+
+   static final int e(byte[] var0, int var1) {
+      return var0[var1] & 0xFF | (var0[var1 + 1] & 0xFF) << 8 | (var0[var1 + 2] & 0xFF) << 16 | (var0[var1 + 3] & 0xFF) << 24;
+   }
+
+   public static final int K(int var0) {
+      if (Actor.E != null) {
+         return 7;
+      }
+
       switch (var0) {
          case -1:
             return 0;
          case 0:
          case 1:
          case 5:
+         case 6:
             return 1;
          case 2:
          case 3:
          case 4:
+         case 16:
             return 2;
-         case 6:
          case 7:
-            return 3;
          case 8:
-            return 4;
+         case 9:
+            return 3;
+         case 10:
+            return 7;
+         case 11:
+         case 12:
+         case 13:
+         case 14:
+         case 15:
          default:
             return -1;
       }
    }
 
-   // $VF: renamed from: G () void
-   public static final void playLevelMusic() {
-      if (musicIdForLevel(levelIndex) != rememberedMusicId || soundPlayer == null || soundPlayer.getState() != 400) {
-         playSound(musicIdForLevel(levelIndex), -1);
+   public static final void U() {
+      if (fN == 7) {
+         playSound(7, -1);
+      } else {
+         playSound(K(levelIndex), -1);
       }
    }
 
-   // $VF: renamed from: a (java.lang.String, java.lang.String, java.lang.String) java.lang.String
-   public static final String replaceToken(String var0, String var1, String var2) {
+   static final void V() {
+      ez = new Image[11];
+      if (levelIndex <= 1 || levelIndex <= 6 && levelIndex >= 5) {
+         int[] var0 = new int[4114];
+         a(0, 0, 34, 74, 128, 6, 38, 53, var0, 34, 40959);
+         ez[0] = Image.createRGBImage(var0, 34, 121, true);
+         a(0, 0, 34, 74, 128, 6, 38, 53, var0, 34, 3325687);
+         ez[2] = Image.createRGBImage(var0, 34, 121, true);
+         var0 = new int[1533];
+         a(0, 0, 21, 49, 81, 3, 26, 30, var0, 21, 40959);
+         ez[1] = Image.createRGBImage(var0, 21, 73, true);
+         a(0, 0, 21, 49, 81, 3, 26, 30, var0, 21, 3325687);
+         ez[3] = Image.createRGBImage(var0, 21, 73, true);
+      }
+
+      if (levelIndex > 1 && levelIndex < 4 || levelIndex >= 5 && levelIndex < 9) {
+         int[] var2 = new int[2040];
+         a(0, 0, 0, 101, 0, 250, 20, 0, var2, 20, 127993);
+         ez[4] = Image.createRGBImage(var2, 20, 102, true);
+         var2 = new int[1632];
+         a(0, 0, 0, 101, 0, 250, 16, 0, var2, 16, 127993);
+         ez[5] = Image.createRGBImage(var2, 16, 102, true);
+         var2 = new int[1224];
+         a(0, 0, 0, 101, 0, 250, 12, 0, var2, 12, 127993);
+         ez[6] = Image.createRGBImage(var2, 12, 102, true);
+         var2 = new int[918];
+         a(0, 0, 0, 101, 0, 250, 9, 0, var2, 9, 127993);
+         ez[7] = Image.createRGBImage(var2, 9, 102, true);
+         var2 = new int[612];
+         a(0, 0, 0, 101, 0, 250, 6, 0, var2, 6, 127993);
+         ez[8] = Image.createRGBImage(var2, 6, 102, true);
+         var2 = new int[408];
+         a(0, 0, 0, 101, 0, 250, 4, 0, var2, 4, 127993);
+         ez[9] = Image.createRGBImage(var2, 4, 102, true);
+         var2 = new int[204];
+         a(0, 0, 0, 101, 0, 250, 2, 0, var2, 2, 127993);
+         ez[10] = Image.createRGBImage(var2, 2, 102, true);
+      }
+   }
+
+   static final void a(int var0, int var1, int var2, int var3, int var4, int var5, int var6, int var7, int[] var8, int var9, int var10) {
+      int var11 = var2 - var0;
+      int var12 = var3 - var1;
+      int var13 = var7 - var6;
+      if (var11 == 0) {
+         int var14 = var1 * var9 + var0;
+         var4 <<= 8;
+         int var26;
+         int var15 = ((var26 = var5 << 8) - var4) / var12;
+
+         for (int var16 = 0; var16 < var12; var16++) {
+            int var17 = var14;
+
+            int var18;
+            for (var18 = 0; var18 < 4; var18++) {
+               int var19 = (var4 / 5 * (var18 + 1) & 0xFF00) << 16 | var10;
+               var8[var17] = var19;
+               var17++;
+            }
+
+            int var34 = (var4 & 0xFF00) << 16 | var10;
+
+            while (var18 < var6 - 4) {
+               var8[var17] = var34;
+               var17++;
+               var18++;
+            }
+
+            while (var18 < var6) {
+               var34 = (var4 / 5 * (var6 - var18) & 0xFF00) << 16 | var10;
+               var8[var17] = var34;
+               var17++;
+               var18++;
+            }
+
+            if (var16 > var12 * 2 / 3) {
+               var4 -= 2 * var15;
+            } else {
+               var4 += var15;
+            }
+
+            var14 += var9;
+         }
+      } else {
+         int var28 = (var12 << 8) / var11;
+         int var29 = (var13 << 8) / var11;
+         int var30 = var1 * var9 + var0;
+         boolean var31 = false;
+         var4 <<= 8;
+         int var27;
+         int var33 = ((var27 = var5 << 8) - var4) / var11;
+
+         for (int var36 = 0; var36 < var11; var36++) {
+            int var20 = var4;
+            if (var36 == 0) {
+               var20 = var27;
+            }
+
+            int var21 = var30;
+            int var22 = var20 << 16 & 0xFF000000 | var10;
+            int var23 = 0;
+
+            for (int var32 = (var6 << 8) + var29 * var36 >> 8; var23 < var32; var23++) {
+               var8[var21] = var22;
+               var21 += var9;
+            }
+
+            var4 += var33;
+            var30 = var0 + var36 + ((var1 << 8) + var28 * var36 >> 8) * var9;
+         }
+      }
+   }
+
+   static final int p(int var0, int var1) {
+      return (int)((long)var0 * var1 + 128L >> 8);
+   }
+
+   public static final String a(String var0, String var1, String var2) {
       StringBuffer var3 = new StringBuffer(var0);
       int var4 = var1.length();
       int[] var5 = new int[15];
@@ -6301,9 +8820,8 @@ final class Game extends FullCanvas implements Runnable {
    }
 
    static {
-      int[] var10000 = new int[]{636, 420, 660, 480};
-      var10000 = new int[]{16724804, 3453695};
-      var10000 = new int[]{-297151236, -297479947, -582956048, -868497173, -1153907488};
+      int[] var10000 = new int[]{16724804, 3453695};
+      String[] var0 = new String[]{"Power", "COMBO", "CRITICAL", "MAGIC"};
       var10000 = new int[]{
          0,
          3,
@@ -6359,13 +8877,13 @@ final class Game extends FullCanvas implements Runnable {
          -1
       };
       var10000 = new int[]{-1441722095, -1155390942, -869059789, -582728636};
-      var10000 = new int[]{327712, 4112, 8256, 16388, 33024};
       var10000 = new int[]{16317688, 16317688, 16317504, 16294936, 16252928};
       var10000 = new int[]{0, 4, 8, 13};
-      short[] var7 = new short[]{2, 19, 36, 53, 70, 87, 104, 121, 138, 155, 172, 176};
-      var7 = new short[]{34, 15, 76, 73, 147, 86, 165, 29, 218, 93, 117, 153, 36, 127, 58, 196, 184, 213, 208, 156, 48, 300, 135, 273};
-      byte[] var9 = new byte[]{40, 4, 40, 4, 40, 4, 40, 4};
-      String[] var10 = new String[]{"/3"};
-      var9 = new byte[]{3, 5, 7, 8, 10};
+      short[] var5 = new short[]{2, 19, 36, 53, 70, 87, 104, 121, 138, 155, 172, 176};
+      var5 = new short[]{34, 15, 76, 73, 147, 86, 165, 29, 218, 93, 117, 153, 36, 127, 58, 196, 184, 213, 208, 156, 48, 300, 135, 273};
+      byte[] var7 = new byte[]{40, 4, 40, 4, 40, 4, 40, 4};
+      String[] var8 = new String[]{"/3"};
+      var7 = new byte[]{3, 5, 7, 8, 10};
+      byte[][] var10 = new byte[][]{{44, 107, 68, 107, 26}, {34, 93, 52, 93, 26}};
    }
 }

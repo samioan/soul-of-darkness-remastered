@@ -1,17 +1,17 @@
 #!/usr/bin/env python3
-"""Reference pipeline for the full-featured build: Soul of Darkness 1.0.1 (HTC P3450, 240x320).
+"""Reference pipeline for Soul of Darkness 1.0.1 (HTC P3450 build, 240x320).
 
-    python tools/build_full.py              # extract (if needed), decompile, rename, compile-check
-    python tools/build_full.py --jar PATH   # use this JAR instead of roms/
+    python tools/build_reference.py              # extract (if needed), decompile, rename, compile-check
+    python tools/build_reference.py --jar PATH   # use this JAR instead of roms/
 
-Output, parallel to the 1.3.7 tree under soul/:
-    soul_full/extracted/   JAR contents (ignored)
-    soul_full/decompiled/  raw Vineflower output
-    soul_full/src/         renamed reference Java (soul_full/docs/names.map + PATCHES), compile-checked
+Output:
+    soul/extracted/   JAR contents (ignored)
+    soul/decompiled/  raw Vineflower output
+    soul/src/         renamed reference Java (soul/docs/names.map + PATCHES), compile-checked
 
 PATCHES are decompiler artifacts fixed textually after renaming: (file, old, new), each must match
-exactly once and carries its bytecode evidence in the comment. tools/check_engine.py --game full
-is what finds them: it compares the translated source with the original class files tick by tick.
+exactly once and carries its bytecode evidence in the comment. tools/check_engine.py is what
+finds them: it compares the translated source with the original class files tick by tick.
 """
 import hashlib
 import shutil
@@ -25,17 +25,17 @@ sys.path.insert(0, str(Path(__file__).resolve().parent))
 from decompile import VINEFLOWER, find_java  # noqa: E402
 
 ROOT = Path(__file__).resolve().parent.parent
-GAME = ROOT / "soul_full"
+GAME = ROOT / "soul"
 JAR = ROOT / "roms" / "SoulOfDarkness_HTC_P3450_EN_IGPL_EU_101_S8000.jar"
 SHA256 = "3da9ea7fe8dfaa2c090e8b3714eaed15127f51dc8b67ed9ef9fed51172e4bea4"
 STUBS = ROOT / "tools" / "midp-stubs"
 RENAMER_SRC = ROOT / "tools" / "renamer" / "ChRenamer.java"
 
 PATCHES: list[tuple[str, str, str]] = [
-    # Game.updateCamera: local 3 is an int flag (iload_3 / ifne), exactly as in the 1.3.7 build.
+    # Game.updateCamera: local 3 is an int flag (iload_3 / ifne).
     ("Game.java", "            if (!var3) {", "            if (var3 == 0) {"),
     # Script tick: dup_x2 keeps the old short for local 9 while the incremented value is stored
-    # (same artifact as 1.3.7's scriptTicks; tools/check_engine.py --game full diverges without it).
+    # (tools/check_engine.py diverges without it).
     ("Game.java", "         cX[var0]++;\n         short var9 = cX[var0];", "         short var9 = cX[var0]++;"),
     # Actor.a(Object): checkcast Integer / invokevirtual Integer.intValue, printed as auto-unboxing
     # (which CLDC source cannot contain).
@@ -137,7 +137,7 @@ def main() -> None:
     javac = java.with_name("javac.exe" if java.suffix == ".exe" else "javac")
     sep = ";" if sys.platform == "win32" else ":"
     names = GAME / "docs" / "names.map"
-    with tempfile.TemporaryDirectory(prefix="sod_full_") as tmp:
+    with tempfile.TemporaryDirectory(prefix="sod_ref_") as tmp:
         tmp = Path(tmp)
         classes, raw, renamed, tool = tmp / "classes", tmp / "raw", tmp / "renamed", tmp / "tool"
         for d in (classes, raw, renamed, tool):

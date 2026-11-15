@@ -24,13 +24,13 @@ public class GloftSOFD extends MIDlet {
          new Thread(game).start();
       } else {
          display.setCurrent(game);
-         game.resumeLoop();
+         game.d();
       }
    }
 
    public final void pauseApp() {
       this.notifyPaused();
-      game.suspendLoop();
+      game.e();
    }
 
    public final void destroyApp(boolean var1) {

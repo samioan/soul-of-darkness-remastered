@@ -310,7 +310,7 @@ void Image::getRGB(const Arr<jint>& out, jint offset, jint scanLength, jint x, j
 
 // One simulation tick of draw calls, tagged by layer. Between ticks the host replays them with each
 // layer moved part of the way back towards where it was drawn on the previous tick. Nothing in the
-// game is re-run, so collision, animation, timers and random numbers stay on the 83 ms tick.
+// game is re-run, so collision, animation, timers and random numbers stay on the original tick.
 namespace {
 enum OpKind { OpFillRect, OpDrawRect, OpDrawLine, OpFillArc, OpDrawArc, OpFillTriangle, OpImage, OpRgb };
 struct DrawOp {
@@ -815,7 +815,7 @@ Arr<jbyte> RecordStore::getRecord(jint) {
 }
 
 Ref<String> GloftSOFD::getAppProperty(const Ref<String>& key) {
-    if (key.p && key.get()->s == u"MIDlet-Version") return jstr(u"1.3.7");
+    if (key.p && key.get()->s == u"MIDlet-Version") return jstr(u"1.0.1");
     return nullptr;
 }
 void GloftSOFD::notifyDestroyed() { hostQuit(); }

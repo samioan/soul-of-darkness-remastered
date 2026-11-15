@@ -104,7 +104,7 @@ int main(int argc, char** argv) {
     long long seed = 12345;
     std::string script, trace, dumpPath;
     std::multimap<int, std::string> shots;
-    bool describe = false, english = false, interpolation = false, verifyReplay = false;
+    bool describe = false, interpolation = false, verifyReplay = false;
     std::multimap<int, std::string> midShots;
     long long replayChecked = 0, replayMismatch = 0, replayFrames = 0;
     for (int i = 1; i < argc; ++i) {
@@ -121,7 +121,6 @@ int main(int argc, char** argv) {
         else if (a == "--save-in") g_saveIn = next();
         else if (a == "--save-out") g_saveOut = next();
         else if (a == "--describe") describe = true;
-        else if (a == "--english") english = true;
 #ifdef _WIN32
         else if (a == "--trace-throws") { g_traceBudget = std::atoi(next().c_str()); sod::g_throwHook = traceThrow; }
 #endif
@@ -155,7 +154,6 @@ int main(int argc, char** argv) {
     }
     sodapi::Options options;
     options.screenWidth = width;
-    options.english = english;
     options.interpolation = interpolation;
     sodapi::configure(options);
     sodapi::start(seed, true);

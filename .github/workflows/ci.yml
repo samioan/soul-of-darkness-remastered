@@ -1,4 +1,4 @@
-name: Windows scaffold
+name: Windows build
 on: [push, pull_request, workflow_dispatch]
 jobs:
   windows:
@@ -13,5 +13,5 @@ jobs:
         run: soul\port\build_dist.bat
       - uses: actions/upload-artifact@v4
         with:
-          name: soul-windows-scaffold
+          name: soul-of-darkness-windows
           path: soul/port/dist/

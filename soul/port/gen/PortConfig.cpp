@@ -5,7 +5,6 @@ namespace sod {
 
 void PortConfig::clinit() {
    PortConfig::screenWidth = 240;
-   PortConfig::english = false;
 }
 
 PortConfig::PortConfig() {
@@ -21,8 +20,8 @@ jint PortConfig::margin() {
 
 void PortConfig::computeView() {
    jint w = PortConfig::screenWidth;
-   jint lo = ((Game::R > 0) ? Game::R : 0);
-   jint hi = ((Game::S > 0) ? Game::S : Game::levelPixelWidth);
+   jint lo = ((Game::regionLeft > 0) ? Game::regionLeft : 0);
+   jint hi = ((Game::regionRight > 0) ? Game::regionRight : Game::levelPixelWidth);
    if (((hi < (lo + 240)))) {
       (lo = 0);
       (hi = Game::levelPixelWidth);
@@ -131,8 +130,19 @@ jint PortConfig::worldRight() {
    return ([&]{ auto _t0 = PortConfig::visibleRight(); auto _t1 = Game::cameraX; return (_t0 - _t1); }());
 }
 
+jint PortConfig::screenLeft(Ref<Graphics> g) {
+   return ((PortConfig::screenWidth <= 240) ? 0 : (-(g)->getTranslateX()));
+}
+
+void PortConfig::untranslate(Ref<Graphics> g) {
+   jint tx = (g)->getTranslateX();
+   if (((tx != 0))) {
+      (g)->translate((-tx), 0);
+   }
+   (PortConfig::worldTx = 0);
+}
+
 void PortConfig::beginFrame(Ref<Graphics> g, jint state) {
-   (PortConfig::uiFrame = false);
    (PortConfig::worldTx = 0);
    if (((PortConfig::screenWidth <= 240))) {
       return;
@@ -140,46 +150,46 @@ void PortConfig::beginFrame(Ref<Graphics> g, jint state) {
    jboolean world = (((((state == 8) || (state == 12)) || (state == 14)) || (state == 15)) || (state == 32));
    if (((!world))) {
       jint m = PortConfig::margin();
-      (g)->setClip(0, 0, PortConfig::screenWidth, 320);
-      (g)->setColor(0);
-      (g)->fillRect(0, 0, m, 320);
-      (g)->fillRect((m + 240), 0, ((PortConfig::screenWidth - m) - 240), 320);
+      if (((state != 31))) {
+         (g)->setClip(0, 0, PortConfig::screenWidth, 320);
+         (g)->setColor(0);
+         (g)->fillRect(0, 0, m, 320);
+         (g)->fillRect((m + 240), 0, ((PortConfig::screenWidth - m) - 240), 320);
+      }
       (g)->translate(m, 0);
       (g)->setClip(0, 0, 240, 320);
-      (PortConfig::uiFrame = true);
    }
 }
 
 void PortConfig::endFrame(Ref<Graphics> g) {
-   if ((PortConfig::uiFrame)) {
-      (g)->translate((-PortConfig::margin()), 0);
-      (PortConfig::uiFrame = false);
+   if (((PortConfig::screenWidth > 240))) {
+      PortConfig::untranslate(g);
    }
 }
 
 void PortConfig::beginWorld(Ref<Graphics> g) {
-   if (((PortConfig::screenWidth <= 240))) {
-      PortConfig::pushWorld(g);
-      return;
-   }
-   if ((((!PortConfig::viewValid) || (PortConfig::viewCameraX != Game::cameraX)))) {
-      PortConfig::computeView();
-   }
-   (g)->setClip(0, 0, PortConfig::screenWidth, 320);
-   (g)->setColor(0);
-   jint left = ([&]{ auto _t0 = PortConfig::visibleLeft(); auto _t1 = PortConfig::viewX; return (_t0 - _t1); }());
-   jint right = ([&]{ auto _t2 = PortConfig::visibleRight(); auto _t3 = PortConfig::viewX; return (_t2 - _t3); }());
-   if (((left > 0))) {
-      (g)->fillRect(0, 0, left, 320);
-   }
-   if (((right < PortConfig::screenWidth))) {
-      (g)->fillRect(right, 0, (PortConfig::screenWidth - right), 320);
+   if (((PortConfig::screenWidth > 240))) {
+      PortConfig::untranslate(g);
+      if ((((!PortConfig::viewValid) || (PortConfig::viewCameraX != Game::cameraX)))) {
+         PortConfig::computeView();
+      }
+      (g)->setClip(0, 0, PortConfig::screenWidth, 320);
+      (g)->setColor(0);
+      jint left = ([&]{ auto _t0 = PortConfig::visibleLeft(); auto _t1 = PortConfig::viewX; return (_t0 - _t1); }());
+      jint right = ([&]{ auto _t2 = PortConfig::visibleRight(); auto _t3 = PortConfig::viewX; return (_t2 - _t3); }());
+      if (((left > 0))) {
+         (g)->fillRect(0, 0, left, 320);
+      }
+      if (((right < PortConfig::screenWidth))) {
+         (g)->fillRect(right, 0, (PortConfig::screenWidth - right), 320);
+      }
    }
    PortConfig::pushWorld(g);
 }
 
 void PortConfig::pushWorld(Ref<Graphics> g) {
    if (((PortConfig::screenWidth > 240))) {
+      PortConfig::untranslate(g);
       (PortConfig::worldTx = (Game::cameraX - PortConfig::viewX));
       (g)->translate(PortConfig::worldTx, 0);
       PortConfig::clipWorld(g);
@@ -192,9 +202,32 @@ void PortConfig::endWorld(Ref<Graphics> g) {
    if (((PortConfig::screenWidth <= 240))) {
       return;
    }
-   (g)->translate((-PortConfig::worldTx), 0);
-   (PortConfig::worldTx = 0);
+   PortConfig::untranslate(g);
    (g)->setClip(0, 0, PortConfig::screenWidth, 320);
+}
+
+void PortConfig::endWorldForWeather(Ref<Graphics> g) {
+   PortNative::layerScreen();
+   if (((PortConfig::screenWidth <= 240))) {
+      return;
+   }
+   PortConfig::untranslate(g);
+   ([&]{ auto _t4 = g; auto _t5 = ([&]{ auto _t0 = PortConfig::visibleLeft(); auto _t1 = PortConfig::viewX; return (_t0 - _t1); }()); auto _t6 = 0; auto _t7 = ([&]{ auto _t2 = PortConfig::visibleRight(); auto _t3 = PortConfig::visibleLeft(); return (_t2 - _t3); }()); auto _t8 = 320; return _t4->setClip(_t5, _t6, _t7, _t8); }());
+}
+
+Ref<String> PortConfig::softKeyName(Ref<String> original) {
+   if (((!PortConfig::desktopText))) {
+      return original;
+   }
+   Ref<String> key = PortNative::settingValue(2, 10);
+   if (((((key == nullptr) || ((key)->length() == 0)) || (key)->equals(jlit(u"-"))))) {
+      return original;
+   }
+   jint space = (key)->indexOf(jlit(u" "));
+   if (((space > 0))) {
+      (key = (key)->substring(0, space));
+   }
+   return jcat(jstr(jcat(jstr(jlit(u"{")), jstr(key))), jstr(jlit(u"} {KEY}")));
 }
 
 void PortConfig::clipWorld(Ref<Graphics> g) {
@@ -208,20 +241,22 @@ void PortConfig::clipWorld(Ref<Graphics> g) {
 }
 
 void PortConfig::beginUi(Ref<Graphics> g) {
+   PortNative::layerScreen();
    if (((PortConfig::screenWidth <= 240))) {
       return;
    }
+   PortConfig::untranslate(g);
    (g)->translate(PortConfig::margin(), 0);
    (g)->setClip(0, 0, 240, 320);
 }
 
-void PortConfig::beginUiOpaque(Ref<Graphics> g) {
-   if (((PortConfig::screenWidth <= 240))) {
-      return;
+void PortConfig::beginUiBar(Ref<Graphics> g) {
+   if (((PortConfig::screenWidth > 240))) {
+      PortConfig::untranslate(g);
+      (g)->setClip(0, 0, PortConfig::screenWidth, 320);
+      (g)->setColor(0);
+      (g)->fillRect(0, 293, PortConfig::screenWidth, 28);
    }
-   (g)->setClip(0, 0, PortConfig::screenWidth, 320);
-   (g)->setColor(0);
-   (g)->fillRect(0, 0, PortConfig::screenWidth, 320);
    PortConfig::beginUi(g);
 }
 
@@ -229,25 +264,52 @@ void PortConfig::endUi(Ref<Graphics> g) {
    if (((PortConfig::screenWidth <= 240))) {
       return;
    }
-   (g)->translate((-PortConfig::margin()), 0);
+   PortConfig::untranslate(g);
    (g)->setClip(0, 0, PortConfig::screenWidth, 320);
 }
 
-void PortConfig::drawTiles(Ref<Graphics> g, jint cameraX, jint cameraY) {
+jint PortConfig::tileMargin() {
+   return (PortConfig::directTiles ? 1 : 0);
+}
+
+jint PortConfig::firstColumn(jint origin) {
+   if ((((PortConfig::screenWidth <= 240) && (!PortConfig::directTiles)))) {
+      return (origin / 20);
+   }
+   return ([&]{ auto _t0 = PortConfig::floorDiv((origin + PortConfig::worldLeft()), 20); auto _t1 = PortConfig::tileMargin(); return (_t0 - _t1); }());
+}
+
+jint PortConfig::lastColumn(jint origin) {
+   if ((((PortConfig::screenWidth <= 240) && (!PortConfig::directTiles)))) {
+      return ((((origin + 240) - 1)) / 20);
+   }
+   return ([&]{ auto _t0 = PortConfig::floorDiv(((origin + PortConfig::worldRight()) - 1), 20); auto _t1 = PortConfig::tileMargin(); return (_t0 + _t1); }());
+}
+
+jint PortConfig::wrapColumn(jint column, jint width) {
+   jint c = jrem32(column, width);
+   return ((c < 0) ? (c + width) : c);
+}
+
+jboolean PortConfig::rowInside(jint row, jint cells, jint width) {
+   return ((row >= 0) && ((((row + 1)) * width) <= cells));
+}
+
+void PortConfig::drawFar(Ref<Graphics> g, jint originX, jint originY) {
    jint left = PortConfig::worldLeft();
    jint right = PortConfig::worldRight();
+   PortNative::layerTiles(0, (PortConfig::worldTx - originX), (-originY));
    (g)->setColor(0);
    (g)->fillRect(left, 0, (right - left), 320);
-   PortNative::layerTiles((PortConfig::worldTx - cameraX), (-cameraY));
-   jint firstColumn = (PortConfig::floorDiv((left + cameraX), 20) - 1);
-   jint lastColumn = (PortConfig::floorDiv(((right - 1) + cameraX), 20) + 1);
-   jint firstRow = (PortConfig::floorDiv(cameraY, 20) - 1);
-   jint lastRow = (PortConfig::floorDiv((cameraY + 319), 20) + 1);
+   jint firstColumn = ([&]{ auto _t0 = PortConfig::floorDiv((originX + left), 20); auto _t1 = PortConfig::tileMargin(); return (_t0 - _t1); }());
+   jint lastColumn = ([&]{ auto _t2 = PortConfig::floorDiv(((originX + right) - 1), 20); auto _t3 = PortConfig::tileMargin(); return (_t2 + _t3); }());
+   jint firstRow = ([&]{ auto _t4 = PortConfig::floorDiv(originY, 20); auto _t5 = PortConfig::tileMargin(); return (_t4 - _t5); }());
+   jint lastRow = ([&]{ auto _t6 = PortConfig::floorDiv((originY + 319), 20); auto _t7 = PortConfig::tileMargin(); return (_t6 + _t7); }());
    if (((firstRow < 0))) {
       (firstRow = 0);
    }
-   if (((lastRow > (Game::bW - 1)))) {
-      (lastRow = (Game::bW - 1));
+   if (((lastRow > (Game::cE - 1)))) {
+      (lastRow = (Game::cE - 1));
    }
    {
       jint row = firstRow;
@@ -255,13 +317,26 @@ void PortConfig::drawTiles(Ref<Graphics> g, jint cameraX, jint cameraY) {
          {
             jint column = firstColumn;
             for (; (column <= lastColumn); (column++)) {
-               jint wrapped = jrem32(column, Game::bU);
-               if (((wrapped < 0))) {
-                  (wrapped = (jint)((wrapped + Game::bU)));
-               }
-               Game::portTile(g, ((column * 20) - cameraX), ((row * 20) - cameraY), (wrapped + (row * Game::bU)));
+               Game::portTile(g, ((column * 20) - originX), ((row * 20) - originY), ([&]{ auto _t8 = PortConfig::wrapColumn(column, Game::cC); auto _t9 = (row * Game::cC); return (_t8 + _t9); }()));
             }
          }
+      }
+   }
+}
+
+void PortConfig::tileOverlay(Ref<Image> image) {
+   if ((((PortConfig::screenWidth <= 240) || (!PortConfig::viewValid)))) {
+      Game::m_a_ImageIII(image, 0, 0, 20);
+      Game::m_a_ImageIII(image, 120, 160, 20);
+      Game::m_a_ImageIII(image, 120, 0, 20);
+      Game::m_a_ImageIII(image, 0, 160, 20);
+      return;
+   }
+   {
+      jint x = (PortConfig::floorDiv(PortConfig::worldLeft(), 120) * 120);
+      for (; (x < PortConfig::worldRight()); (x = (jint)((x + 120)))) {
+         Game::m_a_ImageIII(image, x, 0, 20);
+         Game::m_a_ImageIII(image, x, 160, 20);
       }
    }
 }
@@ -274,25 +349,16 @@ jint PortConfig::floorDiv(jint a, jint b) {
    return q;
 }
 
-Ref<String> PortConfig::text(jint table, jint index, Ref<String> original) {
-   if (((!PortConfig::english))) {
-      return original;
-   }
-   Ref<String> s = PortEnglish::get(table, index, original);
-   return ((s != nullptr) ? Ref<String>(s) : Ref<String>(original));
-}
-
 void PortConfig::portDumpStatics(StateSink& sink) {
    sink.put("screenWidth", PortConfig::screenWidth);
-   sink.put("english", PortConfig::english);
+   sink.put("directTiles", PortConfig::directTiles);
+   sink.put("desktopText", PortConfig::desktopText);
    sink.put("viewX", PortConfig::viewX);
    sink.put("viewValid", PortConfig::viewValid);
    sink.put("clipLeft", PortConfig::clipLeft);
    sink.put("clipRight", PortConfig::clipRight);
    sink.put("viewCameraX", PortConfig::viewCameraX);
    sink.put("worldTx", PortConfig::worldTx);
-   sink.put("uiFrame", PortConfig::uiFrame);
-   sink.put("directTiles", PortConfig::directTiles);
 }
 
 void PortConfig::portDumpFields(StateSink& sink) {

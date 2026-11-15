@@ -38,7 +38,7 @@ def main():
                     raise SystemExit('Vineflower download checksum mismatch')
                 dest.write_bytes(data)
         print(f'OK {name} (SHA256 verified)')
-    jar = ROOT / 'roms/Soul-of-Darkness_J2ME_EN_v137.jar'
+    jar = ROOT / 'roms/SoulOfDarkness_HTC_P3450_EN_IGPL_EU_101_S8000.jar'
     supplied = ROOT / jar.name
     if not jar.exists() and supplied.exists():
         jar.parent.mkdir(exist_ok=True)

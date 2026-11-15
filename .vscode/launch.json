@@ -2,13 +2,13 @@
   "version": "0.2.0",
   "configurations": [
     {
-      "name": "Windows port scaffold",
+      "name": "Soul of Darkness",
       "type": "cppvsdbg",
       "request": "launch",
-      "program": "${workspaceFolder}/soul/port/build/Debug/soul_port.exe",
-      "args": ["--width", "569", "--fps", "60"],
+      "program": "${workspaceFolder}/soul/port/build/Debug/soul_of_darkness.exe",
+      "args": ["--width", "569"],
       "cwd": "${workspaceFolder}",
-      "preLaunchTask": "Build Debug port"
+      "preLaunchTask": "Build Debug"
     }
   ]
 }

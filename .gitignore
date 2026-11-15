@@ -4,8 +4,6 @@
 tools/midp-stubs/
 soul/extracted/
 soul/analysis/
-soul/inventory.json
-soul/bytecode.txt
 *.png
 *.bmp
 *.ppm
@@ -17,11 +15,7 @@ soul/port/build*/
 soul/port/dist/
 CMakeUserPresets.json
 .vs/
-display.ini
 
 # Local native game progress
 *.sav
 *.sav.tmp
-
-# Full 1.0.1 build: extracted data
-soul_full/extracted/

@@ -21,15 +21,14 @@ struct Frame {
 // Values the port patches read (tools/port_java/PortConfig.java). Vanilla builds ignore them.
 struct Options {
     int screenWidth = 240; // logical width; height is always 320
-    bool english = true;
     bool interpolation = false; // record draw calls so renderInterpolated can present between ticks
-    bool optionsMenu = false;   // add the OPTIONS entry to the game's menus (full build; set before start)
+    bool optionsMenu = false;   // add the OPTIONS entry to the game's menus (set before start)
 };
 
 void configure(const Options& options);
 void start(std::int64_t randomSeed, bool fixedSeed);
 void tick();                   // one original loop iteration: Game.paint and input latch
-double tickSeconds();          // length of the next iteration (83 ms in 1.3.7; 50 or 66 ms in 1.0.1)
+double tickSeconds();          // length of the next iteration: 50 ms, or 66 ms while a cutscene script runs
 Frame frame();
 void keyPressed(int midpKey);
 void keyReleased(int midpKey);

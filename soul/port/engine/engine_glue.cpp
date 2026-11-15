@@ -3,16 +3,8 @@
 #include "engine_api.h"
 #include "sod_gen.h"
 
-// The two supported builds share this file. SOD_FULL selects the 1.0.1 build: a 50 ms tick (66 ms while a
-// cutscene script runs) fed with the frame time, and a wall-clock watchdog in paint() that is neutralised
-// so the simulation depends only on ticks. The 1.3.7 build has a fixed 83 ms tick and neither field.
-#ifdef SOD_FULL
-#define SOD_MODAL Game::modalActive
-#define SOD_DIALOG Game::dialogText
-#else
-#define SOD_MODAL Game::aS
-#define SOD_DIALOG Game::aU
-#endif
+// Game.run() has a 50 ms tick (66 ms while a cutscene script runs) fed to the game as the frame time,
+// and a wall-clock watchdog in paint() that is neutralised so the simulation depends only on ticks.
 
 namespace sod {
 namespace {
@@ -43,9 +35,6 @@ void configure(const Options& options) {
     if (g_started && options.screenWidth != g_options.screenWidth) PortConfig::resetView();
     PortConfig::screenWidth = options.screenWidth;
     PortConfig::directTiles = options.interpolation;
-#ifndef SOD_FULL
-    PortConfig::english = options.english;
-#endif
 #endif
     if (!options.interpolation) recorderDrop();
     const bool menu = g_started ? g_options.optionsMenu : options.optionsMenu;
@@ -70,10 +59,6 @@ void start(std::int64_t randomSeed, bool fixedSeed) {
     PortConfig::clinit();
     PortConfig::screenWidth = g_options.screenWidth;
     PortConfig::directTiles = g_options.interpolation;
-#ifndef SOD_FULL
-    PortEnglish::clinit();
-    PortConfig::english = g_options.english;
-#endif
 #endif
     // Same order the JVM initializes them: Game on construction, the others on first use
     // (none of the static initializers read another class).
@@ -81,7 +66,7 @@ void start(std::int64_t randomSeed, bool fixedSeed) {
     Game::clinit();
     Actor::clinit();
     BSprite::clinit();
-#if defined(SOD_PORT_BUILD) && defined(SOD_FULL)
+#ifdef SOD_PORT_BUILD
     PortMenu::clinit();
     if (g_options.optionsMenu) {
         Game::portMenus();
@@ -106,7 +91,7 @@ void tick() {
         }
         if (!Game::suspended) {
             // Game.run(): resume interrupted music a few frames after returning to the foreground.
-            if (((Game::state != 14 && Game::state != 8 && Game::state != 9) || (Game::state == 8 && SOD_MODAL))
+            if (((Game::state != 14 && Game::state != 8 && Game::state != 9) || (Game::state == 8 && Game::modalActive))
                 && (Game::state != 5 || Game::previousState != 14) && Game::soundResumeFrames > 0) {
                 while (--Game::soundResumeFrames == 0) Game::playSound(Game::resumeSoundId, -1);
             }
@@ -114,10 +99,8 @@ void tick() {
             g_graphics->setClip(0, 0, g_screen->width, g_screen->height);
             g_graphics->setColor(0);
             Game::paintComplete = false;
-#ifdef SOD_FULL
             Game::frameDeltaMs = Game::hasActiveBackgroundScript() ? 66 : 50; // Game.run(): time since the last frame
             Game::lastPaintMs = 0;                                            // no 2.5 s stall detection
-#endif
             // Only the states that draw the world have motion worth interpolating.
             recording = g_options.interpolation && worldState(Game::state);
             if (recording) recorderStart(g_graphics.get());
@@ -126,9 +109,7 @@ void tick() {
     } catch (JavaThrow& e) {
         hostLog("uncaught: " + jutf8(e.ex->toString()));
     }
-#ifdef SOD_FULL
     Game::lastPaintMs = 0;
-#endif
     if (recording && worldState(Game::state)) recorderFinish();
     else recorderDrop();
 }
@@ -168,11 +149,7 @@ void shutdown() {
 }
 
 double tickSeconds() {
-#ifdef SOD_FULL
     return (g_started && Game::hasActiveBackgroundScript()) ? 0.066 : 0.050;
-#else
-    return 0.083;
-#endif
 }
 
 int gameState() { return g_started ? Game::state : -1; }
@@ -180,7 +157,7 @@ int levelIndex() { return g_started ? Game::levelIndex : -1; }
 bool inGameplay() { return g_started && Game::state == 8; }
 int inputContext() {
     if (!g_started || Game::state != 8) return 0;
-    if (Game::hasActiveBackgroundScript() || SOD_DIALOG != nullptr || SOD_MODAL) return 2;
+    if (Game::hasActiveBackgroundScript() || Game::dialogText != nullptr || Game::modalActive) return 2;
     return 1;
 }
 

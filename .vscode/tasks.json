@@ -9,7 +9,7 @@
       "problemMatcher": []
     },
     {
-      "label": "Build Debug port",
+      "label": "Build Debug",
       "type": "shell",
       "command": ".\\soul\\port\\build.bat",
       "options": {"cwd": "${workspaceFolder}"},
@@ -20,7 +20,7 @@
       "label": "Regenerate reference Java",
       "type": "process",
       "command": "python",
-      "args": ["${workspaceFolder}/tools/rename_sod.py"],
+      "args": ["${workspaceFolder}/tools/build_reference.py"],
       "problemMatcher": []
     }
   ]

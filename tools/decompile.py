@@ -1,12 +1,8 @@
 #!/usr/bin/env python3
-"""Decompile the game's extracted .class files to Java source with Vineflower.
+"""Shared Vineflower/JDK helpers for the reference tools.
 
-Run tools/extract_jar.py first. This writes soul/decompiled/**/*.java and
-deletes everything Vineflower also copies over from the input directory
-(images, RP* resource banks, ...) since that's a duplicate of
-soul/extracted/ -- decompiled/ should contain source only.
-
-Usage: python tools/decompile.py [soul]
+Decompiling itself is done by tools/build_reference.py, which writes soul/decompiled (raw
+Vineflower output) and soul/src (renamed reference Java).
 
 Vineflower 1.12.0 requires Java 17+. find_java() tries $JAVA_HOME, then
 `java` on PATH, then any installed Temurin JDK (the usual Adoptium install
@@ -14,19 +10,12 @@ location) -- the PATH java on this machine is 1.8, too old to load it.
 """
 import os
 import re
-import tempfile
 import subprocess
 import sys
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
 VINEFLOWER = ROOT / "tools" / "vineflower.jar"
-
-# game key -> (game dir, extraction subdir, decompile output subdir),
-# matching tools/extract_jar.py's output.
-BUILDS = {
-    "soul": ("soul", "extracted", "decompiled"),
-}
 
 
 def _java_major(exe: str) -> int:
@@ -63,49 +52,3 @@ def find_java() -> str:
         "no Java 17+ found (tried $JAVA_HOME, PATH, and installed Temurin JDKs) "
         "-- Vineflower 1.12.0 needs it. Install one from https://adoptium.net/"
     )
-
-
-def decompile(game: str, java_exe: str) -> None:
-    game_dir, src_sub, out_sub = BUILDS[game]
-    src = ROOT / game_dir / src_sub
-    if not src.exists():
-        sys.exit(f"{src} does not exist -- run tools/extract_jar.py {game} first")
-    out = ROOT / game_dir / out_sub
-    # Decompile in a temporary tree; failed runs preserve the reference output.
-    # Copy only Java, never mirrored game assets, into the tracked tree.
-    with tempfile.TemporaryDirectory(prefix="sod_decompile_") as tmp:
-        subprocess.run(
-            [java_exe, "-jar", str(VINEFLOWER), "-log=WARN", str(src), tmp],
-            check=True,
-        )
-        sources = sorted(Path(tmp).rglob("*.java"))
-        if not sources:
-            sys.exit("Vineflower produced no sources")
-        out.mkdir(parents=True, exist_ok=True)
-        for old in out.rglob("*.java"):
-            old.unlink()
-        for source in sources:
-            dest = out / source.relative_to(tmp)
-            dest.parent.mkdir(parents=True, exist_ok=True)
-            dest.write_text(source.read_text(encoding="utf-8"), encoding="utf-8", newline="\n")
-
-    n = sum(1 for _ in out.rglob("*.java"))
-    print(f"{game}: decompiled {n} source files -> {out.relative_to(ROOT)}")
-
-
-def main() -> None:
-    if not VINEFLOWER.exists():
-        sys.exit(
-            f"{VINEFLOWER} not found -- download it from "
-            "https://github.com/Vineflower/vineflower/releases (vineflower-<ver>.jar)"
-        )
-    games = sys.argv[1:] or list(BUILDS)
-    java_exe = find_java()
-    for game in games:
-        if game not in BUILDS:
-            sys.exit(f"unknown game {game!r}, expected one of {list(BUILDS)}")
-        decompile(game, java_exe)
-
-
-if __name__ == "__main__":
-    main()

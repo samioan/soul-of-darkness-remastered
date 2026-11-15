@@ -107,16 +107,18 @@ struct PadName { const char* name; unsigned mask; };
 const PadName kPadNames[] = {{"A", PadA}, {"B", PadB}, {"X", PadX}, {"Y", PadY}, {"LB", PadLB}, {"RB", PadRB}, {"START", PadStart},
                              {"BACK", PadBack}, {"LS", PadLS}, {"RS", PadRS}, {"LT", PadLT}, {"RT", PadRT}};
 
+// Frame-rate setting that means "one frame per original tick": Game.run() ticks every 50 ms.
+constexpr int kNativeFps = 20;
+
 struct Settings {
     int width = 0;            // logical width; 0 = follow the window's aspect ratio
-    int fps = -1;             // -1 = display refresh rate, 0 = unlimited, 12 = original cadence, otherwise the cap
+    int fps = -1;             // -1 = display refresh rate, 0 = unlimited, kNativeFps = one frame per tick, otherwise the cap
     bool fullscreen = false;
     bool interpolation = true;
     bool integerScale = false;
     bool smooth = false;      // bilinear-like stretch instead of nearest neighbour
     int volume = 80;
     bool mute = false;
-    bool english = true;
     bool showFps = false;
     bool pauseUnfocused = true; // like the phone: losing focus suspends the game and opens its pause menu
     int windowScale = 3;
@@ -210,14 +212,13 @@ bool loadSettings(const std::wstring& path, Settings& s) {
             continue;
         }
         if (key == "width") s.width = lv == "AUTO" ? 0 : std::clamp(std::atoi(value.c_str()), 240, 960);
-        else if (key == "fps") s.fps = lv == "DISPLAY" ? -1 : lv == "UNLIMITED" ? 0 : lv == "NATIVE" ? 12 : std::clamp(std::atoi(value.c_str()), 1, 1000);
+        else if (key == "fps") s.fps = lv == "DISPLAY" ? -1 : lv == "UNLIMITED" ? 0 : lv == "NATIVE" ? kNativeFps : std::clamp(std::atoi(value.c_str()), 1, 1000);
         else if (key == "fullscreen") s.fullscreen = std::atoi(value.c_str()) != 0;
         else if (key == "interpolation") s.interpolation = std::atoi(value.c_str()) != 0;
         else if (key == "integer_scale") s.integerScale = std::atoi(value.c_str()) != 0;
         else if (key == "smooth") s.smooth = std::atoi(value.c_str()) != 0;
         else if (key == "volume") s.volume = std::clamp(std::atoi(value.c_str()), 0, 100);
         else if (key == "mute") s.mute = std::atoi(value.c_str()) != 0;
-        else if (key == "language") s.english = lv != "ORIGINAL";
         else if (key == "show_fps") s.showFps = std::atoi(value.c_str()) != 0;
         else if (key == "pause_on_focus_loss") s.pauseUnfocused = std::atoi(value.c_str()) != 0;
         else if (key == "window_scale") s.windowScale = std::clamp(std::atoi(value.c_str()), 1, 8);
@@ -232,14 +233,13 @@ bool saveSettings(const std::wstring& path, const Settings& s) {
     out << "; width: logical width in original pixels (height is always 320). auto follows the window shape;\n";
     out << ";        240 = original portrait, 427 = 4:3, 569 = 16:9, 747 = 21:9.\n";
     out << "width=" << (s.width == 0 ? std::string("auto") : std::to_string(s.width)) << "\n";
-    out << "; fps: display (monitor refresh rate), unlimited, native (the original ~12 fps cadence) or a number.\n";
-    out << "fps=" << (s.fps < 0 ? std::string("display") : s.fps == 0 ? std::string("unlimited") : s.fps == 12 ? std::string("native") : std::to_string(s.fps)) << "\n";
-    out << "; interpolation: draw in-between frames; the simulation always runs at the original 83 ms tick.\n";
+    out << "; fps: display (monitor refresh rate), unlimited, native (one frame per original tick, 20 fps) or a number.\n";
+    out << "fps=" << (s.fps < 0 ? std::string("display") : s.fps == 0 ? std::string("unlimited") : s.fps == kNativeFps ? std::string("native") : std::to_string(s.fps)) << "\n";
+    out << "; interpolation: draw in-between frames; the simulation always runs at the original 50 ms tick (66 ms in cutscenes).\n";
     out << "interpolation=" << (s.interpolation ? 1 : 0) << "\nfullscreen=" << (s.fullscreen ? 1 : 0) << "\ninteger_scale=" << (s.integerScale ? 1 : 0)
         << "\nsmooth=" << (s.smooth ? 1 : 0) << "\nwindow_scale=" << s.windowScale << "\nshow_fps=" << (s.showFps ? 1 : 0) << "\n";
     out << "\n[audio]\nvolume=" << s.volume << "\nmute=" << (s.mute ? 1 : 0) << "\n";
-    out << "\n[game]\npause_on_focus_loss=" << (s.pauseUnfocused ? 1 : 0) << "\n; language: english (desktop translation) or original (the text inside your JAR)\n";
-    out << "language=" << (s.english ? "english" : "original") << "\n";
+    out << "\n[game]\npause_on_focus_loss=" << (s.pauseUnfocused ? 1 : 0) << "\n";
     if (!s.jar.empty()) out << "jar=" << narrow(s.jar) << "\n";
     out << "\n[keyboard]\n; Comma separated keys: letters, digits, LEFT RIGHT UP DOWN SPACE ENTER ESC TAB BACKSPACE SHIFT CTRL ALT F1..F12 NUMPAD0..9\n";
     out << "; Digits 0-9 and numpad always act as the phone keypad too (numpad * and / are the * and # keys).\n";
@@ -382,7 +382,7 @@ namespace {
 // ---------------------------------------------------------------- in-game options screen
 
 const int kWidthChoices[] = {0, 240, 427, 569, 747};
-const int kFpsChoices[] = {-1, 12, 30, 60, 120, 144, 240, 0};
+const int kFpsChoices[] = {-1, kNativeFps, 30, 60, 120, 144, 240, 0};
 const char* const kActionLabels[ActCount] = {"UP", "DOWN", "LEFT", "RIGHT", "JUMP", "ATTACK", "MAGIC", "SWITCH WEAPON",
                                              "CONFIRM", "PAUSE", "UPGRADE / BACK", "MENU KEY"};
 struct Capture { bool active = false; int page = 0; int action = 0; } g_capture;
@@ -430,7 +430,7 @@ std::string hostSettingValue(int page, int index) {
         switch (index) {
             case 0: return g_settings.width == 0 ? "AUTO " + std::to_string(g_logicalWidth) : std::to_string(g_settings.width);
             case 1: return g_settings.fps < 0 ? "DISPLAY " + std::to_string(displayRefresh()) : g_settings.fps == 0 ? "UNLIMITED"
-                         : g_settings.fps == 12 ? "ORIGINAL" : std::to_string(g_settings.fps);
+                         : g_settings.fps == kNativeFps ? "ORIGINAL" : std::to_string(g_settings.fps);
             case 2: return onOff(g_settings.interpolation);
             case 3: return onOff(g_settings.fullscreen);
             case 4: return onOff(g_settings.integerScale);
@@ -578,11 +578,7 @@ bool locateData(const std::wstring& explicitData, const std::wstring& explicitJa
     std::vector<std::wstring> dirs = {exe + L"\\data", g_saveDir + L"\\data"};
     std::wstring up = exe;
     for (int i = 0; i < 6; ++i) {
-#ifdef SOD_FULL
-        dirs.push_back(up + L"\\soul_full\\extracted");
-#else
         dirs.push_back(up + L"\\soul\\extracted");
-#endif
         std::size_t slash = up.find_last_of(L"\\/");
         if (slash == std::wstring::npos) break;
         up = up.substr(0, slash);
@@ -759,7 +755,7 @@ void pollGamepad() {
 // ---------------------------------------------------------------- window and presentation
 
 const int kWidthPresets[] = {0, 240, 427, 569, 747};
-const int kFpsPresets[] = {-1, 12, 30, 60, 120, 144, 240, 0};
+const int kFpsPresets[] = {-1, kNativeFps, 30, 60, 120, 144, 240, 0};
 WINDOWPLACEMENT g_placement = {sizeof(WINDOWPLACEMENT)};
 HDC g_backDc = nullptr;
 HBITMAP g_backBitmap = nullptr;
@@ -789,7 +785,6 @@ void applyLogicalWidth() {
         g_logicalWidth = w;
         sodapi::Options o;
         o.screenWidth = w;
-        o.english = g_settings.english;
         o.interpolation = g_settings.interpolation;
         sodapi::configure(o);
     }
@@ -798,7 +793,6 @@ void applyLogicalWidth() {
 void reconfigure() {
     sodapi::Options o;
     o.screenWidth = g_logicalWidth;
-    o.english = g_settings.english;
     o.interpolation = g_settings.interpolation;
     sodapi::configure(o);
 }
@@ -874,7 +868,7 @@ void present(HDC dc) {
 std::string describeFps() {
     if (g_settings.fps < 0) return "display refresh (" + std::to_string(displayRefresh()) + " Hz)";
     if (g_settings.fps == 0) return "unlimited";
-    if (g_settings.fps == 12) return "native (12 fps, original cadence)";
+    if (g_settings.fps == kNativeFps) return "native (one frame per tick, original cadence)";
     return std::to_string(g_settings.fps) + " fps";
 }
 
@@ -897,12 +891,6 @@ void hostKey(int vk) {
             g_music.applyVolume();
             overlay(g_settings.mute ? "Music muted" : "Music on");
             break;
-        case VK_F7: {
-            g_settings.english = !g_settings.english;
-            reconfigure();
-            overlay(g_settings.english ? "Text: English" : "Text: original JAR language");
-            break;
-        }
         case VK_F8: {
             int i = 0;
             for (int k = 0; k < static_cast<int>(std::size(kWidthPresets)); ++k) if (kWidthPresets[k] == g_settings.width) i = k;
@@ -922,7 +910,7 @@ void hostKey(int vk) {
         case VK_F10:
             g_settings.interpolation = !g_settings.interpolation;
             reconfigure();
-            overlay(g_settings.interpolation ? "Interpolation on" : "Interpolation off (original 12 fps motion)");
+            overlay(g_settings.interpolation ? "Interpolation on" : "Interpolation off (original 20 fps motion)");
             break;
         case VK_F11: setFullscreen(!g_settings.fullscreen); break;
         default: break;
@@ -999,7 +987,7 @@ int WINAPI wWinMain(HINSTANCE instance, HINSTANCE, PWSTR, int show) {
         else if (a == L"--config") configArg = value();
         else if (a == L"--save-dir") { g_saveDir = value(); CreateDirectoryW(g_saveDir.c_str(), nullptr); }
         else if (a == L"--width") { std::wstring v = value(); cli.width = (v == L"auto") ? 0 : std::clamp(_wtoi(v.c_str()), 240, 960); widthOverride = true; }
-        else if (a == L"--fps") { std::wstring v = value(); cli.fps = v == L"display" ? -1 : v == L"unlimited" ? 0 : v == L"native" ? 12 : std::clamp(_wtoi(v.c_str()), 1, 1000); fpsOverride = true; }
+        else if (a == L"--fps") { std::wstring v = value(); cli.fps = v == L"display" ? -1 : v == L"unlimited" ? 0 : v == L"native" ? kNativeFps : std::clamp(_wtoi(v.c_str()), 1, 1000); fpsOverride = true; }
         else if (a == L"--fullscreen") fullscreenOverride = true;
         else if (a == L"--windowed") windowed = true;
         else if (a == L"--no-focus-pause") noFocusPause = true;
@@ -1023,7 +1011,7 @@ int WINAPI wWinMain(HINSTANCE instance, HINSTANCE, PWSTR, int show) {
                 L"--fps N|display|unlimited|native\n"
                 L"--fullscreen / --windowed\n"
                 L"--no-focus-pause  keep running while another window has focus\n"
-                L"--config FILE     settings file (default: settings.ini beside the program, else in %LOCALAPPDATA%\\SoulOfDarkness)\n"
+                L"--config FILE     settings file (default: settings.ini beside the program, else in %LOCALAPPDATA%\\SoulOfDarkness101)\n"
                 L"--save-dir DIR    where the save record is kept\n\nPress F1 in the game for controls.",
                 L"Soul of Darkness", MB_OK);
             return 0;
@@ -1066,7 +1054,6 @@ int WINAPI wWinMain(HINSTANCE instance, HINSTANCE, PWSTR, int show) {
     g_logicalWidth = widthForClient(client.right, client.bottom);
     sodapi::Options options;
     options.screenWidth = g_logicalWidth;
-    options.english = g_settings.english;
     options.interpolation = g_settings.interpolation;
     options.optionsMenu = !noOptionsMenu;
     sodapi::configure(options);
@@ -1114,7 +1101,7 @@ int WINAPI wWinMain(HINSTANCE instance, HINSTANCE, PWSTR, int show) {
         }
         if (ran == 3) accumulator = 0;
 
-        const bool interpolate = g_settings.interpolation && g_settings.fps != 12 && g_active;
+        const bool interpolate = g_settings.interpolation && g_settings.fps != kNativeFps && g_active;
         bool draw = freshTick;
         if (interpolate) draw = sodapi::renderInterpolated(std::clamp(accumulator / kTick, 0.0, 1.0)) || freshTick;
         if (draw) {
@@ -1130,7 +1117,8 @@ int WINAPI wWinMain(HINSTANCE instance, HINSTANCE, PWSTR, int show) {
             fpsWindowStart = t;
         }
         // Pace presentation. Without interpolation there is nothing new to show between ticks.
-        int cap = g_settings.fps < 0 ? displayRefresh() : g_settings.fps;
+        // Native shows each tick as it is produced (20 fps, 15 during cutscenes), so it needs no cap of its own.
+        int cap = g_settings.fps < 0 ? displayRefresh() : g_settings.fps == kNativeFps ? 0 : g_settings.fps;
         double frameTime = cap > 0 ? 1.0 / cap : 0.0;
         if (!interpolate) frameTime = std::max(frameTime, 0.004);
         nextFrame += frameTime;

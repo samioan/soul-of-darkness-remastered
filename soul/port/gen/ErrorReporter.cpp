@@ -9,16 +9,16 @@ void ErrorReporter::clinit() {
 ErrorReporter::ErrorReporter() {
 }
 
-void ErrorReporter::report(Ref<Exception> var0, Ref<String> var1) {
-   if (((ErrorReporter::firstException == nullptr))) {
-      (ErrorReporter::firstException = var0);
+void ErrorReporter::m_a_ExceptionString(Ref<Exception> var0, Ref<String> var1) {
+   if (((ErrorReporter::a == nullptr))) {
+      (ErrorReporter::a = var0);
    }
    (System::out)->println(jcat(jstr(jlit(u"ERROR: ")), jstr(var1)));
    (var0)->printStackTrace();
 }
 
 void ErrorReporter::portDumpStatics(StateSink& sink) {
-   sink.put("firstException", ErrorReporter::firstException);
+   sink.put("a", ErrorReporter::a);
 }
 
 void ErrorReporter::portDumpFields(StateSink& sink) {

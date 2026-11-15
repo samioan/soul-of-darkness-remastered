@@ -6,13 +6,13 @@ stores small constants into it. Java source then narrows silently in compound as
 (`b <<= 1`, `b += x`), which the original code never did. Such methods recompile to bytecode with
 MORE i2b/i2s/i2c instructions than the original.
 
-This recompiles <game>/src and compares, per method, the number of each narrowing instruction with
+This recompiles soul/src and compares, per method, the number of each narrowing instruction with
 the original class files (methods are matched through docs/names.map).
 
-    python tools/check_narrowing.py [soul_full|soul]
+    python tools/check_narrowing.py
 
-Exit status 1 if any method differs. A reported method needs an asserting PATCH (tools/build_full.py
-or tools/rename_sod.py) that restores the int local, with this tool's output as the evidence.
+Exit status 1 if any method differs. A reported method needs an asserting WIDEN/PATCH entry in tools/build_reference.py
+that restores the int local, with this tool's output as the evidence.
 """
 import re
 import subprocess
@@ -57,7 +57,7 @@ def methods(javap: Path, classpath: Path, cls: str):
 
 
 def main() -> None:
-    game = ROOT / (sys.argv[1] if len(sys.argv) > 1 else "soul_full")
+    game = ROOT / "soul"
     java = Path(find_java())
     javac = java.with_name("javac.exe" if java.suffix == ".exe" else "javac")
     javap = java.with_name("javap.exe" if java.suffix == ".exe" else "javap")

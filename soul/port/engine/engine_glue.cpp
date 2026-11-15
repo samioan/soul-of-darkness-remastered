@@ -156,7 +156,11 @@ int gameState() { return g_started ? Game::state : -1; }
 int levelIndex() { return g_started ? Game::levelIndex : -1; }
 bool inGameplay() { return g_started && Game::state == 8; }
 int inputContext() {
-    if (!g_started || Game::state != 8) return 0;
+    if (!g_started) return 0;
+    // The upgrade screen (Game.ak) pours points into a stat while FIRE or keypad 5 is held and leaves
+    // with the right softkey; the left softkey only dismisses its messages, which FIRE does too.
+    if (Game::state == 31) return 2;
+    if (Game::state != 8) return 0;
     if (Game::hasActiveBackgroundScript() || Game::dialogText != nullptr || Game::modalActive) return 2;
     return 1;
 }

@@ -26,11 +26,14 @@ Indices are zero-based: level 0 is the first level.
 - [x] Translate and run it natively on the Java/MIDP runtime; tick-by-tick oracle
   (`tools/check_engine.py`).
 - [x] Widescreen (auto, 240, 427, 569, 747) with the original camera untouched, three
-  independently widened tile layers and the bottom icon bar centred.
+  independently widened tile layers and the bottom icon bar centred. Parallax layers follow the
+  wide view (they slid at about 7/8 of the camera speed, backwards, wherever the view was clamped
+  to a room). Rooms narrower than the screen fill their sides instead of black bars: extended,
+  darkened walls in the level 6 tower, a blurred copy of the room elsewhere, fading in on entry.
 - [x] Render-only interpolation from recorded draw calls; replay at alpha 1 verified at
   240/427/569/747.
-- [x] Keyboard and XInput gamepad with context mapping; OPTIONS screen in the main and pause menus
-  (display, audio, keyboard, gamepad).
+- [x] Keyboard and XInput gamepad with context mapping (including the upgrade screen, which needs
+  FIRE held); OPTIONS screen in the main and pause menus (display, audio, keyboard, gamepad).
 - [x] Music and effects, original RMS save record, user-JAR loading with SHA-256 identity check,
   data-free package (`soul/port/build_dist.bat`).
 - [x] Launcher (`SoulOfDarkness.exe`, `soul/port/launcher`): banner artwork, JAR pick/auto-detect

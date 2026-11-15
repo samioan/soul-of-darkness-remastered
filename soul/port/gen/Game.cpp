@@ -3275,15 +3275,15 @@ void Game::portFar(jint var0, jint var1) {
 void Game::m_as_V() {
    PortConfig::beginWorld(Game::graphics);
    if ((Actor::en)) {
-      Game::portFar(jshr32((jint)(jadd32(Game::cameraX, Actor::eo)), (jint)(6)), 20);
-      Game::m_e_III(jrem32((jshr32((jint)(jadd32(Game::cameraX, Actor::eo)), (jint)(3))), (jmul32(Game::cD, 20))), 20, 2);
+      Game::portFar(PortConfig::parallax(jadd32(Game::cameraX, Actor::eo), 6), 20);
+      Game::m_e_III(([&]{ auto _t0 = PortConfig::parallax(jadd32(Game::cameraX, Actor::eo), 3); auto _t1 = (jmul32(Game::cD, 20)); return jrem32(_t0, _t1); }()), 20, 2);
       Game::m_e_III(jadd32(Game::cameraX, (Actor::eo % 240)), Game::cameraY, 1);
    } else if ((((Game::be)[Game::levelIndex] == 3))) {
       if (((Game::bo != -2))) {
-         Game::portFar(jshr32((jint)(Game::cameraX), (jint)(6)), 20);
+         Game::portFar(PortConfig::parallax(Game::cameraX, 6), 20);
       }
       if (((Game::bo != -1))) {
-         Game::m_e_III(jrem32((jshr32((jint)(Game::cameraX), (jint)(3))), (jmul32(Game::cD, 20))), 20, 2);
+         Game::m_e_III(([&]{ auto _t2 = PortConfig::parallax(Game::cameraX, 3); auto _t3 = (jmul32(Game::cD, 20)); return jrem32(_t2, _t3); }()), 20, 2);
       }
       if (((Game::levelIndex == 9))) {
          PortConfig::clipWorld(Game::graphics);
@@ -3297,10 +3297,10 @@ void Game::m_as_V() {
          Game::portFarFit(jdiv32(jmul32(Game::cameraX, (jsub32(Game::cC, 13))), (jsub32(Game::cy, 13))), jdiv32(jmul32(Game::cameraY, (jsub32(Game::cE, 17))), (jsub32(Game::cz, 17))));
       } else {
          Game::m_b_I(0);
-         ([&]{ auto _t2 = PortConfig::worldLeft(); auto _t3 = 0; auto _t4 = ([&]{ auto _t0 = PortConfig::worldRight(); auto _t1 = PortConfig::worldLeft(); return jsub32(_t0, _t1); }()); auto _t5 = 320; return Game::m_b_IIII(_t2, _t3, _t4, _t5); }());
+         ([&]{ auto _t6 = PortConfig::worldLeft(); auto _t7 = 0; auto _t8 = ([&]{ auto _t4 = PortConfig::worldRight(); auto _t5 = PortConfig::worldLeft(); return jsub32(_t4, _t5); }()); auto _t9 = 320; return Game::m_b_IIII(_t6, _t7, _t8, _t9); }());
       }
       if ((((Game::bo != -1) && (Game::bo != -3)))) {
-         Game::m_e_III(jrem32((jshr32((jint)(Game::cameraX), (jint)(3))), (jmul32(Game::cD, 20))), jdiv32(jmul32((jadd32(Game::cameraY, Game::bo)), (jsub32(Game::cF, 16))), (jsub32(Game::cz, 16))), 2);
+         ([&]{ auto _t12 = ([&]{ auto _t10 = PortConfig::parallax(Game::cameraX, 3); auto _t11 = (jmul32(Game::cD, 20)); return jrem32(_t10, _t11); }()); auto _t13 = jdiv32(jmul32((jadd32(Game::cameraY, Game::bo)), (jsub32(Game::cF, 16))), (jsub32(Game::cz, 16))); auto _t14 = 2; return Game::m_e_III(_t12, _t13, _t14); }());
       }
       Game::m_u_V();
       Game::m_e_III(Game::cameraX, ((Game::cameraY < 0) ? 0 : Game::cameraY), 1);
@@ -3470,7 +3470,7 @@ void Game::m_as_V() {
       }
    }
    if ((Game::hasActiveBackgroundScript())) {
-      ([&]{ auto _t6 = (((Game::bJ != 17) && Game::db) ? Ref<String>(Game::m_k_II(0, 20)) : Ref<String>(jlit(u""))); auto _t7 = ((Game::bJ == 5) ? Ref<String>(Game::m_k_II(0, 17)) : Ref<String>(jlit(u""))); auto _t8 = true; return Game::m_a_StringStringZ(_t6, _t7, _t8); }());
+      ([&]{ auto _t15 = (((Game::bJ != 17) && Game::db) ? Ref<String>(Game::m_k_II(0, 20)) : Ref<String>(jlit(u""))); auto _t16 = ((Game::bJ == 5) ? Ref<String>(Game::m_k_II(0, 17)) : Ref<String>(jlit(u""))); auto _t17 = true; return Game::m_a_StringStringZ(_t15, _t16, _t17); }());
    }
    PortConfig::endUi(Game::graphics);
    if (((((((Game::player != nullptr) && ((Game::player)->aq == 1)) && (Game::state != 15)) && (!Game::modalActive)) && (Game::state == 8)))) {
@@ -4215,6 +4215,7 @@ void Game::m_e_III(jint var0, jint var1, jint var2) {
    if (((var1 < 0))) {
       (var1 = (jint)(jsub32(var1, 20)));
    }
+   (PortConfig::tileLayer = var2);
    jint var5 = PortConfig::firstColumn(var0);
    jint var6 = jsub32((var1 / 20), PortConfig::tileMargin());
    jint var7 = PortConfig::lastColumn(var0);
@@ -4230,7 +4231,9 @@ void Game::m_e_III(jint var0, jint var1, jint var2) {
       for (; (var9 <= var7); (var9++)) {
          jint var4 = jadd32(jsub32(jmul32(var6, 20), var1), 0);
          jint var10 = var9;
-         if (((var9 < 0))) {
+         if ((((var2 == 1) && PortConfig::wallsMode()))) {
+            (var10 = PortConfig::edgeColumn(var9, Game::cy));
+         } else if (((var9 < 0))) {
             (var10 = PortConfig::wrapColumn(var9, ((var2 == 2) ? Game::cD : Game::cy)));
          } else if ((((var2 == 2) && (var9 >= Game::cD)))) {
             (var10 = jrem32(var9, Game::cD));
@@ -4254,6 +4257,7 @@ void Game::m_e_III(jint var0, jint var1, jint var2) {
          (var3 = (jint)(jadd32(var3, 20)));
       }
    }
+   PortConfig::endTiles(Game::graphics);
    PortNative::layerWorld(jsub32(PortConfig::worldTx, Game::cameraX), jneg32(Game::cameraY));
 }
 

@@ -177,7 +177,7 @@ void Image::getRGB(const Arr<jint>& out, jint offset, jint scanLength, jint x, j
 // layer moved part of the way back towards where it was drawn on the previous tick. Nothing in the
 // game is re-run, so collision, animation, timers and random numbers stay on the original tick.
 namespace {
-enum OpKind { OpFillRect, OpDrawRect, OpDrawLine, OpFillArc, OpDrawArc, OpFillTriangle, OpImage, OpRgb };
+enum OpKind { OpFillRect, OpDrawRect, OpDrawLine, OpFillArc, OpDrawArc, OpFillTriangle, OpImage, OpRgb, OpSides };
 struct DrawOp {
     OpKind kind;
     int layer;
@@ -278,6 +278,112 @@ jboolean PortNative::settingCapturing() { return hostSettingCapturing(); }
 void PortNative::settingsClosed() { hostSettingsClosed(); }
 void PortNative::layerActor(const Ref<Object>& actor, jint screenX, jint screenY) { pushLayer(3, actor, screenX, screenY); }
 
+// Sides of a room narrower than the wide screen: the room [left, right) stretched across the screen,
+// blurred (8 px cells, two 3x3 box passes, bilinear), dimmed and desaturated, darker away from the
+// room with a short shadow at its edge, then scaled by fade / 256. Rows 0..319 of the target.
+static void ambientFill(Image* dst, jint left, jint right, jint fade) {
+    const int width = dst->width, height = std::min(dst->height, 320);
+    left = std::max<jint>(0, left);
+    right = std::min<jint>(width, right);
+    const int roomWidth = right - left;
+    if (roomWidth <= 0 || (left == 0 && right == width) || height <= 0) return;
+    constexpr int cell = 8;
+    const int gw = (roomWidth + cell - 1) / cell, gh = (height + cell - 1) / cell;
+    std::vector<float> grid(static_cast<std::size_t>(gw * gh * 3)), tmp(grid.size());
+    for (int gy = 0; gy < gh; ++gy)
+        for (int gx = 0; gx < gw; ++gx) {
+            float r = 0, g = 0, b = 0;
+            int n = 0;
+            for (int y = gy * cell; y < std::min(height, gy * cell + cell); ++y)
+                for (int x = left + gx * cell; x < std::min<int>(right, left + gx * cell + cell); ++x) {
+                    const std::uint32_t p = dst->pixels[static_cast<std::size_t>(y * width + x)];
+                    r += (p >> 16) & 0xff; g += (p >> 8) & 0xff; b += p & 0xff; ++n;
+                }
+            float* c = &grid[static_cast<std::size_t>((gy * gw + gx) * 3)];
+            c[0] = r / n; c[1] = g / n; c[2] = b / n;
+        }
+    auto boxPass = [&](bool horizontal) {
+        for (int gy = 0; gy < gh; ++gy)
+            for (int gx = 0; gx < gw; ++gx)
+                for (int k = 0; k < 3; ++k) {
+                    float sum = 0;
+                    for (int d = -1; d <= 1; ++d) {
+                        const int x = horizontal ? std::clamp(gx + d, 0, gw - 1) : gx;
+                        const int y = horizontal ? gy : std::clamp(gy + d, 0, gh - 1);
+                        sum += grid[static_cast<std::size_t>((y * gw + x) * 3 + k)];
+                    }
+                    tmp[static_cast<std::size_t>((gy * gw + gx) * 3 + k)] = sum / 3;
+                }
+        grid.swap(tmp);
+    };
+    for (int pass = 0; pass < 2; ++pass) { boxPass(true); boxPass(false); }
+    const float fadeScale = std::clamp(fade, 0, 256) / 256.0f;
+    for (int x = 0; x < width; ++x) {
+        if (x >= left && x < right) continue;
+        const int d = x < left ? left - x : x - right + 1;
+        float k = 1.0f - 0.35f * std::min(1.0f, 0.35f + 0.65f * d / 160.0f);
+        if (d < 10) k *= 1.0f - 0.55f * (1.0f - d / 10.0f);
+        k *= 0.55f * fadeScale;
+        const float fx = std::clamp((x + 0.5f) * roomWidth / width / cell - 0.5f, 0.0f, static_cast<float>(gw - 1));
+        const int x0 = static_cast<int>(fx), x1 = std::min(gw - 1, x0 + 1);
+        const float ax = fx - x0;
+        for (int y = 0; y < height; ++y) {
+            const float fy = std::clamp((y + 0.5f) / cell - 0.5f, 0.0f, static_cast<float>(gh - 1));
+            const int y0 = static_cast<int>(fy), y1 = std::min(gh - 1, y0 + 1);
+            const float ay = fy - y0;
+            float c[3];
+            for (int i = 0; i < 3; ++i) {
+                const float top = grid[static_cast<std::size_t>((y0 * gw + x0) * 3 + i)] * (1 - ax) + grid[static_cast<std::size_t>((y0 * gw + x1) * 3 + i)] * ax;
+                const float bottom = grid[static_cast<std::size_t>((y1 * gw + x0) * 3 + i)] * (1 - ax) + grid[static_cast<std::size_t>((y1 * gw + x1) * 3 + i)] * ax;
+                c[i] = top * (1 - ay) + bottom * ay;
+            }
+            const float luma = 0.299f * c[0] + 0.587f * c[1] + 0.114f * c[2];
+            std::uint32_t out = 0xff000000u;
+            for (int i = 0; i < 3; ++i) {
+                const float v = (luma + 0.8f * (c[i] - luma)) * k;
+                out |= static_cast<std::uint32_t>(std::clamp(v + 0.5f, 0.0f, 255.0f)) << (16 - 8 * i);
+            }
+            dst->pixels[static_cast<std::size_t>(y * width + x)] = out;
+        }
+    }
+}
+
+// Extended walls beside a narrow room: 0.78 of their brightness at the room edge, falling to 0.38
+// from 150 px out, scaled by fade / 256.
+static void shadeFill(Image* dst, jint left, jint right, jint fade) {
+    const int width = dst->width, height = std::min(dst->height, 320);
+    left = std::max<jint>(0, left);
+    right = std::min<jint>(width, right);
+    const std::uint32_t f = static_cast<std::uint32_t>(std::clamp<jint>(fade, 0, 256));
+    for (int x = 0; x < width; ++x) {
+        if (x >= left && x < right) continue;
+        const int d = x < left ? left - x : x - right + 1;
+        const int ramp = std::min(256, 90 + d * 166 / 150);
+        const std::uint32_t k = static_cast<std::uint32_t>(256 - 159 * ramp / 256) * f / 256;
+        for (int y = 0; y < height; ++y) {
+            std::uint32_t& p = dst->pixels[static_cast<std::size_t>(y * width + x)];
+            p = 0xff000000u | ((((p >> 16) & 0xff) * k >> 8) << 16) | ((((p >> 8) & 0xff) * k >> 8) << 8) | ((p & 0xff) * k >> 8);
+        }
+    }
+}
+
+static void sidesFill(Image* dst, jint mode, jint left, jint right, jint fade) {
+    if (mode == 1) shadeFill(dst, left, right, fade);
+    else ambientFill(dst, left, right, fade);
+}
+
+void PortNative::sides(const Ref<Graphics>& g, jint mode, jint left, jint right, jint fade) {
+    if (!g.p) throwNullPointer();
+    Graphics& gr = *g.get();
+    left += gr.tx;
+    right += gr.tx;
+    if (recordingTo(&gr)) {
+        DrawOp& op = newOp(gr, OpSides);
+        op.a = left; op.b = right; op.c = fade; op.d = mode; op.e = op.f = 0;
+    }
+    sidesFill(gr.target.get(), mode, left, right, fade);
+}
+
 void recorderStart(Graphics* target) {
     g_rec.target = target;
     g_rec.work.ops.clear();
@@ -343,6 +449,7 @@ bool recorderReplay(double alpha, Graphics& out) {
             case OpDrawArc: out.drawArc(op.a + dx, op.b + dy, op.c, op.d, op.e, op.f); break;
             case OpFillTriangle: out.fillTriangle(op.a + dx, op.b + dy, op.c + dx, op.d + dy, op.e + dx, op.f + dy); break;
             case OpImage: out.drawRegion(op.image, op.sx, op.sy, op.c, op.d, op.transform, op.a + dx, op.b + dy, 0); break;
+            case OpSides: sidesFill(out.target.get(), op.d, op.a, op.b, op.c); break;
             case OpRgb: {
                 Image* dst = out.target.get();
                 for (jint row = 0; row < op.d; ++row) {

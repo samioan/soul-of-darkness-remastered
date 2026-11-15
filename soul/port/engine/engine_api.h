@@ -41,7 +41,8 @@ void shutdown();               // MIDlet.destroyApp: flush the save record
 int gameState();
 int levelIndex();
 bool inGameplay();
-// 0 = menus/prompts, 1 = free gameplay, 2 = gameplay with a dialogue, cutscene or reward panel open.
+// 0 = menus/prompts, 1 = free gameplay, 2 = gameplay with a dialogue, cutscene or reward panel open,
+// and the upgrade screen (both hold FIRE to confirm).
 int inputContext();
 std::uint64_t stateHash();
 std::string describeState();

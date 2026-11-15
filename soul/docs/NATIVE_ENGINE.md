@@ -96,6 +96,22 @@ it is one picture panned about 20 pixels across the level (`camera * (layer - wi
 window)`, e.g. level 1's 280x360 moonlit sky), repeating it showed two or three moons; instead it
 is scaled up uniformly, nearest neighbour, until the screen fits inside it with the same 20 pixel
 slack (`PortConfig.drawFarFit`, cached per level), and panned across the level with the camera.
+
+Parallax origins (`camera >> 3` for the middle layer, `camera >> 6` for a repeating far strip)
+follow the wide view, not the camera (`PortConfig.parallax`). The view stands still while the camera
+moves inside a room narrower than the screen, or within 164 pixels of a room edge; a camera-based
+origin then slid the layer at about 7/8 of the camera's speed in the wrong direction. The layer now
+scrolls as if the camera were the one that centres the original window in the view, which is the
+camera itself whenever the view tracks it, so open stretches draw exactly as before.
+
+Rooms narrower than the screen do not leave black bars. Level 6 (a 400 pixel wide tower of stone
+shafts, `PortConfig.wallsMode`) draws its tile layers across the whole view: real tiles past the room
+where the map has them, then the map's two outermost columns repeated, darkened away from the room.
+Everywhere else (the level 10 arena, narrow rooms inside wide levels) repeated tiles would read as
+broken graphics, so the sides show a blurred, dimmed copy of the room as drawn this frame. Both are
+native pixel passes recorded as draw ops (`PortNative.sides`), since MIDP colours are opaque, and
+fade in from black over 12 ticks when the sides first appear. Actors, collision and activation still
+stop at the room; in level 6 the black-out around a pickup's beam of light covers the walls too.
 Screens without the world (menus, the level map) drop the wide view so their tile layers keep the
 240 layout; the logo screen's side bars are white. Full-screen fills, the
 world clip and on-screen tests are changed explicitly, site by site. Panels, dialogue, menus and
@@ -122,7 +138,9 @@ frames. The `native` frame-rate setting shows one frame per tick with interpolat
 ### Input, audio, saves, data
 
 - Keyboard and XInput gamepad map to the original phone keys by context
-  (`sodapi::inputContext`): the same button jumps in play and confirms in menus and dialogue.
+  (`sodapi::inputContext`): the same button jumps in play and confirms in menus and dialogue. The
+  upgrade screen pours points into a stat only while FIRE (or keypad 5) is held, so Confirm and
+  Attack send FIRE there, as in dialogue, rather than the left softkey of the other menus.
   Bindings are edited on the OPTIONS screen or in `settings.ini`; digits and the numpad remain
   the phone keypad, so the original cheat sequence still works.
 - The OPTIONS screen (`tools/port_java/PortMenu.java`, game state 40) is reached from an entry

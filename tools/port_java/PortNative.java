@@ -1,3 +1,5 @@
+import javax.microedition.lcdui.Graphics;
+
 /**
  * Compile-time stand-in for native hooks (implemented in soul/port/engine). tools/gen_port.py does
  * not translate this class.
@@ -21,6 +23,14 @@ final class PortNative {
 
    /** Following draws belong to one actor drawn at this screen position. */
    static void layerActor(Object actor, int screenX, int screenY) {
+   }
+
+   /**
+    * The screen outside columns [left, right) (the room) in widescreen, scaled by fade / 256.
+    * mode 0: a blurred, darkened copy of the room; mode 1: what is drawn there (extended walls),
+    * darkened away from the room. Works on the target's pixels; recorded, so replayed frames redo it.
+    */
+   static void sides(Graphics g, int mode, int left, int right, int fade) {
    }
 
    /** Number of entries on a settings page (0 display, 1 audio, 2 keyboard, 3 gamepad). */

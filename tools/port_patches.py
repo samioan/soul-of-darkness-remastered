@@ -109,8 +109,19 @@ PORT_PATCHES: list[tuple[str, str, str, int]] = [
      "   private static void as() {\n"
      "      PortConfig.beginWorld(graphics);\n"
      "      if (Actor.en) {\n"
-     "         portFar(cameraX + Actor.eo >> 6, 20);\n", 1),
-    ("Game.java", "            a(cameraX >> 6, 20, true);\n", "            portFar(cameraX >> 6, 20);\n", 1),
+     "         portFar(PortConfig.parallax(cameraX + Actor.eo, 6), 20);\n", 1),
+    ("Game.java", "            a(cameraX >> 6, 20, true);\n", "            portFar(PortConfig.parallax(cameraX, 6), 20);\n", 1),
+    # parallax middle layer: its origin follows the wide view, which stands still while the camera
+    # moves inside a room narrower than the screen (PortConfig.parallax)
+    ("Game.java",
+     "         e((cameraX + Actor.eo >> 3) % (cD * 20), 20, 2);\n",
+     "         e(PortConfig.parallax(cameraX + Actor.eo, 3) % (cD * 20), 20, 2);\n", 1),
+    ("Game.java",
+     "            e((cameraX >> 3) % (cD * 20), 20, 2);\n",
+     "            e(PortConfig.parallax(cameraX, 3) % (cD * 20), 20, 2);\n", 1),
+    ("Game.java",
+     "            e((cameraX >> 3) % (cD * 20), (cameraY + bo) * (cF - 16) / (cz - 16), 2);\n",
+     "            e(PortConfig.parallax(cameraX, 3) % (cD * 20), (cameraY + bo) * (cF - 16) / (cz - 16), 2);\n", 1),
     # this far layer is one picture panned across the level, not a repeating strip: the wide view
     # scales it to fit instead of repeating it
     ("Game.java",
@@ -130,15 +141,17 @@ PORT_PATCHES: list[tuple[str, str, str, int]] = [
      "      int var5 = var0 / 20;\n      int var6 = var1 / 20;\n      int var7 = (var0 + 240 - 1) / 20;\n"
      "      int var8 = (var1 + 320 - 1) / 20;\n      j(0, 0, 240, 320);\n      if (var1 < 0) {\n         var1 += 20;\n      }\n\n"
      "      int var3 = var5 * 20 - var0;\n",
-     "      int var5 = PortConfig.firstColumn(var0);\n      int var6 = var1 / 20 - PortConfig.tileMargin();\n"
+     "      PortConfig.tileLayer = var2;\n      int var5 = PortConfig.firstColumn(var0);\n      int var6 = var1 / 20 - PortConfig.tileMargin();\n"
      "      int var7 = PortConfig.lastColumn(var0);\n      int var8 = (var1 + 320 - 1) / 20 + PortConfig.tileMargin();\n"
      "      PortConfig.clipWorld(graphics);\n      if (var1 < 0) {\n         var1 += 20;\n      }\n\n"
      "      PortNative.layerTiles(var2, PortConfig.worldTx - var0, -var1);\n"
      "      int var3 = var5 * 20 - var0;\n", 1),
-    # the original only wrapped columns past the right end; the wide view can start left of column 0
+    # the original only wrapped columns past the right end; the wide view can start left of column 0.
+    # In walls mode (PortConfig.wallsMode) the main layer repeats its outermost columns past the map.
     ("Game.java",
      "         int var10 = var9;\n         if (var2 == 2 && var9 >= cD) {\n",
-     "         int var10 = var9;\n         if (var9 < 0) {\n            var10 = PortConfig.wrapColumn(var9, var2 == 2 ? cD : cy);\n"
+     "         int var10 = var9;\n         if (var2 == 1 && PortConfig.wallsMode()) {\n            var10 = PortConfig.edgeColumn(var9, cy);\n"
+     "         } else if (var9 < 0) {\n            var10 = PortConfig.wrapColumn(var9, var2 == 2 ? cD : cy);\n"
      "         } else if (var2 == 2 && var9 >= cD) {\n", 1),
     # margin rows (interpolation only) may lie outside the layer
     ("Game.java",
@@ -147,7 +160,7 @@ PORT_PATCHES: list[tuple[str, str, str, int]] = [
      "               if (var2 == 1) {\n                  a(graphics, fm, fn, eC, var3, var4, var10 + var11 * cy);\n", 1),
     ("Game.java",
      "            var4 += 20;\n         }\n\n         var3 += 20;\n      }\n   }\n",
-     f"            var4 += 20;\n         }}\n\n         var3 += 20;\n      }}\n\n      {WORLD_LAYER}\n   }}\n", 1),
+     f"            var4 += 20;\n         }}\n\n         var3 += 20;\n      }}\n\n      PortConfig.endTiles(graphics);\n      {WORLD_LAYER}\n   }}\n", 1),
 
     # ------------------------------------------------------------------ actors
     ("Game.java",

@@ -90,7 +90,14 @@ screen snap.
 
 World drawing is translated by `cameraX - viewX`, so the original `world - cameraX` draw code is
 untouched. The three tile layers (far background, parallax middle, main map) widen independently;
-the far layer bypasses its 260x340 scroll buffer when the view is wide. Full-screen fills, the
+the far layer bypasses its 260x340 scroll buffer when the view is wide. Where the far layer is a
+repeating strip (levels whose far origin is `cameraX >> 6`) it repeats across the wide view. Where
+it is one picture panned about 20 pixels across the level (`camera * (layer - window) / (level -
+window)`, e.g. level 1's 280x360 moonlit sky), repeating it showed two or three moons; instead it
+is scaled up uniformly, nearest neighbour, until the screen fits inside it with the same 20 pixel
+slack (`PortConfig.drawFarFit`, cached per level), and panned across the level with the camera.
+Screens without the world (menus, the level map) drop the wide view so their tile layers keep the
+240 layout; the logo screen's side bars are white. Full-screen fills, the
 world clip and on-screen tests are changed explicitly, site by site. Panels, dialogue, menus and
 the boss bar keep their 240 layout, centred; the bottom icon bar keeps its 240 layout, centred,
 over a full-width strip.
@@ -121,7 +128,16 @@ frames. The `native` frame-rate setting shows one frame per tick with interpolat
 - The OPTIONS screen (`tools/port_java/PortMenu.java`, game state 40) is reached from an entry
   the host installs in the main and pause menus and is drawn with the game's font, framed panel
   and softkey buttons. Headless checks never install it.
-- Music and effects (the original MIDI and WAV) play through Windows MCI with volume and mute.
+- Music and jingles (the original MIDI, and WAV) play through a small SMF sequencer on its own
+  thread sending to the system MIDI synthesizer (`engine/host_midi.cpp`); WAV plays through
+  PlaySound. The earlier MCI path opened every track synchronously and stalled the game whenever
+  music started or a jingle interrupted it. The tracks were mixed for a phone and differ by about
+  20 dB (level themes quiet, boss theme and jingles loud), so each is measured on load (note power
+  under the GS/DLS volume curves) and its channel volumes are scaled to a common level (gain
+  clamped to 0.3..2.5); the user's volume and mute scale them too.
+- Arcs are filled only inside the clip with half-plane wedge tests: the boss-death effect draws
+  eleven 640x640 arcs per frame, which took about 75 ms per frame with per-pixel `atan2` over the
+  whole box and now takes about 6 ms, with identical pixels.
 - The save is the original RMS record, stored as `%LOCALAPPDATA%\SoulOfDarkness101\dvseed.sav`.
 - Game data is read directly from the user's JAR (SHA-256 checked, other 240x320 builds offered
   with a warning) or from an extracted folder.

@@ -196,11 +196,15 @@ final class PortConfig {
 
       boolean world = state == 8 || state == 12 || state == 14 || state == 15 || state == 32;
       if (!world) {
+         // Screens without the world (menus, the level map) keep the 240 layout: their tile layers
+         // must not use the wide view the last level left behind.
+         viewValid = false;
          int m = margin();
          // State 31 (weapon upgrade) is drawn over the last gameplay frame, which stays on screen.
          if (state != 31) {
             g.setClip(0, 0, screenWidth, 320);
-            g.setColor(0);
+            // The Gameloft logo (state 1) sits on a white screen.
+            g.setColor(state == 1 ? 0xFFFFFF : 0);
             g.fillRect(0, 0, m, 320);
             g.fillRect(m + 240, 0, screenWidth - m - 240, 320);
          }
@@ -292,6 +296,27 @@ final class PortConfig {
       }
 
       return "{" + key + "} {KEY}";
+   }
+
+   /**
+    * Replaces a fill of the original 240x320 screen in an interface layout (translated to the centred
+    * 240 window): the fill covers the whole wide screen, then the centred clip is restored.
+    */
+   static void fillScreen(Graphics g) {
+      if (screenWidth <= 240) {
+         g.fillRect(0, 0, 240, 320);
+         return;
+      }
+
+      int tx = g.getTranslateX();
+      g.setClip(-tx, 0, screenWidth, 320);
+      g.fillRect(-tx, 0, screenWidth, 320);
+      g.setClip(0, 0, 240, 320);
+   }
+
+   /** Replaces a fill of the original screen inside world drawing: the visible part of the room. */
+   static void fillWorld(Graphics g) {
+      g.fillRect(worldLeft(), 0, worldRight() - worldLeft(), 320);
    }
 
    /** Replaces the original full-screen clip inside world drawing. */
@@ -397,6 +422,114 @@ final class PortConfig {
             Game.portTile(g, column * 20 - originX, row * 20 - originY, wrapColumn(column, Game.cC) + row * Game.cC);
          }
       }
+   }
+
+   /** Far-layer picture scaled for the wide view, and what it was built from. */
+   private static Image fitImage;
+   private static Object fitKey;
+   private static int fitScreenWidth;
+
+   /**
+    * Far background of the levels whose far layer is a single picture panned across the level
+    * (origin = camera * (layer - window) / (level - window)) rather than a strip that repeats. On the
+    * phone the 240x320 window moves about 20 pixels over it; a wide view would show it two or three
+    * times side by side. Instead the picture is scaled up uniformly (nearest neighbour) until the
+    * screen fits inside it with the same 20 pixel slack, and panned across the level the same way.
+    */
+   static void drawFarFit(Graphics g, int originX, int originY) {
+      int farWidth = Game.cC * 20;
+      int farHeight = Game.cE * 20;
+      // scale = max(screenWidth / (farWidth - 20), 320 / (farHeight - 20)), as the fraction num / den
+      int num = screenWidth;
+      int den = farWidth - 20;
+      if (320 * den > num * (farHeight - 20)) {
+         num = 320;
+         den = farHeight - 20;
+      }
+
+      if (den <= 0 || num <= den) {
+         drawFar(g, originX, originY);
+         return;
+      }
+
+      Object key = Game.portFarKey();
+      if (fitImage == null || fitKey != key || fitScreenWidth != screenWidth) {
+         fitImage = null;
+         Image source = Image.createImage(farWidth, farHeight);
+         Graphics sg = source.getGraphics();
+         sg.setColor(0);
+         sg.fillRect(0, 0, farWidth, farHeight);
+         for (int row = 0; row < Game.cE; row++) {
+            for (int column = 0; column < Game.cC; column++) {
+               Game.portTile(sg, column * 20, row * 20, column + row * Game.cC);
+            }
+         }
+
+         int[] pixels = new int[farWidth * farHeight];
+         source.getRGB(pixels, 0, farWidth, 0, 0, farWidth, farHeight);
+         int scaledWidth = (farWidth * num + den - 1) / den;
+         int scaledHeight = (farHeight * num + den - 1) / den;
+         int[] scaled = new int[scaledWidth * scaledHeight];
+         for (int y = 0; y < scaledHeight; y++) {
+            int sy = y * den / num;
+            if (sy >= farHeight) {
+               sy = farHeight - 1;
+            }
+
+            for (int x = 0; x < scaledWidth; x++) {
+               int sx = x * den / num;
+               if (sx >= farWidth) {
+                  sx = farWidth - 1;
+               }
+
+               scaled[y * scaledWidth + x] = pixels[sy * farWidth + sx];
+            }
+         }
+
+         fitImage = Image.createRGBImage(scaled, scaledWidth, scaledHeight, false);
+         fitKey = key;
+         fitScreenWidth = screenWidth;
+      }
+
+      int left = worldLeft();
+      int right = worldRight();
+      int visible = right - left;
+      int x = 0;
+      int travelX = fitImage.getWidth() - visible;
+      int levelX = Game.levelPixelWidth - visible;
+      if (travelX > 0 && levelX > 0) {
+         int from = left + Game.cameraX;
+         if (from < 0) {
+            from = 0;
+         }
+
+         if (from > levelX) {
+            from = levelX;
+         }
+
+         x = (int)((long)from * travelX / levelX);
+      }
+
+      int y = 0;
+      int travelY = fitImage.getHeight() - 320;
+      int levelY = Game.cB - 320;
+      if (travelY > 0 && levelY > 0) {
+         int from = Game.cameraY;
+         if (from < 0) {
+            from = 0;
+         }
+
+         if (from > levelY) {
+            from = levelY;
+         }
+
+         y = (int)((long)from * travelY / levelY);
+      }
+
+      PortNative.layerTiles(0, worldTx + left - x, -y);
+      g.setColor(0);
+      g.fillRect(left, 0, visible, 320);
+      g.drawImage(fitImage, left - x, -y, 20);
    }
 
    /** The water tint image is 120x160 and was drawn four times to cover 240x320. */

@@ -22,6 +22,9 @@ struct PortConfig : Object {
    static inline jint clipRight{};
    static inline jint viewCameraX{};
    static inline jint worldTx{};
+   static inline Ref<Image> fitImage{};
+   static inline Ref<Object> fitKey{};
+   static inline jint fitScreenWidth{};
    PortConfig();
    static jboolean wide();
    static jint margin();
@@ -43,6 +46,8 @@ struct PortConfig : Object {
    static void endWorld(Ref<Graphics> g);
    static void endWorldForWeather(Ref<Graphics> g);
    static Ref<String> softKeyName(Ref<String> original);
+   static void fillScreen(Ref<Graphics> g);
+   static void fillWorld(Ref<Graphics> g);
    static void clipWorld(Ref<Graphics> g);
    static void beginUi(Ref<Graphics> g);
    static void beginUiBar(Ref<Graphics> g);
@@ -53,6 +58,7 @@ struct PortConfig : Object {
    static jint wrapColumn(jint column, jint width);
    static jboolean rowInside(jint row, jint cells, jint width);
    static void drawFar(Ref<Graphics> g, jint originX, jint originY);
+   static void drawFarFit(Ref<Graphics> g, jint originX, jint originY);
    static void tileOverlay(Ref<Image> image);
    static jint floorDiv(jint a, jint b);
    static void clinit();
@@ -1352,6 +1358,8 @@ struct Game : Canvas {
    static void m_ar_V();
    static void m_e_Z(jboolean var0);
    static void portTile(Ref<Graphics> var0, jint var1, jint var2, jint var3);
+   static Ref<Object> portFarKey();
+   static void portFarFit(jint var0, jint var1);
    static void portFar(jint var0, jint var1);
    static void m_as_V();
    static void m_g_IIII(jint var0, jint var1, jint var2, jint var3);

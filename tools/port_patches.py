@@ -84,6 +84,19 @@ PORT_PATCHES: list[tuple[str, str, str, int]] = [
      "      a(var0, var1, var2, var3);\n"
      "   }\n"
      "\n"
+     "   static Object portFarKey() {\n"
+     "      return fk;\n"
+     "   }\n"
+     "\n"
+     "   private static void portFarFit(int var0, int var1) {\n"
+     "      if (PortConfig.screenWidth <= 240 && !PortConfig.directTiles) {\n"
+     "         a(var0, var1, true);\n"
+     "      } else {\n"
+     "         PortConfig.drawFarFit(graphics, var0, var1);\n"
+     f"         {WORLD_LAYER}\n"
+     "      }\n"
+     "   }\n"
+     "\n"
      "   private static void portFar(int var0, int var1) {\n"
      "      if (PortConfig.screenWidth <= 240 && !PortConfig.directTiles) {\n"
      "         a(var0, var1, true);\n"
@@ -98,9 +111,11 @@ PORT_PATCHES: list[tuple[str, str, str, int]] = [
      "      if (Actor.en) {\n"
      "         portFar(cameraX + Actor.eo >> 6, 20);\n", 1),
     ("Game.java", "            a(cameraX >> 6, 20, true);\n", "            portFar(cameraX >> 6, 20);\n", 1),
+    # this far layer is one picture panned across the level, not a repeating strip: the wide view
+    # scales it to fit instead of repeating it
     ("Game.java",
      "            a(cameraX * (cC - 13) / (cy - 13), cameraY * (cE - 17) / (cz - 17), true);\n",
-     "            portFar(cameraX * (cC - 13) / (cy - 13), cameraY * (cE - 17) / (cz - 17));\n", 1),
+     "            portFarFit(cameraX * (cC - 13) / (cy - 13), cameraY * (cE - 17) / (cz - 17));\n", 1),
     # levels without a far layer clear to black instead
     ("Game.java",
      "            b(0);\n            b(0, 0, 240, 320);\n         }\n\n         if (bo != -1 && bo != -3) {\n",
@@ -170,6 +185,11 @@ PORT_PATCHES: list[tuple[str, str, str, int]] = [
     ("Game.java",
      "            a(0, 0, 240, 320);\n         } else {\n            if (var0 == 0) {\n",
      "            PortConfig.clipWorld(graphics);\n         } else {\n            if (var0 == 0) {\n", 1),
+
+    # pickups, upgrades and boss deaths black out the room around a beam of light (world space)
+    ("Game.java",
+     "      b(-2013265920);\n      b(0, 0, 240, 320);\n      int var3 = Q - cameraX + 0;\n",
+     "      b(-2013265920);\n      PortConfig.fillWorld(graphics);\n      int var3 = Q - cameraX + 0;\n", 1),
 
     # ------------------------------------------------------------------ end of the world layer; weather is screen space
     ("Game.java",
@@ -243,6 +263,11 @@ PORT_PATCHES: list[tuple[str, str, str, int]] = [
     ("Game.java",
      "         f(Actor.E.as, Actor.F);\n      }\n   }\n",
      "         PortConfig.beginUi(graphics);\n         f(Actor.E.as, Actor.F);\n      }\n\n      PortConfig.beginUi(graphics);\n   }\n", 1),
+
+    # the weapon upgrade screen after a level ends is drawn on black, not over the last frame
+    ("Game.java",
+     "      if (eR) {\n         graphics.setColor(0);\n         b(0, 0, 240, 320);\n      }\n",
+     "      if (eR) {\n         graphics.setColor(0);\n         PortConfig.fillScreen(graphics);\n      }\n", 1),
 
     # ------------------------------------------------------------------ Actor: water and hazard areas
     ("Actor.java",

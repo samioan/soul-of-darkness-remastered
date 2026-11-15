@@ -1,7 +1,8 @@
 // Windows host for the translated Soul of Darkness engine: window, scaling, timing, keyboard and
-// XInput gamepad input, MIDI music, save file, settings and JAR loading. The game itself lives in
+// XInput gamepad input, music (host_midi.cpp), save file, settings and JAR loading. The game itself lives in
 // the generated sources behind engine_api.h; nothing here knows the game's rules.
 #include "engine_api.h"
+#include "host_midi.h"
 #include "host_util.h"
 
 #include <windows.h>
@@ -14,11 +15,14 @@
 #include <cmath>
 #include <cstdio>
 #include <cstdlib>
+#include <cstring>
 #include <cwchar>
 #include <fstream>
 #include <map>
+#include <memory>
 #include <sstream>
 #include <string>
+#include <string_view>
 #include <vector>
 
 namespace {
@@ -288,65 +292,91 @@ void overlay(const std::string& text) {
     g_overlayUntil = now() + 2.5;
 }
 
-// ---------------------------------------------------------------- music (MCI)
+// ---------------------------------------------------------------- music
 
+// The game plays one track at a time through one MIDP Player: the MIDI themes and jingles, and three
+// WAV files it opens with the MIDI content type. MIDI goes to the sequencer thread (host_midi.cpp),
+// which levels the tracks and never blocks this thread; WAV plays through PlaySound from memory.
 struct Music {
-    bool open = false, playing = false;
-    int loopsLeft = 0;
-    std::wstring file;
-    int serial = 0;
-    void command(const std::wstring& c, bool notify = false) {
-        mciSendStringW(c.c_str(), nullptr, 0, notify ? g_window : nullptr);
+    std::unique_ptr<sodhost::MidiPlayer> midi;
+    std::map<std::size_t, std::shared_ptr<const sodhost::MidiSong>> songs;   // by content hash
+    std::vector<std::uint8_t> wave;   // PlaySound reads it while it plays
+    double waveEnd = 0;               // when the WAV finishes (PlaySound has no status)
+    bool wavePlaying = false;
+
+    sodhost::MidiPlayer& player() {
+        if (!midi) {
+            midi = std::make_unique<sodhost::MidiPlayer>();
+            midi->setVolume(g_settings.mute ? 0 : g_settings.volume);
+        }
+        return *midi;
     }
-    void applyVolume() {
-        if (!open) return;
-        int v = g_settings.mute ? 0 : g_settings.volume * 10;
-        command(L"setaudio sodmusic volume to " + std::to_wstring(v));
+    void applyVolume() { player().setVolume(g_settings.mute ? 0 : g_settings.volume); }
+    void flushLog() {
+        if (midi) for (auto& line : midi->takeLog()) g_log.push_back(line);
+    }
+    void stopWave() {
+        if (wavePlaying) PlaySoundW(nullptr, nullptr, 0);
+        wavePlaying = false;
     }
     void stop() {
-        if (open) {
-            command(L"stop sodmusic");
-            command(L"close sodmusic");
-        }
-        open = playing = false;
-        if (!file.empty()) DeleteFileW(file.c_str());
-        file.clear();
+        if (midi) midi->stop();
+        stopWave();
     }
-    void start(const std::vector<std::uint8_t>& data, bool midi, int loops) {
+    bool playing() {
+        if (wavePlaying && now() >= waveEnd) wavePlaying = false;
+        return wavePlaying || (midi && midi->playing());
+    }
+    void startWave(const std::vector<std::uint8_t>& data) {
+        // Find the format and data chunks; scale 8/16-bit PCM by the music volume.
+        std::size_t p = 12, fmt = 0, body = 0, bodySize = 0;
+        while (p + 8 <= data.size()) {
+            const std::uint32_t size = data[p + 4] | data[p + 5] << 8 | data[p + 6] << 16 | static_cast<std::uint32_t>(data[p + 7]) << 24;
+            if (std::memcmp(&data[p], "fmt ", 4) == 0 && size >= 16) fmt = p + 8;
+            if (std::memcmp(&data[p], "data", 4) == 0) { body = p + 8; bodySize = std::min<std::size_t>(size, data.size() - body); break; }
+            p += 8 + size + (size & 1);
+        }
+        if (!fmt || !body) { g_log.push_back("music: unreadable WAV"); return; }
+        wave = data;
+        const unsigned format = data[fmt] | data[fmt + 1] << 8, bits = data[fmt + 14] | data[fmt + 15] << 8;
+        const std::uint32_t rate = data[fmt + 8] | data[fmt + 9] << 8 | data[fmt + 10] << 16 | static_cast<std::uint32_t>(data[fmt + 11]) << 24;
+        const double gain = g_settings.mute ? 0.0 : g_settings.volume / 100.0;
+        if (format == 1 && bits == 16) {
+            for (std::size_t i = body; i + 1 < body + bodySize; i += 2) {
+                int v = static_cast<std::int16_t>(wave[i] | wave[i + 1] << 8);
+                v = static_cast<int>(std::lround(v * gain));
+                wave[i] = static_cast<std::uint8_t>(v & 0xff);
+                wave[i + 1] = static_cast<std::uint8_t>((v >> 8) & 0xff);
+            }
+        } else if (format == 1 && bits == 8) {
+            for (std::size_t i = body; i < body + bodySize; ++i) wave[i] = static_cast<std::uint8_t>(128 + std::lround((wave[i] - 128) * gain));
+        }
+        waveEnd = now() + (rate ? static_cast<double>(bodySize) / rate : 0.0);
+        wavePlaying = PlaySoundW(reinterpret_cast<LPCWSTR>(wave.data()), nullptr, SND_MEMORY | SND_ASYNC | SND_NODEFAULT) != FALSE;
+    }
+    void start(const std::vector<std::uint8_t>& data, bool, int loops) {
         stop();
-        if (data.empty()) return;
-        wchar_t temp[MAX_PATH];
-        GetTempPathW(MAX_PATH, temp);
-        file = std::wstring(temp) + L"sod_music_" + std::to_wstring(GetCurrentProcessId()) + L"_" + std::to_wstring(++serial) + (midi ? L".mid" : L".wav");
-        if (!writeFile(file, data.data(), data.size())) { file.clear(); return; }
-        // The MPEGVideo (DirectShow) device plays MIDI and honours "setaudio volume"; fall back to the sequencer.
-        std::wstring openCmd = L"open \"" + file + L"\" type mpegvideo alias sodmusic";
-        const char* device = "mpegvideo";
-        if (mciSendStringW(openCmd.c_str(), nullptr, 0, nullptr) != 0) {
-            device = midi ? "sequencer" : "waveaudio";
-            openCmd = L"open \"" + file + (midi ? L"\" type sequencer alias sodmusic" : L"\" type waveaudio alias sodmusic");
-            if (mciSendStringW(openCmd.c_str(), nullptr, 0, nullptr) != 0) {
-                g_log.push_back("music: no MCI device could open the track");
-                DeleteFileW(file.c_str());
-                file.clear();
+        if (data.size() >= 12 && std::memcmp(data.data(), "RIFF", 4) == 0 && std::memcmp(data.data() + 8, "WAVE", 4) == 0) {
+            startWave(data);
+            return;
+        }
+        const std::size_t key = std::hash<std::string_view>()(std::string_view(reinterpret_cast<const char*>(data.data()), data.size()));
+        auto it = songs.find(key);
+        if (it == songs.end()) {
+            auto song = std::make_shared<sodhost::MidiSong>();
+            std::string error;
+            if (!sodhost::parseMidi(data, *song, error)) {
+                g_log.push_back("music: " + error);
                 return;
             }
+            char line[160];
+            std::snprintf(line, sizeof line, "music: track of %.1f s, %zu events, loudness %.1f dB, level gain %.2f",
+                          song->lengthMs / 1000.0, song->events.size(), song->loudnessDb, song->gain);
+            g_log.push_back(line);
+            it = songs.emplace(key, std::move(song)).first;
         }
-        g_log.push_back(std::string("music: playing ") + std::to_string(data.size()) + " bytes via MCI " + device + (loops < 0 ? " (looping)" : ""));
-        open = true;
-        loopsLeft = loops;
-        applyVolume();
-        command(L"play sodmusic notify", true);
-        playing = true;
-    }
-    void finished() { // MM_MCINOTIFY
-        if (!open) return;
-        if (loopsLeft < 0 || --loopsLeft > 0) {
-            command(L"seek sodmusic to start");
-            command(L"play sodmusic notify", true);
-        } else {
-            playing = false;
-        }
+        player().play(it->second, loops);
+        flushLog();
     }
 } g_music;
 
@@ -374,7 +404,7 @@ bool hostStoreSave(const std::string& name, const std::vector<std::uint8_t>& dat
 }
 void hostAudioStart(const std::vector<std::uint8_t>& data, bool midi, int loops) { g_music.start(data, midi, loops); }
 void hostAudioStop() { g_music.stop(); }
-bool hostAudioPlaying() { return g_music.playing; }
+bool hostAudioPlaying() { return g_music.playing(); }
 }
 
 namespace {
@@ -955,9 +985,6 @@ LRESULT CALLBACK windowProc(HWND hwnd, UINT msg, WPARAM wp, LPARAM lp) {
         case WM_KEYUP:
             keyUp(static_cast<int>(wp));
             return 0;
-        case MM_MCINOTIFY:
-            if (wp == MCI_NOTIFY_SUCCESSFUL) g_music.finished();
-            return 0;
         case WM_GETMINMAXINFO: {
             MINMAXINFO* mm = reinterpret_cast<MINMAXINFO*>(lp);
             mm->ptMinTrackSize.x = 260;
@@ -1137,6 +1164,8 @@ int WINAPI wWinMain(HINSTANCE instance, HINSTANCE, PWSTR, int show) {
     timeEndPeriod(1);
     sodapi::shutdown();
     g_music.stop();
+    g_music.flushLog();
+    g_music.midi.reset();
     saveSettings(g_settingsPath, g_settings);
     if (!logArg.empty()) {
         std::string text;

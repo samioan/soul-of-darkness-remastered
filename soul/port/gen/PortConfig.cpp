@@ -149,10 +149,11 @@ void PortConfig::beginFrame(Ref<Graphics> g, jint state) {
    }
    jboolean world = (((((state == 8) || (state == 12)) || (state == 14)) || (state == 15)) || (state == 32));
    if (((!world))) {
+      (PortConfig::viewValid = false);
       jint m = PortConfig::margin();
       if (((state != 31))) {
          (g)->setClip(0, 0, PortConfig::screenWidth, 320);
-         (g)->setColor(0);
+         (g)->setColor(((state == 1) ? 16777215 : 0));
          (g)->fillRect(0, 0, m, 320);
          (g)->fillRect(jadd32(m, 240), 0, jsub32(jsub32(PortConfig::screenWidth, m), 240), 320);
       }
@@ -228,6 +229,21 @@ Ref<String> PortConfig::softKeyName(Ref<String> original) {
       (key = (key)->substring(0, space));
    }
    return jcat(jstr(jcat(jstr(jlit(u"{")), jstr(key))), jstr(jlit(u"} {KEY}")));
+}
+
+void PortConfig::fillScreen(Ref<Graphics> g) {
+   if (((PortConfig::screenWidth <= 240))) {
+      (g)->fillRect(0, 0, 240, 320);
+      return;
+   }
+   jint tx = (g)->getTranslateX();
+   (g)->setClip(jneg32(tx), 0, PortConfig::screenWidth, 320);
+   (g)->fillRect(jneg32(tx), 0, PortConfig::screenWidth, 320);
+   (g)->setClip(0, 0, 240, 320);
+}
+
+void PortConfig::fillWorld(Ref<Graphics> g) {
+   ([&]{ auto _t2 = g; auto _t3 = PortConfig::worldLeft(); auto _t4 = 0; auto _t5 = ([&]{ auto _t0 = PortConfig::worldRight(); auto _t1 = PortConfig::worldLeft(); return jsub32(_t0, _t1); }()); auto _t6 = 320; return _t2->fillRect(_t3, _t4, _t5, _t6); }());
 }
 
 void PortConfig::clipWorld(Ref<Graphics> g) {
@@ -324,6 +340,100 @@ void PortConfig::drawFar(Ref<Graphics> g, jint originX, jint originY) {
    }
 }
 
+void PortConfig::drawFarFit(Ref<Graphics> g, jint originX, jint originY) {
+   jint farWidth = jmul32(Game::cC, 20);
+   jint farHeight = jmul32(Game::cE, 20);
+   jint num = PortConfig::screenWidth;
+   jint den = jsub32(farWidth, 20);
+   if (((jmul32(320, den) > jmul32(num, (jsub32(farHeight, 20)))))) {
+      (num = 320);
+      (den = jsub32(farHeight, 20));
+   }
+   if ((((den <= 0) || (num <= den)))) {
+      PortConfig::drawFar(g, originX, originY);
+      return;
+   }
+   Ref<Object> key = Game::portFarKey();
+   if (((((PortConfig::fitImage == nullptr) || (PortConfig::fitKey != key)) || (PortConfig::fitScreenWidth != PortConfig::screenWidth)))) {
+      (PortConfig::fitImage = nullptr);
+      Ref<Image> source = Image::createImage(farWidth, farHeight);
+      Ref<Graphics> sg = (source)->getGraphics();
+      (sg)->setColor(0);
+      (sg)->fillRect(0, 0, farWidth, farHeight);
+      {
+         jint row = 0;
+         for (; (row < Game::cE); (row++)) {
+            {
+               jint column = 0;
+               for (; (column < Game::cC); (column++)) {
+                  Game::portTile(sg, jmul32(column, 20), jmul32(row, 20), jadd32(column, jmul32(row, Game::cC)));
+               }
+            }
+         }
+      }
+      Arr<jint> pixels = jnewarray<Arr<jint>>(jmul32(farWidth, farHeight));
+      (source)->getRGB(pixels, 0, farWidth, 0, 0, farWidth, farHeight);
+      jint scaledWidth = jdiv32((jsub32(jadd32(jmul32(farWidth, num), den), 1)), den);
+      jint scaledHeight = jdiv32((jsub32(jadd32(jmul32(farHeight, num), den), 1)), den);
+      Arr<jint> scaled = jnewarray<Arr<jint>>(jmul32(scaledWidth, scaledHeight));
+      {
+         jint y = 0;
+         for (; (y < scaledHeight); (y++)) {
+            jint sy = jdiv32(jmul32(y, den), num);
+            if (((sy >= farHeight))) {
+               (sy = jsub32(farHeight, 1));
+            }
+            {
+               jint x = 0;
+               for (; (x < scaledWidth); (x++)) {
+                  jint sx = jdiv32(jmul32(x, den), num);
+                  if (((sx >= farWidth))) {
+                     (sx = jsub32(farWidth, 1));
+                  }
+                  ((scaled)[jadd32(jmul32(y, scaledWidth), x)] = (pixels)[jadd32(jmul32(sy, farWidth), sx)]);
+               }
+            }
+         }
+      }
+      (PortConfig::fitImage = Image::createRGBImage(scaled, scaledWidth, scaledHeight, false));
+      (PortConfig::fitKey = key);
+      (PortConfig::fitScreenWidth = PortConfig::screenWidth);
+   }
+   jint left = PortConfig::worldLeft();
+   jint right = PortConfig::worldRight();
+   jint visible = jsub32(right, left);
+   jint x = 0;
+   jint travelX = jsub32((PortConfig::fitImage)->getWidth(), visible);
+   jint levelX = jsub32(Game::levelPixelWidth, visible);
+   if ((((travelX > 0) && (levelX > 0)))) {
+      jint from = jadd32(left, Game::cameraX);
+      if (((from < 0))) {
+         (from = 0);
+      }
+      if (((from > levelX))) {
+         (from = levelX);
+      }
+      (x = ((jint)((jdiv64(jmul64(((jlong)(from)), travelX), levelX)))));
+   }
+   jint y = 0;
+   jint travelY = jsub32((PortConfig::fitImage)->getHeight(), 320);
+   jint levelY = jsub32(Game::cB, 320);
+   if ((((travelY > 0) && (levelY > 0)))) {
+      jint from = Game::cameraY;
+      if (((from < 0))) {
+         (from = 0);
+      }
+      if (((from > levelY))) {
+         (from = levelY);
+      }
+      (y = ((jint)((jdiv64(jmul64(((jlong)(from)), travelY), levelY)))));
+   }
+   PortNative::layerTiles(0, jsub32(jadd32(PortConfig::worldTx, left), x), jneg32(y));
+   (g)->setColor(0);
+   (g)->fillRect(left, 0, visible, 320);
+   (g)->drawImage(PortConfig::fitImage, jsub32(left, x), jneg32(y), 20);
+}
+
 void PortConfig::tileOverlay(Ref<Image> image) {
    if ((((PortConfig::screenWidth <= 240) || (!PortConfig::viewValid)))) {
       Game::m_a_ImageIII(image, 0, 0, 20);
@@ -359,6 +469,9 @@ void PortConfig::portDumpStatics(StateSink& sink) {
    sink.put("clipRight", PortConfig::clipRight);
    sink.put("viewCameraX", PortConfig::viewCameraX);
    sink.put("worldTx", PortConfig::worldTx);
+   sink.put("fitImage", PortConfig::fitImage);
+   sink.put("fitKey", PortConfig::fitKey);
+   sink.put("fitScreenWidth", PortConfig::fitScreenWidth);
 }
 
 void PortConfig::portDumpFields(StateSink& sink) {

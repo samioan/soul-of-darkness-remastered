@@ -1,0 +1,326 @@
+#include "host_midi.h"
+
+#include <windows.h>
+#include <mmsystem.h>
+
+#include <algorithm>
+#include <atomic>
+#include <chrono>
+#include <cmath>
+#include <condition_variable>
+#include <map>
+#include <mutex>
+#include <thread>
+
+namespace sodhost {
+
+// ---------------------------------------------------------------- Standard MIDI File
+
+namespace {
+
+struct Reader {
+    const std::vector<std::uint8_t>& d;
+    std::size_t p, end;
+    bool ok = true;
+    std::uint8_t u8() {
+        if (p >= end) { ok = false; return 0; }
+        return d[p++];
+    }
+    std::uint32_t vlq() {
+        std::uint32_t v = 0;
+        for (int i = 0; i < 4; ++i) {
+            std::uint8_t b = u8();
+            v = (v << 7) | (b & 0x7f);
+            if (!(b & 0x80)) return v;
+        }
+        ok = false;
+        return v;
+    }
+};
+
+std::uint32_t be(const std::vector<std::uint8_t>& d, std::size_t p, int n) {
+    std::uint32_t v = 0;
+    for (int i = 0; i < n; ++i) v = (v << 8) | d[p + static_cast<std::size_t>(i)];
+    return v;
+}
+
+struct TickEvent {
+    std::uint32_t tick;
+    std::uint32_t order;      // file order, keeps simultaneous events stable
+    std::uint32_t msg;        // short message, or 0 for a tempo change
+    std::uint32_t tempo;      // microseconds per quarter note when msg == 0
+};
+
+} // namespace
+
+bool parseMidi(const std::vector<std::uint8_t>& data, MidiSong& out, std::string& error) {
+    out = MidiSong();
+    if (data.size() < 14 || be(data, 0, 4) != 0x4d546864u) { error = "not a MIDI file"; return false; }
+    const std::uint32_t headerLength = be(data, 4, 4);
+    const unsigned format = be(data, 8, 2), tracks = be(data, 10, 2), division = be(data, 12, 2);
+    if (format > 1 || division == 0 || (division & 0x8000)) { error = "unsupported MIDI format"; return false; }
+    std::vector<TickEvent> events;
+    std::uint32_t endTick = 0, order = 0;
+    std::size_t p = 8 + static_cast<std::size_t>(headerLength);
+    for (unsigned t = 0; t < tracks && p + 8 <= data.size(); ++t) {
+        const std::uint32_t length = be(data, p + 4, 4);
+        if (be(data, p, 4) != 0x4d54726bu || p + 8 + length > data.size()) { error = "bad MIDI track"; return false; }
+        Reader r{data, p + 8, p + 8 + length};
+        std::uint32_t tick = 0;
+        std::uint8_t status = 0;
+        while (r.ok && r.p < r.end) {
+            tick += r.vlq();
+            std::uint8_t b = r.u8();
+            if (b == 0xff) {
+                const std::uint8_t type = r.u8();
+                const std::uint32_t n = r.vlq();
+                if (type == 0x51 && n == 3 && r.p + 3 <= r.end)
+                    events.push_back({tick, order++, 0, be(data, r.p, 3)});
+                r.p += n;
+                if (type == 0x2f) break;
+                continue;
+            }
+            if (b == 0xf0 || b == 0xf7) { r.p += r.vlq(); continue; }
+            std::uint8_t first;
+            if (b & 0x80) { status = b; first = r.u8(); }
+            else { if (!status) { error = "MIDI data without status"; return false; } first = b; }
+            const unsigned kind = status >> 4;
+            std::uint32_t msg = status | (static_cast<std::uint32_t>(first & 0x7f) << 8);
+            if (kind != 0xc && kind != 0xd) msg |= static_cast<std::uint32_t>(r.u8() & 0x7f) << 16;
+            events.push_back({tick, order++, msg, 0});
+        }
+        if (!r.ok) { error = "truncated MIDI track"; return false; }
+        endTick = std::max(endTick, tick);
+        p += 8 + length;
+    }
+    std::stable_sort(events.begin(), events.end(), [](const TickEvent& a, const TickEvent& b) { return a.tick < b.tick; });
+
+    // Ticks to milliseconds through the tempo map, and the loudness of what sounds: each note's
+    // amplitude follows the GS/DLS concave curves, (velocity * volume * expression / 127^3)^2.
+    double tempo = 500000.0, ms = 0, energy = 0;
+    std::uint32_t lastTick = 0;
+    int volume[16], expression[16];
+    std::fill(std::begin(volume), std::end(volume), 100);
+    std::fill(std::begin(expression), std::end(expression), 127);
+    std::map<int, double> sounding;    // (channel << 8 | note) -> power
+    double power = 0;
+    auto advance = [&](std::uint32_t tick) {
+        const double dt = (tick - lastTick) * tempo / division / 1000.0;
+        energy += power * dt;
+        ms += dt;
+        lastTick = tick;
+    };
+    for (const TickEvent& e : events) {
+        advance(e.tick);
+        if (e.msg == 0) { tempo = e.tempo ? e.tempo : 500000.0; continue; }
+        out.events.push_back({ms, e.msg});
+        const int kind = (e.msg >> 4) & 0xf, channel = e.msg & 0xf, a = (e.msg >> 8) & 0x7f, b = (e.msg >> 16) & 0x7f;
+        if (kind == 0xb && a == 7) volume[channel] = b;
+        else if (kind == 0xb && a == 11) expression[channel] = b;
+        else if (kind == 0x9 && b > 0) {
+            const double amp = std::pow(b * volume[channel] * expression[channel] / (127.0 * 127.0 * 127.0), 2.0);
+            const double pw = amp * amp * (channel == 9 ? 0.5 : 1.0);
+            auto it = sounding.find(channel << 8 | a);
+            if (it != sounding.end()) power -= it->second;
+            sounding[channel << 8 | a] = pw;
+            power += pw;
+        } else if (kind == 0x8 || kind == 0x9) {
+            auto it = sounding.find(channel << 8 | a);
+            if (it != sounding.end()) { power -= it->second; sounding.erase(it); }
+        }
+        if (power < 0) power = 0;
+    }
+    advance(std::max(endTick, lastTick));
+    out.lengthMs = ms;
+    if (ms > 0 && energy > 0) {
+        out.loudnessDb = 10.0 * std::log10(energy / ms);
+        out.gain = std::clamp(std::pow(10.0, (kMidiTargetDb - out.loudnessDb) / 40.0), kMidiMinGain, kMidiMaxGain);
+    } else {
+        out.loudnessDb = -120.0;
+        out.gain = 1.0;
+    }
+    return true;
+}
+
+// ---------------------------------------------------------------- player thread
+
+struct MidiPlayer::Impl {
+    using Clock = std::chrono::steady_clock;
+    std::thread thread;
+    mutable std::mutex mutex;
+    std::condition_variable wake;
+    bool quit = false;
+    // requests from the game thread
+    bool requestStop = false;
+    std::shared_ptr<const MidiSong> requestSong;
+    int requestLoops = 1;
+    bool requestVolume = true;
+    int volume = 80;
+    std::atomic<bool> isPlaying{false};
+    std::vector<std::string> log;
+
+    // player thread state
+    HMIDIOUT out = nullptr;
+    bool openFailed = false;
+    std::shared_ptr<const MidiSong> song;
+    std::size_t next = 0;
+    int loopsLeft = 0;
+    Clock::time_point origin;
+    int rawVolume[16] = {};
+    double scale = 1.0;      // song gain * user volume, applied to CC7
+
+    void send(std::uint32_t msg) { if (out) midiOutShortMsg(out, msg); }
+    std::uint32_t cc(int channel, int controller, int value) {
+        return static_cast<std::uint32_t>(0xb0 | channel) | (static_cast<std::uint32_t>(controller) << 8) | (static_cast<std::uint32_t>(value) << 16);
+    }
+    int scaled(int raw) const { return std::clamp(static_cast<int>(std::lround(raw * scale)), 0, 127); }
+    void silence() {
+        for (int c = 0; c < 16; ++c) {
+            send(cc(c, 64, 0));     // sustain off
+            send(cc(c, 123, 0));    // all notes off
+            send(cc(c, 120, 0));    // all sound off
+        }
+    }
+    void resetChannels() {
+        for (int c = 0; c < 16; ++c) {
+            send(cc(c, 121, 0));    // reset controllers (leaves volume alone)
+            send(static_cast<std::uint32_t>(0xc0 | c));     // program 0
+            send(static_cast<std::uint32_t>(0xe0 | c) | (0x40u << 16));  // pitch bend centre
+            rawVolume[c] = 100;
+            send(cc(c, 7, scaled(100)));
+            send(cc(c, 11, 127));
+        }
+    }
+    void updateScale(int userVolume) {
+        // Amplitude follows CC7 squared, so the user's amplitude percentage becomes its square root.
+        scale = (song ? song->gain : 1.0) * std::sqrt(std::clamp(userVolume, 0, 100) / 100.0);
+    }
+    void dispatch(std::uint32_t msg) {
+        if ((msg & 0xf0) == 0xb0 && ((msg >> 8) & 0x7f) == 7) {
+            const int c = msg & 0xf;
+            rawVolume[c] = (msg >> 16) & 0x7f;
+            send(cc(c, 7, scaled(rawVolume[c])));
+            return;
+        }
+        send(msg);
+    }
+
+    void run() {
+        std::unique_lock<std::mutex> lock(mutex);
+        if (!out && !openFailed) {
+            lock.unlock();
+            MMRESULT r = midiOutOpen(&out, MIDI_MAPPER, 0, 0, CALLBACK_NULL);
+            lock.lock();
+            if (r != MMSYSERR_NOERROR) {
+                out = nullptr;
+                openFailed = true;
+                log.push_back("music: no MIDI output device (midiOutOpen " + std::to_string(r) + ")");
+            }
+        }
+        while (!quit) {
+            if (requestStop) {
+                requestStop = false;
+                if (song) silence();
+                song = nullptr;
+            }
+            if (requestSong) {
+                if (song) silence();
+                song = std::move(requestSong);
+                requestSong = nullptr;
+                loopsLeft = requestLoops;
+                next = 0;
+                origin = Clock::now();
+                updateScale(volume);
+                resetChannels();
+                requestVolume = false;
+            }
+            if (requestVolume) {
+                requestVolume = false;
+                updateScale(volume);
+                if (song) for (int c = 0; c < 16; ++c) send(cc(c, 7, scaled(rawVolume[c])));
+            }
+            Clock::time_point due = Clock::time_point::max();
+            if (song) {
+                const double elapsed = std::chrono::duration<double, std::milli>(Clock::now() - origin).count();
+                while (next < song->events.size() && song->events[next].ms <= elapsed) dispatch(song->events[next++].msg);
+                if (next >= song->events.size() && elapsed >= song->lengthMs) {
+                    if (loopsLeft < 0 || --loopsLeft > 0) {
+                        // Restart from the song's own timeline so loops do not drift.
+                        origin += std::chrono::duration_cast<Clock::duration>(std::chrono::duration<double, std::milli>(std::max(song->lengthMs, 1.0)));
+                        next = 0;
+                        continue;
+                    }
+                    silence();
+                    song = nullptr;
+                    isPlaying = false;
+                } else {
+                    const double at = next < song->events.size() ? song->events[next].ms : song->lengthMs;
+                    due = origin + std::chrono::duration_cast<Clock::duration>(std::chrono::duration<double, std::milli>(at));
+                }
+            }
+            if (due == Clock::time_point::max()) wake.wait(lock);
+            else wake.wait_until(lock, due);
+        }
+        if (song) silence();
+        if (out) {
+            midiOutReset(out);
+            midiOutClose(out);
+            out = nullptr;
+        }
+    }
+};
+
+MidiPlayer::MidiPlayer() : impl_(new Impl) {
+    impl_->thread = std::thread([this] { impl_->run(); });
+}
+
+MidiPlayer::~MidiPlayer() {
+    {
+        std::lock_guard<std::mutex> lock(impl_->mutex);
+        impl_->quit = true;
+    }
+    impl_->wake.notify_all();
+    if (impl_->thread.joinable()) impl_->thread.join();
+}
+
+void MidiPlayer::play(std::shared_ptr<const MidiSong> song, int loops) {
+    if (!song) { stop(); return; }
+    {
+        std::lock_guard<std::mutex> lock(impl_->mutex);
+        impl_->requestSong = std::move(song);
+        impl_->requestLoops = loops == 0 ? 1 : loops;
+        impl_->requestStop = false;
+        impl_->isPlaying = true;
+    }
+    impl_->wake.notify_all();
+}
+
+void MidiPlayer::stop() {
+    {
+        std::lock_guard<std::mutex> lock(impl_->mutex);
+        impl_->requestSong = nullptr;
+        impl_->requestStop = true;
+        impl_->isPlaying = false;
+    }
+    impl_->wake.notify_all();
+}
+
+bool MidiPlayer::playing() const { return impl_->isPlaying; }
+
+void MidiPlayer::setVolume(int volume) {
+    {
+        std::lock_guard<std::mutex> lock(impl_->mutex);
+        impl_->volume = volume;
+        impl_->requestVolume = true;
+    }
+    impl_->wake.notify_all();
+}
+
+std::vector<std::string> MidiPlayer::takeLog() {
+    std::lock_guard<std::mutex> lock(impl_->mutex);
+    std::vector<std::string> l;
+    l.swap(impl_->log);
+    return l;
+}
+
+} // namespace sodhost

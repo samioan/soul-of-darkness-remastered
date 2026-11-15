@@ -24,7 +24,7 @@ add_library(sod_engine STATIC gen/ErrorReporter.cpp gen/BSprite.cpp gen/Actor.cp
   engine/jrt.cpp engine/midp.cpp engine/engine_glue.cpp engine/host_util.cpp engine/host_zip.cpp engine/inflate.cpp)
 target_include_directories(sod_engine PUBLIC engine gen)
 target_compile_definitions(sod_engine PUBLIC SOD_PORT_BUILD)
-add_executable(soul_of_darkness WIN32 engine/host_win32.cpp)
+add_executable(soul_of_darkness WIN32 engine/host_win32.cpp engine/host_midi.cpp)
 target_compile_definitions(soul_of_darkness PRIVATE _CRT_SECURE_NO_WARNINGS NOMINMAX WIN32_LEAN_AND_MEAN UNICODE _UNICODE)
 target_link_libraries(soul_of_darkness PRIVATE sod_engine user32 gdi32 shell32 winmm comdlg32 ole32)
 add_executable(soul_engine_check engine/engine_check.cpp)

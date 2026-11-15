@@ -472,30 +472,54 @@ void Graphics::drawLine(jint x1, jint y1, jint x2, jint y2) {
     }
 }
 
-static bool angleInside(double degrees, jint start, jint arc) {
-    if (arc >= 360 || arc <= -360) return true;
-    double a = std::fmod(degrees - start, 360.0);
-    if (a < 0) a += 360.0;
-    return arc >= 0 ? a <= arc : a >= 360.0 + arc || a == 0;
-}
-
 void Graphics::fillArc(jint x, jint y, jint w, jint h, jint start, jint arc) {
     if (w <= 0 || h <= 0 || arc == 0) return;
     x += tx;
     y += ty;
     if (recordingTo(this)) recordOp(*this, OpFillArc, x, y, w, h, start, arc);
+    // Only rows and columns inside the clip are visited; the game draws 640x640 wedges every tick
+    // during boss deaths, and testing every pixel of the box with atan2 cost tens of milliseconds.
+    const Bounds b = bounds(*this);
     const double rx = w / 2.0, ry = h / 2.0, cx = x + rx, cy = y + ry;
-    for (jint py = y; py < y + h; ++py) {
+    const jint rowFirst = std::max(y, b.y1), rowLast = std::min(y + h, b.y2) - 1;
+    const jint colFirst = std::max(x, b.x1), colLast = std::min(x + w, b.x2) - 1;
+    if (rowFirst > rowLast || colFirst > colLast) return;
+    // The wedge as half-plane tests (y up, as atan2(-dy, dx) measured it): from angle s0 through
+    // `sweep` degrees counter-clockwise. Sweeps over 180 degrees test the complementary wedge.
+    const bool full = arc >= 360 || arc <= -360;
+    const double pi = 3.14159265358979323846;
+    double s0 = arc >= 0 ? start : start + arc, sweep = std::abs(static_cast<double>(arc));
+    const double sx0 = std::cos(s0 * pi / 180.0), sy0 = std::sin(s0 * pi / 180.0);
+    const double sx1 = std::cos((s0 + sweep) * pi / 180.0), sy1 = std::sin((s0 + sweep) * pi / 180.0);
+    auto inWedge = [&](double vx, double vy) {
+        if (full) return true;
+        if (sweep <= 180.0) return sx0 * vy - sy0 * vx >= -1e-12 && vx * sy1 - vy * sx1 >= -1e-12;
+        return !(sx1 * vy - sy1 * vx > 1e-12 && vx * sy0 - vy * sx0 > 1e-12);
+    };
+    for (jint py = rowFirst; py <= rowLast; ++py) {
+        const double dy = (py + 0.5 - cy) / ry;
+        const double rest = 1.0 - dy * dy;
+        if (rest < 0) continue;
+        // Columns whose centre lies inside the ellipse, widened by one and then tested exactly.
+        const double half = rx * std::sqrt(rest);
+        jint left = std::max(colFirst, static_cast<jint>(std::floor(cx - half - 0.5)) - 1);
+        jint right = std::min(colLast, static_cast<jint>(std::ceil(cx + half - 0.5)) + 1);
+        auto inside = [&](jint px) {
+            const double dx = (px + 0.5 - cx) / rx;
+            return dx * dx + dy * dy <= 1.0 && inWedge(dx, -dy);
+        };
+        if (full) {
+            while (left <= right && !inside(left)) ++left;
+            while (right >= left && !inside(right)) --right;
+            if (left <= right) span(left, right, py);
+            continue;
+        }
         jint runStart = 0;
         bool inRun = false;
-        for (jint px = x; px <= x + w; ++px) {
-            bool inside = false;
-            if (px < x + w) {
-                double dx = (px + 0.5 - cx) / rx, dy = (py + 0.5 - cy) / ry;
-                if (dx * dx + dy * dy <= 1.0) inside = angleInside(std::atan2(-dy, dx) * 180.0 / 3.14159265358979323846, start, arc);
-            }
-            if (inside && !inRun) { runStart = px; inRun = true; }
-            else if (!inside && inRun) { span(runStart, px - 1, py); inRun = false; }
+        for (jint px = left; px <= right + 1; ++px) {
+            const bool in = px <= right && inside(px);
+            if (in && !inRun) { runStart = px; inRun = true; }
+            else if (!in && inRun) { span(runStart, px - 1, py); inRun = false; }
         }
     }
 }

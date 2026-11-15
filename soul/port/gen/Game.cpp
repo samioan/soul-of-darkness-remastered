@@ -1259,7 +1259,7 @@ void Game::m_f_V() {
 
 void Game::m_a_IZI(jint var0, jboolean var1, jint var2) {
    Game::m_b_I(-2013265920);
-   Game::m_b_IIII(0, 0, 240, 320);
+   PortConfig::fillWorld(Game::graphics);
    jint var3 = jadd32(jsub32(Game::Q, Game::cameraX), 0);
    jint var4 = jadd32(jsub32(Game::R, Game::cameraY), 0);
    if (((var1 || (!Game::modalActive)))) {
@@ -2608,7 +2608,7 @@ jboolean Game::m_aj_V() {
 void Game::m_ak_V() {
    if ((Game::eR)) {
       (Game::graphics)->setColor(0);
-      Game::m_b_IIII(0, 0, 240, 320);
+      PortConfig::fillScreen(Game::graphics);
    }
    Game::m_q_V();
    if (((!Game::bb))) {
@@ -3250,6 +3250,19 @@ void Game::portTile(Ref<Graphics> var0, jint var1, jint var2, jint var3) {
    Game::m_a_GraphicsIII(var0, var1, var2, var3);
 }
 
+Ref<Object> Game::portFarKey() {
+   return Game::fk;
+}
+
+void Game::portFarFit(jint var0, jint var1) {
+   if ((((PortConfig::screenWidth <= 240) && (!PortConfig::directTiles)))) {
+      Game::m_a_IIZ(var0, var1, true);
+   } else {
+      PortConfig::drawFarFit(Game::graphics, var0, var1);
+      PortNative::layerWorld(jsub32(PortConfig::worldTx, Game::cameraX), jneg32(Game::cameraY));
+   }
+}
+
 void Game::portFar(jint var0, jint var1) {
    if ((((PortConfig::screenWidth <= 240) && (!PortConfig::directTiles)))) {
       Game::m_a_IIZ(var0, var1, true);
@@ -3281,7 +3294,7 @@ void Game::m_as_V() {
       }
    } else {
       if ((((Game::bo != -3) && (Game::bo != -2)))) {
-         Game::portFar(jdiv32(jmul32(Game::cameraX, (jsub32(Game::cC, 13))), (jsub32(Game::cy, 13))), jdiv32(jmul32(Game::cameraY, (jsub32(Game::cE, 17))), (jsub32(Game::cz, 17))));
+         Game::portFarFit(jdiv32(jmul32(Game::cameraX, (jsub32(Game::cC, 13))), (jsub32(Game::cy, 13))), jdiv32(jmul32(Game::cameraY, (jsub32(Game::cE, 17))), (jsub32(Game::cz, 17))));
       } else {
          Game::m_b_I(0);
          ([&]{ auto _t2 = PortConfig::worldLeft(); auto _t3 = 0; auto _t4 = ([&]{ auto _t0 = PortConfig::worldRight(); auto _t1 = PortConfig::worldLeft(); return jsub32(_t0, _t1); }()); auto _t5 = 320; return Game::m_b_IIII(_t2, _t3, _t4, _t5); }());

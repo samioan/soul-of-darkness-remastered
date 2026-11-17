@@ -26,11 +26,11 @@ final class PortNative {
    }
 
    /**
-    * The screen outside columns [left, right) (the room) in widescreen, scaled by fade / 256.
-    * mode 0: a blurred, darkened copy of the room; mode 1: what is drawn there (extended walls),
-    * darkened away from the room. Works on the target's pixels; recorded, so replayed frames redo it.
+    * The screen outside columns [left, right) (a level narrower than the wide screen): a blurred,
+    * darkened copy of the level, scaled by fade / 256. Works on the target's pixels; recorded, so
+    * replayed frames redo it.
     */
-   static void sides(Graphics g, int mode, int left, int right, int fade) {
+   static void sides(Graphics g, int left, int right, int fade) {
    }
 
    /** Number of entries on a settings page (0 display, 1 audio, 2 keyboard, 3 gamepad). */

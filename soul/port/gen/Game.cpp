@@ -2710,6 +2710,9 @@ void Game::m_ak_V() {
    } else if ((Game::aP)) {
       (Game::aP = false);
       if ((Game::eR)) {
+         if ((PortConfig::desktopFixes)) {
+            (Game::bb = false);
+         }
          Game::m_c_Z(true);
          (Game::eR = false);
          return;
@@ -4222,7 +4225,6 @@ void Game::m_e_III(jint var0, jint var1, jint var2) {
    if (((var1 < 0))) {
       (var1 = (jint)(jsub32(var1, 20)));
    }
-   (PortConfig::tileLayer = var2);
    jint var5 = PortConfig::firstColumn(var0);
    jint var6 = jsub32((var1 / 20), PortConfig::tileMargin());
    jint var7 = PortConfig::lastColumn(var0);
@@ -4238,9 +4240,7 @@ void Game::m_e_III(jint var0, jint var1, jint var2) {
       for (; (var9 <= var7); (var9++)) {
          jint var4 = jadd32(jsub32(jmul32(var6, 20), var1), 0);
          jint var10 = var9;
-         if ((((var2 == 1) && PortConfig::wallsMode()))) {
-            (var10 = PortConfig::edgeColumn(var9, Game::cy));
-         } else if (((var9 < 0))) {
+         if (((var9 < 0))) {
             (var10 = PortConfig::wrapColumn(var9, ((var2 == 2) ? Game::cD : Game::cy)));
          } else if ((((var2 == 2) && (var9 >= Game::cD)))) {
             (var10 = jrem32(var9, Game::cD));
@@ -4264,7 +4264,6 @@ void Game::m_e_III(jint var0, jint var1, jint var2) {
          (var3 = (jint)(jadd32(var3, 20)));
       }
    }
-   PortConfig::endTiles(Game::graphics);
    PortNative::layerWorld(jsub32(PortConfig::worldTx, Game::cameraX), jneg32(Game::cameraY));
 }
 

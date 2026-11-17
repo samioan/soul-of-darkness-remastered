@@ -296,7 +296,7 @@ void overlay(const std::string& text) {
 
 // The game plays one track at a time through one MIDP Player: the MIDI themes and jingles, and three
 // WAV files it opens with the MIDI content type. MIDI goes to the sequencer thread (host_midi.cpp),
-// which levels the tracks and never blocks this thread; WAV plays through PlaySound from memory.
+// which never blocks this thread; WAV plays through PlaySound from memory.
 struct Music {
     std::unique_ptr<sodhost::MidiPlayer> midi;
     std::map<std::size_t, std::shared_ptr<const sodhost::MidiSong>> songs;   // by content hash
@@ -370,8 +370,8 @@ struct Music {
                 return;
             }
             char line[160];
-            std::snprintf(line, sizeof line, "music: track of %.1f s, %zu events, loudness %.1f dB, level gain %.2f",
-                          song->lengthMs / 1000.0, song->events.size(), song->loudnessDb, song->gain);
+            std::snprintf(line, sizeof line, "music: track of %.1f s, %zu events",
+                          song->lengthMs / 1000.0, song->events.size());
             g_log.push_back(line);
             it = songs.emplace(key, std::move(song)).first;
         }

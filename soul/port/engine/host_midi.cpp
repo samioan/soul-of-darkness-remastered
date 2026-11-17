@@ -8,7 +8,6 @@
 #include <chrono>
 #include <cmath>
 #include <condition_variable>
-#include <map>
 #include <mutex>
 #include <thread>
 
@@ -95,50 +94,20 @@ bool parseMidi(const std::vector<std::uint8_t>& data, MidiSong& out, std::string
     }
     std::stable_sort(events.begin(), events.end(), [](const TickEvent& a, const TickEvent& b) { return a.tick < b.tick; });
 
-    // Ticks to milliseconds through the tempo map, and the loudness of what sounds: each note's
-    // amplitude follows the GS/DLS concave curves, (velocity * volume * expression / 127^3)^2.
-    double tempo = 500000.0, ms = 0, energy = 0;
+    // Ticks to milliseconds through the tempo map.
+    double tempo = 500000.0, ms = 0;
     std::uint32_t lastTick = 0;
-    int volume[16], expression[16];
-    std::fill(std::begin(volume), std::end(volume), 100);
-    std::fill(std::begin(expression), std::end(expression), 127);
-    std::map<int, double> sounding;    // (channel << 8 | note) -> power
-    double power = 0;
     auto advance = [&](std::uint32_t tick) {
-        const double dt = (tick - lastTick) * tempo / division / 1000.0;
-        energy += power * dt;
-        ms += dt;
+        ms += (tick - lastTick) * tempo / division / 1000.0;
         lastTick = tick;
     };
     for (const TickEvent& e : events) {
         advance(e.tick);
         if (e.msg == 0) { tempo = e.tempo ? e.tempo : 500000.0; continue; }
         out.events.push_back({ms, e.msg});
-        const int kind = (e.msg >> 4) & 0xf, channel = e.msg & 0xf, a = (e.msg >> 8) & 0x7f, b = (e.msg >> 16) & 0x7f;
-        if (kind == 0xb && a == 7) volume[channel] = b;
-        else if (kind == 0xb && a == 11) expression[channel] = b;
-        else if (kind == 0x9 && b > 0) {
-            const double amp = std::pow(b * volume[channel] * expression[channel] / (127.0 * 127.0 * 127.0), 2.0);
-            const double pw = amp * amp * (channel == 9 ? 0.5 : 1.0);
-            auto it = sounding.find(channel << 8 | a);
-            if (it != sounding.end()) power -= it->second;
-            sounding[channel << 8 | a] = pw;
-            power += pw;
-        } else if (kind == 0x8 || kind == 0x9) {
-            auto it = sounding.find(channel << 8 | a);
-            if (it != sounding.end()) { power -= it->second; sounding.erase(it); }
-        }
-        if (power < 0) power = 0;
     }
     advance(std::max(endTick, lastTick));
     out.lengthMs = ms;
-    if (ms > 0 && energy > 0) {
-        out.loudnessDb = 10.0 * std::log10(energy / ms);
-        out.gain = std::clamp(std::pow(10.0, (kMidiTargetDb - out.loudnessDb) / 40.0), kMidiMinGain, kMidiMaxGain);
-    } else {
-        out.loudnessDb = -120.0;
-        out.gain = 1.0;
-    }
     return true;
 }
 
@@ -167,7 +136,7 @@ struct MidiPlayer::Impl {
     int loopsLeft = 0;
     Clock::time_point origin;
     int rawVolume[16] = {};
-    double scale = 1.0;      // song gain * user volume, applied to CC7
+    double scale = 1.0;      // user volume, applied to CC7
 
     void send(std::uint32_t msg) { if (out) midiOutShortMsg(out, msg); }
     std::uint32_t cc(int channel, int controller, int value) {
@@ -193,7 +162,7 @@ struct MidiPlayer::Impl {
     }
     void updateScale(int userVolume) {
         // Amplitude follows CC7 squared, so the user's amplitude percentage becomes its square root.
-        scale = (song ? song->gain : 1.0) * std::sqrt(std::clamp(userVolume, 0, 100) / 100.0);
+        scale = std::sqrt(std::clamp(userVolume, 0, 100) / 100.0);
     }
     void dispatch(std::uint32_t msg) {
         if ((msg & 0xf0) == 0xb0 && ((msg >> 8) & 0x7f) == 7) {

@@ -23,8 +23,6 @@ struct PortConfig : Object {
    static inline jint clipRight{};
    static inline jint viewCameraX{};
    static inline jint worldTx{};
-   static inline jint tileLayer{};
-   static inline jint EDGE_COLUMNS{};
    static inline jint SIDE_FADE_TICKS{};
    static inline jint sideFade{};
    static inline jboolean sidesShown{};
@@ -36,10 +34,6 @@ struct PortConfig : Object {
    static jint margin();
    static void computeView();
    static jint parallax(jint camera, jint shift);
-   static jboolean wallsMode();
-   static jboolean tilesExtended();
-   static void endTiles(Ref<Graphics> g);
-   static jint edgeColumn(jint column, jint width);
    static void drawSides(Ref<Graphics> g);
    static jint visibleLeft();
    static jint visibleRight();

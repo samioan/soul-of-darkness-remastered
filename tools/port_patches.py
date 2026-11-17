@@ -141,17 +141,15 @@ PORT_PATCHES: list[tuple[str, str, str, int]] = [
      "      int var5 = var0 / 20;\n      int var6 = var1 / 20;\n      int var7 = (var0 + 240 - 1) / 20;\n"
      "      int var8 = (var1 + 320 - 1) / 20;\n      j(0, 0, 240, 320);\n      if (var1 < 0) {\n         var1 += 20;\n      }\n\n"
      "      int var3 = var5 * 20 - var0;\n",
-     "      PortConfig.tileLayer = var2;\n      int var5 = PortConfig.firstColumn(var0);\n      int var6 = var1 / 20 - PortConfig.tileMargin();\n"
+     "      int var5 = PortConfig.firstColumn(var0);\n      int var6 = var1 / 20 - PortConfig.tileMargin();\n"
      "      int var7 = PortConfig.lastColumn(var0);\n      int var8 = (var1 + 320 - 1) / 20 + PortConfig.tileMargin();\n"
      "      PortConfig.clipWorld(graphics);\n      if (var1 < 0) {\n         var1 += 20;\n      }\n\n"
      "      PortNative.layerTiles(var2, PortConfig.worldTx - var0, -var1);\n"
      "      int var3 = var5 * 20 - var0;\n", 1),
-    # the original only wrapped columns past the right end; the wide view can start left of column 0.
-    # In walls mode (PortConfig.wallsMode) the main layer repeats its outermost columns past the map.
+    # the original only wrapped columns past the right end; the wide view can start left of column 0
     ("Game.java",
      "         int var10 = var9;\n         if (var2 == 2 && var9 >= cD) {\n",
-     "         int var10 = var9;\n         if (var2 == 1 && PortConfig.wallsMode()) {\n            var10 = PortConfig.edgeColumn(var9, cy);\n"
-     "         } else if (var9 < 0) {\n            var10 = PortConfig.wrapColumn(var9, var2 == 2 ? cD : cy);\n"
+     "         int var10 = var9;\n         if (var9 < 0) {\n            var10 = PortConfig.wrapColumn(var9, var2 == 2 ? cD : cy);\n"
      "         } else if (var2 == 2 && var9 >= cD) {\n", 1),
     # margin rows (interpolation only) may lie outside the layer
     ("Game.java",
@@ -160,7 +158,7 @@ PORT_PATCHES: list[tuple[str, str, str, int]] = [
      "               if (var2 == 1) {\n                  a(graphics, fm, fn, eC, var3, var4, var10 + var11 * cy);\n", 1),
     ("Game.java",
      "            var4 += 20;\n         }\n\n         var3 += 20;\n      }\n   }\n",
-     f"            var4 += 20;\n         }}\n\n         var3 += 20;\n      }}\n\n      PortConfig.endTiles(graphics);\n      {WORLD_LAYER}\n   }}\n", 1),
+     f"            var4 += 20;\n         }}\n\n         var3 += 20;\n      }}\n\n      {WORLD_LAYER}\n   }}\n", 1),
 
     # ------------------------------------------------------------------ actors
     ("Game.java",
@@ -293,6 +291,14 @@ PORT_PATCHES: list[tuple[str, str, str, int]] = [
      "      b(-2013265920);\n      a(0, 0, 240, 320);\n      PortConfig.fillScreen(graphics);\n      e(0, 100, 240, 100);\n", 1),
 
     # ------------------------------------------------------------------ original-game fixes (desktopFixes)
+    # Upgrade screen: bb (a message is showing) is cleared when the message is dismissed or the screen is
+    # left normally, but leaving the screen a level ends with (eR) returns before that (e.ak bytecode:
+    # c(Z) and return at 708..715, bb cleared at 734). Leaving it with Back while a message showed made
+    # the next upgrade screen open with that stale message ("no soul shards left") already up.
+    ("Game.java",
+     "         if (eR) {\n            c(true);\n            eR = false;\n            return;\n         }\n",
+     "         if (eR) {\n            if (PortConfig.desktopFixes) {\n               bb = false;\n            }\n\n"
+     "            c(true);\n            eR = false;\n            return;\n         }\n", 1),
     # Music: U() replays the boss theme whenever the last music played was the boss theme (id 7), and only
     # the main menu ever plays another music id directly. After a level's boss the next level therefore
     # started with boss music (levels 1 and 2 share theme 1, so it showed there first). The original bytecode

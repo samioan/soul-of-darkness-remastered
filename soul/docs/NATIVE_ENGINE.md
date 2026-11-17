@@ -104,14 +104,13 @@ origin then slid the layer at about 7/8 of the camera's speed in the wrong direc
 scrolls as if the camera were the one that centres the original window in the view, which is the
 camera itself whenever the view tracks it, so open stretches draw exactly as before.
 
-Rooms narrower than the screen do not leave black bars. Level 6 (a 400 pixel wide tower of stone
-shafts, `PortConfig.wallsMode`) draws its tile layers across the whole view: real tiles past the room
-where the map has them, then the map's two outermost columns repeated, darkened away from the room.
-Everywhere else (the level 10 arena, narrow rooms inside wide levels) repeated tiles would read as
-broken graphics, so the sides show a blurred, dimmed copy of the room as drawn this frame. Both are
-native pixel passes recorded as draw ops (`PortNative.sides`), since MIDP colours are opaque, and
-fade in from black over 12 ticks when the sides first appear. Actors, collision and activation still
-stop at the room; in level 6 the black-out around a pickup's beam of light covers the walls too.
+Rooms narrower than the screen do not leave black bars. In a level that scrolls horizontally, the
+view around such a room grows to the screen width, centred on the room and kept inside the level,
+so the sides show the real level beyond it. Only a level narrower than the screen (the 400 pixel
+level 6 tower and level 10 arena) leaves sides: they show a blurred, dimmed copy of the level as
+drawn this frame, a native pixel pass recorded as a draw op (`PortNative.sides`, since MIDP colours
+are opaque), fading in from black over 12 ticks when the sides first appear. Actors, collision and
+activation stop at the level edge there.
 Screens without the world (menus, the level map) drop the wide view so their tile layers keep the
 240 layout; the logo screen's side bars are white. Full-screen fills, the
 world clip and on-screen tests are changed explicitly, site by site. Panels, dialogue, menus and
@@ -154,6 +153,10 @@ are active only when the host installs the desktop menus (`PortConfig.desktopFix
   a level forgets the boss theme.
 - Upgrade window: its black panel, `fillRect(19, 20, 203, 250)`, stuck out 12 pixels above the frame
   and left the frame's bottom 8 pixels open; it now fills the frame (x 20..220, y 32..281).
+- Upgrade screen message: `bb` (a message is up) is cleared when it is dismissed or the screen is
+  left normally, but leaving the screen that follows a level's end returns before that (`e.ak`:
+  `c(Z)` and return at 708..715, `bb` cleared at 734). Leaving it with Back while a message showed
+  made the next upgrade screen open with that stale message ("no soul shards left") already up.
 
 ### Input, audio, saves, data
 
@@ -169,10 +172,9 @@ are active only when the host installs the desktop menus (`PortConfig.desktopFix
 - Music and jingles (the original MIDI, and WAV) play through a small SMF sequencer on its own
   thread sending to the system MIDI synthesizer (`engine/host_midi.cpp`); WAV plays through
   PlaySound. The earlier MCI path opened every track synchronously and stalled the game whenever
-  music started or a jingle interrupted it. The tracks were mixed for a phone and differ by about
-  20 dB (level themes quiet, boss theme and jingles loud), so each is measured on load (note power
-  under the GS/DLS volume curves) and its channel volumes are scaled to a common level (gain
-  clamped to 0.3..2.5); the user's volume and mute scale them too.
+  music started or a jingle interrupted it. Tracks play as the game mixed them (the game sets no
+  volume; its level themes are about 20 dB quieter than the boss theme and jingles); only the
+  user's volume and mute scale their channel volumes.
 - Arcs are filled only inside the clip with half-plane wedge tests: the boss-death effect draws
   eleven 640x640 arcs per frame, which took about 75 ms per frame with per-pixel `atan2` over the
   whole box and now takes about 6 ms, with identical pixels.

@@ -348,40 +348,16 @@ static void ambientFill(Image* dst, jint left, jint right, jint fade) {
     }
 }
 
-// Extended walls beside a narrow room: 0.78 of their brightness at the room edge, falling to 0.38
-// from 150 px out, scaled by fade / 256.
-static void shadeFill(Image* dst, jint left, jint right, jint fade) {
-    const int width = dst->width, height = std::min(dst->height, 320);
-    left = std::max<jint>(0, left);
-    right = std::min<jint>(width, right);
-    const std::uint32_t f = static_cast<std::uint32_t>(std::clamp<jint>(fade, 0, 256));
-    for (int x = 0; x < width; ++x) {
-        if (x >= left && x < right) continue;
-        const int d = x < left ? left - x : x - right + 1;
-        const int ramp = std::min(256, 90 + d * 166 / 150);
-        const std::uint32_t k = static_cast<std::uint32_t>(256 - 159 * ramp / 256) * f / 256;
-        for (int y = 0; y < height; ++y) {
-            std::uint32_t& p = dst->pixels[static_cast<std::size_t>(y * width + x)];
-            p = 0xff000000u | ((((p >> 16) & 0xff) * k >> 8) << 16) | ((((p >> 8) & 0xff) * k >> 8) << 8) | ((p & 0xff) * k >> 8);
-        }
-    }
-}
-
-static void sidesFill(Image* dst, jint mode, jint left, jint right, jint fade) {
-    if (mode == 1) shadeFill(dst, left, right, fade);
-    else ambientFill(dst, left, right, fade);
-}
-
-void PortNative::sides(const Ref<Graphics>& g, jint mode, jint left, jint right, jint fade) {
+void PortNative::sides(const Ref<Graphics>& g, jint left, jint right, jint fade) {
     if (!g.p) throwNullPointer();
     Graphics& gr = *g.get();
     left += gr.tx;
     right += gr.tx;
     if (recordingTo(&gr)) {
         DrawOp& op = newOp(gr, OpSides);
-        op.a = left; op.b = right; op.c = fade; op.d = mode; op.e = op.f = 0;
+        op.a = left; op.b = right; op.c = fade; op.d = op.e = op.f = 0;
     }
-    sidesFill(gr.target.get(), mode, left, right, fade);
+    ambientFill(gr.target.get(), left, right, fade);
 }
 
 void recorderStart(Graphics* target) {
@@ -449,7 +425,7 @@ bool recorderReplay(double alpha, Graphics& out) {
             case OpDrawArc: out.drawArc(op.a + dx, op.b + dy, op.c, op.d, op.e, op.f); break;
             case OpFillTriangle: out.fillTriangle(op.a + dx, op.b + dy, op.c + dx, op.d + dy, op.e + dx, op.f + dy); break;
             case OpImage: out.drawRegion(op.image, op.sx, op.sy, op.c, op.d, op.transform, op.a + dx, op.b + dy, 0); break;
-            case OpSides: sidesFill(out.target.get(), op.d, op.a, op.b, op.c); break;
+            case OpSides: ambientFill(out.target.get(), op.a, op.b, op.c); break;
             case OpRgb: {
                 Image* dst = out.target.get();
                 for (jint row = 0; row < op.d; ++row) {

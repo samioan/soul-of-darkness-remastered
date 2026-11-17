@@ -2,9 +2,7 @@
 // system MIDI synthesizer (midiOut). It replaces MCI, whose synchronous open of every track stalled
 // the game each time music started, looped or a jingle interrupted it.
 //
-// The game's tracks were mixed for a phone and differ by about 20 dB (the level themes are quiet, the
-// boss theme and the jingles loud). Each track is measured when it is loaded and its channel volumes
-// (CC7) are scaled so all of them play at a similar loudness; the user's volume scales them too.
+// Tracks play as the game mixed them; only the user's volume scales their channel volumes (CC7).
 #pragma once
 #include <cstdint>
 #include <memory>
@@ -20,17 +18,10 @@ struct MidiSong {
     };
     std::vector<Event> events;
     double lengthMs = 0;      // end of the longest track
-    double loudnessDb = 0;    // mean power of the sounding notes under the GS/DLS volume curves
-    double gain = 1;          // multiplier for every channel volume (CC7) that levels this song
 };
 
-// Parses a format 0/1 SMF and measures it. Returns false for anything that is not one.
+// Parses a format 0/1 SMF. Returns false for anything that is not one.
 bool parseMidi(const std::vector<std::uint8_t>& data, MidiSong& out, std::string& error);
-
-// Loudness every song is levelled to (dB, same scale as MidiSong::loudnessDb) and the gain limits.
-constexpr double kMidiTargetDb = -18.0;
-constexpr double kMidiMinGain = 0.3;
-constexpr double kMidiMaxGain = 2.5;
 
 class MidiPlayer {
 public:

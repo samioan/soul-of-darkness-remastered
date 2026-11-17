@@ -152,8 +152,8 @@ struct PortNative {
     static void layerTiles(jint originX, jint originY) { layerTiles(0, originX, originY); }
     static void layerTiles(jint id, jint originX, jint originY);
     static void layerActor(const Ref<Object>& actor, jint screenX, jint screenY);
-    // Widescreen: the sides of a room narrower than the screen (0 blurred room copy, 1 darkened walls).
-    static void sides(const Ref<Graphics>& g, jint mode, jint left, jint right, jint fade);
+    // Widescreen: the sides of a level narrower than the screen, a blurred copy of what is drawn there.
+    static void sides(const Ref<Graphics>& g, jint left, jint right, jint fade);
     // In-game options menu (full build): host settings by page and index.
     static jint settingCount(jint page);
     static Ref<String> settingName(jint page, jint index);

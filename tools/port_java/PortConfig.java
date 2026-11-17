@@ -56,6 +56,21 @@ final class PortConfig {
          hi = Game.levelPixelWidth;
       }
 
+      // Only a level narrower than the screen leaves sides to fill (drawSides). Inside a level that
+      // scrolls horizontally, a room narrower than the screen shows the level around it: the bounds
+      // grow to the screen width, centred on the room and kept inside the level.
+      if (hi - lo < w && Game.levelPixelWidth > w) {
+         lo -= (w - (hi - lo)) / 2;
+         hi = lo + w;
+         if (lo < 0) {
+            lo = 0;
+            hi = w;
+         } else if (hi > Game.levelPixelWidth) {
+            hi = Game.levelPixelWidth;
+            lo = hi - w;
+         }
+      }
+
       // The camera may still be scrolling into these bounds from a neighbouring room.
       if (Game.cameraX < lo) {
          lo = Game.cameraX;
@@ -136,54 +151,17 @@ final class PortConfig {
       return Game.cameraX - centred + (camera - Game.cameraX + centred >> shift);
    }
 
-   // ---------------------------------------------------------------- rooms narrower than the screen
+   // ---------------------------------------------------------------- levels narrower than the screen
    //
-   // Where the room (or the whole map) is narrower than the wide screen, the sides are not left black.
-   // The level 6 tower is a 400 pixel wide map of stone shafts: its tile layers continue past the room
-   // edge (real tiles where the map has them, then its outermost columns repeated) and darken outwards.
-   // Elsewhere (the level 10 arena, narrow rooms inside wide levels) repeated tiles would look like
-   // broken graphics; the sides show a blurred, darkened copy of the room instead (PortNative.ambientSides).
-   // Either fades in from black when the sides first appear. Actors, collision and activation still
-   // stop at the room: only tile drawing and the side treatment change.
+   // Where the whole level is narrower than the wide screen (the 400 pixel level 6 tower and level 10
+   // arena), the sides are not left black: they show a blurred, darkened copy of the level as drawn
+   // this frame (PortNative.sides), fading in from black when they first appear. Actors, collision and
+   // activation still stop at the level edge. Narrow rooms inside wider levels show the level around
+   // them instead (computeView).
 
-   /** Tile layer being drawn by Game.e / drawFar (0 far, 2 middle, 1 main), -1 otherwise. */
-   static int tileLayer = -1;
-   /** Columns repeated past the edge of the map in walls mode. */
-   static final int EDGE_COLUMNS = 2;
    static final int SIDE_FADE_TICKS = 12;
    static int sideFade;
    static boolean sidesShown;
-
-   static boolean wallsMode() {
-      return screenWidth > 240 && Game.levelIndex == 6;
-   }
-
-   private static boolean tilesExtended() {
-      return tileLayer >= 0 && wallsMode();
-   }
-
-   /** End of a tile layer drawn by Game.e: later world drawing is clipped to the room again. */
-   static void endTiles(Graphics g) {
-      boolean extended = tilesExtended();
-      tileLayer = -1;
-      if (extended) {
-         clipWorld(g);
-      }
-   }
-
-   /** Column of the main layer to draw at `column` in walls mode: past the map, its outermost columns repeat. */
-   static int edgeColumn(int column, int width) {
-      int n = EDGE_COLUMNS < width ? EDGE_COLUMNS : width;
-      if (column < 0) {
-         return wrapColumn(column, n);
-      }
-
-      if (column >= width) {
-         return width - n + (column - width) % n;
-      }
-
-      return column;
-   }
 
    /** Called once per painted world frame, after the world and before the weather and interface. */
    private static void drawSides(Graphics g) {
@@ -201,24 +179,16 @@ final class PortConfig {
          sideFade++;
       }
 
-      // MIDP colours are opaque (Graphics.setColor drops alpha), so both treatments are native pixel passes.
+      // MIDP colours are opaque (Graphics.setColor drops alpha), so the blur is a native pixel pass.
       g.setClip(0, 0, screenWidth, 320);
-      PortNative.sides(g, wallsMode() ? 1 : 0, left, right, sideFade * 256 / SIDE_FADE_TICKS);
+      PortNative.sides(g, left, right, sideFade * 256 / SIDE_FADE_TICKS);
    }
 
    static int visibleLeft() {
-      if (tilesExtended()) {
-         return viewX;
-      }
-
       return viewX > clipLeft ? viewX : clipLeft;
    }
 
    static int visibleRight() {
-      if (tilesExtended()) {
-         return viewX + screenWidth;
-      }
-
       return viewX + screenWidth < clipRight ? viewX + screenWidth : clipRight;
    }
 
@@ -417,17 +387,8 @@ final class PortConfig {
       g.setClip(0, 0, 240, 320);
    }
 
-   /** Replaces a fill of the original screen inside world drawing: the visible part of the room. */
+   /** Replaces a fill of the original screen inside world drawing: the visible part of the level. */
    static void fillWorld(Graphics g) {
-      if (wallsMode() && viewValid) {
-         // the extended walls beside the room are part of the scene being blacked out
-         int x = viewX - Game.cameraX;
-         g.setClip(x, 0, screenWidth, 320);
-         g.fillRect(x, 0, screenWidth, 320);
-         clipWorld(g);
-         return;
-      }
-
       g.fillRect(worldLeft(), 0, worldRight() - worldLeft(), 320);
    }
 
@@ -512,11 +473,6 @@ final class PortConfig {
 
    /** Far background: wide replacement for the original 260x340 scroll buffer. */
    static void drawFar(Graphics g, int originX, int originY) {
-      tileLayer = 0;
-      if (tilesExtended()) {
-         clipWorld(g);
-      }
-
       int left = worldLeft();
       int right = worldRight();
       PortNative.layerTiles(0, worldTx - originX, -originY);
@@ -539,13 +495,6 @@ final class PortConfig {
             Game.portTile(g, column * 20 - originX, row * 20 - originY, wrapColumn(column, Game.cC) + row * Game.cC);
          }
       }
-
-      if (tilesExtended()) {
-         tileLayer = -1;
-         clipWorld(g);
-      }
-
-      tileLayer = -1;
    }
 
    /** Far-layer picture scaled for the wide view, and what it was built from. */
@@ -615,10 +564,8 @@ final class PortConfig {
          fitScreenWidth = screenWidth;
       }
 
-      tileLayer = 0;
       int left = worldLeft();
       int right = worldRight();
-      tileLayer = -1;
       int visible = right - left;
       int x = 0;
       int travelX = fitImage.getWidth() - visible;

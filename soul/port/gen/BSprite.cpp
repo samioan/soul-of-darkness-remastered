@@ -661,16 +661,16 @@ void BSprite::m_a_GraphicsIIII(Ref<Graphics> var1, jint var2, jint var3, jint va
                (System::out)->println(jlit(u"DecodeImage() FAILED !"));
                return;
             }
-            if ((((jadd32(var6, var3) > 0) && (jadd32(var7, var4) > 0)))) {
+            if ((((jadd32(var6, var3) > PortConfig::screenLeft(var1)) && (jadd32(var7, var4) > 0)))) {
                if (((var4 < 0))) {
                   (var12 = jsub32(0, jmul32(var4, var6)));
                   (var7 = (jint)(jadd32(var7, var4)));
                   (var4 = 0);
                }
-               if (((var3 < 0))) {
-                  (var12 = (jint)(jsub32(var12, var3)));
-                  (var6 = (jint)(jadd32(var6, var3)));
-                  (var3 = 0);
+               if (((var3 < PortConfig::screenLeft(var1)))) {
+                  (var12 = (jint)(jsub32(var12, jsub32(var3, PortConfig::screenLeft(var1)))));
+                  (var6 = (jint)(jadd32(var6, jsub32(var3, PortConfig::screenLeft(var1)))));
+                  (var3 = PortConfig::screenLeft(var1));
                }
             }
          } else {
@@ -731,7 +731,7 @@ void BSprite::m_a_GraphicsIIII(Ref<Graphics> var1, jint var2, jint var3, jint va
             }
          }
          if (((var8 == nullptr))) {
-            if ((((jadd32(var6, var3) > 0) && (jadd32(var7, var4) > 0)))) {
+            if ((((jadd32(var6, var3) > PortConfig::screenLeft(var1)) && (jadd32(var7, var4) > 0)))) {
                (var1)->drawRGB(var11, var12, var13, var3, var4, var6, var7, (this)->A);
             }
          } else if (((((var5 & 1)) != 0))) {

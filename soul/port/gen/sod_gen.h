@@ -16,6 +16,7 @@ struct PortConfig : Object {
    static inline jint screenWidth{};
    static inline jboolean directTiles{};
    static inline jboolean desktopText{};
+   static inline jboolean desktopFixes{};
    static inline jint viewX{};
    static inline jboolean viewValid{};
    static inline jint clipLeft{};

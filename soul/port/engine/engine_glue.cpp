@@ -71,6 +71,7 @@ void start(std::int64_t randomSeed, bool fixedSeed) {
     if (g_options.optionsMenu) {
         Game::portMenus();
         PortConfig::desktopText = true;
+        PortConfig::desktopFixes = true;
     }
 #endif
     GloftSOFD::instance = jnew<GloftSOFD>();

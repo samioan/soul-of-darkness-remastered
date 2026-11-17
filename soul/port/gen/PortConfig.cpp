@@ -544,6 +544,7 @@ void PortConfig::portDumpStatics(StateSink& sink) {
    sink.put("screenWidth", PortConfig::screenWidth);
    sink.put("directTiles", PortConfig::directTiles);
    sink.put("desktopText", PortConfig::desktopText);
+   sink.put("desktopFixes", PortConfig::desktopFixes);
    sink.put("viewX", PortConfig::viewX);
    sink.put("viewValid", PortConfig::viewValid);
    sink.put("clipLeft", PortConfig::clipLeft);

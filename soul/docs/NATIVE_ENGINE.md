@@ -116,7 +116,13 @@ Screens without the world (menus, the level map) drop the wide view so their til
 240 layout; the logo screen's side bars are white. Full-screen fills, the
 world clip and on-screen tests are changed explicitly, site by site. Panels, dialogue, menus and
 the boss bar keep their 240 layout, centred; the bottom icon bar keeps its 240 layout, centred,
-over a full-width strip.
+over a full-width strip. Upgrade and pickup messages black out the full width.
+
+`BSprite` crops frames it decodes to pixel arrays (most actors) to x >= 0 before `drawRGB` and skips
+those wholly left of it, a guard for the phone's 240 pixel screen. Inside the world layer x = 0 is the
+left edge of the original window, so actors left of it in the wide view were cut at that line or not
+drawn at all (the right side was never affected). The crop now uses the left edge of the surface in
+the current translation (`PortConfig.screenLeft`, 0 at width 240).
 
 The visible-area bounds and the activation distance follow the visible width, so in widescreen
 enemies wake, spawn at and leave the real screen edges. That is a deliberate gameplay difference
@@ -134,6 +140,20 @@ are shown in place, which covers passages, restarts and scene cuts. HUD and pane
 `soul_engine_check --verify-replay` confirms that replaying at alpha 1 reproduces the tick's own
 frame exactly. Interpolation moves whole layers by whole pixels; it does not invent animation
 frames. The `native` frame-rate setting shows one frame per tick with interpolation off.
+
+### Fixes to the original game
+
+Some flaws are the original's own, confirmed in its bytecode. Their fixes change game state, so they
+are active only when the host installs the desktop menus (`PortConfig.desktopFixes`, set with
+`desktopText`) and are off in the configuration `check_engine.py` compares; `soul_engine_check
+--options-menu` runs with them.
+
+- Music: `Game.U()` replays the boss theme whenever the last music played (`fN`) was the boss theme,
+  and only the main menu plays a different music id directly. After a boss the next level therefore
+  started with boss music (first visible going from level 1 to level 2, which share a theme). Loading
+  a level forgets the boss theme.
+- Upgrade window: its black panel, `fillRect(19, 20, 203, 250)`, stuck out 12 pixels above the frame
+  and left the frame's bottom 8 pixels open; it now fills the frame (x 20..220, y 32..281).
 
 ### Input, audio, saves, data
 

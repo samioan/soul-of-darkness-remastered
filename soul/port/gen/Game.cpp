@@ -993,6 +993,9 @@ void Game::m_a_Z(jboolean var0) {
 void Game::m_a_I(jint var0) {
    if (((var0 == 9))) {
       Game::m_T_V();
+      if ((PortConfig::desktopFixes)) {
+         (Game::fN = -1);
+      }
       (Game::eS = ((Game::levelIndex == 0) ? 0 : Game::m_i_II(0, 7)));
       (Game::soundResumeFrames = 0);
    } else if (((var0 == 12))) {
@@ -2080,7 +2083,7 @@ void Game::m_a_StringStringZ(Ref<String> var0, Ref<String> var1, jboolean var2) 
 void Game::m_ac_V() {
    Game::m_b_I(-2013265920);
    Game::m_a_IIII(0, 0, 240, 320);
-   Game::m_b_IIII(0, 0, 240, 320);
+   PortConfig::fillScreen(Game::graphics);
    Game::m_e_IIII(0, 100, 240, 100);
    ((Game::b)[33])->m_a_GraphicsIIIIII(Game::graphics, 23, 0, 100, 0, 0, 0);
    ((Game::b)[33])->m_a_GraphicsIIIIII(Game::graphics, 23, 242, 100, 1, 0, 0);
@@ -2530,7 +2533,11 @@ void Game::m_g_I(jint var0) {
       Game::m_as_V();
    }
    Game::m_b_I(-587202560);
-   Game::m_b_IIII(19, 20, 203, 250);
+   if ((PortConfig::desktopFixes)) {
+      Game::m_b_IIII(20, 32, 201, 250);
+   } else {
+      Game::m_b_IIII(19, 20, 203, 250);
+   }
    if ((Actor::bB)) {
       ([&]{ auto _t0 = (Game::b)[33]; auto _t1 = Game::graphics; auto _t2 = 0; auto _t3 = Game::m_b_II(Game::aX, 0); auto _t4 = 120; auto _t5 = 167; auto _t6 = 0; auto _t7 = 0; auto _t8 = 0; return _t0->m_a_GraphicsIIIIIII(_t1, _t2, _t3, _t4, _t5, _t6, _t7, _t8); }());
    } else {

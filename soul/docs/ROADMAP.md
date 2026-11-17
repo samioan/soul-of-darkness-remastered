@@ -30,6 +30,12 @@ Indices are zero-based: level 0 is the first level.
   wide view (they slid at about 7/8 of the camera speed, backwards, wherever the view was clamped
   to a room). Rooms narrower than the screen fill their sides instead of black bars: extended,
   darkened walls in the level 6 tower, a blurred copy of the room elsewhere, fading in on entry.
+  Sprites decoded to pixel arrays are cropped at the wide screen's edge, not the 240 window's
+  (actors left of the original window were cut off or vanished); upgrade and pickup messages
+  black out the full width.
+- [x] Fixes for flaws of the original, active only with the desktop menus (`PortConfig.desktopFixes`,
+  off in the `check_engine.py` configuration): the level after a boss no longer starts with
+  boss music, and the upgrade window's black panel fits its frame.
 - [x] Render-only interpolation from recorded draw calls; replay at alpha 1 verified at
   240/427/569/747.
 - [x] Keyboard and XInput gamepad with context mapping (including the upgrade screen, which needs

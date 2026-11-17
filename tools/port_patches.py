@@ -281,6 +281,39 @@ PORT_PATCHES: list[tuple[str, str, str, int]] = [
     ("Game.java",
      "      if (eR) {\n         graphics.setColor(0);\n         b(0, 0, 240, 320);\n      }\n",
      "      if (eR) {\n         graphics.setColor(0);\n         PortConfig.fillScreen(graphics);\n      }\n", 1),
+    # the upgrade window's black panel (19,20)-(222,270) overhung its frame, whose lines are x=20/220 and
+    # y=32/281, by 12 px at the top and left the frame's bottom 8 px open (PortConfig.desktopFixes)
+    ("Game.java",
+     "      b(-587202560);\n      b(19, 20, 203, 250);\n",
+     "      b(-587202560);\n      if (PortConfig.desktopFixes) {\n         b(20, 32, 201, 250);\n      } else {\n"
+     "         b(19, 20, 203, 250);\n      }\n", 1),
+    # upgrade/pickup messages ("you don't have enough ...") black out the whole screen, not the 240 window
+    ("Game.java",
+     "      b(-2013265920);\n      a(0, 0, 240, 320);\n      b(0, 0, 240, 320);\n      e(0, 100, 240, 100);\n",
+     "      b(-2013265920);\n      a(0, 0, 240, 320);\n      PortConfig.fillScreen(graphics);\n      e(0, 100, 240, 100);\n", 1),
+
+    # ------------------------------------------------------------------ original-game fixes (desktopFixes)
+    # Music: U() replays the boss theme whenever the last music played was the boss theme (id 7), and only
+    # the main menu ever plays another music id directly. After a level's boss the next level therefore
+    # started with boss music (levels 1 and 2 share theme 1, so it showed there first). The original bytecode
+    # does the same (e.U / e.o, fN read only there). Loading a level forgets the boss theme.
+    ("Game.java",
+     "      if (var0 == 9) {\n         T();\n         eS = levelIndex == 0 ? 0 : i(0, 7);\n",
+     "      if (var0 == 9) {\n         T();\n         if (PortConfig.desktopFixes) {\n            fN = -1;\n         }\n\n"
+     "         eS = levelIndex == 0 ? 0 : i(0, 7);\n", 1),
+
+    # ------------------------------------------------------------------ BSprite: RGB frames cropped at the screen edge
+    # Frames decoded to pixel arrays are cropped to x >= 0 before drawRGB, and skipped when wholly left of
+    # it. In widescreen the world is translated so that x = 0 is the left edge of the original 240 window,
+    # so actors left of it (in the wide view) were cut off or vanished. Crop at the surface's left edge in
+    # the current translation instead (0 at width 240).
+    ("BSprite.java",
+     "               if (var6 + var3 > 0 && var7 + var4 > 0) {\n",
+     "               if (var6 + var3 > PortConfig.screenLeft(var1) && var7 + var4 > 0) {\n", 2),
+    ("BSprite.java",
+     "                  if (var3 < 0) {\n                     var12 -= var3;\n                     var6 += var3;\n                     var3 = 0;\n                  }\n",
+     "                  if (var3 < PortConfig.screenLeft(var1)) {\n                     var12 -= var3 - PortConfig.screenLeft(var1);\n"
+     "                     var6 += var3 - PortConfig.screenLeft(var1);\n                     var3 = PortConfig.screenLeft(var1);\n                  }\n", 1),
 
     # ------------------------------------------------------------------ Actor: water and hazard areas
     ("Actor.java",

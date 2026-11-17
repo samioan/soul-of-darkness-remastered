@@ -104,7 +104,7 @@ int main(int argc, char** argv) {
     long long seed = 12345;
     std::string script, trace, dumpPath;
     std::multimap<int, std::string> shots;
-    bool describe = false, interpolation = false, verifyReplay = false;
+    bool describe = false, interpolation = false, verifyReplay = false, optionsMenu = false;
     std::multimap<int, std::string> midShots;
     long long replayChecked = 0, replayMismatch = 0, replayFrames = 0;
     for (int i = 1; i < argc; ++i) {
@@ -128,6 +128,7 @@ int main(int argc, char** argv) {
         else if (a == "--verify-replay") { interpolation = true; verifyReplay = true; }
         else if (a == "--mid-shot") { int t = std::atoi(next().c_str()); midShots.emplace(t, next()); interpolation = true; }
         else if (a == "--quiet") g_quiet = true;
+        else if (a == "--options-menu") optionsMenu = true; // the desktop configuration: OPTIONS entry and desktopFixes
         else { std::fprintf(stderr, "unknown option %s\n", a.c_str()); return 2; }
     }
     if (!g_saveIn.empty()) {
@@ -155,6 +156,7 @@ int main(int argc, char** argv) {
     sodapi::Options options;
     options.screenWidth = width;
     options.interpolation = interpolation;
+    options.optionsMenu = optionsMenu;
     sodapi::configure(options);
     sodapi::start(seed, true);
     std::ofstream traceOut;

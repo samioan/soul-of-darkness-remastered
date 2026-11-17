@@ -25,6 +25,12 @@ final class PortConfig {
    /** Use desktop key names in the few strings that mention phone softkeys (set with the options menu). */
    static boolean desktopText;
 
+   /**
+    * Fixes for flaws of the original game itself (set with the options menu, like desktopText). Off in
+    * the configuration tools/check_engine.py compares with the original bytecode.
+    */
+   static boolean desktopFixes;
+
    static int viewX;
    static boolean viewValid;
    static int clipLeft;

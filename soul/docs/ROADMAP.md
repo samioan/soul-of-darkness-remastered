@@ -14,7 +14,10 @@ progress narrative.
   [NATIVE_ENGINE.md](NATIVE_ENGINE.md).
 - Its shipped Release engine at width 240 matches the original class files over 187,499 fuzzed
   ticks in 44 scenarios across all eleven levels; the unpatched translation over 202,630.
-  State comparison under random input, not pixels: **no complete playthrough has been recorded.**
+  State comparison under random input, not pixels. The game has been played to the end credits
+  on the desktop build (2026-11-17).
+- **Version 1.0.0 (2026-11-17) is the complete release.** The items under Remaining are possible
+  future updates, not missing pieces; no further work is planned for now.
 
 Indices are zero-based: level 0 is the first level.
 
@@ -31,12 +34,13 @@ Indices are zero-based: level 0 is the first level.
   to a room). Rooms and levels narrower than the screen (no horizontal scrolling) fill their
   sides with a blurred copy of the room, fading in on entry.
   Sprites decoded to pixel arrays are cropped at the wide screen's edge, not the 240 window's
-  (actors left of the original window were cut off or vanished); upgrade and pickup messages
-  black out the full width.
+  (actors left of the original window were cut off or vanished); upgrade and pickup messages,
+  the ending's white fade and the closing message before the credits cover the full width.
 - [x] Fixes for flaws of the original, active only with the desktop menus (`PortConfig.desktopFixes`,
   off in the `check_engine.py` configuration): the level after a boss no longer starts with
   boss music, the upgrade window's black panel fits its frame, and the upgrade screen no longer
-  opens with a stale message left over from the end-of-level upgrade screen.
+  opens with a stale message left over from the end-of-level upgrade screen, and the level or
+  boss music restarts after a death even while the death jingle is still playing.
 - [x] Render-only interpolation from recorded draw calls; replay at alpha 1 verified at
   240/427/569/747.
 - [x] Keyboard and XInput gamepad with context mapping (including the upgrade screen, which needs
@@ -49,13 +53,18 @@ Indices are zero-based: level 0 is the first level.
   `.github/workflows/release.yml`). Headless smoke test in CTest; window, auto-detect, Play and
   return checked in an unattended run.
 
+- [x] Played start to credits by a person on the desktop build (2026-11-17), bosses, deaths and
+  restarts included; fixes from that pass are in v0.1.3 to v1.0.0.
+- [x] Releases v0.1.0 to v1.0.0 published from tags; v1.0.0 is the complete release.
+
 ## Remaining
+
+Possible future updates; none is needed to play the game through.
+
 
 - [ ] Wire touch input (pointer events) to the mouse, if wanted.
 - [ ] Human check of the OPTIONS screen flows: rebinding by capture, gamepad page, returning to
   the pause menu. Only the top page and the display page were seen in an unattended run.
-- [ ] Record and verify a complete playthrough, first spawn to credits, including every boss,
-  exit, checkpoint death/restart and Continue.
 - [ ] Human pass in each display mode (240, 427, 569, 747, auto with live resize, fullscreen)
   and at native/30/60/144 fps.
 - [ ] Test gamepad input and audio output on real hardware; both are implemented but were only
@@ -64,9 +73,10 @@ Indices are zero-based: level 0 is the first level.
   behavior) or stay at the original 240-pixel radius.
 - [ ] Interpolation refinements: per-effect layers and sub-pixel motion.
 - [ ] Test on a clean Windows machine; non-Windows hosts.
-- [ ] Cut the first release (`git tag v0.1.0 && git push origin v0.1.0`) and check an update end
-  to end. The launcher's update check is unauthenticated, so it sees releases only while the
-  repository is public.
+- [ ] Check a launcher update end to end on a fresh install. The update check is unauthenticated,
+  so it sees releases only while the repository is public.
+- [ ] A scripted, replayable playthrough checked against the original (the human playthrough is
+  not recorded as input).
 
 ## Verification
 

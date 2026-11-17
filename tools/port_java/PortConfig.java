@@ -31,6 +31,9 @@ final class PortConfig {
     */
    static boolean desktopFixes;
 
+   /** Sound id the game's one Player was last started with (Game.playSound), for desktopFixes. */
+   static int playingId = -1;
+
    static int viewX;
    static boolean viewValid;
    static int clipLeft;

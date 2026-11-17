@@ -285,12 +285,37 @@ PORT_PATCHES: list[tuple[str, str, str, int]] = [
      "      b(-587202560);\n      b(19, 20, 203, 250);\n",
      "      b(-587202560);\n      if (PortConfig.desktopFixes) {\n         b(20, 32, 201, 250);\n      } else {\n"
      "         b(19, 20, 203, 250);\n      }\n", 1),
+    # the ending's white fade (j, bJ 17) and the closing message before the credits (i, bJ 18) fill the
+    # whole screen, not the centred 240 window
+    ("Game.java",
+     "         b(var0 = 0xFF000000 & 1677721 * Y << 8);\n         b(0, 0, 240, 320);\n",
+     "         b(var0 = 0xFF000000 & 1677721 * Y << 8);\n         PortConfig.fillScreen(graphics);\n", 1),
+    ("Game.java",
+     "      } else if (Y <= 100) {\n         b(0);\n         b(0, 0, 240, 320);\n",
+     "      } else if (Y <= 100) {\n         b(0);\n         PortConfig.fillScreen(graphics);\n", 1),
+    ("Game.java",
+     "      } else {\n         b(0);\n         b(0, 0, 240, 320);\n         aC();\n         a(6);\n",
+     "      } else {\n         b(0);\n         PortConfig.fillScreen(graphics);\n         aC();\n         a(6);\n", 1),
+    ("Game.java",
+     "      b(var0 = 16777215 | 3276 * Y << 16);\n      b(0, 0, 240, 320);\n",
+     "      b(var0 = 16777215 | 3276 * Y << 16);\n      PortConfig.fillScreen(graphics);\n", 1),
     # upgrade/pickup messages ("you don't have enough ...") black out the whole screen, not the 240 window
     ("Game.java",
      "      b(-2013265920);\n      a(0, 0, 240, 320);\n      b(0, 0, 240, 320);\n      e(0, 100, 240, 100);\n",
      "      b(-2013265920);\n      a(0, 0, 240, 320);\n      PortConfig.fillScreen(graphics);\n      e(0, 100, 240, 100);\n", 1),
 
     # ------------------------------------------------------------------ original-game fixes (desktopFixes)
+    # Music after a jingle: playSound skips a request for the music id last started (fN) while the one
+    # Player is busy, but jingles (death, pickup, level end) play on that same Player without changing fN.
+    # Restarting after a death before the death jingle ended (e.ag -> aF -> a(8) -> U, no stop on the way)
+    # skipped the level or boss music, and it stayed off until a pickup's jingle and U() restarted it.
+    # The skip now also needs the Player to be playing that id (PortConfig.playingId).
+    ("Game.java",
+     "            if (var0 != fN || fM == null || fM.getState() != 400) {\n",
+     "            if (var0 != fN || fM == null || fM.getState() != 400 || PortConfig.desktopFixes && PortConfig.playingId != var0) {\n", 1),
+    ("Game.java",
+     "                  default:\n                     T();\n",
+     "                  default:\n                     PortConfig.playingId = var0;\n                     T();\n", 1),
     # Upgrade screen: bb (a message is showing) is cleared when the message is dismissed or the screen is
     # left normally, but leaving the screen a level ends with (eR) returns before that (e.ak bytecode:
     # c(Z) and return at 708..715, bb cleared at 734). Leaving it with Back while a message showed made

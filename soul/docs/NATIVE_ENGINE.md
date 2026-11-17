@@ -69,7 +69,8 @@ Limits of this evidence, stated plainly:
 - It compares game state, not pixels. Rendering was checked by eye on captured frames, not
   against a phone or emulator.
 - Fuzzed input explores the first rooms of each level thoroughly and deeper rooms only by
-  chance. No complete start-to-credits playthrough has been recorded, by a person or a script.
+  chance. A person has played the desktop build to the end credits, but no playthrough has been
+  recorded as input and replayed against the original.
 - The promotion class is stubbed identically on both sides.
 - Widescreen and the OPTIONS screen are outside the comparison by construction (below).
 
@@ -113,7 +114,8 @@ Screens without the world (menus, the level map) drop the wide view so their til
 240 layout; the logo screen's side bars are white. Full-screen fills, the
 world clip and on-screen tests are changed explicitly, site by site. Panels, dialogue, menus and
 the boss bar keep their 240 layout, centred; the bottom icon bar keeps its 240 layout, centred,
-over a full-width strip. Upgrade and pickup messages black out the full width.
+over a full-width strip. Upgrade and pickup messages, the ending's white fade and the closing
+message before the credits cover the full width.
 
 `BSprite` crops frames it decodes to pixel arrays (most actors) to x >= 0 before `drawRGB` and skips
 those wholly left of it, a guard for the phone's 240 pixel screen. Inside the world layer x = 0 is the
@@ -152,6 +154,11 @@ are active only when the host installs the desktop menus (`PortConfig.desktopFix
   a level forgets the boss theme.
 - Upgrade window: its black panel, `fillRect(19, 20, 203, 250)`, stuck out 12 pixels above the frame
   and left the frame's bottom 8 pixels open; it now fills the frame (x 20..220, y 32..281).
+- Music after a jingle: `playSound` skips a request for the music id last started (`fN`) while the
+  one Player is busy, but jingles (death, pickup, level end) play on that Player without changing
+  `fN`. Restarting after a death before the death jingle ended (`ag` -> `aF` -> `a(8)` -> `U`, with no
+  stop on the way) skipped the level or boss music, which stayed off until a pickup's jingle and
+  `U()` restarted it. The skip now also requires the Player to be playing that id.
 - Upgrade screen message: `bb` (a message is up) is cleared when it is dismissed or the screen is
   left normally, but leaving the screen that follows a level's end returns before that (`e.ak`:
   `c(Z)` and return at 708..715, `bb` cleared at 734). Leaving it with Back while a message showed
@@ -183,8 +190,8 @@ are active only when the host installs the desktop menus (`PortConfig.desktopFix
 
 ## Not done
 
-- A recorded complete playthrough, and a human pass over every level, boss and the ending in each
-  display mode. Fullscreen, live resize, gamepad and audio output were exercised only as far as
+- A recorded, replayable playthrough checked against the original, and a human pass over every
+  level, boss and the ending in each display mode. Fullscreen, live resize, gamepad and audio output were exercised only as far as
   an unattended run allows.
 - Touch input (pointer events) is not wired to the mouse.
 - Sub-pixel or animation-frame interpolation; per-effect layers.

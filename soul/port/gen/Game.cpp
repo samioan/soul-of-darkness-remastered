@@ -1424,10 +1424,10 @@ void Game::m_i_V() {
    jint var0 = 0;
    if (((Game::Y <= 10))) {
       Game::m_b_I((var0 = (-16777216 & jshl32((jint)(jmul32(1677721, Game::Y)), (jint)(8)))));
-      Game::m_b_IIII(0, 0, 240, 320);
+      PortConfig::fillScreen(Game::graphics);
    } else if (((Game::Y <= 100))) {
       Game::m_b_I(0);
-      Game::m_b_IIII(0, 0, 240, 320);
+      PortConfig::fillScreen(Game::graphics);
       if (((Game::Y <= 30))) {
          (var0 = jshr32((jint)(jmul32(838860, (jsub32(Game::Y, 10)))), (jint)(16)));
       } else if (((Game::Y > 80))) {
@@ -1442,7 +1442,7 @@ void Game::m_i_V() {
       ((Game::a)->t = false);
    } else {
       Game::m_b_I(0);
-      Game::m_b_IIII(0, 0, 240, 320);
+      PortConfig::fillScreen(Game::graphics);
       Game::m_aC_V();
       Game::m_a_I(6);
       (Game::bs = 160);
@@ -1454,7 +1454,7 @@ void Game::m_i_V() {
 void Game::m_j_V() {
    jint var0{};
    Game::m_b_I((var0 = (16777215 | jshl32((jint)(jmul32(3276, Game::Y)), (jint)(16)))));
-   Game::m_b_IIII(0, 0, 240, 320);
+   PortConfig::fillScreen(Game::graphics);
    (Game::Y++);
    if (((Game::Y == 20))) {
       Game::m_s_V();
@@ -7860,7 +7860,7 @@ void Game::m_aR_V() {
 void Game::playSound(jint var0, jint var1) {
    if ((((var0 != -1) && Game::el))) {
       if ((((Game::fR)[var0] != nullptr))) {
-         if (((((var0 != Game::fN) || (Game::fM == nullptr)) || ((Game::fM)->getState() != 400)))) {
+         if ((((((var0 != Game::fN) || (Game::fM == nullptr)) || ((Game::fM)->getState() != 400)) || (PortConfig::desktopFixes && (PortConfig::playingId != var0))))) {
             {
                Ref<Player> var3{};
                switch ((var0)) {
@@ -7881,6 +7881,7 @@ void Game::playSound(jint var0, jint var1) {
                   case 6:
                      ;
                   default:
+                     (PortConfig::playingId = var0);
                      Game::m_T_V();
                      try {
                         Ref<ByteArrayInputStream> var2{};

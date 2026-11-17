@@ -83,7 +83,8 @@ built without the port patches (`gen_port.py --vanilla`) and the shipped engine 
 original menus rendered 620 frames from 22 scenarios pixel for pixel identically, with identical
 state traces: at 240 the desktop patches change neither state nor pixels.
 
-Not established: a complete playthrough; pixel equivalence with a phone; deeper rooms, bosses
+Not established: a recorded playthrough replayed against the original (a person has played the
+desktop build to the credits); pixel equivalence with a phone; deeper rooms, bosses
 and the ending, which fuzzing reaches only by chance. The transformation and upgrade systems
 were exercised only as far as random input happened to trigger them.
 

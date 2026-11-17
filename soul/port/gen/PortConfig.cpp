@@ -5,6 +5,7 @@ namespace sod {
 
 void PortConfig::clinit() {
    PortConfig::screenWidth = 240;
+   PortConfig::playingId = -1;
    PortConfig::SIDE_FADE_TICKS = 12;
 }
 
@@ -492,6 +493,7 @@ void PortConfig::portDumpStatics(StateSink& sink) {
    sink.put("directTiles", PortConfig::directTiles);
    sink.put("desktopText", PortConfig::desktopText);
    sink.put("desktopFixes", PortConfig::desktopFixes);
+   sink.put("playingId", PortConfig::playingId);
    sink.put("viewX", PortConfig::viewX);
    sink.put("viewValid", PortConfig::viewValid);
    sink.put("clipLeft", PortConfig::clipLeft);

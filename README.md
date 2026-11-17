@@ -10,8 +10,12 @@ upgrades, transformations, parallax backgrounds, music and sound effects, with w
 display-rate frame interpolation, keyboard and gamepad, and an in-game OPTIONS screen drawn in the
 game's own style.** It is the verified reference Java translated to C++ on a small runtime, not
 an emulator. The shipped Release engine at the original 240 width matches the original class
-files field for field over 187,499 fuzzed ticks across all eleven levels. That compares game
-state under random input, not pixels, and **no complete playthrough has been recorded yet**.
+files field for field over 187,499 fuzzed ticks across all eleven levels (state under random
+input, not pixels), and the game has been played to the end credits on the desktop build.
+
+**Version 1.0.0 is a complete release**: the whole game, start to credits, with the desktop options
+above. Updates may still come (fixes, polish), and installed launchers pick them up, but nothing is
+missing for a full playthrough and no further work is planned for now.
 
 ```powershell
 .\setup.ps1 -Jar <SoulOfDarkness_HTC_P3450_EN_IGPL_EU_101_S8000.jar>   # once: tools, reference Java, C++, build, check
@@ -46,7 +50,7 @@ is public. Local builds carry a `-dev` version and never offer updates.
 | `soul/extracted/` | JAR contents (ignored) |
 | `soul/decompiled/` | Raw Vineflower output (generated) |
 | `soul/src/` | Renamed reference Java with bytecode-verified decompiler fixes (generated) |
-| `soul/docs/` | [BUILD_101.md](soul/docs/BUILD_101.md) (the build, its artifact fixes and evidence), [NATIVE_ENGINE.md](soul/docs/NATIVE_ENGINE.md) (translator, runtime, widescreen, interpolation), [ROADMAP.md](soul/docs/ROADMAP.md), `names.map` |
+| `soul/docs/` | [BUILD_101.md](soul/docs/BUILD_101.md) (the build, its artifact fixes and evidence), [NATIVE_ENGINE.md](soul/docs/NATIVE_ENGINE.md) (translator, runtime, widescreen, interpolation), [ROADMAP.md](soul/docs/ROADMAP.md), [ITCH_PAGE.md](soul/docs/ITCH_PAGE.md) (store page copy), `names.map` |
 | `soul/port/gen/` | The reference Java translated to C++ (generated, tracked) |
 | `soul/port/engine/` | Hand-written Java/MIDP runtime, glue and Win32 host |
 | `soul/port/launcher/` | The launcher (`SoulOfDarkness.exe`) and its artwork; ported from the Dawnstar/Shadowkey launchers |

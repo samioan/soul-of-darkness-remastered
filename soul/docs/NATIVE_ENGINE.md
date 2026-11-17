@@ -104,13 +104,11 @@ origin then slid the layer at about 7/8 of the camera's speed in the wrong direc
 scrolls as if the camera were the one that centres the original window in the view, which is the
 camera itself whenever the view tracks it, so open stretches draw exactly as before.
 
-Rooms narrower than the screen do not leave black bars. In a level that scrolls horizontally, the
-view around such a room grows to the screen width, centred on the room and kept inside the level,
-so the sides show the real level beyond it. Only a level narrower than the screen (the 400 pixel
-level 6 tower and level 10 arena) leaves sides: they show a blurred, dimmed copy of the level as
-drawn this frame, a native pixel pass recorded as a draw op (`PortNative.sides`, since MIDP colours
-are opaque), fading in from black over 12 ticks when the sides first appear. Actors, collision and
-activation stop at the level edge there.
+Rooms and levels narrower than the screen (no horizontal scrolling: the level 6 tower, the level 10
+arena, single-screen rooms inside wider levels) do not leave black bars and do not show tiles past
+the room: their sides show a blurred, dimmed copy of the room as drawn this frame, a native pixel
+pass recorded as a draw op (`PortNative.sides`, since MIDP colours are opaque), fading in from black
+over 12 ticks when the sides first appear. Actors, collision and activation stop at the room edge.
 Screens without the world (menus, the level map) drop the wide view so their tile layers keep the
 240 layout; the logo screen's side bars are white. Full-screen fills, the
 world clip and on-screen tests are changed explicitly, site by site. Panels, dialogue, menus and
@@ -124,7 +122,8 @@ drawn at all (the right side was never affected). The crop now uses the left edg
 the current translation (`PortConfig.screenLeft`, 0 at width 240).
 
 The visible-area bounds and the activation distance follow the visible width, so in widescreen
-enemies wake, spawn at and leave the real screen edges. That is a deliberate gameplay difference
+enemies wake, spawn at and leave the real screen edges. Auto-scrolling sections hold the player
+inside the visible area on every edge (two edges of the original used the 240 window directly). That is a deliberate gameplay difference
 from the 240 original and cannot be checked against it; at 240 nothing changes.
 
 ### Frame rate and interpolation

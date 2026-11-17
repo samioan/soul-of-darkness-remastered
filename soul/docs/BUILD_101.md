@@ -75,6 +75,14 @@ target); the About screen now shows the JAR's own "1.0.1", runtime and oracle al
 after that change with the default `check_engine.py` run only: 6 scenarios, 13,732 ticks,
 identical.
 
+Audit (2026-11-17, after the v0.1.3/v0.1.4 desktop changes): the default run (6 scenarios,
+13,732 ticks) and 22 further scenarios over all 11 levels (80,611 ticks) identical; regenerating
+the reference from the JAR changes nothing in `soul/decompiled` or `soul/src`, which contain no
+decompiler failure markers; `check_narrowing.py` reports only the six findings above. A translation
+built without the port patches (`gen_port.py --vanilla`) and the shipped engine at width 240 with the
+original menus rendered 620 frames from 22 scenarios pixel for pixel identically, with identical
+state traces: at 240 the desktop patches change neither state nor pixels.
+
 Not established: a complete playthrough; pixel equivalence with a phone; deeper rooms, bosses
 and the ending, which fuzzing reaches only by chance. The transformation and upgrade systems
 were exercised only as far as random input happened to trigger them.

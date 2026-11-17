@@ -308,6 +308,29 @@ PORT_PATCHES: list[tuple[str, str, str, int]] = [
      "      if (var0 == 9) {\n         T();\n         if (PortConfig.desktopFixes) {\n            fN = -1;\n         }\n\n"
      "         eS = levelIndex == 0 ? 0 : i(0, 7);\n", 1),
 
+    # auto-scrolling sections (camera controller, type 49): the leading edge of a left scroll, and both
+    # sides of mode 5 (level 10's vertical section), held the player inside the original 240 window,
+    # an invisible wall in the wide view. They follow the visible area, as the other edges already do
+    # through Game.viewBounds.
+    ("Actor.java",
+     "                        } else if (Game.player.positionX < Game.cameraX + 10) {\n"
+     "                           Game.player.positionX = Game.cameraX + 10;\n",
+     "                        } else if (Game.player.positionX < Game.cameraX + PortConfig.worldLeft() + 10) {\n"
+     "                           Game.player.positionX = Game.cameraX + PortConfig.worldLeft() + 10;\n", 1),
+    ("Actor.java",
+     "                     if (5 == this.aA) {\n"
+     "                        if (Game.player.positionX > Game.cameraX + 240 - 10) {\n"
+     "                           Game.player.positionX = Game.cameraX + 240 - 10;\n"
+     "                        }\n\n"
+     "                        if (Game.player.positionX < Game.cameraX + 10) {\n"
+     "                           Game.player.positionX = Game.cameraX + 10;\n",
+     "                     if (5 == this.aA) {\n"
+     "                        if (Game.player.positionX > Game.cameraX + PortConfig.worldRight() - 10) {\n"
+     "                           Game.player.positionX = Game.cameraX + PortConfig.worldRight() - 10;\n"
+     "                        }\n\n"
+     "                        if (Game.player.positionX < Game.cameraX + PortConfig.worldLeft() + 10) {\n"
+     "                           Game.player.positionX = Game.cameraX + PortConfig.worldLeft() + 10;\n", 1),
+
     # ------------------------------------------------------------------ BSprite: RGB frames cropped at the screen edge
     # Frames decoded to pixel arrays are cropped to x >= 0 before drawRGB, and skipped when wholly left of
     # it. In widescreen the world is translated so that x = 0 is the left edge of the original 240 window,

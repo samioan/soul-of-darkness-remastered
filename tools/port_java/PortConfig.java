@@ -56,21 +56,6 @@ final class PortConfig {
          hi = Game.levelPixelWidth;
       }
 
-      // Only a level narrower than the screen leaves sides to fill (drawSides). Inside a level that
-      // scrolls horizontally, a room narrower than the screen shows the level around it: the bounds
-      // grow to the screen width, centred on the room and kept inside the level.
-      if (hi - lo < w && Game.levelPixelWidth > w) {
-         lo -= (w - (hi - lo)) / 2;
-         hi = lo + w;
-         if (lo < 0) {
-            lo = 0;
-            hi = w;
-         } else if (hi > Game.levelPixelWidth) {
-            hi = Game.levelPixelWidth;
-            lo = hi - w;
-         }
-      }
-
       // The camera may still be scrolling into these bounds from a neighbouring room.
       if (Game.cameraX < lo) {
          lo = Game.cameraX;
@@ -151,13 +136,12 @@ final class PortConfig {
       return Game.cameraX - centred + (camera - Game.cameraX + centred >> shift);
    }
 
-   // ---------------------------------------------------------------- levels narrower than the screen
+   // ---------------------------------------------------------------- screens narrower than the view
    //
-   // Where the whole level is narrower than the wide screen (the 400 pixel level 6 tower and level 10
-   // arena), the sides are not left black: they show a blurred, darkened copy of the level as drawn
-   // this frame (PortNative.sides), fading in from black when they first appear. Actors, collision and
-   // activation still stop at the level edge. Narrow rooms inside wider levels show the level around
-   // them instead (computeView).
+   // Where the room (or the whole level) is narrower than the wide screen, so the camera does not
+   // scroll horizontally, the sides are not left black: they show a blurred, darkened copy of the room
+   // as drawn this frame (PortNative.sides), fading in from black when they first appear. Actors,
+   // collision and activation still stop at the room.
 
    static final int SIDE_FADE_TICKS = 12;
    static int sideFade;

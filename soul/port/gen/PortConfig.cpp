@@ -27,17 +27,6 @@ void PortConfig::computeView() {
       (lo = 0);
       (hi = Game::levelPixelWidth);
    }
-   if ((((jsub32(hi, lo) < w) && (Game::levelPixelWidth > w)))) {
-      (lo = (jint)(jsub32(lo, ((jsub32(w, (jsub32(hi, lo)))) / 2))));
-      (hi = jadd32(lo, w));
-      if (((lo < 0))) {
-         (lo = 0);
-         (hi = w);
-      } else if (((hi > Game::levelPixelWidth))) {
-         (hi = Game::levelPixelWidth);
-         (lo = jsub32(hi, w));
-      }
-   }
    if (((Game::cameraX < lo))) {
       (lo = Game::cameraX);
    }

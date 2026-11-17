@@ -15326,8 +15326,8 @@ void Actor::m_cx_V() {
                            } else if (((3 != (Game::be)[Game::levelIndex]))) {
                               ((Game::player)->G = 0);
                            }
-                        } else if ((((Game::player)->positionX < jadd32(Game::cameraX, 10)))) {
-                           ((Game::player)->positionX = jadd32(Game::cameraX, 10));
+                        } else if ((([&]{ auto _t4 = (Game::player)->positionX; auto _t5 = jadd32(([&]{ auto _t2 = Game::cameraX; auto _t3 = PortConfig::worldLeft(); return jadd32(_t2, _t3); }()), 10); return (_t4 < _t5); }()))) {
+                           ([&]{ auto _t8 = Game::player; auto _t9 = (jint)(jadd32(([&]{ auto _t6 = Game::cameraX; auto _t7 = PortConfig::worldLeft(); return jadd32(_t6, _t7); }()), 10)); return _t8->positionX = _t9; }());
                         }
                         (Game::aD = true);
                      }
@@ -15361,11 +15361,11 @@ void Actor::m_cx_V() {
                         (Game::aD = false);
                      }
                      if (((5 == (this)->aA))) {
-                        if ((((Game::player)->positionX > jsub32(jadd32(Game::cameraX, 240), 10)))) {
-                           ((Game::player)->positionX = jsub32(jadd32(Game::cameraX, 240), 10));
+                        if ((([&]{ auto _t12 = (Game::player)->positionX; auto _t13 = jsub32(([&]{ auto _t10 = Game::cameraX; auto _t11 = PortConfig::worldRight(); return jadd32(_t10, _t11); }()), 10); return (_t12 > _t13); }()))) {
+                           ([&]{ auto _t16 = Game::player; auto _t17 = (jint)(jsub32(([&]{ auto _t14 = Game::cameraX; auto _t15 = PortConfig::worldRight(); return jadd32(_t14, _t15); }()), 10)); return _t16->positionX = _t17; }());
                         }
-                        if ((((Game::player)->positionX < jadd32(Game::cameraX, 10)))) {
-                           ((Game::player)->positionX = jadd32(Game::cameraX, 10));
+                        if ((([&]{ auto _t20 = (Game::player)->positionX; auto _t21 = jadd32(([&]{ auto _t18 = Game::cameraX; auto _t19 = PortConfig::worldLeft(); return jadd32(_t18, _t19); }()), 10); return (_t20 < _t21); }()))) {
+                           ([&]{ auto _t24 = Game::player; auto _t25 = (jint)(jadd32(([&]{ auto _t22 = Game::cameraX; auto _t23 = PortConfig::worldLeft(); return jadd32(_t22, _t23); }()), 10)); return _t24->positionX = _t25; }());
                         }
                      }
                   }

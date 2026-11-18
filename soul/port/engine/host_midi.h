@@ -2,7 +2,10 @@
 // system MIDI synthesizer (midiOut). It replaces MCI, whose synchronous open of every track stalled
 // the game each time music started, looped or a jingle interrupted it.
 //
-// Tracks play as the game mixed them; only the user's volume scales their channel volumes (CC7).
+// The tracks were mixed for a phone and differ by 12-26 dB through a desktop GS synthesizer (the
+// title and level themes quiet, the menu/boss theme and the jingles loud). Each known track has a
+// measured gain (tools/music_levels.py) that levels it to a common loudness, applied to its channel
+// volumes (CC7) and note velocities; the user's volume scales CC7 too.
 #pragma once
 #include <cstdint>
 #include <memory>
@@ -18,9 +21,10 @@ struct MidiSong {
     };
     std::vector<Event> events;
     double lengthMs = 0;      // end of the longest track
+    double levelDb = 0;       // levelling gain for this track, 0 when it is not a known track
 };
 
-// Parses a format 0/1 SMF. Returns false for anything that is not one.
+// Parses a format 0/1 SMF and looks up its levelling gain. Returns false for anything that is not one.
 bool parseMidi(const std::vector<std::uint8_t>& data, MidiSong& out, std::string& error);
 
 class MidiPlayer {

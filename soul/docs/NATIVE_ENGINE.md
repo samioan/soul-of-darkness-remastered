@@ -178,9 +178,18 @@ are active only when the host installs the desktop menus (`PortConfig.desktopFix
 - Music and jingles (the original MIDI, and WAV) play through a small SMF sequencer on its own
   thread sending to the system MIDI synthesizer (`engine/host_midi.cpp`); WAV plays through
   PlaySound. The earlier MCI path opened every track synchronously and stalled the game whenever
-  music started or a jingle interrupted it. Tracks play as the game mixed them (the game sets no
-  volume; its level themes are about 20 dB quieter than the boss theme and jingles); only the
-  user's volume and mute scale their channel volumes.
+  music started or a jingle interrupted it. The tracks were mixed for a phone (the game sets no
+  volume): through the Windows GS synthesizer the title and level themes play at -28.5..-32.6 LUFS,
+  the menu/boss theme at -19.7 and the jingles at -5.8..-48.7, so every change of track jumped in
+  volume. `tools/music_levels.py` decodes the tracks with the original classes, renders them with
+  `gm.dls` (the synthesizer's sample set: regions, loops, envelopes, the concave velocity and
+  volume curves) and measures integrated loudness (BS.1770); it finds each track's gain to
+  -20 LUFS, iterating through the host's own rounding and clamping. The host looks tracks up by
+  FNV-1a hash and size (`kTrackLevels`, `engine/host_midi.cpp`) and applies the gain as one factor
+  on channel volumes (CC7) and note velocities (amplitude follows their product squared, so each
+  takes a quarter of the dB); unknown tracks play as mixed. A formula over the note data alone
+  (levelling tried earlier) misjudged the differences by up to 9 dB. The user's volume and mute
+  scale CC7 on top.
 - Arcs are filled only inside the clip with half-plane wedge tests: the boss-death effect draws
   eleven 640x640 arcs per frame, which took about 75 ms per frame with per-pixel `atan2` over the
   whole box and now takes about 6 ms, with identical pixels.

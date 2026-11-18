@@ -47,6 +47,9 @@ Indices are zero-based: level 0 is the first level.
   FIRE held); OPTIONS screen in the main and pause menus (display, audio, keyboard, gamepad).
 - [x] Music and effects, original RMS save record, user-JAR loading with SHA-256 identity check,
   data-free package (`soul/port/build_dist.bat`).
+- [x] Music levelled: every MIDI track plays at -20 LUFS through the Windows GS synthesizer
+  (per-track gains measured by `tools/music_levels.py`), instead of level themes 12 dB below the
+  menu/boss theme and jingles up to 14 dB above it.
 - [x] Launcher (`SoulOfDarkness.exe`, `soul/port/launcher`): banner artwork, JAR pick/auto-detect
   with the game's own identity check, window size or fullscreen, Play, and self-update from the
   GitHub releases of samioan/soul-of-darkness-remastered (tag `vX.Y.Z` ->
@@ -55,7 +58,8 @@ Indices are zero-based: level 0 is the first level.
 
 - [x] Played start to credits by a person on the desktop build (2026-11-17), bosses, deaths and
   restarts included; fixes from that pass are in v0.1.3 to v1.0.0.
-- [x] Releases v0.1.0 to v1.0.0 published from tags; v1.0.0 is the complete release.
+- [x] Releases v0.1.0 to v1.0.1 published from tags; v1.0.0 is the complete release, v1.0.1
+  levels the music.
 
 ## Remaining
 

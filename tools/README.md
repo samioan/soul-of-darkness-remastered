@@ -13,6 +13,7 @@ paths relative to their own location.
 | `python tools/check_engine.py` | Original class files vs. the built engine, tick by tick |
 | `python tools/check_narrowing.py` | Narrowing-cast counts and call targets of `soul/src` vs. the original class files |
 | `python tools/outline.py Game` | Member line ranges; `--big N` filters large methods; `--calls NAME` approximates callers/callees |
+| `python tools/music_levels.py` | Render the MIDI tracks with `gm.dls`, measure loudness, print the host's per-track levelling gains (needs numpy, scipy) |
 | `python tools/bytecode.py e` | Original instructions in ignored `soul/analysis/e.bytecode.txt` |
 | `python tools/make_banner.py soul/port/launcher/assets/banner_source.jpg` | The launcher's embedded banner (`banner.jpg`), via System.Drawing; from shadowkey-decomp |
 | `python tools/make_icon.py soul/port/launcher/assets/banner_source.jpg` | The launcher's `.ico` (the hero's face, 16-256 px); from shadowkey-decomp |
